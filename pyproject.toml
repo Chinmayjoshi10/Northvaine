@@ -51,6 +51,4 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 
-[tool.ruff.lint.per-file-ignores]
-# Factory tooling outside M1 ticket scopes; remove once the file is cleaned up.
-"scripts/factory_status.py" = ["E501", "I001", "UP017"]
+

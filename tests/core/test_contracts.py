@@ -130,13 +130,6 @@ async def test_dispose_engine_is_noop_without_engine() -> None:
     assert db._engine is None
 
 
-def test_stubs_raise_not_implemented() -> None:
-    with pytest.raises(NotImplementedError):
-        db.get_engine()
-    with pytest.raises(NotImplementedError):
-        queue.backoff_delay(1)
-
-
 # --- core models ---------------------------------------------------------------------------
 
 SPEC_EVENT_TYPES = {

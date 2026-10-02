@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 import re
 import subprocess
+import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +22,9 @@ PROJECTS = Path.home() / ".claude" / "projects"
 
 
 def workflow_runs(limit: int) -> list[Path]:
-    runs = [p for p in PROJECTS.glob("*/*/subagents/workflows/wf_*") if (p / "journal.jsonl").exists()]
+    runs = [
+        p for p in PROJECTS.glob("*/*/subagents/workflows/wf_*") if (p / "journal.jsonl").exists()
+    ]
     runs = [p for p in runs if "hack" in p.parts[-5].lower()]
     return sorted(runs, key=lambda p: (p / "journal.jsonl").stat().st_mtime, reverse=True)[:limit]
 
@@ -45,7 +47,7 @@ def ago(ts: str | None) -> str:
     if not ts:
         return "?"
     then = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    secs = int((datetime.now(timezone.utc) - then).total_seconds())
+    secs = int((datetime.now(UTC) - then).total_seconds())
     return f"{secs}s" if secs < 90 else f"{secs // 60}m" if secs < 5400 else f"{secs // 3600}h"
 
 
@@ -77,8 +79,12 @@ def show_run(run: Path) -> None:
     agents: dict[str, dict[str, Any]] = {}
     for e in entries:
         if e.get("type") == "started":
-            agents[e["key"]] = {"label": e.get("label", "?"), "phase": e.get("phase", ""),
-                                "id": e.get("agentId"), "done": False}
+            agents[e["key"]] = {
+                "label": e.get("label", "?"),
+                "phase": e.get("phase", ""),
+                "id": e.get("agentId"),
+                "done": False,
+            }
         elif e.get("type") == "result" and e.get("key") in agents:
             agents[e["key"]]["done"] = True
     running = sum(not a["done"] for a in agents.values())
@@ -87,7 +93,11 @@ def show_run(run: Path) -> None:
     for a in agents.values():
         action, ts, calls = agent_activity(run, a["id"])
         mark = "✔" if a["done"] else "…"
-        detail = f"done ({calls} actions)" if a["done"] else f"{action}   [{calls} actions, last {ago(ts)} ago]"
+        detail = (
+            f"done ({calls} actions)"
+            if a["done"]
+            else f"{action}   [{calls} actions, last {ago(ts)} ago]"
+        )
         print(f"  {mark} {a['phase']:<10} {a['label']:<40} {detail}")
 
 
@@ -99,15 +109,23 @@ def show_board() -> None:
         return
     print("\nBoard:")
     for t in tickets:
-        head = t.read_text(encoding="utf-8").split("---")[1] if t.read_text(encoding="utf-8").startswith("---") else ""
+        head = (
+            t.read_text(encoding="utf-8").split("---")[1]
+            if t.read_text(encoding="utf-8").startswith("---")
+            else ""
+        )
         status = re.search(r"^status:\s*(\S+)", head, re.M)
         title = re.search(r"^title:\s*(.+)$", head, re.M)
-        print(f"  {t.parent.name}/{t.stem[:40]:<40} {(status.group(1) if status else '?'):<12} {(title.group(1)[:60] if title else '')}")
+        state = status.group(1) if status else "?"
+        name = title.group(1)[:60] if title else ""
+        print(f"  {t.parent.name}/{t.stem[:40]:<40} {state:<12} {name}")
 
 
 def git(*args: str) -> str:
     try:
-        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        return subprocess.run(
+            ["git", *args], cwd=ROOT, capture_output=True, text=True
+        ).stdout.strip()
     except OSError:
         return ""
 
@@ -130,7 +148,10 @@ def main() -> None:
             show_run(run)
         show_board()
         print("\nWorktrees:\n  " + (git("worktree", "list") or "-").replace("\n", "\n  "))
-        print("\nRecent commits:\n  " + (git("log", "--oneline", "--all", "-8") or "-").replace("\n", "\n  "))
+        print(
+            "\nRecent commits:\n  "
+            + (git("log", "--oneline", "--all", "-8") or "-").replace("\n", "\n  ")
+        )
         if not args.watch:
             break
         time.sleep(args.watch)
