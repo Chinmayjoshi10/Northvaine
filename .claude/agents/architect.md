@@ -16,6 +16,9 @@ Produce plans that let several builders work **in parallel without conflict**:
 1. **Wave 0 = contracts.** Shared Pydantic models, protocols/ABCs, function signatures with
    docstrings, DB tables/migrations, fixture formats, config settings. Implemented as real
    code with `NotImplementedError` bodies where needed, plus contract tests.
+   **Contract tests check shape only** (names, signatures, fields, types, import side effects),
+   never stub behaviour. A test asserting a stub raises `NotImplementedError` blocks the
+   very ticket that implements it.
 2. **Later waves = implementation tickets** that depend only on contracts and earlier waves.
 3. **Disjoint `writes`** inside a wave. Shared files (`pyproject.toml`, `schema.sql`,
    migrations, `core/models.py`, `core/settings.py`) belong to the contracts ticket.
