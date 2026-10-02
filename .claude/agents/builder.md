@@ -18,7 +18,9 @@ You are given one ticket. Work like this:
 5. No network in tests: use `tests/fixtures/`. Never call real APIs from pytest.
 6. Never guess external API details. Use `docs/integrations/`. If a fact is missing, report it
    as blocked.
-7. Run `uv run python scripts/gate.py` until it passes.
+7. Run `uv run python scripts/gate.py` until it passes. Your worktree has no `.env`, so `db`
+   tests skip here. That is expected and is **not** a reason to report blocked; the integrator
+   runs them against the test database after merging.
 8. Commit on your branch with a clear message, ending with the attribution lines from the
    session's system instructions.
 9. Report: ticket id, status (done | blocked), worktree path (`git rev-parse --show-toplevel`),

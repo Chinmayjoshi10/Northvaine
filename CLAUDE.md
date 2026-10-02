@@ -66,16 +66,20 @@ schema.sql
 ```
 
 ## Commands
+Run every task with `uv run python scripts/tasks.py <task>` (works in PowerShell and Git Bash;
+`make <task>` delegates to it where make exists):
 ```
-make dev        # run API + frontend locally
-make test       # pytest (no network)
-make golden     # run the golden set, print precision
-make migrate    # alembic upgrade head
-make nightly    # run one radar cycle for a workspace
+setup     uv sync (Python 3.12 env + dev tools)
+dev       run API (+ frontend) locally
+test      unit tests: no network, no database
+golden    run the golden set
+lint      ruff check + format check
+migrate   alembic upgrade head (DATABASE_URL)
+db-check  print database status
+db-test   db tests against TEST_DATABASE_URL (Neon test branch; slow)
+gate      the factory gate: every ticket and merge must pass it
+nightly   run one radar cycle
 ```
-Create these Makefile targets in milestone 1.
-The dev machine is Windows without `make`: every target must also run without it.
-`uv run python scripts/gate.py` is the gate every ticket and merge must pass.
 
 ## Environment (`.env`, never committed; `.env.example` lists names only)
 ```
@@ -95,7 +99,7 @@ DAILY_BUDGET_USD=  # hard stop per workspace per day
 - Plan mode first for every feature; show the plan, wait for approval, then build.
 - One milestone per session. Small diffs. Commit after each working step.
 - Tests never call real APIs: use `tests/fixtures/`. Record real responses once, replay after.
-- Before saying "done": `make test` and `make golden` pass, and the demo path still works.
+- Before saying "done": `tasks.py gate` passes (and `db-test` for DB changes), and the demo path still works.
 - If an external API's shape is unknown, check its docs or ask. Never guess model ids,
   parameters, or endpoints.
 - Don't add features outside the current milestone; write them in `docs/LATER.md`.
