@@ -1,0 +1,24 @@
+# Industry words that must never appear in application code (northvaine/).
+# Business knowledge is data. One lowercase term per line; matched as whole words,
+# case-insensitive. Tests, fixtures and docs are not checked. Extend as new clients appear.
+stone
+paving
+paver
+pavers
+porcelain
+granite
+marble
+sandstone
+limestone
+slate
+tile
+tiles
+freight
+forwarder
+cement
+concrete
+timber
+lumber
+textile
+garment
+steel
