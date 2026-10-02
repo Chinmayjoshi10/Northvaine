@@ -28,3 +28,21 @@ Record any change to the spec: date, decision, reason.
 - **Decision:** the repo root is `D:\hack`. Docs live in `docs/`, as CLAUDE.md expects. The
   original handoff copies in `files (2)/` and the zip are kept out of git.
 - **Reason:** match the layout in CLAUDE.md.
+
+## 2026-10-02 — Milestone 1 plan approved (orchestrator, under the founder's delegation)
+- Python 3.12 via uv; setuptools.build_meta backend; unused later-milestone deps removed
+  (each milestone re-adds what it needs).
+- ARCHITECTURE §21 interpretations in `factory/board/M1/PLAN.md` (Decisions 7) are accepted:
+  - `theses.alpha/beta` dropped,
+  - jobs gets leases/heartbeat/attempt fields,
+  - 13-stage CHECKs on `cases`/`outcomes`,
+  - lessons require a strategy version,
+  - one open case per company + pattern (a second inbound request joins it).
+- Vector columns are dimensionless in M1; the dimension and the indexes are fixed in M2 once
+  the embedding model is confirmed.
+- Licence: MIT (LICENSE file in M15).
+- `DAILY_BUDGET_USD` has no default: LLM calls refuse to run until the founder sets it.
+- db-test may create/drop `nv_test_<hex>` databases on the TEST_DATABASE_URL server only. If
+  the role can't, it uses `reuse` mode on a dedicated test branch. It never touches the demo DB.
+- **Pending, founder:** Postgres hosting (Neon free for dev/test recommended now; Nebius
+  Managed PostgreSQL ~ $100/month is a paid decision for the demo, to decide by M14).

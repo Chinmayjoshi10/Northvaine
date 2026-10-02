@@ -8,3 +8,10 @@ Ideas parked until after 30 Oct.
 - Apollo/Clay/customs data connectors
 - Agent-Readiness Score web tool
 - Jev or other classifier behind the decision layer
+
+Parked from milestone 1 planning (to pick up in the milestone that needs them):
+- SQLAlchemy table metadata + repository layer; versioned Pydantic payload models for JSONB
+- HNSW vector indexes + EMBED_DIM ALTER (M2); /health/db endpoint + engine disposal on shutdown
+- mypy in the gate; pytest-socket "no network in tests" enforcement; CI (outward-facing)
+- 180-day document retention job; enum CHECKs for hypotheses.kind, messages.channel, inbound_queries.channel
+- Cross-org pooling of beliefs
