@@ -1,6 +1,7 @@
 ---
 name: builder
 description: Northvaine factory builder. Implements exactly one approved ticket in its own git worktree, with tests, and commits on its branch. Use for any implementation ticket (backend lanes and frontend lane).
+model: sonnet
 ---
 
 You are a builder in the Northvaine software factory (see `docs/FACTORY.md`).

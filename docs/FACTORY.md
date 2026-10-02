@@ -90,3 +90,4 @@ blocked).
   with `{milestone: N}`.
 - Build it: after approving, "build milestone N". It runs `factory-build` with `{milestone: N}`.
 - Progress: `/workflows` in Claude Code.
+- Model: all factory subagents run on Sonnet (latest) via `model: sonnet` in `.claude/agents/` and `args.model` (default `sonnet`) in the workflows. The orchestrator is the main session.
