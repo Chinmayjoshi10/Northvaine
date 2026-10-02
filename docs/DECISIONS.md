@@ -80,3 +80,9 @@ Record any change to the spec: date, decision, reason.
   - The manual first-radar run showed that the buyer is usually found by following a chain
     (council → project → contractor). Events tied to one company can't represent that.
   - Contact data adds personal-data obligations and cost, and nothing for the demo.
+
+## 2026-10-03 — LLM budget: $1/day until hackathon credits arrive
+- **Decision:** `DAILY_BUDGET_USD=1`. `llm.py` hard-stops at the cap. Live LLM use in tests and
+  smoke checks is kept minimal; recorded fixtures are replayed instead. Raise the cap when
+  Nebius credits arrive.
+- **Reason:** the founder has no Token Factory credits yet and doesn't want to spend now.
