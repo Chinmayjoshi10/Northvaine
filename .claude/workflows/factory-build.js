@@ -17,6 +17,8 @@ const M = args && args.milestone
 if (!M) throw new Error('args.milestone is required')
 const ONLY = (args && args.only) || null
 const MAX_FIX_ROUNDS = 2
+// Lean mode: Opus reviews contract tickets (wave 0); Sonnet reviews the rest. args.models.reviewer forces one model.
+const reviewModel = t => ((args && args.models && args.models.reviewer) || (t.wave === 0 ? 'opus' : 'sonnet'))
 const builderRole = t => (t.role === 'test-engineer' ? 'test-engineer' : 'builder')
 const role = r => `Act as the ${r} defined in .claude/agents/${r}.md (read it first) and follow docs/FACTORY.md.`
 
@@ -139,7 +141,7 @@ You are in an isolated git worktree. Commit your work on the current branch when
   if (!b) return { ticket: t, status: 'blocked', reason: 'builder failed' }
   if (b.status !== 'done') return { ticket: t, build: b, status: 'blocked', reason: b.notes }
 
-  let review = await agent(reviewPrompt(t, b, 1), { model: MODELS.reviewer, label: `review:${t.id}`, phase: 'Review', schema: REVIEW })
+  let review = await agent(reviewPrompt(t, b, 1), { model: reviewModel(t), label: `review:${t.id}`, phase: 'Review', schema: REVIEW })
   for (let round = 1; review && review.verdict !== 'approve' && round <= MAX_FIX_ROUNDS; round++) {
     const blocking = review.findings.filter(f => f.severity !== 'nit')
     const fix = await agent(
@@ -152,7 +154,7 @@ Findings: ${JSON.stringify(blocking)}`,
       { model: MODELS[builderRole(t)], label: `fix:${t.id}#${round}`, phase: 'Review', schema: BUILD },
     )
     if (!fix || fix.status !== 'done') return { ticket: t, build: b, review, status: 'blocked', reason: 'fix failed' }
-    review = await agent(reviewPrompt(t, { ...b, notes: fix.notes }, round + 1), { model: MODELS.reviewer, label: `review:${t.id}#${round + 1}`, phase: 'Review', schema: REVIEW })
+    review = await agent(reviewPrompt(t, { ...b, notes: fix.notes }, round + 1), { model: reviewModel(t), label: `review:${t.id}#${round + 1}`, phase: 'Review', schema: REVIEW })
   }
   if (!review || review.verdict !== 'approve') return { ticket: t, build: b, review, status: 'blocked', reason: 'review not approved after fix rounds' }
   return { ticket: t, build: b, review, status: 'approved' }

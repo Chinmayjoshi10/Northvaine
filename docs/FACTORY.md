@@ -90,4 +90,4 @@ blocked).
   with `{milestone: N}`.
 - Build it: after approving, "build milestone N". It runs `factory-build` with `{milestone: N}`.
 - Progress: `/workflows` in Claude Code.
-- Models per role: architect + reviewer = Opus (planning and the quality gate), builder, test engineer, researcher, integrator = Sonnet (volume work), board loader = Haiku. Set in `.claude/agents/` frontmatter and the `MODELS` map in both workflows; override any role with `args.models`, e.g. `{builder: "opus"}`.
+- Models per role (lean mode): architect = Opus; reviewer = Opus for contract tickets (wave 0) and the milestone check, Sonnet for other tickets; builder, test engineer, researcher, integrator = Sonnet; board loader = Haiku. Research only for external facts new to the milestone; aim for 4-7 tickets per milestone. Start each milestone in a fresh session so the orchestrator context stays small. Override any role with `args.models`, e.g. `{reviewer: "opus"}`.

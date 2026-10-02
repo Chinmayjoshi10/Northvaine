@@ -98,7 +98,7 @@ const draft = await agent(
 Draft the plan for milestone ${M} (date: ${TODAY}). Founder notes: ${NOTES}
 Inspect the repository as it is now (existing code may be partial or broken; plan to fix it, not ignore it).
 Do NOT write any files yet. Return the plan. Ticket ids look like T${M}.0, T${M}.1, ...; wave 0 is the contracts ticket(s).
-List every external fact the plan depends on under research_needed unless docs/integrations/ already confirms it.`,
+List under research_needed ONLY external facts that are new for this milestone and not already confirmed in docs/integrations/ (no research for well-known libraries already in use). Prefer fewer, larger tickets (aim 4-7) over many small ones.`,
   { model: MODELS.architect, label: 'architect:draft', schema: PLAN },
 )
 log(`Draft: ${draft.tickets.length} tickets, ${draft.research_needed.length} research topics`)
