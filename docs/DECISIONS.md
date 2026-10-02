@@ -86,3 +86,10 @@ Record any change to the spec: date, decision, reason.
   smoke checks is kept minimal; recorded fixtures are replayed instead. Raise the cap when
   Nebius credits arrive.
 - **Reason:** the founder has no Token Factory credits yet and doesn't want to spend now.
+- **Correction (same day):** the $1 is the **total** available until the promo credits arrive,
+  not $1 per day. Milestone 2 must add `TOTAL_BUDGET_USD` (a lifetime cap summed from
+  `llm_calls.cost_usd`), checked before every call alongside the daily cap. Until credits
+  arrive:
+  - only free calls (e.g. listing models) and a handful of tiny smoke calls on the smallest
+    model;
+  - everything else uses recorded fixtures.
