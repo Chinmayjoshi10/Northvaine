@@ -59,3 +59,4 @@ files (2).zip
 
 # Factory builder worktrees
 .claude/worktrees/
+.neon
