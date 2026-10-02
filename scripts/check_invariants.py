@@ -46,17 +46,43 @@ def load_banned_terms() -> list[str]:
     return [ln.strip().lower() for ln in lines if ln.strip() and not ln.startswith("#")]
 
 
-def check_banned_terms(files: list[Path], terms: list[str]) -> list[str]:
+def _scan_terms(
+    files: list[Path], terms: list[str], where: str, left: str = r"\b", right: str = r"\b"
+) -> list[str]:
     if not terms:
         return []
-    pattern = re.compile(r"\b(" + "|".join(map(re.escape, terms)) + r")\b", re.IGNORECASE)
+    body = "|".join(map(re.escape, terms))
+    pattern = re.compile(left + "(" + body + ")" + right, re.IGNORECASE)
     problems = []
     for path in files:
         for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             match = pattern.search(line)
             if match:
-                problems.append(f"{rel(path)}:{n}: industry word '{match.group(0)}' in code")
+                problems.append(f"{rel(path)}:{n}: industry word '{match.group(0)}' in {where}")
     return problems
+
+
+def check_banned_terms(files: list[Path], terms: list[str]) -> list[str]:
+    return _scan_terms(files, terms, "code")
+
+
+def check_sql_banned_terms(files: list[Path], terms: list[str]) -> list[str]:
+    """The same rule for the schema and migrations: table and column names are code too."""
+    # In SQL an underscore separates words (`x_orders`), so only letters and digits join.
+    return _scan_terms(files, terms, "SQL", r"(?<![A-Za-z0-9])", r"(?![A-Za-z0-9])")
+
+
+def sql_files() -> list[Path]:
+    """schema.sql plus every .sql and .py file under migrations/."""
+    files = [ROOT / "schema.sql"] if (ROOT / "schema.sql").is_file() else []
+    migrations = ROOT / "migrations"
+    if migrations.exists():
+        files += sorted(
+            p for p in migrations.rglob("*")
+            if p.is_file() and p.suffix in {".sql", ".py"}
+            and not SKIP_DIRS.intersection(p.relative_to(ROOT).parts)
+        )
+    return files
 
 
 def imported_modules(path: Path) -> set[str]:
@@ -125,14 +151,18 @@ def main() -> int:
     if FRONTEND_SRC.exists():
         code_files += [p for p in FRONTEND_SRC.rglob("*") if p.suffix in {".ts", ".tsx"}]
 
+    terms = load_banned_terms()
+    sql = sql_files()
     problems = (
-        check_banned_terms(code_files, load_banned_terms())
+        check_banned_terms(code_files, terms)
+        + check_sql_banned_terms(sql, terms)
         + check_imports(py_files)
         + check_secrets(tracked_files())
     )
     for problem in problems:
         print(f"INVARIANT  {problem}")
-    print(f"invariants: {len(problems)} violation(s) in {len(code_files)} code files")
+    print(f"invariants: {len(problems)} violation(s) in {len(code_files)} code files"
+          f" and {len(sql)} SQL/migration files")
     return 1 if problems else 0
 
 
