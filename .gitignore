@@ -56,3 +56,6 @@ files (2).zip
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Factory builder worktrees
+.claude/worktrees/
