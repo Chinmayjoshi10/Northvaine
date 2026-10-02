@@ -46,3 +46,14 @@ Record any change to the spec: date, decision, reason.
   the role can't, it uses `reuse` mode on a dedicated test branch. It never touches the demo DB.
 - **Pending, founder:** Postgres hosting (Neon free for dev/test recommended now; Nebius
   Managed PostgreSQL ~ $100/month is a paid decision for the demo, to decide by M14).
+
+## 2026-10-02 — Database: Neon free tier for development, tests and the demo
+- **Decision:**
+  - Neon project `divine-resonance-54542003`, linked with the `neon` CLI (`neon.ts`, empty policy).
+  - Branch `production` → `DATABASE_URL`; branch `test` → `TEST_DATABASE_URL`.
+  - Both are Postgres 18.6 with pgvector 0.8.6; the role can create databases, so db-test uses
+    `database` isolation.
+  - URLs live only in the git-ignored `.env` / `.env.local`.
+  - Nebius Managed PostgreSQL is not used.
+- **Reason:** the founder wants no spending now, and Neon free covers dev, tests and a hackathon
+  demo with no local install.
