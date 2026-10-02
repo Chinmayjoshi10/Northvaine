@@ -158,7 +158,8 @@ async def test_run_worker_end_to_end(maker: async_sessionmaker[AsyncSession]) ->
     count = await queue.run_worker({"k": handler}, "w", once=True, sessionmaker=maker)
     assert count == 3
     assert sorted(handled) == sorted(ids)
-    assert all((await row(maker, i))["status"] == "done" for i in ids)
+    statuses = [(await row(maker, i))["status"] for i in ids]
+    assert statuses == ["done"] * len(ids)
 
 
 async def _one(
