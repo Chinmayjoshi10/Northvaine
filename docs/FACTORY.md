@@ -90,4 +90,4 @@ blocked).
   with `{milestone: N}`.
 - Build it: after approving, "build milestone N". It runs `factory-build` with `{milestone: N}`.
 - Progress: `/workflows` in Claude Code.
-- Model: all factory subagents run on Sonnet (latest) via `model: sonnet` in `.claude/agents/` and `args.model` (default `sonnet`) in the workflows. The orchestrator is the main session.
+- Models per role: architect + reviewer = Opus (planning and the quality gate), builder, test engineer, researcher, integrator = Sonnet (volume work), board loader = Haiku. Set in `.claude/agents/` frontmatter and the `MODELS` map in both workflows; override any role with `args.models`, e.g. `{builder: "opus"}`.

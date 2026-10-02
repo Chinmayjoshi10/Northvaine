@@ -10,7 +10,8 @@ export const meta = {
   ],
 }
 
-const MODEL = (args && args.model) || 'sonnet'  // subagent model; override with args.model
+// Model per role (override any with args.models, e.g. {builder: 'opus'}).
+const MODELS = { architect: 'opus', reviewer: 'opus', builder: 'sonnet', 'test-engineer': 'sonnet', researcher: 'sonnet', integrator: 'sonnet', loader: 'haiku', ...((args && args.models) || {}) }
 const M = args && args.milestone
 if (!M) throw new Error('args.milestone is required, e.g. {milestone: 1, today: "2026-10-02"}')
 const TODAY = (args && args.today) || 'today'
@@ -98,7 +99,7 @@ Draft the plan for milestone ${M} (date: ${TODAY}). Founder notes: ${NOTES}
 Inspect the repository as it is now (existing code may be partial or broken; plan to fix it, not ignore it).
 Do NOT write any files yet. Return the plan. Ticket ids look like T${M}.0, T${M}.1, ...; wave 0 is the contracts ticket(s).
 List every external fact the plan depends on under research_needed unless docs/integrations/ already confirms it.`,
-  { model: MODEL, label: 'architect:draft', schema: PLAN },
+  { model: MODELS.architect, label: 'architect:draft', schema: PLAN },
 )
 log(`Draft: ${draft.tickets.length} tickets, ${draft.research_needed.length} research topics`)
 
@@ -108,7 +109,7 @@ const research = (await parallel(draft.research_needed.map(r => () =>
 Topic: ${r.topic}. Date checked: ${TODAY}.
 Questions:\n- ${r.questions.join('\n- ')}
 Write docs/integrations/${r.topic.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md (create docs/integrations/ if needed; only that file).`,
-    { model: MODEL, label: `research:${r.topic}`, schema: RESEARCH }),
+    { model: MODELS.researcher, label: `research:${r.topic}`, schema: RESEARCH }),
 ))).filter(Boolean)
 
 phase('Critique')
@@ -120,7 +121,7 @@ Review this milestone ${M} PLAN (not code). Research results are included; flag 
 Mechanical write-scope conflicts already detected: ${JSON.stringify(mechanical)}
 PLAN: ${JSON.stringify(draft)}
 RESEARCH: ${JSON.stringify(research)}`,
-  { model: MODEL, label: 'reviewer:plan', schema: CRITIQUE },
+  { model: MODELS.reviewer, label: 'reviewer:plan', schema: CRITIQUE },
 )
 
 phase('Finalize')
@@ -133,7 +134,7 @@ DRAFT: ${JSON.stringify(draft)}
 RESEARCH: ${JSON.stringify(research)}
 CRITIQUE: ${JSON.stringify(critique)}
 MECHANICAL CONFLICTS: ${JSON.stringify(mechanical)}`,
-  { model: MODEL, label: 'architect:final', schema: PLAN },
+  { model: MODELS.architect, label: 'architect:final', schema: PLAN },
 )
 
 const remaining = scopeConflicts(final.tickets)

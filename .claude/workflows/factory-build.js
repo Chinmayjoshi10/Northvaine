@@ -11,11 +11,13 @@ export const meta = {
   ],
 }
 
-const MODEL = (args && args.model) || 'sonnet'  // subagent model; override with args.model
+// Model per role (override any with args.models, e.g. {builder: 'opus'}).
+const MODELS = { architect: 'opus', reviewer: 'opus', builder: 'sonnet', 'test-engineer': 'sonnet', researcher: 'sonnet', integrator: 'sonnet', loader: 'haiku', ...((args && args.models) || {}) }
 const M = args && args.milestone
 if (!M) throw new Error('args.milestone is required')
 const ONLY = (args && args.only) || null
 const MAX_FIX_ROUNDS = 2
+const builderRole = t => (t.role === 'test-engineer' ? 'test-engineer' : 'builder')
 const role = r => `Act as the ${r} defined in .claude/agents/${r}.md (read it first) and follow docs/FACTORY.md.`
 
 const LOAD = {
@@ -97,7 +99,7 @@ const VERIFY = {
 phase('Load')
 const board = await agent(
   `Read every ticket file in factory/board/M${M}/ (not PLAN.md). Parse each one's frontmatter and return them all. Do not modify anything.`,
-  { model: MODEL, label: 'load-board', schema: LOAD, effort: 'low' },
+  { model: MODELS.loader, label: 'load-board', schema: LOAD, effort: 'low' },
 )
 let tickets = board.tickets.filter(t => (ONLY ? ONLY.includes(t.id) : t.status === 'approved'))
 const skipped = board.tickets.filter(t => !tickets.includes(t)).map(t => `${t.id}(${t.status})`)
@@ -117,7 +119,7 @@ for (const w of waveNums) {
     home ? home.push(t) : subs.push([t])
   }
   if (subs.length > 1) log(`Wave ${w}: write-scope overlap, split into ${subs.length} sequential batches`)
-  subs.forEach((s, i) => batches.push({ model: MODEL, label: subs.length > 1 ? `${w}.${i}` : `${w}`, tickets: s }))
+  subs.forEach((s, i) => batches.push({ label: subs.length > 1 ? `${w}.${i}` : `${w}`, tickets: s }))
 }
 
 // ---- Per-ticket chain: build -> review -> fix loop
@@ -129,28 +131,28 @@ Builder notes: ${b.notes}`
 
 async function buildTicket(t) {
   const b = await agent(
-    `${role(t.role === 'test-engineer' ? 'test-engineer' : 'builder')}
+    `${role(builderRole(t))}
 Implement ticket ${t.id} "${t.title}". Ticket file: ${t.file}. You may write ONLY: ${t.writes.join(', ')}.
 You are in an isolated git worktree. Commit your work on the current branch when the gate passes.`,
-    { model: MODEL, label: `build:${t.id}`, phase: 'Build', isolation: 'worktree', schema: BUILD },
+    { model: MODELS[builderRole(t)], label: `build:${t.id}`, phase: 'Build', isolation: 'worktree', schema: BUILD },
   )
   if (!b) return { ticket: t, status: 'blocked', reason: 'builder failed' }
   if (b.status !== 'done') return { ticket: t, build: b, status: 'blocked', reason: b.notes }
 
-  let review = await agent(reviewPrompt(t, b, 1), { model: MODEL, label: `review:${t.id}`, phase: 'Review', schema: REVIEW })
+  let review = await agent(reviewPrompt(t, b, 1), { model: MODELS.reviewer, label: `review:${t.id}`, phase: 'Review', schema: REVIEW })
   for (let round = 1; review && review.verdict !== 'approve' && round <= MAX_FIX_ROUNDS; round++) {
     const blocking = review.findings.filter(f => f.severity !== 'nit')
     const fix = await agent(
-      `${role(t.role === 'test-engineer' ? 'test-engineer' : 'builder')}
+      `${role(builderRole(t))}
 Fix review findings for ticket ${t.id} (ticket file: ${t.file}).
 IMPORTANT: your work is in the existing worktree ${b.worktree_path} on branch ${b.branch}. Run every shell command with
 cd "${b.worktree_path}" (or git -C) and edit files only under that path. Never touch the main checkout.
 Allowed paths: ${t.writes.join(', ')}. Re-run the gate there, then commit.
 Findings: ${JSON.stringify(blocking)}`,
-      { model: MODEL, label: `fix:${t.id}#${round}`, phase: 'Review', schema: BUILD },
+      { model: MODELS[builderRole(t)], label: `fix:${t.id}#${round}`, phase: 'Review', schema: BUILD },
     )
     if (!fix || fix.status !== 'done') return { ticket: t, build: b, review, status: 'blocked', reason: 'fix failed' }
-    review = await agent(reviewPrompt(t, { ...b, notes: fix.notes }, round + 1), { model: MODEL, label: `review:${t.id}#${round + 1}`, phase: 'Review', schema: REVIEW })
+    review = await agent(reviewPrompt(t, { ...b, notes: fix.notes }, round + 1), { model: MODELS.reviewer, label: `review:${t.id}#${round + 1}`, phase: 'Review', schema: REVIEW })
   }
   if (!review || review.verdict !== 'approve') return { ticket: t, build: b, review, status: 'blocked', reason: 'review not approved after fix rounds' }
   return { ticket: t, build: b, review, status: 'approved' }
@@ -177,7 +179,7 @@ for (const batch of batches) {
     `${role('integrator')}
 Merge these approved branches into main, in this order, following your role exactly:
 ${approved.map(r => `- ${r.ticket.id} "${r.ticket.title}": branch ${r.build.branch}, worktree ${r.build.worktree_path}, ticket file ${r.ticket.file}`).join('\n')}`,
-    { model: MODEL, label: `integrate:wave-${batch.label}`, phase: 'Integrate', schema: INTEGRATE },
+    { model: MODELS.integrator, label: `integrate:wave-${batch.label}`, phase: 'Integrate', schema: INTEGRATE },
   )
   mainGreen = !!(integ && integ.main_gate_passed)
   const mergedIds = new Set(((integ && integ.merged) || []).map(m => m.ticket_id))
@@ -194,7 +196,7 @@ Milestone-level verification for M${M} on the main checkout (branch main).
 Read factory/board/M${M}/PLAN.md. Run uv run python scripts/gate.py. Check each milestone acceptance criterion and the demo path described in the plan.
 Write factory/reports/M${M}.md (what was built, merged tickets, blocked tickets with reasons, gate output summary, unmet criteria, follow-ups) and commit it on main.
 Ticket outcomes: ${JSON.stringify(outcome.map(o => ({ id: o.ticket.id, status: o.status, reason: o.reason || '' })))}`,
-  { model: MODEL, label: 'verify:milestone', schema: VERIFY },
+  { model: MODELS.reviewer, label: 'verify:milestone', schema: VERIFY },
 )
 
 return {
