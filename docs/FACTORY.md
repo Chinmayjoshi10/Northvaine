@@ -44,7 +44,14 @@ Role definitions live in `.claude/agents/`. Each agent reads only what its role 
    notes in `docs/integrations/`, each with a source URL and the date checked.
 8. **Escalate, don't improvise.** Spec questions, contract changes, and anything outward-facing
    (deploy, push, sending, paid services) go back to the orchestrator → founder.
-9. **Leave a trail.** Every agent ends with a structured report saved in `factory/reports/`.
+9. **Acceptance must be satisfiable inside the ticket.** Every acceptance criterion must be
+   reachable using only that ticket's `writes:` paths, **against the tests already on `main`**.
+   A criterion that needs a file another ticket owns is a planning defect, not a build problem:
+   the builder cannot fix it and the gate can never go green. The architect checks this before
+   the board is saved; the orchestrator checks it before flipping tickets to `approved`.
+   (Cost of skipping it: the 3 Oct M2 run, where T2.0 added four `LlmCallRow` fields whose
+   columns lived in T2.1a's `schema.sql`, blocking all eight tickets.)
+10. **Leave a trail.** Every agent ends with a structured report saved in `factory/reports/`.
    Decisions that change the spec go in `docs/DECISIONS.md`.
 
 ## 3. Definition of done (per ticket)
