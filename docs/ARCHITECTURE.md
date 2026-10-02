@@ -73,6 +73,26 @@ What this changes in the design:
 
 ---
 
+## 0.2 One engine, many lenses (scope decision, 3 Oct)
+
+The engine is general. It observes public (and private) sources, builds entity timelines,
+learns state transitions and their lags, predicts expected next events, investigates
+uncertainty, learns from outcomes, and changes where it looks. A **lens** is what sits on top:
+an objective, an outcome definition, and a feedback vocabulary.
+
+| Lens | Question | Outcome it learns from | Status |
+|---|---|---|---|
+| **B2B radar** | "Who is entering a buying moment for this client?" | rated good → reply → quote → won; inbound; public awards | **the hackathon product** |
+| Company watch / market intelligence | "What is changing at these companies, and what usually comes next?" | later public events confirming a predicted transition (filings, capex, facilities, awards) | after the hackathon (`docs/LATER.md`) |
+
+**Rules that keep the engine general now:**
+- No lens-specific logic in W (world state) or R (research policy).
+- Lens specifics live in O (context) and B (outcome definition), as data.
+- **Demo proof of generality:** the radar runs for 2–3 very different sample clients with no code
+  changes.
+
+**Not in scope, ever:** stock-price prediction or investment advice.
+
 ## 1. What "intelligence" means here
 
 A score is an output. Ranking a fixed candidate list better is the smallest kind of

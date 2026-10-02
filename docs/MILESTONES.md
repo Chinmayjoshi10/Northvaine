@@ -10,27 +10,33 @@ still works.
 2. `brain/llm.py`: Token Factory client, model routing, validated JSON, retries, budgets,
    `llm_calls` logging. Model ids confirmed, not guessed. One live smoke script (not pytest).
    **De-risk deployment now:** Postgres + pgvector where the demo will run.
-3. Sensors with `available_at`: safe fetch, TED, Tavily, website snapshot; fixtures + tests.
+3. Sensors with `available_at`: safe fetch, Tavily, website snapshot, and official registries
+   and tender sources (researched first, chosen by sample-client geography: e.g. Companies House,
+   SEC EDGAR, TED, Find a Tender / Contracts Finder, SAM.gov); fixtures + tests.
 4. Evidence ledger (claims + code quote check + LLM support check); event normalization, seed
    concepts, clustering.
-5. Point-in-time timeline builder, pattern DSL evaluator, decision log (with propensities).
+5. **First radar (multi-client):** a rough end-to-end slice (discover → filter → extract →
+   verify → buyer-or-seller gate → brief) for 2–3 very different sample clients, about 10
+   candidates each with sources. The founder rates them. This is the go/no-go on core quality
+   before the learners.
+6. Point-in-time timeline builder, pattern DSL evaluator, decision log (with propensities).
 
-## Week 2 (to 15 Oct) — learners, first pass
-6. World-state learner: dynamics on TED/news (concept → proxy lift, lag densities), expectations.
-7. Org-context learner: belief slots, VOI questions, "which of these 8?" onboarding chat.
-8. Buying-pattern learner: LLM priors, case-control with controls, proxy chain, ledger behind
+## Week 2 (to 15 Oct) — learners, first pass  (milestone 6 may start in week 2)
+7. World-state learner: dynamics on TED/news (concept → proxy lift, lag densities), expectations.
+8. Org-context learner: belief slots, VOI questions, "which of these 8?" onboarding chat.
+9. Buying-pattern learner: LLM priors, case-control with controls, proxy chain, ledger behind
    its interface.
-9. Replay harness + simulated owner + golden set.
+10. Replay harness + simulated owner + golden set.
 
 ## Week 3 (to 22 Oct) — learning changes behaviour
-10. Research policy + attention allocator: search programs from patterns, value-per-cost
+11. Research policy + attention allocator: search programs from patterns, value-per-cost
     allocation, watches, investigation VOI, query-template evolution.
-11. Feedback chips (+ "already knew?") → routed updates → behaviour change → lessons →
+12. Feedback chips (+ "already knew?") → routed updates → behaviour change → lessons →
     strategy versions + rollback.
-12. Missed-opportunity post-mortems.
-13. Frontend: Today (net-new reach), Case file, Setup chat, What I learned.
+13. Missed-opportunity post-mortems.
+14. Frontend: Today (net-new reach), Case file, Setup chat, What I learned.
 
 ## Week 4 (to 30 Oct) — Gateway-lite + ship
-14. Gateway-lite: JSON-LD, catalog, agent card, read-only MCP, receptionist + red-team set.
-15. Deploy (Nebius); README; licence; secrets scan of history.
-16. 3-minute video; submit by 29 Oct.
+15. Gateway-lite: JSON-LD, catalog, agent card, read-only MCP, receptionist + red-team set.
+16. Deploy (Nebius); README; licence; secrets scan of history.
+17. 3-minute video; submit by 29 Oct.

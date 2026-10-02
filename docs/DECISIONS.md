@@ -57,3 +57,15 @@ Record any change to the spec: date, decision, reason.
   - Nebius Managed PostgreSQL is not used.
 - **Reason:** the founder wants no spending now, and Neon free covers dev, tests and a hackathon
   demo with no local install.
+
+## 2026-10-03 — Product scope: B2B radar now, one engine for many lenses
+- **Decision:**
+  - The hackathon product is the B2B radar, for any client (not tied to the founder's company).
+  - The engine stays general ("one engine, many lenses", ARCHITECTURE §0.2); company watch /
+    market intelligence is the first lens after the hackathon.
+  - New milestone 5 "First radar (multi-client)" tests core quality on 2–3 diverse sample
+    clients before the learners; later milestones shift by one.
+  - Milestone 3 adds official registries and tender sources, chosen after research.
+- **Reason:**
+  - Prove the core promise (good, sourced buyers for any client) in week 1 rather than week 3.
+  - Generality across clients is the strongest proof of "nothing hard-coded".
