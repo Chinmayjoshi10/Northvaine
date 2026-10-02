@@ -93,3 +93,87 @@ Record any change to the spec: date, decision, reason.
   - only free calls (e.g. listing models) and a handful of tiny smoke calls on the smallest
     model;
   - everything else uses recorded fixtures.
+
+## 2026-10-03 — Milestone 2 approved: `brain/llm.py` as the single auditable door to every model call
+Founder approved `factory/board/M2/PLAN.md` and its four open questions on 3 Oct: run the
+pre-flight probe, adopt `Qwen/Qwen3-Embedding-8B` at 1024 dimensions, apply migration 0003 to the
+production Neon database once T2.1a lands, and run one live smoke run. The ten plan decisions are
+recorded here so no ticket owns `docs/DECISIONS.md` (FACTORY §2 rule 9).
+
+- **D1 — Four money caps, no defaults on the two that matter.** `TOTAL_BUDGET_USD` (lifetime, summed
+  from `llm_calls.cost_usd` across all rows) joins `DAILY_BUDGET_USD`, `RUN_BUDGET_USD` and
+  `MAX_CALL_COST_USD`. All four are checked before every call. Neither `DAILY_BUDGET_USD` nor
+  `TOTAL_BUDGET_USD` has a default — calls raise `ConfigError` naming the variable until the founder
+  sets both. `RUN_BUDGET_USD` and `MAX_CALL_COST_USD` do get conservative defaults, since a run cap
+  with no default would block every run.
+  **Reason:** the single dollar is real money and a forgotten variable must fail loudly, not
+  silently default to something generous.
+- **D2 — A cap that would be exceeded raises `BudgetExceeded` and stops.** No model downgrade, no
+  truncated prompt, no partial result.
+  **Reason:** silent degradation produces results that look fine and are not; under a $1 cap the
+  failure must be visible.
+- **D3 — Daily cap is a per-workspace UTC-day bucket** (`workspace_id IS NULL` is its own bucket,
+  used by onboarding and smoke calls); the **lifetime cap is global across every row**.
+  **Reason:** the daily cap protects a client's share, the lifetime cap protects one wallet.
+- **D4 — Every attempt writes an `llm_calls` row** — successes, transport failures, timeouts and
+  invalid-JSON retries alike. A failure with no reported usage records `cost_usd = 0` and
+  `ok = false`, never an estimate.
+  **Reason:** retries are paid for, so they must be visible in the ledger.
+- **D5 — `llm_calls` gains `run_id`, `prompt_version`, `latency_ms` and `error`,** plus indexes on
+  `created_at` and `(workspace_id, created_at)`.
+  **Reason:** the budget sums run before every call and must stay cheap as the table grows.
+- **D6 — `MODEL_EMBED = Qwen/Qwen3-Embedding-8B`.** Token Factory serves **no Nemotron embedding
+  model** — its catalog has exactly one embedder (confirmed live, P1 below). The hackathon's
+  Nemotron requirement is met by the fast/mid/deep generation tiers. CLAUDE.md's `# Nemotron Embed
+  id` comment and the `.env.example` line are corrected accordingly (T2.0).
+- **D7 — `EMBED_DIM = 1024`,** requested via the endpoint's `dimensions` parameter, stored as
+  `vector(1024)` with a plain HNSW `vector_cosine_ops` index. The value lives in exactly one place,
+  `core/standards.EMBED_DIM_EXPECTED`, and an offline test proves schema.sql, migration 0003 and
+  that constant agree.
+  **Reason:** the model's native 4096 **cannot be indexed by pgvector at all** (limit 2,000 for
+  `vector`, 4,000 for `halfvec`). `dimensions` is not an optimization here — it is what makes
+  indexed vector search possible. `halfvec` remains a fallback only for 2000 < N <= 4000.
+- **D8 — Prompts are files named `<name>.v<N>.md` with front matter.** `load_prompt(name)` takes the
+  highest version; `llm_calls.prompt_version` stores `"<name>.v<N>"`.
+  **Reason:** a prompt change must be attributable to the results it produced (SPEC §12).
+- **D9 — External text is fenced by construction.** A prompt declares which variables are untrusted;
+  `render()` refuses anything but an `Untrusted` value for them and passes each through `fence()`
+  before interpolation.
+  **Reason:** CLAUDE.md #7 becomes a type error instead of a reviewer's memory.
+- **D10 — The live smoke script is the only code path in the repository that spends money,** and it
+  doubles as the fixture recorder. It imports no HTTP or LLM SDK itself — it calls `brain/llm.py`.
+  Model call concurrency stays at one for M2.
+  **Reason:** one sub-cent run buys the recorded responses every later milestone replays offline;
+  check-then-call is not atomic, and under a $1 cap guard correctness beats throughput.
+
+## 2026-10-03 — Pre-flight probe results: model ids, reasoning, and the vector dimension
+Three live calls against Token Factory (approved; under $0.0001 total). Full raw detail in
+`docs/integrations/nebius-token-factory-api-surface-and-client.md`.
+
+- **D11 — The configured model ids are these exact strings,** copied from the live catalog:
+  `MODEL_FAST=nvidia/Nemotron-3_5-Lightning` ($0.06/$0.24 per 1M, 1M ctx, EU),
+  `MODEL_MID=nvidia/nemotron-3-super-120b-a12b` ($0.30/$0.90, 262k ctx, **US**),
+  `MODEL_DEEP=nvidia/Nemotron-3-Ultra-550b-a55b` ($1.00/$3.00, 1M ctx, **US**),
+  `MODEL_EMBED=Qwen/Qwen3-Embedding-8B` ($0.01/1M, EU).
+  **Reason:** the catalog ids follow no single convention (an underscore decimal point in one, a
+  repeated vendor prefix in another, lowercase in a third). They cannot be guessed, and a miss means
+  `PricingUnknown` on every call. Also recorded: prices are returned **per token**, not per million;
+  the API exposes **no `max_output_tokens`**, so the budget guard's output bound must come from our
+  own `max_tokens`; per-model rate limits differ sharply (Nano is 100 RPM); and the mid and deep
+  tiers are **US-region**, which matters for client content.
+- **D12 — `brain/llm.py` sends `reasoning_effort: "none"` by default on every structured call.**
+  Measured: without it, Lightning spent all 60 allowed tokens thinking in plain prose *into
+  `message.content`*, returned `finish_reason: "length"`, and **the JSON schema did not constrain
+  the output at all**. With it: `finish_reason: "stop"`, exact schema-valid JSON, 14 completion
+  tokens.
+  **Reason:** this is the single largest avoidable cost and failure mode under a $1 cap. Raising
+  reasoning effort is a deliberate per-call choice, never a default.
+- **D13 — The structured-output request nests the schema under `json_schema.schema`** (the standard
+  OpenAI convention), with `strict: true` beside `name`. Confirmed accepted and enforced.
+  **Reason:** the research doc flagged the Nebius example as suggesting a flat shape; it is not.
+  This was a prerequisite of T2.4's central request shape.
+- **D14 — `EMBED_DIM = 1024` is confirmed live, not assumed.** `dimensions: 1024` returns exactly
+  1024 floats; omitting it returns 4096. **Both are L2-normalized to 1.0**, so truncated vectors are
+  re-normalized server-side and `vector_cosine_ops` is correct.
+  **Reason:** the dimension is the one fact migration 0003 bakes into the database, and M1
+  deliberately left the vector columns dimensionless so it would be measured rather than guessed.
