@@ -21,3 +21,10 @@ After the hackathon, the first new lens (docs/ARCHITECTURE.md §0.2):
   companies from public evidence (SEC EDGAR filings and XBRL, Companies House, procurement
   awards, patents, hiring, facilities) and alert on emerging transitions and expected next
   events, personalised per analyst. Never stock-price prediction or investment advice.
+
+Models beyond Nemotron (3 Oct):
+- Distil the high-volume yes/no checks (buyer-or-seller gate, quote support, event concept,
+  relevance) into a small classifier. Train it on labels the system collects (verified claims,
+  gate decisions, owner ratings); switch only when it matches Nemotron on the golden set.
+- JEPA-style timeline encoder (predict the next company state in representation space) as the
+  world learner's predictor for the company-watch lens, once large timeline data exists.
