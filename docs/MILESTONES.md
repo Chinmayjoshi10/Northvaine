@@ -19,7 +19,10 @@ still works.
    verify → buyer-or-seller gate → brief) for 2–3 very different sample clients, about 10
    candidates each with sources. The founder rates them. This is the go/no-go on core quality
    before the learners.
-6. Point-in-time timeline builder, pattern DSL evaluator, decision log (with propensities).
+6. Point-in-time timeline builder, pattern DSL evaluator, decision log (with propensities),
+   and the **project graph**: `projects` + `relationships` (organisation, role such as
+   client, contractor, designer or supplier, project or other organisation, since, source
+   claim), so the radar can follow funding → design → tender → contractor (the buyer).
 
 ## Week 2 (to 15 Oct) — learners, first pass  (milestone 6 may start in week 2)
 7. World-state learner: dynamics on TED/news (concept → proxy lift, lag densities), expectations.

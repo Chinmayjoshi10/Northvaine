@@ -5,7 +5,7 @@ Ideas parked until after 30 Oct.
 - Harness (SOPs, RFQs, quotes)
 - Team features (territories, assignment, permissions)
 - Email/Slack/Telegram/WhatsApp channels
-- Apollo/Clay/customs data connectors
+- Apollo/Clay/customs data connectors (founder: after the hackathon, once the product is finished; company-level first, then contacts with a UK GDPR legitimate-interest assessment)
 - Agent-Readiness Score web tool
 - Jev or other classifier behind the decision layer
 

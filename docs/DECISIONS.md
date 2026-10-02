@@ -69,3 +69,14 @@ Record any change to the spec: date, decision, reason.
 - **Reason:**
   - Prove the core promise (good, sourced buyers for any client) in week 1 rather than week 3.
   - Generality across clients is the strongest proof of "nothing hard-coded".
+
+## 2026-10-03 — Project graph in milestone 6; Apollo/Clay after the product is finished
+- **Decision:**
+  - Add `projects` + `relationships` (company ↔ project/company with role, dates and a source
+    claim) in milestone 6.
+  - Contact enrichment (Apollo, Clay) waits until after the hackathon, once the product is
+    finished.
+- **Reason:**
+  - The manual first-radar run showed that the buyer is usually found by following a chain
+    (council → project → contractor). Events tied to one company can't represent that.
+  - Contact data adds personal-data obligations and cost, and nothing for the demo.
