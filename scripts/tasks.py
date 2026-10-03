@@ -118,6 +118,11 @@ def smoke() -> list[list[str]]:
     return [_py("scripts/smoke_llm.py")]
 
 
+def record_sensors() -> list[list[str]]:
+    """Record redacted live TED/Tavily fixtures. Calls live APIs; never part of the gate."""
+    return [_py("scripts/record_sensor_fixtures.py")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -130,6 +135,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "gate": gate,
     "nightly": nightly,
     "smoke": smoke,
+    "record-sensors": record_sensors,
 }
 
 HELP = {
@@ -144,7 +150,10 @@ HELP = {
     "gate": "the factory gate (scripts/gate.py)",
     "nightly": "run one radar cycle",
     "smoke": "live LLM smoke run - SPENDS REAL MONEY (add -- --yes to confirm)",
+    "record-sensors": "record redacted TED/Tavily fixtures from live APIs (add -- --yes)",
 }
+
+PASSTHROUGH = {"smoke", "record-sensors"}  # arguments after `--` go to the script
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
 
@@ -179,7 +188,7 @@ def run_parallel(cmds: list[list[str]]) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    lines = "\n".join(f"  {name:<9} {HELP[name]}" for name in TASKS)
+    lines = "\n".join(f"  {name:<15} {HELP[name]}" for name in TASKS)
     return argparse.ArgumentParser(
         prog="tasks.py",
         description="Northvaine tasks. Works the same in PowerShell and Git Bash.",
@@ -197,9 +206,18 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="print the commands without running anything",
     )
+    argv = list(sys.argv[1:] if argv is None else argv)
+    extra: list[str] = []
+    if "--" in argv:
+        cut = argv.index("--")
+        argv, extra = argv[:cut], argv[cut + 1 :]
     args = parser.parse_args(argv)
+    if extra and args.task not in PASSTHROUGH:
+        parser.error(f"task {args.task!r} takes no extra arguments")
     try:
         cmds = TASKS[args.task]()
+        if extra:
+            cmds[-1] = [*cmds[-1], *extra]
     except TaskExit as stop:
         print(stop.message, file=sys.stdout if stop.code == 0 else sys.stderr)
         return stop.code
