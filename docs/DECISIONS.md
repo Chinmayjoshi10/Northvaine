@@ -193,3 +193,20 @@ Three live calls against Token Factory (approved; under $0.0001 total). Full raw
   **Not decided here:** whether to actually use NIM. This only preserves the ability to answer the
   question later. The hackathon requires runtime calls to Nebius Token Factory with Nemotron
   models, so the demo path stays on Token Factory regardless.
+
+## 2026-10-03 — Nebius budget raised to $29; the M5 money blocker is gone
+
+- **D16 — The lifetime LLM budget is raised from $1 to $29** (founder, 3 Oct 2026).
+  `TOTAL_BUDGET_USD` and `DAILY_BUDGET_USD` are set by the founder in `.env`; no code default
+  changes, because both still have **no default** and calls refuse to run until they are set (D1).
+  **Reason:** the $1 cap was sized when the account had no credits, and it made every milestone
+  after M2 blocked on money rather than on code. The M2 plan's standing risk - "once the smoke run
+  is spent, every further live call is refused... M5's first-radar run is blocked on money, not
+  code" - no longer applies. M5's first radar needs roughly 2-3 clients x ~10 candidates of
+  discovery, extraction and verification calls, which is a few dollars on the fast tier, not a few
+  cents.
+  **Unchanged by this:** the four-level guard (call / run / day / total) still hard-stops and never
+  silently degrades (D2); every attempt still writes an `llm_calls` row (D4); `provider` still
+  records which API served each call (D15). A larger cap makes the ledger more important, not less.
+  **Still worth having:** the free NVIDIA NIM credits remain useful for development iteration, but
+  they are now a convenience rather than the thing standing between the project and a demo.
