@@ -39,6 +39,12 @@ from northvaine.core.models import ModelTier
 from northvaine.core.settings import ConfigError, get_settings
 from northvaine.core.standards import EMBED_DIM_EXPECTED
 
+
+def stamp() -> str:
+    """Wall-clock UTC for each step: a run that writes an audit ledger should say when."""
+    return datetime.now(UTC).strftime("%H:%M:%S")
+
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "llm"
 REQUIRED_HEAD = "0003"
@@ -201,6 +207,7 @@ def print_plan(settings: Any, url: str, estimate: Decimal, day: Decimal, total: 
     prices = load_prices()
     print("=" * 72)
     print("NORTHVAINE LIVE SMOKE RUN - this spends real money")
+    print(f"started         : {datetime.now(UTC).isoformat(timespec='seconds')}")
     print("=" * 72)
     print(f"base URL        : {settings.nebius_base_url}")
     print("api key         : [set, never printed]")
@@ -259,7 +266,7 @@ async def run_smoke(settings: Any, url: str, session: Any) -> int:
             max_tokens=SMOKE_MAX_TOKENS,
         )
         print(
-            f"      {index}. {result.value.language!r} "
+            f"      [{stamp()}] {index}. {result.value.language!r} "
             f"words={result.value.word_count} "
             f"followed_instructions={result.value.followed_instructions} "
             f"[{result.usage.input_tokens}in/{result.usage.output_tokens}out "
@@ -347,8 +354,8 @@ async def report(settings: Any, session: Any, run_started: datetime) -> None:
     rows = (
         await session.execute(
             text(
-                "SELECT model, purpose, input_tokens, output_tokens, cost_usd, ok, latency_ms, "
-                "provider FROM llm_calls WHERE created_at >= :since ORDER BY id"
+                "SELECT created_at, model, purpose, input_tokens, output_tokens, cost_usd, "
+                "ok, latency_ms, provider FROM llm_calls WHERE created_at >= :since ORDER BY id"
             ),
             {"since": run_started},
         )
@@ -358,13 +365,15 @@ async def report(settings: Any, session: Any, run_started: datetime) -> None:
     print("llm_calls rows written by this run (read back from the database):")
     for row in rows:
         print(
-            f"  {row['model']:38} {row['purpose']:14} "
+            f"  {row['created_at'].strftime('%H:%M:%S')} {row['model']:38} "
+            f"{row['purpose']:14} "
             f"{row['input_tokens'] or 0:>5}in/{row['output_tokens'] or 0:>4}out "
             f"${Decimal(str(row['cost_usd'])):.6f} ok={row['ok']} "
             f"{row['latency_ms']}ms {row['provider']}"
         )
     day, total = await spend_so_far(session)
     print()
+    print(f"finished        : {datetime.now(UTC).isoformat(timespec='seconds')}")
     print(f"spent today     : ${day:.6f}  of ${settings.daily_budget_usd}")
     print(f"spent lifetime  : ${total:.6f}  of ${settings.total_budget_usd}")
     print(f"headroom        : ${settings.total_budget_usd - total:.6f}")

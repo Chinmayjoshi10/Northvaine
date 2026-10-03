@@ -83,10 +83,24 @@ def test_lists_and_scalars_are_walked(smoke) -> None:
     assert out["items"][1:] == ["plain", 7, None]
 
 
-def test_the_fixtures_directory_holds_only_the_readme() -> None:
-    """T2.5a commits no recorded fixture: the orchestrator records, T2.5b replays."""
-    present = sorted(p.name for p in (ROOT / "tests" / "fixtures" / "llm").glob("*"))
-    assert present == ["README.md"], present
+def test_every_committed_fixture_is_free_of_credentials() -> None:
+    """The standing guard, now that real recordings are committed.
+
+    T2.5a shipped the recorder with no fixtures; the smoke run then recorded them. What must
+    stay true from here is not "the directory is empty" but "nothing in it is a credential" -
+    these files go to a public repository.
+    """
+    directory = ROOT / "tests" / "fixtures" / "llm"
+    assert (directory / "README.md").exists(), "the fixture schema documentation is missing"
+
+    import re
+
+    key_shape = re.compile(r"(nvapi|sk-|eyJ)[-_A-Za-z0-9.]{12,}")
+    for path in sorted(directory.glob("*.json")):
+        body = path.read_text(encoding="utf-8")
+        assert not key_shape.search(body), f"{path.name} contains something shaped like a key"
+        for marker in ("password", "neondb_owner", "npg_", "Bearer "):
+            assert marker not in body, f"{path.name} contains {marker!r}"
 
 
 def test_the_smoke_script_imports_no_http_client_or_llm_sdk() -> None:

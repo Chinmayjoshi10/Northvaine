@@ -221,3 +221,77 @@ def test_schema_qualified_and_quoted_names() -> None:
 def test_unsupported_or_inconsistent_ddl_raises(sql: str) -> None:
     with pytest.raises(DdlParseError):
         parse_ddl(sql)
+
+
+# --- M1 carry-over 1: unsupported DDL raises instead of being silently ignored (T2.1b) -------
+
+
+@pytest.mark.parametrize(
+    ("label", "statement"),
+    [
+        ("CREATE SEQUENCE", "CREATE SEQUENCE thing_id_seq START 1"),
+        ("CREATE TYPE", "CREATE TYPE mood AS ENUM ('ok', 'bad')"),
+        ("CREATE MATERIALIZED VIEW", "CREATE MATERIALIZED VIEW mv AS SELECT 1"),
+        ("ALTER INDEX", "ALTER INDEX cases_open_unique RENAME TO cases_open_uniq"),
+        ("DROP SEQUENCE", "DROP SEQUENCE thing_id_seq"),
+        ("CREATE TRIGGER", "CREATE TRIGGER t AFTER INSERT ON cases EXECUTE FUNCTION f()"),
+    ],
+)
+def test_an_unsupported_ddl_form_raises_and_names_the_statement(
+    label: str, statement: str
+) -> None:
+    """Silently ignoring these is how schema.sql and the migrations drift apart unnoticed."""
+    with pytest.raises(DdlParseError) as caught:
+        parse_ddl(statement + ";")
+    assert statement[:30] in str(caught.value), label
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "CREATE EXTENSION IF NOT EXISTS vector",
+        "CREATE EXTENSION IF NOT EXISTS pgcrypto",
+        "INSERT INTO event_concepts (label) VALUES ('x')",
+        "BEGIN",
+        "COMMIT",
+        "UPDATE theses SET alpha = 1",
+    ],
+)
+def test_non_table_ddl_is_still_ignored(statement: str) -> None:
+    """The hardening must not start rejecting the statements the schema legitimately contains."""
+    assert parse_ddl(statement + ";") == {}
+
+
+def test_the_hnsw_index_form_that_migration_0003_creates_is_accepted() -> None:
+    sql = (
+        "CREATE TABLE theses (id uuid, embedding vector(1024));"
+        "CREATE INDEX theses_embedding_hnsw ON theses USING hnsw (embedding vector_cosine_ops);"
+    )
+    schema = parse_schema(sql)
+    assert "theses_embedding_hnsw" in schema.indexes
+    assert schema.tables["theses"]["embedding"].type == "vector(1024)"
+
+
+def test_the_halfvec_expression_index_fallback_form_is_accepted() -> None:
+    """The D7 fallback branch: not taken at 1024, but the parser must not choke if it ever is."""
+    sql = (
+        "CREATE TABLE t (embedding vector(3072));"
+        "CREATE INDEX t_embedding_hnsw ON t "
+        "USING hnsw ((embedding::halfvec(3072)) halfvec_cosine_ops);"
+    )
+    assert "t_embedding_hnsw" in parse_schema(sql).indexes
+
+
+def test_the_llm_calls_columns_migration_0003_adds_are_accepted() -> None:
+    sql = (
+        "CREATE TABLE llm_calls (id bigserial PRIMARY KEY);"
+        "ALTER TABLE llm_calls ADD COLUMN run_id uuid;"
+        "ALTER TABLE llm_calls ADD COLUMN prompt_version text;"
+        "ALTER TABLE llm_calls ADD COLUMN latency_ms int;"
+        "ALTER TABLE llm_calls ADD COLUMN error text;"
+        "ALTER TABLE llm_calls ADD COLUMN provider text NOT NULL DEFAULT 'nebius';"
+    )
+    columns = parse_ddl(sql)["llm_calls"]
+    for name in ("run_id", "prompt_version", "latency_ms", "error", "provider"):
+        assert name in columns, name
+    assert columns["provider"].type == "text"

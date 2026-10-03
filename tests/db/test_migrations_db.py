@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 
 from northvaine.core.db import normalize_database_url
+from northvaine.core.standards import EMBED_DIM_EXPECTED
 from tests.db.conftest import alembic_config
 
 pytestmark = pytest.mark.db
@@ -62,7 +63,9 @@ def test_upgrade_downgrade_upgrade_round_trip(migrated_url: str) -> None:
     print("pgcrypto present:", "pgcrypto" in extensions)  # reported, not asserted
     assert concepts == 12
     assert views == 1
-    assert embedding == "vector"
+    # 0003 sizes the vectors (D7/D14): a round trip to base and back must end at the head's
+    # shape, not M1's dimensionless one.
+    assert embedding == f"vector({EMBED_DIM_EXPECTED})"
 
 
 def test_event_concepts_has_twelve_level_zero_rows(migrated_url: str) -> None:

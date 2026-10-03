@@ -37,7 +37,10 @@ class Settings(BaseSettings):
     db_pool_size: int = Field(default=5, ge=1)
     db_max_overflow: int = Field(default=10, ge=0)
     db_echo: bool = False
-    test_db_isolation: Literal["database", "reuse"] = "database"
+    # "reuse" by default (T2.1b): one migrated database per process with a TRUNCATE between
+    # tests, instead of a migration cycle per test. "database" still works where the role has
+    # CREATEDB and full per-test isolation is wanted.
+    test_db_isolation: Literal["database", "reuse"] = "reuse"
 
     # LLM + sensors (values confirmed in M2; no defaults, no guesses)
     nebius_api_key: SecretStr | None = None

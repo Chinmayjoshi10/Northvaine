@@ -62,6 +62,15 @@ _ALTER_TABLE = re.compile(
     rf"^ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?{_NAME}\s+(.*)$", re.I | re.S
 )
 _DROP = re.compile(rf"^DROP\s+(TABLE|VIEW|INDEX)\s+(?:IF\s+EXISTS\s+)?{_NAME}", re.I)
+
+# Statements that are deliberately not table DDL. Everything else beginning CREATE/ALTER/DROP
+# must be understood or raise, so a construct this parser cannot read is never silently dropped.
+_IGNORABLE = re.compile(
+    r"^(?:CREATE|DROP)\s+(?:EXTENSION|SCHEMA)\b"
+    r"|^ALTER\s+(?:EXTENSION|SCHEMA|DATABASE)\b",
+    re.I,
+)
+_ANY_DDL = re.compile(r"^(?:CREATE|ALTER|DROP)\b", re.I)
 _TABLE_ITEM = re.compile(
     r"^(?:CONSTRAINT\s+\S+\s+)?(PRIMARY\s+KEY|UNIQUE|CHECK|FOREIGN\s+KEY|EXCLUDE)\b", re.I
 )
@@ -258,7 +267,18 @@ class _Builder:
                 self.schema.views.discard(name)
             else:
                 self.schema.indexes.discard(name)
-        # CREATE EXTENSION, INSERT, BEGIN, COMMIT, UPDATE, ... are not table DDL: ignored.
+        elif _IGNORABLE.match(statement):
+            pass  # not table DDL: CREATE EXTENSION, INSERT, BEGIN, COMMIT, UPDATE, ...
+        elif _ANY_DDL.match(statement):
+            # M1 carry-over 1. A CREATE/ALTER/DROP form this parser does not understand used to
+            # fall through silently, so schema.sql and the migrations could disagree about a
+            # construct neither side had ever read. Every consistency test built on this parser
+            # would then pass while comparing two incomplete pictures.
+            raise DdlParseError(
+                "unsupported DDL form; the parser would otherwise ignore it and every schema "
+                "consistency check built on it would compare incomplete pictures: "
+                f"{statement[:160]!r}"
+            )
 
 
 def parse_schema(sql: str) -> ParsedSchema:
