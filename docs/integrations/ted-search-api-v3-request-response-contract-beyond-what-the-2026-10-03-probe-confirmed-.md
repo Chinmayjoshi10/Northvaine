@@ -264,3 +264,84 @@ curl -s -X POST https://api.ted.europa.eu/v3/notices/search -H 'Content-Type: ap
 5. Winner-per-lot pairing in multi-lot awards (search record cannot express it).
 6. Coverage of winners in legacy-schema notices (n=1 sample had none).
 7. Ten-year retention means history before late 2016 is not on TED; not tested.
+
+## Pre-flight PF1-PF3 (2026-10-04)
+
+**Checked:** 2026-10-04 by the researcher, live, no key, requests at least 1.6 s apart (10 calls, no 429). Only
+`TED_SAFE_FIELDS` were requested (PF2c/PF2d requested 5 identity fields). Excerpts have `links` removed and
+`buyer-name`, `winner-name`, `notice-title` replaced by their shape (language keys only). All confidence `[live]`
+unless marked. The throwaway script lived in the session scratchpad, not in the repo.
+
+`TED_SAFE_FIELDS` = publication-number, notice-type, notice-subtype, notice-version, notice-identifier,
+procedure-identifier, publication-date, deadline-receipt-request, winner-decision-date, buyer-name, buyer-country,
+winner-name, winner-country, classification-cpv, notice-title, estimated-value-lot, total-value (this whole list was the `fields` array in PF1, PF2a, PF2b, PF3).
+
+### PF1: all safe fields accepted; shapes
+
+Request: `{"query": "notice-type IN (cn-standard can-standard) AND buyer-country=ESP AND publication-date>=20260401 AND publication-date<=20260402", "fields": [<TED_SAFE_FIELDS>], "limit": 3, "page": 1}`
+HTTP **200**, `totalNoticeCount` 575, `timedOut` false. Excerpt (one notice):
+
+```json
+{"notice-identifier":"19dd278e-57fd-478d-aba9-ec6339ea733e","notice-type":"can-standard","publication-number":"222468-2026",
+ "estimated-value-lot":["7438016.5"],"winner-country":["ESP"],"procedure-identifier":"de547b8c-3ee0-49ab-9f3d-05fbd1aef150",
+ "buyer-country":["ESP"],"total-value":4150413.21,"classification-cpv":["50230000","45233222","50230000","45233222"],
+ "notice-subtype":"29","publication-date":"2026-04-01+02:00","buyer-name":{"spa":["<redacted>"]},
+ "winner-decision-date":["2026-02-26+01:00"],"notice-version":1,"winner-name":{"spa":["<redacted>"]},
+ "notice-title":{"<24 language keys>":"<redacted string>"}}
+```
+
+Settles:
+- **Every field name is accepted**: yes, no 400 for the 17 names (also accepted in PF2 and PF3).
+- `notice-version`: scalar **integer** (1; elsewhere 2 and 4).
+- `notice-identifier`: scalar UUID string. `notice-subtype`: scalar **string** ("29" CAN, "16" CN, "4" pin-only, "38" can-modif).
+- `total-value`: scalar **JSON number** (`4150413.21`, `895000`, `16000000`, also `0`). It can be **0**: a CAN with 5 lots had
+  `total-value: 0` while `estimated-value-lot` was `["9800000"]`. Treat 0 as "not stated" [live, n=1].
+- Fields are omitted when empty (a CN has no `winner-*`; pin-only had no `procedure-identifier`). `winner-country` and `winner-decision-date`
+  repeat per lot (5 identical entries seen); `estimated-value-lot` can hold several different strings.
+
+### PF2: change notices (notice-version > 1)
+
+Requests (all HTTP **200**):
+- `{"query":"notice-version>1 AND publication-date>=20260901 AND publication-date<=20260902","fields":[<safe>],"limit":3,"page":1}`: `totalNoticeCount` 251. So `notice-version>1` is a valid query. Returned a pin-only v2, a `cn-standard` v4 and a `can-standard` v2.
+- `{"query":"notice-type=can-modif AND publication-date>=20260901 AND publication-date<=20260902","fields":[<safe>],"limit":3,"page":1}`: 410 results; the three returned all had `notice-version` 1 and `notice-subtype` "38". `can-modif` is a modification of an awarded contract, not the version mechanism.
+- `{"query":"notice-identifier=a29c5dfb-1734-4501-8e8a-afc9c073d987","fields":["publication-number","notice-type","notice-version","notice-identifier","publication-date"],"limit":10,"page":1}`: `totalNoticeCount` **1**.
+- Same with `procedure-identifier=5e80f9cd-e82b-4ced-8f1c-2b66f7c64c5b`: `totalNoticeCount` **1**.
+
+Excerpt of the version-4 notice (redacted):
+
+```json
+{"notice-identifier":"a29c5dfb-1734-4501-8e8a-afc9c073d987","notice-type":"cn-standard","publication-number":"599739-2026","notice-subtype":"16",
+ "publication-date":"2026-09-01+02:00","notice-version":4,"deadline-receipt-request":["2026-10-02T23:59:59+02:00"],"total-value":16000000,
+ "buyer-country":["DNK"],"classification-cpv":["32000000","32000000"],"buyer-name":{"swe":["<redacted>"]}}
+```
+
+Settles:
+- **Search returns only the latest version**: version 4 is the single record for that `notice-identifier` and `procedure-identifier`; versions 1-3 are not returned [live, one notice]. Whether an `onlyLatestVersions` body parameter exists or defaults on is untested (open question 3).
+- **`publication-date` of a change notice** is the change's own date: the v4 record says 2026-09-01 and its `publication-number` 599739-2026 sits in the number range of 2026-09-01 issues (neighbours 599730, 599735, 599747, 599758, 599768). [inferred strongly; v1's date cannot be observed because v1 is not returned]
+- **Replay-leak consequence (D36)**: a record is the latest version stamped with that version's date. So the risk is not "old date with new content". The risk is loss: a notice changed after first publication leaves its original window and appears under the change date, so the original CN (original deadline and value) is not recoverable by date-window queries. Re-recording an old window later therefore returns a different set. Treat `notice-version > 1` as a flag, and never re-record an old window to refresh fixtures.
+- New shape: `winner-decision-date` can use a `Z` offset (`"2026-08-10Z"`, seen on a v2 CAN), not only `+HH:MM`. A decision date can be weeks before the publication date.
+
+### PF3: query grammar for one value and for several
+
+All HTTP **200**, window `publication-date>=20260401 AND publication-date<=20260402`, `notice-type=can-standard`, `limit` 1:
+
+| Query fragment | `totalNoticeCount` |
+|---|---|
+| `classification-cpv IN (45233000)` (single value in IN) | 69 |
+| `classification-cpv=45233000` | 69 (same first record) |
+| `buyer-country IN (ESP POL)` | 685 |
+| `(buyer-country=ESP OR buyer-country=POL)` | 685 (same first record) |
+
+(The earlier 217 for CPV 45233000 was a different filter set, so there is no conflict.)
+
+Settles:
+- **Single-value `IN (x)` is valid and equivalent to `=`**, so "one value uses `=`, several use `IN (a b)` (space separated)" is valid grammar.
+- **`buyer-country IN (ESP POL)` is valid** and equals the OR form. `notice-type IN (cn-standard can-standard)` (PF1) is valid too.
+
+### Contradictions with the frozen T3.0a request shape
+
+None. The frozen shape (clauses joined by ` AND `, `field=v` for one value, `field IN (v1 v2)` for several, `yyyyMMdd` dates, `fields` = TED_SAFE_FIELDS, `limit` <= 250, `page`) was accepted and returned the expected results. Notes for the architect that do not break the request shape:
+1. `parse_date` must accept the `Z` offset (`2026-08-10Z`).
+2. `total-value` can be 0 while lot estimates exist; do not read 0 as a real value.
+3. Search returns only the latest version, and a changed notice carries the change's own `publication-date`; the original CN is not recoverable (affects T3.4 procedure linking and the D36 reasoning, not T3.0a).
+4. `winner-*` lists repeat per lot; de-duplicate.

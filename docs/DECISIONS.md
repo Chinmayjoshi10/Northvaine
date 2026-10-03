@@ -434,3 +434,8 @@ Tender sensor in M3 (parked). Migration 0004 approved by the orchestrator (techn
 - **D44** TED requests only the research allow-list of fields (`TED_SAFE_FIELDS`), paces at
   >= 1.5 s, uses PAGE_NUMBER pagination, de-duplicates on (publication-number, notice-version),
   and never sends unconfirmed body parameters.
+
+- **D36 note (PF2, 4 Oct):** TED search returns only the latest version of a changed notice,
+  dated by the change. The replay risk is therefore *loss* of the original notice from its date
+  window, not early leakage of new content. Documents with `notice-version > 1` are flagged, and
+  old fixture windows are never re-recorded to "refresh" them (a re-record returns a different set).

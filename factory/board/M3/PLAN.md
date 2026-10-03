@@ -1,6 +1,6 @@
 # Milestone 3 plan: lens-agnostic sensors and replay-safe `documents`
 
-status: **proposed**
+status: **approved** (orchestrator, 4 Oct 2026, per founder delegation; PF1-PF3 run 4 Oct, no contradictions; PF4 pending TAVILY_API_KEY)
 date: 2026-10-04
 baseline: `main` at c270dc6 (gate green: 415 passed, 22 deselected; migration head 0003).
 `northvaine/sensors/` holds only an empty `__init__.py`. No document persistence code exists;
