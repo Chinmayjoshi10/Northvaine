@@ -254,7 +254,9 @@ FENCING_CONTRACT = {
 }
 
 PROMPTS_CONTRACT = {
-    "load_prompt": [("name", POS, NO)],
+    # T2.2 adds the keyword-only version pin its acceptance criteria require:
+    # load_prompt(name) takes the highest version, load_prompt(name, version=N) pins one.
+    "load_prompt": [("name", POS, NO), ("version", KW, None)],
 }
 
 
