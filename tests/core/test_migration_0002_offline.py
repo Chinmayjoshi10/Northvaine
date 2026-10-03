@@ -1,4 +1,7 @@
-"""Migration 0002 (architecture v2) and schema.sql v2, checked offline with no database."""
+"""Migration 0002 (architecture v2) and schema.sql, checked offline with no database.
+
+0002's own section is asserted here; schema.sql is checked against the current head (0003).
+"""
 
 from __future__ import annotations
 
@@ -12,6 +15,7 @@ from alembic import command
 from alembic.config import Config
 
 from northvaine.core.sqlsplit import split_sql
+from northvaine.core.standards import EMBED_DIM_EXPECTED
 
 ROOT = Path(__file__).resolve().parents[2]
 ALEMBIC_INI = ROOT / "alembic.ini"
@@ -52,7 +56,10 @@ def section_0002(clean_settings: None) -> str:
     sql = buffer.getvalue()
     marker = "Running upgrade 0001 -> 0002"
     assert marker in sql
-    return sql.split(marker, 1)[1]
+    section = sql.split(marker, 1)[1]
+    # Stop at the next revision. Without this bound the fixture swallows every
+    # later migration, so 0003's sized vectors would be read as 0002's.
+    return section.split("Running upgrade 0002 -> 0003", 1)[0]
 
 
 def statement(section: str, head: str) -> str:
@@ -119,14 +126,17 @@ def test_offline_upgrade_drops_theses_counters(section_0002: str) -> None:
     assert "DROP INDEX jobs_ready" in section_0002
 
 
-def test_schema_sql_is_the_v2_end_state() -> None:
+def test_schema_sql_is_the_v3_end_state() -> None:
+    """schema.sql tracks the head, and the head is 0003 (T2.0, DECISIONS D7/D14)."""
     text = SCHEMA.read_text(encoding="utf-8")
     first_line = text.splitlines()[1]
-    assert "migrations 0001+0002" in first_line and "T1.8" in first_line
+    assert "migrations 0001+0002+0003" in first_line and "T1.8" in first_line
     for table in NEW_TABLES:
         assert f"CREATE TABLE {table} (" in text, table
     assert "CREATE VIEW patterns" in text
-    assert "vector(" not in text
+    # 0003 sizes the vectors; dimensionless columns cannot be indexed.
+    assert f"vector({EMBED_DIM_EXPECTED})" in text
+    assert "vector(" in text
     assert not re.search(r"b(alpha|beta)s+real", text) and "ALTER TABLE" not in text
     for label in SEED_LABELS:
         assert f"'{label}'" in text, label

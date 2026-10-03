@@ -16,6 +16,7 @@ dependencies = [
     "pgvector>=0.5,<0.6",
     "pydantic>=2.10,<3",
     "pydantic-settings>=2.15,<3",
+    "openai>=1.60,<2",  # Token Factory is OpenAI-compatible; no Nebius-specific SDK exists (M2)
 ]
 
 [dependency-groups]
@@ -50,5 +51,16 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# brain/errors.py's taxonomy is a frozen M2 contract (factory/board/M2/PLAN.md) that does not
+# suffix every exception with "Error" (LlmTimeout, PricingUnknown, BudgetExceeded...).
+"northvaine/brain/errors.py" = ["N818"]
+# PEP 695 type-parameter syntax (`class C[T]`) is not used for these Generic contract types
+# (LlmResult, Untrusted, the complete_json/complete_text skeletons) so Pydantic's older, more
+# broadly-tested Generic[T] style stays consistent across the codebase.
+"northvaine/core/models.py" = ["UP046"]
+"northvaine/brain/fencing.py" = ["UP046"]
+"northvaine/brain/llm.py" = ["UP047"]
 
 

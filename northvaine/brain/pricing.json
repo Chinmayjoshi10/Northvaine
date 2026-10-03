@@ -1,0 +1,42 @@
+{
+  "nvidia/Nemotron-3_5-Lightning": {
+    "model": "nvidia/Nemotron-3_5-Lightning",
+    "usd_per_million_input": "0.06",
+    "usd_per_million_output": "0.24",
+    "context_length": 1048576,
+    "checked_on": "2026-10-03",
+    "source_url": "https://api.tokenfactory.nebius.com/v1/models?verbose=true"
+  },
+  "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+    "usd_per_million_input": "0.06",
+    "usd_per_million_output": "0.24",
+    "context_length": 262144,
+    "checked_on": "2026-10-03",
+    "source_url": "https://api.tokenfactory.nebius.com/v1/models?verbose=true"
+  },
+  "nvidia/nemotron-3-super-120b-a12b": {
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "usd_per_million_input": "0.30",
+    "usd_per_million_output": "0.90",
+    "context_length": 262144,
+    "checked_on": "2026-10-03",
+    "source_url": "https://api.tokenfactory.nebius.com/v1/models?verbose=true"
+  },
+  "nvidia/Nemotron-3-Ultra-550b-a55b": {
+    "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+    "usd_per_million_input": "1.00",
+    "usd_per_million_output": "3.00",
+    "context_length": 1048576,
+    "checked_on": "2026-10-03",
+    "source_url": "https://api.tokenfactory.nebius.com/v1/models?verbose=true"
+  },
+  "Qwen/Qwen3-Embedding-8B": {
+    "model": "Qwen/Qwen3-Embedding-8B",
+    "usd_per_million_input": "0.01",
+    "usd_per_million_output": null,
+    "context_length": 40960,
+    "checked_on": "2026-10-03",
+    "source_url": "https://api.tokenfactory.nebius.com/v1/models?verbose=true"
+  }
+}

@@ -19,6 +19,7 @@ from alembic.config import Config
 from pydantic import BaseModel, create_model
 
 from northvaine.core import models as m
+from northvaine.core.standards import EMBED_DIM_EXPECTED
 from tests.core.ddl_parser import ColumnInfo, Tables, parse_ddl, parse_schema
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -193,7 +194,9 @@ def test_views_and_indexes_agree(rendered_sql: str) -> None:
     assert "jobs_ready" not in replay.indexes
 
 
-def test_no_vector_column_has_a_dimension(rendered_sql: str, schema_tables: Tables) -> None:
+def test_every_vector_column_is_sized(rendered_sql: str, schema_tables: Tables) -> None:
+    """0003 sizes the vectors (D7/D14). The dimension is never an unreviewed literal:
+    schema.sql and the rendered migrations must both equal EMBED_DIM_EXPECTED."""
     for label, tables in (
         ("schema.sql", schema_tables),
         ("migrations", replayed_tables(rendered_sql)),
@@ -207,7 +210,8 @@ def test_no_vector_column_has_a_dimension(rendered_sql: str, schema_tables: Tabl
         assert set(vectors) == {
             "document_chunks.embedding", "event_concepts.embedding", "theses.embedding",
         }, label  # fmt: skip
-        assert set(vectors.values()) == {"vector"}, f"{label}: {vectors}"
+        expected = f"vector({EMBED_DIM_EXPECTED})"
+        assert set(vectors.values()) == {expected}, f"{label}: {vectors}"
 
 
 def test_row_models_match_tables(schema_tables: Tables) -> None:

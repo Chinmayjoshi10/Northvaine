@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal
 from enum import StrEnum
-from typing import Any
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -714,6 +714,62 @@ class CaseOpenQuestionRow(NorthvaineModel):
 JobRow = Job
 
 
+class ModelTier(StrEnum):
+    """Routing tier for an LLM call (ARCHITECTURE §20)."""
+
+    FAST = "fast"
+    MID = "mid"
+    DEEP = "deep"
+    EMBED = "embed"
+
+
+class BudgetKind(StrEnum):
+    """Which of the four money caps `brain/budget.py` checks (DECISIONS D1)."""
+
+    CALL = "call"
+    RUN = "run"
+    DAY = "day"
+    TOTAL = "total"
+
+
+class LlmUsage(NorthvaineModel):
+    """Token counts of one completion or embedding call, as reported by Token Factory."""
+
+    input_tokens: int = Field(ge=0)
+    output_tokens: int = Field(ge=0)
+    total_tokens: int = Field(ge=0)
+
+
+class ModelPrice(NorthvaineModel):
+    """One `pricing.json` entry: per-million USD prices and the model's context window.
+
+    `checked_on` and `source_url` trace the figure back to the research that confirmed it
+    (CLAUDE.md "never guess model ids, parameters, or endpoints"). Token Factory exposes no
+    `max_output_tokens`, only `context_length` (docs/integrations/nebius-token-factory-api-
+    surface-and-client.md, probe P1), so `context_length` is what a caller's `max_tokens` is
+    validated against.
+    """
+
+    model: str
+    usd_per_million_input: Decimal = Field(ge=0)
+    usd_per_million_output: Decimal | None = Field(default=None, ge=0)
+    context_length: int = Field(gt=0)
+    checked_on: date
+    source_url: str
+
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class LlmResult(NorthvaineModel, Generic[T]):
+    """The validated result of one `brain/llm.py` call: the typed value, usage and cost."""
+
+    value: T
+    usage: LlmUsage
+    cost_usd: Decimal
+    model: str
+
+
 class LlmCallRow(NorthvaineModel):
     id: int
     workspace_id: UUID | None
@@ -724,6 +780,11 @@ class LlmCallRow(NorthvaineModel):
     output_tokens: int | None
     cost_usd: Decimal | None
     ok: bool | None
+    run_id: UUID | None
+    prompt_version: str | None
+    latency_ms: int | None
+    error: str | None
+    provider: str
     created_at: datetime
 
 

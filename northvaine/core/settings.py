@@ -2,7 +2,7 @@
 
 Nothing here needs a database URL or an API key at import. Secrets are SecretStr, so they
 never appear in repr, logs or JSON dumps. Model ids, the Nebius base URL, EMBED_DIM and the
-daily budget have no defaults: they are confirmed in milestone 2 (docs/integrations/).
+daily and total budgets have no defaults: they are confirmed in milestone 2 (docs/integrations/).
 """
 
 from __future__ import annotations
@@ -48,7 +48,19 @@ class Settings(BaseSettings):
     model_embed: str | None = None
     embed_dim: int | None = Field(default=None, ge=1)
     tavily_api_key: SecretStr | None = None
+
+    # money caps (brain/budget.py checks all four before every call). DAILY_BUDGET_USD and
+    # TOTAL_BUDGET_USD have no default: calls refuse to run until the founder sets both
+    # (DECISIONS D1). RUN_BUDGET_USD and MAX_CALL_COST_USD get conservative defaults, since a
+    # run cap with no default would block every run.
     daily_budget_usd: Decimal | None = None
+    total_budget_usd: Decimal | None = None
+    run_budget_usd: Decimal = Field(default=Decimal("0.20"), gt=0)
+    max_call_cost_usd: Decimal = Field(default=Decimal("0.05"), gt=0)
+
+    # LLM call behaviour
+    llm_timeout_seconds: float = Field(default=30.0, gt=0)
+    llm_max_retries: int = Field(default=2, ge=0)
 
     # queue
     job_lease_seconds: int = Field(default=300, ge=1)

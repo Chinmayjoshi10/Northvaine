@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,7 @@ from northvaine.core.settings import (
     require_test_database_url,
 )
 from northvaine.core.settings import get_settings as real_get_settings
+from northvaine.core.standards import EMBED_DIM_EXPECTED, validate_embed_dim
 
 pytestmark = pytest.mark.usefixtures("clean_settings")
 
@@ -30,8 +32,43 @@ def test_constructs_with_no_env() -> None:
     assert s.model_fast is None
     assert s.embed_dim is None
     assert s.daily_budget_usd is None
+    assert s.total_budget_usd is None
+    assert s.run_budget_usd == Decimal("0.20")
+    assert s.max_call_cost_usd == Decimal("0.05")
+    assert s.llm_timeout_seconds == 30.0
+    assert s.llm_max_retries == 2
     assert s.db_pool_mode == "session"
     assert s.job_max_attempts == 5
+
+
+def test_money_caps_parse_as_decimal_not_float(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DAILY_BUDGET_USD", "1.00")
+    monkeypatch.setenv("TOTAL_BUDGET_USD", "1.00")
+    monkeypatch.setenv("RUN_BUDGET_USD", "0.10")
+    monkeypatch.setenv("MAX_CALL_COST_USD", "0.02")
+    s = Settings(_env_file=None)
+    for value in (s.daily_budget_usd, s.total_budget_usd, s.run_budget_usd, s.max_call_cost_usd):
+        assert isinstance(value, Decimal)
+    assert s.daily_budget_usd == Decimal("1.00")
+    assert s.total_budget_usd == Decimal("1.00")
+
+
+def test_embed_dim_matching_expected_does_not_raise(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("EMBED_DIM", str(EMBED_DIM_EXPECTED))
+    settings_module.get_settings.cache_clear()
+    validate_embed_dim(Settings(_env_file=None))
+
+
+def test_embed_dim_mismatch_raises_config_error_naming_embed_dim(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("EMBED_DIM", str(EMBED_DIM_EXPECTED + 1))
+    with pytest.raises(ConfigError, match="EMBED_DIM"):
+        validate_embed_dim(Settings(_env_file=None))
+
+
+def test_embed_dim_unset_does_not_raise() -> None:
+    validate_embed_dim(Settings(_env_file=None))
 
 
 def test_require_database_url_names_the_variable() -> None:
