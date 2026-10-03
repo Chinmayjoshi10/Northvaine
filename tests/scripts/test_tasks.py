@@ -59,6 +59,7 @@ def test_task_names_in_order(tasks: ModuleType) -> None:
         "db-test",
         "gate",
         "nightly",
+        "smoke",
     ]
 
 
@@ -91,6 +92,8 @@ def test_exact_argv_for_every_task(
         "db-test": [[PY, "-m", "pytest", "-q", "-m", "db"]],
         "gate": [[PY, "scripts/gate.py"]],
         "nightly": [[PY, "-m", "northvaine.jobs.nightly"]],
+        # The only task that spends money; never invoked by the gate (T2.5a).
+        "smoke": [[PY, "scripts/smoke_llm.py"]],
     }
     assert set(expected) == set(tasks.TASKS)
     for name, argv in expected.items():

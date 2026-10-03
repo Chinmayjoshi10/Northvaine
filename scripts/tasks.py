@@ -113,6 +113,11 @@ def nightly() -> list[list[str]]:
     return [_py("-m", "northvaine.jobs.nightly")]
 
 
+def smoke() -> list[list[str]]:
+    """The live smoke run. Spends real money; never part of the gate."""
+    return [_py("scripts/smoke_llm.py")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -124,6 +129,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "db-test": db_test,
     "gate": gate,
     "nightly": nightly,
+    "smoke": smoke,
 }
 
 HELP = {
@@ -137,6 +143,7 @@ HELP = {
     "db-test": "db tests against TEST_DATABASE_URL",
     "gate": "the factory gate (scripts/gate.py)",
     "nightly": "run one radar cycle",
+    "smoke": "live LLM smoke run - SPENDS REAL MONEY (add -- --yes to confirm)",
 }
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
