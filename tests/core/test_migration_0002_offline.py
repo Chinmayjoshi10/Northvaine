@@ -1,6 +1,6 @@
 """Migration 0002 (architecture v2) and schema.sql, checked offline with no database.
 
-0002's own section is asserted here; schema.sql is checked against the current head (0003).
+0002's own section is asserted here; schema.sql is checked against the current head (0004).
 """
 
 from __future__ import annotations
@@ -127,10 +127,10 @@ def test_offline_upgrade_drops_theses_counters(section_0002: str) -> None:
 
 
 def test_schema_sql_is_the_v3_end_state() -> None:
-    """schema.sql tracks the head, and the head is 0003 (T2.0, DECISIONS D7/D14)."""
+    """schema.sql tracks the head, and the head is 0004 (T2.0, T3.0a; DECISIONS D7/D14/D40)."""
     text = SCHEMA.read_text(encoding="utf-8")
     first_line = text.splitlines()[1]
-    assert "migrations 0001+0002+0003" in first_line and "T1.8" in first_line
+    assert "migrations 0001+0002+0003+0004" in first_line and "T1.8" in first_line
     for table in NEW_TABLES:
         assert f"CREATE TABLE {table} (" in text, table
     assert "CREATE VIEW patterns" in text

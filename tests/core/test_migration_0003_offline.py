@@ -39,7 +39,7 @@ def section_0003(clean_settings: None) -> str:
     sql = render(clean_settings, "head")
     marker = "Running upgrade 0002 -> 0003"
     assert marker in sql, "0003 did not render; is it the head?"
-    return sql.split(marker, 1)[1]
+    return sql.split(marker, 1)[1].split("Running upgrade 0003 -> 0004", 1)[0]
 
 
 @pytest.fixture
