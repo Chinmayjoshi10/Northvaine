@@ -11,7 +11,7 @@ from decimal import Decimal
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -52,6 +52,22 @@ class Settings(BaseSettings):
     embed_dim: int | None = Field(default=None, ge=1)
     tavily_api_key: SecretStr | None = None
 
+    # sensors (M3). Safe fetch, TED and Tavily. No setting touches the network at import.
+    fetch_timeout_seconds: float = Field(default=15.0, gt=0)
+    fetch_max_bytes: int = Field(default=5_000_000, ge=1)
+    fetch_max_redirects: int = Field(default=5, ge=0)
+    fetch_user_agent: str = "NorthvaineBot/0.1 (+https://github.com/northvaine; public pages only)"
+    fetch_deny_hosts: list[str] = Field(
+        default_factory=lambda: ["linkedin.com", "facebook.com", "instagram.com", "x.com"]
+    )
+    ted_api_url: str = "https://api.ted.europa.eu/v3/notices/search"
+    ted_min_interval_seconds: float = Field(default=1.5, ge=0)
+    ted_availability_lag_days: int = 1
+    ted_extreme_lag_days: int = Field(default=365, ge=1)
+    tavily_api_url: str = "https://api.tavily.com"
+    tavily_max_calls_per_run: int = Field(default=20, ge=1)
+    sensor_max_results: int = Field(default=250, ge=1)
+
     # money caps (brain/budget.py checks all four before every call). DAILY_BUDGET_USD and
     # TOTAL_BUDGET_USD have no default: calls refuse to run until the founder sets both
     # (DECISIONS D1). RUN_BUDGET_USD and MAX_CALL_COST_USD get conservative defaults, since a
@@ -70,6 +86,13 @@ class Settings(BaseSettings):
     job_max_attempts: int = Field(default=5, ge=1)
     job_backoff_base_seconds: float = 30.0
     job_backoff_max_seconds: float = 3600.0
+
+    @field_validator("ted_availability_lag_days")
+    @classmethod
+    def _lag_at_least_one(cls, value: int) -> int:
+        if value < 1:
+            raise ValueError("ted_availability_lag_days must be >= 1")
+        return value
 
 
 @lru_cache(maxsize=1)

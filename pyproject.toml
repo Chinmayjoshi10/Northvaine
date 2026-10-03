@@ -16,6 +16,7 @@ dependencies = [
     "pgvector>=0.5,<0.6",
     "pydantic>=2.10,<3",
     "pydantic-settings>=2.15,<3",
+    "httpx>=0.28,<1",  # sensors (TED, Tavily, safe fetch) call APIs directly (D43)
     "openai>=1.60,<2",  # Token Factory is OpenAI-compatible; no Nebius-specific SDK exists (M2)
 ]
 
@@ -24,7 +25,6 @@ dev = [
     "pytest>=8.4,<9",
     "pytest-asyncio>=1.4,<2",
     "ruff>=0.8",
-    "httpx>=0.28,<1",  # test client only
 ]
 
 [build-system]
@@ -33,6 +33,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["northvaine*"]
+
+[tool.setuptools.package-data]
+northvaine = ["core/iso3166.csv"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -56,6 +59,8 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 # brain/errors.py's taxonomy is a frozen M2 contract (factory/board/M2/PLAN.md) that does not
 # suffix every exception with "Error" (LlmTimeout, PricingUnknown, BudgetExceeded...).
 "northvaine/brain/errors.py" = ["N818"]
+# Sensor errors are named for what happened (FetchBlocked, RobotsDisallowed...), like the LLM ones.
+"northvaine/sensors/base.py" = ["N818"]
 # PEP 695 type-parameter syntax (`class C[T]`) is not used for these Generic contract types
 # (LlmResult, Untrusted, the complete_json/complete_text skeletons) so Pydantic's older, more
 # broadly-tested Generic[T] style stays consistent across the codebase.

@@ -325,6 +325,9 @@ class DocumentRow(NorthvaineModel):
     fetched_at: datetime
     workspace_id: UUID | None
     available_at: datetime | None
+    external_id: str | None = None
+    group_key: str | None = None
+    meta: dict[str, Any] = Field(default_factory=dict)
 
 
 class DocumentChunkRow(NorthvaineModel):

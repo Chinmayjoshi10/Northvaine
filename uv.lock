@@ -269,6 +269,7 @@ dependencies = [
     { name = "alembic" },
     { name = "asyncpg" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "openai" },
     { name = "pgvector" },
     { name = "pydantic" },
@@ -279,7 +280,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
@@ -290,6 +290,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.20,<2" },
     { name = "asyncpg", specifier = ">=0.31,<0.32" },
     { name = "fastapi", specifier = ">=0.115,<1" },
+    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "openai", specifier = ">=1.60,<2" },
     { name = "pgvector", specifier = ">=0.5,<0.6" },
     { name = "pydantic", specifier = ">=2.10,<3" },
@@ -300,7 +301,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "pytest", specifier = ">=8.4,<9" },
     { name = "pytest-asyncio", specifier = ">=1.4,<2" },
     { name = "ruff", specifier = ">=0.8" },

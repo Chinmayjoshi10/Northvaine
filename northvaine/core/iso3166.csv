@@ -1,0 +1,251 @@
+alpha2,alpha3,name
+AF,AFG,afghanistan
+AX,ALA,aland islands
+AL,ALB,albania
+DZ,DZA,algeria
+AS,ASM,american samoa
+AD,AND,andorra
+AO,AGO,angola
+AI,AIA,anguilla
+AQ,ATA,antarctica
+AG,ATG,antigua and barbuda
+AR,ARG,argentina
+AM,ARM,armenia
+AW,ABW,aruba
+AU,AUS,australia
+AT,AUT,austria
+AZ,AZE,azerbaijan
+BS,BHS,bahamas
+BH,BHR,bahrain
+BD,BGD,bangladesh
+BB,BRB,barbados
+BY,BLR,belarus
+BE,BEL,belgium
+BZ,BLZ,belize
+BJ,BEN,benin
+BM,BMU,bermuda
+BT,BTN,bhutan
+BO,BOL,bolivia
+BQ,BES,bonaire sint eustatius and saba
+BA,BIH,bosnia and herzegovina
+BW,BWA,botswana
+BV,BVT,bouvet island
+BR,BRA,brazil
+IO,IOT,british indian ocean territory
+BN,BRN,brunei darussalam
+BG,BGR,bulgaria
+BF,BFA,burkina faso
+BI,BDI,burundi
+CV,CPV,cabo verde
+KH,KHM,cambodia
+CM,CMR,cameroon
+CA,CAN,canada
+KY,CYM,cayman islands
+CF,CAF,central african republic
+TD,TCD,chad
+CL,CHL,chile
+CN,CHN,china
+CX,CXR,christmas island
+CC,CCK,cocos (keeling) islands
+CO,COL,colombia
+KM,COM,comoros
+CG,COG,congo
+CD,COD,congo (democratic republic of the)
+CK,COK,cook islands
+CR,CRI,costa rica
+CI,CIV,cote d'ivoire
+HR,HRV,croatia
+CU,CUB,cuba
+CW,CUW,curacao
+CY,CYP,cyprus
+CZ,CZE,czechia
+DK,DNK,denmark
+DJ,DJI,djibouti
+DM,DMA,dominica
+DO,DOM,dominican republic
+EC,ECU,ecuador
+EG,EGY,egypt
+SV,SLV,el salvador
+GQ,GNQ,equatorial guinea
+ER,ERI,eritrea
+EE,EST,estonia
+SZ,SWZ,eswatini
+ET,ETH,ethiopia
+FK,FLK,falkland islands (malvinas)
+FO,FRO,faroe islands
+FJ,FJI,fiji
+FI,FIN,finland
+FR,FRA,france
+GF,GUF,french guiana
+PF,PYF,french polynesia
+TF,ATF,french southern territories
+GA,GAB,gabon
+GM,GMB,gambia
+GE,GEO,georgia
+DE,DEU,germany
+GH,GHA,ghana
+GI,GIB,gibraltar
+GR,GRC,greece
+GL,GRL,greenland
+GD,GRD,grenada
+GP,GLP,guadeloupe
+GU,GUM,guam
+GT,GTM,guatemala
+GG,GGY,guernsey
+GN,GIN,guinea
+GW,GNB,guinea-bissau
+GY,GUY,guyana
+HT,HTI,haiti
+HM,HMD,heard island and mcdonald islands
+VA,VAT,holy see
+HN,HND,honduras
+HK,HKG,hong kong
+HU,HUN,hungary
+IS,ISL,iceland
+IN,IND,india
+ID,IDN,indonesia
+IR,IRN,iran
+IQ,IRQ,iraq
+IE,IRL,ireland
+IM,IMN,isle of man
+IL,ISR,israel
+IT,ITA,italy
+JM,JAM,jamaica
+JP,JPN,japan
+JE,JEY,jersey
+JO,JOR,jordan
+KZ,KAZ,kazakhstan
+KE,KEN,kenya
+KI,KIR,kiribati
+KP,PRK,north korea
+KR,KOR,south korea
+KW,KWT,kuwait
+KG,KGZ,kyrgyzstan
+LA,LAO,laos
+LV,LVA,latvia
+LB,LBN,lebanon
+LS,LSO,lesotho
+LR,LBR,liberia
+LY,LBY,libya
+LI,LIE,liechtenstein
+LT,LTU,lithuania
+LU,LUX,luxembourg
+MO,MAC,macao
+MG,MDG,madagascar
+MW,MWI,malawi
+MY,MYS,malaysia
+MV,MDV,maldives
+ML,MLI,mali
+MT,MLT,malta
+MH,MHL,marshall islands
+MQ,MTQ,martinique
+MR,MRT,mauritania
+MU,MUS,mauritius
+YT,MYT,mayotte
+MX,MEX,mexico
+FM,FSM,micronesia
+MD,MDA,moldova
+MC,MCO,monaco
+MN,MNG,mongolia
+ME,MNE,montenegro
+MS,MSR,montserrat
+MA,MAR,morocco
+MZ,MOZ,mozambique
+MM,MMR,myanmar
+NA,NAM,namibia
+NR,NRU,nauru
+NP,NPL,nepal
+NL,NLD,netherlands
+NC,NCL,new caledonia
+NZ,NZL,new zealand
+NI,NIC,nicaragua
+NE,NER,niger
+NG,NGA,nigeria
+NU,NIU,niue
+NF,NFK,norfolk island
+MK,MKD,north macedonia
+MP,MNP,northern mariana islands
+NO,NOR,norway
+OM,OMN,oman
+PK,PAK,pakistan
+PW,PLW,palau
+PS,PSE,palestine
+PA,PAN,panama
+PG,PNG,papua new guinea
+PY,PRY,paraguay
+PE,PER,peru
+PH,PHL,philippines
+PN,PCN,pitcairn
+PL,POL,poland
+PT,PRT,portugal
+PR,PRI,puerto rico
+QA,QAT,qatar
+RE,REU,reunion
+RO,ROU,romania
+RU,RUS,russia
+RW,RWA,rwanda
+BL,BLM,saint barthelemy
+SH,SHN,saint helena ascension and tristan da cunha
+KN,KNA,saint kitts and nevis
+LC,LCA,saint lucia
+MF,MAF,saint martin (french part)
+PM,SPM,saint pierre and miquelon
+VC,VCT,saint vincent and the grenadines
+WS,WSM,samoa
+SM,SMR,san marino
+ST,STP,sao tome and principe
+SA,SAU,saudi arabia
+SN,SEN,senegal
+RS,SRB,serbia
+SC,SYC,seychelles
+SL,SLE,sierra leone
+SG,SGP,singapore
+SX,SXM,sint maarten (dutch part)
+SK,SVK,slovakia
+SI,SVN,slovenia
+SB,SLB,solomon islands
+SO,SOM,somalia
+ZA,ZAF,south africa
+GS,SGS,south georgia and the south sandwich islands
+SS,SSD,south sudan
+ES,ESP,spain
+LK,LKA,sri lanka
+SD,SDN,sudan
+SR,SUR,suriname
+SJ,SJM,svalbard and jan mayen
+SE,SWE,sweden
+CH,CHE,switzerland
+SY,SYR,syria
+TW,TWN,taiwan
+TJ,TJK,tajikistan
+TZ,TZA,tanzania
+TH,THA,thailand
+TL,TLS,timor-leste
+TG,TGO,togo
+TK,TKL,tokelau
+TO,TON,tonga
+TT,TTO,trinidad and tobago
+TN,TUN,tunisia
+TR,TUR,turkiye
+TM,TKM,turkmenistan
+TC,TCA,turks and caicos islands
+TV,TUV,tuvalu
+UG,UGA,uganda
+UA,UKR,ukraine
+AE,ARE,united arab emirates
+GB,GBR,united kingdom
+US,USA,united states
+UM,UMI,united states minor outlying islands
+UY,URY,uruguay
+UZ,UZB,uzbekistan
+VU,VUT,vanuatu
+VE,VEN,venezuela
+VN,VNM,vietnam
+VG,VGB,british virgin islands
+VI,VIR,us virgin islands
+WF,WLF,wallis and futuna
+EH,ESH,western sahara
+YE,YEM,yemen
+ZM,ZMB,zambia
+ZW,ZWE,zimbabwe
+XK,XKX,kosovo

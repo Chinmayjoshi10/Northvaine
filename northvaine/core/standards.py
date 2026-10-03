@@ -7,6 +7,10 @@ offline test (T2.1a) proves schema.sql and this migration agree with the number 
 
 from __future__ import annotations
 
+import csv
+from functools import lru_cache
+from pathlib import Path
+
 from northvaine.core.settings import ConfigError, Settings, get_settings
 
 # Confirmed live against Token Factory, probe P3, 2026-10-03 (docs/integrations/
@@ -25,3 +29,23 @@ def validate_embed_dim(settings: Settings | None = None) -> None:
             f"EMBED_DIM={settings.embed_dim} does not match the expected {EMBED_DIM_EXPECTED} "
             "(see northvaine/core/standards.py)"
         )
+
+
+_ISO3166_CSV = Path(__file__).with_name("iso3166.csv")
+
+
+@lru_cache(maxsize=1)
+def _iso3166() -> dict[str, tuple[str, str]]:
+    """alpha-2 -> (alpha-3, lowercase English short name), read once from iso3166.csv."""
+    with _ISO3166_CSV.open(encoding="utf-8", newline="") as handle:
+        return {row["alpha2"]: (row["alpha3"], row["name"]) for row in csv.DictReader(handle)}
+
+
+def iso2_to_iso3(code: str) -> str:
+    """'DE' -> 'DEU'. Case-insensitive; raises KeyError for an unknown code."""
+    return _iso3166()[code.strip().upper()][0]
+
+
+def iso2_to_name(code: str) -> str:
+    """'GB' -> 'united kingdom' (lowercase English short name). KeyError for an unknown code."""
+    return _iso3166()[code.strip().upper()][1]

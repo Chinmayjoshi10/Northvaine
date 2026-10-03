@@ -140,3 +140,43 @@ def test_clean_settings_patches_get_settings() -> None:
     s = settings_module.get_settings()
     assert s.database_url is None
     assert settings_module.get_settings() is s
+
+
+def test_sensor_settings_defaults() -> None:
+    s = Settings(_env_file=None)
+    assert s.fetch_timeout_seconds == 15
+    assert s.fetch_max_bytes == 5_000_000
+    assert s.fetch_max_redirects == 5
+    assert s.fetch_user_agent
+    assert "linkedin.com" in s.fetch_deny_hosts
+    assert s.ted_api_url == "https://api.ted.europa.eu/v3/notices/search"
+    assert s.ted_min_interval_seconds == 1.5
+    assert s.ted_availability_lag_days == 1
+    assert s.ted_extreme_lag_days == 365
+    assert s.tavily_api_url == "https://api.tavily.com"
+    assert s.tavily_api_key is None
+    assert s.tavily_max_calls_per_run == 20
+    assert s.sensor_max_results == 250
+
+
+def test_ted_availability_lag_must_be_at_least_one(monkeypatch: pytest.MonkeyPatch) -> None:
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, ted_availability_lag_days=0)
+    monkeypatch.setenv("TED_AVAILABILITY_LAG_DAYS", "2")
+    assert Settings(_env_file=None).ted_availability_lag_days == 2
+
+
+def test_tavily_key_is_a_secret_str(monkeypatch: pytest.MonkeyPatch) -> None:
+    from pydantic import SecretStr
+
+    monkeypatch.setenv("TAVILY_API_KEY", "fake-key")
+    s = Settings(_env_file=None)
+    assert isinstance(s.tavily_api_key, SecretStr)
+    assert "fake-key" not in repr(s)
+
+
+def test_env_example_lists_the_tavily_key_by_name_only() -> None:
+    text = (Path(__file__).resolve().parents[2] / ".env.example").read_text(encoding="utf-8")
+    assert any(line.strip() == "TAVILY_API_KEY=" for line in text.splitlines())
