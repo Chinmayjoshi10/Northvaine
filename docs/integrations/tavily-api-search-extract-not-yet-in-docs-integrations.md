@@ -47,7 +47,7 @@ From docs (search):
 
 ```
 POST https://api.tavily.com/search
-Authorization: Bearer tvly-YOUR_API_KEY
+Authorization: Bearer <YOUR_TAVILY_API_KEY>
 Content-Type: application/json
 ```
 
