@@ -14,6 +14,7 @@ from sqlalchemy import pool, text
 from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 
 from northvaine.core.db import normalize_database_url
+from northvaine.core.standards import EMBED_DIM_EXPECTED
 from tests.core.ddl_parser import parse_ddl
 
 pytestmark = pytest.mark.db
@@ -79,7 +80,8 @@ def test_patterns_view_exists(migrated_url: str) -> None:
     assert run(migrated_url, probe) == ["patterns"]
 
 
-def test_vector_columns_are_dimensionless(migrated_url: str) -> None:
+def test_vector_columns_carry_the_confirmed_dimension(migrated_url: str) -> None:
+    """0003 sizes them (D7/D14). pgvector stores N directly in atttypmod; -1 means unsized."""
     async def probe(conn: AsyncConnection) -> dict[str, int]:
         rows = await conn.execute(
             text(
@@ -103,4 +105,28 @@ def test_vector_columns_are_dimensionless(migrated_url: str) -> None:
     }
     assert set(vectors) == schema_vectors
     assert schema_vectors  # the check must not pass on an empty set
-    assert set(vectors.values()) == {-1}, vectors
+    assert set(vectors.values()) == {EMBED_DIM_EXPECTED}, vectors
+
+
+def test_every_embedding_column_has_its_hnsw_index(migrated_url: str) -> None:
+    """Without the index the dimension buys nothing: search would fall back to a seq scan."""
+
+    async def probe(conn: AsyncConnection) -> dict[str, str]:
+        rows = await conn.execute(
+            text(
+                "SELECT i.relname, am.amname "
+                "FROM pg_index x "
+                "JOIN pg_class i ON i.oid = x.indexrelid "
+                "JOIN pg_am am ON am.oid = i.relam "
+                "JOIN pg_namespace n ON n.oid = i.relnamespace "
+                "WHERE n.nspname = current_schema()"
+            )
+        )
+        return {name: access_method for name, access_method in rows}
+
+    indexes = run(migrated_url, probe)
+    for table in ("document_chunks", "event_concepts", "theses"):
+        name = f"{table}_embedding_hnsw"
+        assert indexes.get(name) == "hnsw", f"{name}: {indexes.get(name)}"
+    for name in ("llm_calls_created_at", "llm_calls_workspace_created"):
+        assert name in indexes, name
