@@ -1,14 +1,14 @@
 """Date parsing and validation for sensors (D27-D29, D38).
 
 `parse_date` and `parse_datetime` are pure and never raise: unreadable input gives None.
-`validate_notice_dates` and `available_at_for_publication` are filled in by T3.4.
+`validate_notice_dates` and `available_at_for_publication` serve the TED sensor (T3.4).
 """
 
 from __future__ import annotations
 
 import re
 from collections.abc import Sequence
-from datetime import UTC, date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, time, timedelta, timezone
 from email.utils import parsedate_to_datetime
 
 from northvaine.sensors.base import DateFlag
@@ -95,15 +95,41 @@ def parse_datetime(value: str | None) -> datetime | None:
 
 def validate_notice_dates(
     publication: date | None,
-    deadlines: Sequence[date],
-    decisions: Sequence[date],
+    deadlines: Sequence[date | None],
+    decisions: Sequence[date | None],
     *,
     extreme_lag_days: int,
 ) -> list[DateFlag]:
-    """Flag impossible or suspicious date combinations; never correct them (D29). T3.4."""
-    raise NotImplementedError("T3.4")
+    """Flag impossible or suspicious date combinations; never correct or drop a value (D29).
+
+    A `None` entry in `deadlines` or `decisions` means "a value was given but could not be
+    parsed". Flags come back in a fixed order, each at most once.
+    """
+    flags: list[DateFlag] = []
+
+    def add(flag: DateFlag) -> None:
+        if flag not in flags:
+            flags.append(flag)
+
+    if publication is None:
+        add(DateFlag.MISSING_PUBLICATION)
+    if any(d is None for d in deadlines) or any(d is None for d in decisions):
+        add(DateFlag.UNPARSEABLE)
+    good_deadlines = [d for d in deadlines if d is not None]
+    good_decisions = [d for d in decisions if d is not None]
+    if len(set(good_deadlines)) > 1 or len(set(good_decisions)) > 1:
+        add(DateFlag.MULTIPLE_VALUES)
+    if publication is not None:
+        if any(d < publication for d in good_deadlines):
+            add(DateFlag.DEADLINE_BEFORE_PUBLICATION)
+        if any(d > publication for d in good_decisions):
+            add(DateFlag.DECISION_AFTER_PUBLICATION)
+        too_far = timedelta(days=extreme_lag_days)
+        if any(abs(d - publication) > too_far for d in good_deadlines + good_decisions):
+            add(DateFlag.EXTREME_LAG)
+    return flags
 
 
 def available_at_for_publication(d: date, *, lag_days: int = 1) -> datetime:
-    """00:00 UTC of `d + lag_days`: when a published notice counts as knowable (D36). T3.4."""
-    raise NotImplementedError("T3.4")
+    """00:00 UTC of `d + lag_days`: when a published notice counts as knowable (D36)."""
+    return datetime.combine(d + timedelta(days=lag_days), time.min, tzinfo=UTC)
