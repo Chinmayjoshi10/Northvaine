@@ -344,3 +344,37 @@ tender-to-award on `procedure-identifier`:
   31 days *before* their notice's publication date (corrections and amended notices), and award
   publication lags up to 242 days. The TED sensor validates and flags rather than assuming
   monotonic dates; `available_at` is what gates replay, never the stated date.
+
+## 2026-10-03 — Two signal streams, not one: the specification window and the pricing window
+
+Founder: for a stone exporter, a new hotel, a new development or an architect's project are
+signals too. Probed live, 3 Oct.
+
+| Stage | Lead time | Source | Enumerable | Prize |
+|---|---|---|---|---|
+| planning approved / project announced | 12-24 months | trade press, planning portals | **no** | **specification** |
+| tender published (`cn-standard`) | **30 days** (D27) | TED API | **yes** | quote into the bid |
+| award (`can-standard`) | already late | TED API | yes | account intelligence (D23) |
+
+- **D30 — The radar runs two streams with different economics, not one pipeline.** The *pricing
+  window* (TED tenders, D27) is enumerable, structured and complete: ask for every tender in a
+  country and get all of them. The *specification window* (project announcements) is earlier and
+  worth far more - in building materials, being in the architect's specification wins the job
+  before bidding exists - but it is **not enumerable**: you find some projects, never all, and
+  you cannot know what you missed.
+  **Evidence it is worth the mess:** the Apex City of Bath hotel facade consumed **over 1,000
+  tonnes** of Bath stone. One specification win is worth a year of quotes.
+  **Consequence:** recall is honestly reportable for the TED stream and *not* for the
+  announcement stream. Never present them with the same confidence; ARCHITECTURE §18.1's recall
+  metric applies to the enumerable stream only.
+- **D31 — The contact target changes by stage, and so must the brief.** At award stage the
+  contractor is named. At planning stage the useful contact is the architect or developer, who is
+  often not named in the announcement, so investigation cost per candidate is higher. The brief
+  template must carry *who to approach and why now*, which differs per stage - as data from O,
+  not as code (CLAUDE.md #1).
+- **D32 — `planning.data.gov.uk` is not usable for a live radar (checked 3 Oct 2026).** Genuinely
+  open, well structured, no key - but covering roughly four local authorities with its most
+  recent entry dated September 2025. Commercial alternatives (Glenigan, Barbour ABI, Searchland)
+  are paid. **Do not design a sensor around the official planning API** without re-checking
+  coverage first; the UK early-stage stream must come from trade press and announcements until
+  that changes.
