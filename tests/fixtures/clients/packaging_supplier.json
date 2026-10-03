@@ -1,0 +1,12 @@
+{
+  "id": "packaging_supplier",
+  "offer": "Packaging supplier to private cosmetics brands. Announcement stream only.",
+  "markets": ["GB", "FR"],
+  "sensors": {
+    "ted": [],
+    "tavily": [
+      {"text": "cosmetics brand announces new skincare range launch", "languages": ["en"], "countries": ["GB"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5},
+      {"text": "marque de cosmetiques lance une nouvelle gamme de soins", "languages": ["fr"], "countries": ["FR"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5}
+    ]
+  }
+}
