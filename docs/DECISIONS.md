@@ -210,3 +210,25 @@ Three live calls against Token Factory (approved; under $0.0001 total). Full raw
   records which API served each call (D15). A larger cap makes the ledger more important, not less.
   **Still worth having:** the free NVIDIA NIM credits remain useful for development iteration, but
   they are now a convenience rather than the thing standing between the project and a demo.
+
+## 2026-10-03 — "Did you already know?" is a scale, and deal size sets the bar
+
+- **D17 — The reach label has three states, not two.** The one-tap question on every case
+  (ARCHITECTURE §0.1) becomes: *never heard of them* / **knew the company, not the moment** /
+  *already working on it*.
+  **Reason (founder, 3 Oct):** knowing is continuous, not binary. The middle state is both the
+  most common outcome and the one the radar is best at - it is pure timing value. A yes/no tap
+  collapses it into "already knew" and scores zero for exactly the capability being sold. The
+  headline metric stays net-new reach; it now counts the middle state as a partial win rather
+  than discarding it, and the three states are separately reportable.
+- **D18 — Optimise for reach over precision, because deal size dominates.** In the target
+  segment (export, manufacturing, distribution, logistics) a single deal is worth thousands to
+  tens of thousands. Expected value is hit-rate x deal size, so a false positive costs the owner
+  one minute while a miss costs a year's worth of one deal.
+  **Reason:** this is why "reach, not rank" is the right north star and not a slogan. It also
+  sets the sensible operating point: a modest hit rate over a wide, novel candidate set beats a
+  high hit rate over companies the owner already tracks. Scoring exists to protect owner time,
+  not to maximise precision.
+  **What this does not relax:** evidence correctness. A wrong *claim* costs credibility with a
+  buyer, which is not recoverable by volume. Rule #2 and the release gate on evidence
+  correctness stand unchanged (§18.1).
