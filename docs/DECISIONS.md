@@ -232,3 +232,32 @@ Three live calls against Token Factory (approved; under $0.0001 total). Full raw
   **What this does not relax:** evidence correctness. A wrong *claim* costs credibility with a
   buyer, which is not recoverable by volume. Rule #2 and the release gate on evidence
   correctness stand unchanged (§18.1).
+
+## 2026-10-03 — Signal availability probed live: follow the award chain, not the product CPV
+
+Full evidence in `docs/integrations/signal-availability-probe-2026-10-03.md`. Cost $0.
+
+- **D19 — Sensors search the works that consume the client's offer, not only the offer itself.**
+  Measured EU-wide over three months: stone/paving products 36 notices, refrigeration equipment
+  158, packaging machinery 26 - but road construction works 6,112, of which 1,190 award notices
+  in two months each **name the winning contractor**. That is ~600 named, dated prospects a
+  month for a paving supplier, against 12 from the product CPV.
+  **Reason:** the organisation publishing a notice is almost never the buyer of materials. The
+  contractor who won the work is. Searching only what the client sells finds the trickle.
+  **Consequence for onboarding:** O must learn *which works create demand for this offer* from
+  the owner, as data. No industry words in code (CLAUDE.md #1).
+- **D20 — The award -> winner hop is pulled forward from M6 into the first radar.** The project
+  graph as a whole stays in M6, but the single hop from an award notice to the winning company
+  is what makes M5's candidate pool real rather than thin.
+  **Reason:** without it M5 would be evaluated on ~12 candidates a quarter and would look like a
+  failure of the idea rather than of the query.
+- **D21 — The TED sensor is an API client, never a page fetcher.** `POST
+  https://api.ted.europa.eu/v3/notices/search` works with no key, free, returning structured
+  publication dates, deadlines, buyer and winner names. Both the TED notice page and its PDF
+  fetched **empty** - the site is JavaScript-rendered.
+  **Reason:** a page-fetching sensor would have silently produced nothing and looked like a
+  coverage problem rather than a transport one.
+- **D22 — Client fit is a selection criterion, not an engineering problem.** The radar is
+  strongest where buyers are public bodies, or where public works create private buying moments;
+  weakest in private-to-private niches whose only signals are unstructured trade press. Say so
+  when choosing demo clients rather than trying to engineer around it.
