@@ -8,6 +8,7 @@ that implement them (T2.2-T2.5).
 
 from __future__ import annotations
 
+import ast
 import inspect
 import os
 import subprocess
@@ -69,10 +70,22 @@ def test_brain_imports_without_env_or_api_key(tmp_path: Path) -> None:
 
 
 def test_importing_brain_builds_no_settings_instance() -> None:
+    """No Settings is constructed at import time - reading them inside a function is fine.
+
+    T2.3's check_budget must read the four caps, so it calls get_settings() in its body. The
+    property that matters is that importing the module does not, which is what this now checks
+    (a banned substring would have forbidden the legitimate call too).
+    """
     for module in (llm, budget, fencing, pricing, errors):
-        source = Path(module.__file__).read_text(encoding="utf-8")  # type: ignore[arg-type]
-        assert "Settings(" not in source
-        assert "get_settings(" not in source
+        path = Path(module.__file__)  # type: ignore[arg-type]
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in tree.body:  # module level only; function bodies are not walked
+            for call in ast.walk(node) if not isinstance(
+                node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+            ) else []:
+                if isinstance(call, ast.Call):
+                    name = getattr(call.func, "id", getattr(call.func, "attr", ""))
+                    assert name not in {"Settings", "get_settings"}, f"{path.name}: {name}()"
 
 
 # --- core/models.py: LlmUsage, ModelPrice, LlmResult[T], BudgetKind ------------------------
@@ -246,6 +259,8 @@ BUDGET_CONTRACT = {
         ("usage", KW, NO), ("cost_usd", KW, NO), ("ok", KW, NO), ("error", KW, NO),
         ("latency_ms", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
         ("prompt_version", KW, None),
+        # D15 postdates this frozen contract: every row records which API served the call.
+        ("provider", KW, "nebius"),
     ],
 }
 
