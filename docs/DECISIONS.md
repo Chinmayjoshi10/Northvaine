@@ -177,3 +177,19 @@ Three live calls against Token Factory (approved; under $0.0001 total). Full raw
   re-normalized server-side and `vector_cosine_ops` is correct.
   **Reason:** the dimension is the one fact migration 0003 bakes into the database, and M1
   deliberately left the vector columns dimensionless so it would be measured rather than guessed.
+
+## 2026-10-03 — Every `llm_calls` row records which provider served it
+
+- **D15 — Migration 0003 adds `provider` (text, NOT NULL, default `'nebius'`) to `llm_calls`, and
+  `LlmCallRow` carries it.** `brain/llm.py` sets it from configuration, never from a caller.
+  **Reason:** every other part of a provider swap is reversible — `base_url`, the API key and the
+  four `MODEL_*` ids are configuration, and call sites name a tier (`fast`/`mid`/`deep`), never a
+  model id. Provenance on rows *already written* is the one thing that cannot be reconstructed
+  afterwards. If development traffic ever runs through a second provider (NVIDIA NIM's free
+  credits are the live candidate) while the demo path stays on Token Factory, a ledger without
+  this column can never afterwards distinguish real spend from free spend, and the `TOTAL_BUDGET_USD`
+  sum becomes unauditable. 0003 is already open in T2.0 and already adding four columns, so the
+  cost today is one line; after wave 0 it is a fifth migration.
+  **Not decided here:** whether to actually use NIM. This only preserves the ability to answer the
+  question later. The hackathon requires runtime calls to Nebius Token Factory with Nemotron
+  models, so the demo path stays on Token Factory regardless.
