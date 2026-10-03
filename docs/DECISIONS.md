@@ -378,3 +378,23 @@ signals too. Probed live, 3 Oct.
   are paid. **Do not design a sensor around the official planning API** without re-checking
   coverage first; the UK early-stage stream must come from trade press and announcements until
   that changes.
+
+## 2026-10-03 — "Not hardcoded" is the pitch, not just an invariant
+
+- **D33 — CLAUDE.md #1 is the commercial differentiator, and the §0.2 demo is how it is proved.**
+  Competitors ship a fixed taxonomy - SIC codes, intent topics, prebuilt filters decided by
+  someone who has never sold the customer's product. Northvaine cannot have categories: the
+  moment an industry word enters the code, the engine serves one business.
+  **So everything the owner knows enters as answers, not code:** which works create demand for
+  the offer (D19), who to approach at which stage (D31), what must be known before calling. A
+  freight forwarder answers differently and gets a different radar from identical machinery.
+  **Every other tool claims "it learns your business." This one is architecturally forced to
+  mean it** - which is the whole value of the invariant being an invariant.
+  **The claim is only credible if demonstrated:** ARCHITECTURE §0.2's proof - the radar runs for
+  2-3 very different sample clients **with no code changes** - is therefore not a nice-to-have in
+  the demo video. It *is* the pitch. Without it the generality claim is an assertion.
+- **D34 — Adaptation must feel like a conversation, not configuration.** If "it adapts to you"
+  means a long setup interview before anything useful appears, the product has sold flexibility
+  and delivered homework. The first brief should arrive fast and imperfect and sharpen as the
+  owner corrects it; VOI question selection (ARCHITECTURE §6.3) should earn each question rather
+  than front-loading a form. Watch this when M8's onboarding chat is built.
