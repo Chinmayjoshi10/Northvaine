@@ -398,3 +398,39 @@ signals too. Probed live, 3 Oct.
   and delivered homework. The first brief should arrive fast and imperfect and sharpen as the
   owner corrects it; VOI question selection (ARCHITECTURE §6.3) should earn each question rather
   than front-loading a form. Watch this when M8's onboarding chat is built.
+
+## 2026-10-04 — Milestone 3 sensors (from factory/board/M3/PLAN.md, founder answers 4 Oct)
+
+Founder confirmed the three proposed sample clients (stone supplier into UK+EU; EU cold-chain
+equipment maker; packaging supplier to cosmetics brands, announcement stream only) and that
+redacted, contact-free TED and Tavily fixtures may be committed to the public repo. No UK Find a
+Tender sensor in M3 (parked). Migration 0004 approved by the orchestrator (technical, reversible).
+
+- **D35** Sensors speak a generic query language (`SensorQuery`: EventType kinds, scheme-prefixed
+  codes, ISO 3166-1 alpha-2 countries, ISO 639-1 languages, free text, a date range). Each sensor
+  maps it to its own vocabulary inside its module; client values exist only as data (rule #1, D33).
+- **D36 (provisional)** TED `available_at` = 00:00 UTC of `publication-date + ted_availability_lag_days`
+  (default 1), derived only from `publication-date`. Deadlines and decision dates are stored, never
+  used for availability (D29). Provisional until the API indexing lag is measured by an hourly poll.
+- **D37** Live web and Tavily documents get `available_at = fetched_at`; claimed dates go to
+  `published_on` flagged `claimed_date_untrusted`. Sensors raise `ReplayUnsupported` for an
+  `as_of` they cannot honour (ARCHITECTURE §23).
+- **D38** Messy dates are flagged with `DateFlag` values stored on the document, never dropped or
+  corrected (D29).
+- **D39** A notice's document text is a deterministic plain-text rendering of its PII-free search
+  record, so code quote checks (rule #2) have real text; the structured fields live in
+  `documents.meta` (`schema_ver` 1). Raw TED XML is never persisted.
+- **D40** Migration 0004: `documents.external_id`, `documents.group_key`, `documents.meta jsonb`,
+  indexes on (source_id, group_key), (source_id, external_id), (available_at), and
+  `UNIQUE (sources.name)`. Sources stay **global provider rows** ('ted', 'tavily', 'website',
+  'order_history'); privacy lives in `documents.workspace_id`, not in sources. Before `migrate`
+  on production, the orchestrator checks `SELECT name FROM sources GROUP BY name HAVING count(*) > 1`.
+- **D41** Every sensor declares `enumerable`, carried on every `SensorResult`. Recall and
+  coverage are reported only for enumerable sensors (D30).
+- **D42** Sensor fixtures are recorded once from the live API by the orchestrator through T3.1's
+  recorder, redaction first, and are never hand-written. Synthetic HTML is allowed only for
+  fetch/SSRF/robots/website tests, which test our own code, not an API shape.
+- **D43** Sensor HTTP uses `httpx` (promoted to a runtime dependency), called directly. No Tavily SDK.
+- **D44** TED requests only the research allow-list of fields (`TED_SAFE_FIELDS`), paces at
+  >= 1.5 s, uses PAGE_NUMBER pagination, de-duplicates on (publication-number, notice-version),
+  and never sends unconfirmed body parameters.

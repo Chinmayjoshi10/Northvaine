@@ -88,3 +88,22 @@ is reversible configuration, but data never written cannot be reconstructed.
 Fold into whichever milestone first implements the gate (M4/M5), as a column and a non-delete,
 **not** as a distributor feature. The lens itself stays out of hackathon scope (ARCHITECTURE
 §0.2: B2B radar is the hackathon product).
+
+## Parked from Milestone 3 planning (2026-10-04)
+
+- Find a Tender / Contracts Finder (UK) sensor: only if Q1 picks a UK-market client (then a
+  wave-2 ticket); otherwise M5+.
+- TED notice types beyond cn-standard/can-standard (`cn-social`, `veat`, `can-modif`, `pin-only`)
+  in `TED_KIND_TO_NOTICE_TYPES`; TED ITERATION pagination; place-of-performance country filter;
+  TED text (`~`) queries.
+- Hourly poll to measure the TED indexing lag (D36 provisional).
+- Companies House, SEC EDGAR, SAM.gov registry sensors (M4/M5 or later).
+- Award winners -> `companies` rows (entity resolution, the D20 award->winner hop): M4/M5.
+- Planning portals / planning.data.gov.uk (D32).
+- Fetching TED notice XML/HTML for free-text scope and per-lot winners (strip contacts first).
+- Tavily `/extract`; Tavily credit ledger alongside `llm_calls`.
+- Archived web snapshots (Wayback) to make web documents replay-safe.
+- Wiring sensors into the nightly `discover` job and per-provider concurrency caps: M5.
+- Gate persisting rejected sellers with `rejected_as`: M4/M5.
+- DNS pinning in `safe_fetch` (rebinding protection).
+

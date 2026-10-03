@@ -313,6 +313,10 @@ never sent: days, auto_parameters, the API key (it goes only in the Authorizatio
 
 ## Questions for the founder
 
+**Answered 4 Oct 2026:** Q1 = the proposed three clients (A, B, C), no Find a Tender sensor in M3.
+Q2 = pending (founder to add `TAVILY_API_KEY`; blocks PF4 and the T3.1 recording run only).
+Q3 = approved by the orchestrator. Q4 = yes, commit redacted TED and Tavily fixtures.
+
 1. **Which 2-3 sample clients?** Proposed, very different (D22/D33): (A) an overseas natural-stone
    supplier into the UK and EU (works-consumption, heavy TED); (B) an EU cold-chain/refrigeration
    equipment maker selling EU-wide (product and works CPVs, multilingual); (C) a packaging supplier
