@@ -311,3 +311,36 @@ EUROVIA CZ 7x, COLAS FRANCE 3x, PORR 3x, SWIETELSKY 3x.
 
   **Use this sentence** as the opening line of the README and the demo video. The temptation
   when writing those will be to claim more; claiming more would make the headline unmeasurable.
+
+## 2026-10-03 — The sweet spot is measured, not guessed: watch tenders, not awards
+
+Measured live from 52 matched stone procurements (TED, CPV 44912000, since Jan 2024), joined
+tender-to-award on `procedure-identifier`:
+
+| Interval | Median | Range |
+|---|---|---|
+| tender published -> bid deadline | **30 days** | -31 to 67 |
+| winner decided -> award published | **50 days** | 7 to 242 |
+| tender published -> award published | **120 days** | 35 to 621 |
+
+- **D27 — The radar's primary signal is the contract notice (`cn-standard`), not the award.**
+  Watching awards arrives a median of **120 days** after the tender published and **50 days after
+  the winner was already privately decided**. Materials were priced into the winning bid months
+  earlier. The ~30-day bidding window that opens the day a tender publishes is the only moment
+  when a contractor is actively pricing materials and has committed to no supplier - the one
+  window where being new costs the buyer nothing.
+  **Awards are not dropped**: they identify winners, build the account list (D23) and supply the
+  outcome labels. They are intelligence, not opportunity. This supersedes the hypothesis in D24
+  with a measurement.
+- **D28 — Lag is learned from the public record before any outcome exists.** The tender ->
+  deadline -> decision -> publication chain is fully present in history, so W's lag densities can
+  be calibrated per CPV, per country and per client on day one, with no closed deals. This is a
+  partial answer to cold start (ARCHITECTURE §17): the *timing* half needs no customer history,
+  only the *conversion* half does.
+  **Method:** join notices on `procedure-identifier`, which links every notice of one procurement.
+  `winner-decision-date` on the award exposes the private decision date and therefore the
+  publication blind spot.
+- **D29 — Real notice data is messy and the sensor must not trust it.** Observed deadlines up to
+  31 days *before* their notice's publication date (corrections and amended notices), and award
+  publication lags up to 242 days. The TED sensor validates and flags rather than assuming
+  monotonic dates; `available_at` is what gates replay, never the stated date.
