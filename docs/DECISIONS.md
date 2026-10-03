@@ -261,3 +261,28 @@ Full evidence in `docs/integrations/signal-availability-probe-2026-10-03.md`. Co
   strongest where buyers are public bodies, or where public works create private buying moments;
   weakest in private-to-private niches whose only signals are unstructured trade press. Say so
   when choosing demo clients rather than trying to engineer around it.
+
+## 2026-10-03 — Repeat winners are accounts, not leads; watch three stages, learn which converts
+
+Measured live (TED, CPV 45233000 awards, Jan-May 2026). In a 250-notice sample - only 9% of the
+2,839 awards in the window - **8% of the 421 distinct winners had already won more than once**.
+Because the sample is small, that materially *understates* the true repeat rate. Examples:
+EUROVIA CZ 7x, COLAS FRANCE 3x, PORR 3x, SWIETELSKY 3x.
+
+- **D23 — The radar outputs qualified accounts as well as timed moments.** A contractor that
+  wins public works repeatedly is a durable buyer of materials, verified by public record,
+  whether or not any single job's timing is caught.
+  **Reason (founder, 3 Oct):** a lead is a prospect you can sell to; right timing raises the
+  odds but is not the only value. Missing one job's window still leaves a named, active,
+  provably-buying business that a person can build a relationship with - and the next win is
+  coming. This makes the product robust to the timing risk rather than dependent on solving it.
+- **D24 — Watch three stages, and learn which one converts for this client.** Planning ->
+  tender published -> award. The hypothesis to test is that *tender published* is the hot moment,
+  because contractors price materials while bidding, weeks before an award is public - 6,112
+  notices a quarter against 1,190 awards in two months. This is **not** hardcoded: the stage that
+  converts is learned from outcomes via W's lag densities (ARCHITECTURE §11), seeded by the
+  owner's own experience of whether buyers came to him before or after award.
+- **D25 — The handoff to a person is the point, not a limitation.** The system's job ends at
+  putting a qualified, sourced, dated company in front of a human, who then finds mutual
+  contacts and negotiates. CLAUDE.md #5 stands: AI never negotiates. The evidence discipline is
+  what makes that handoff worth acting on.
