@@ -49,8 +49,15 @@ Role definitions live in `.claude/agents/`. Each agent reads only what its role 
    A criterion that needs a file another ticket owns is a planning defect, not a build problem:
    the builder cannot fix it and the gate can never go green. The architect checks this before
    the board is saved; the orchestrator checks it before flipping tickets to `approved`.
-   (Cost of skipping it: the 3 Oct M2 run, where T2.0 added four `LlmCallRow` fields whose
-   columns lived in T2.1a's `schema.sql`, blocking all eight tickets.)
+   **Whoever changes a shared artefact owns every test that asserts it.** Change `schema.sql`
+   or a migration, and every test file asserting the old DDL joins your `writes:`. The
+   mechanical check, before approving a board: check out the branch, run
+   `pytest -m "not live and not db"`, and confirm every failure is in a file the ticket owns.
+   Cost of skipping it, twice on 3 Oct: T2.0 added four `LlmCallRow` fields whose columns lived
+   in T2.1a's `schema.sql`; then, after that was fixed, 0003 sized the vector columns while two
+   M1 test files still asserted they were dimensionless and no M2 ticket owned them. Both times
+   all eight tickets blocked, ~16 minutes each. The prose version of this rule was written after
+   the first failure and did not prevent the second - only running the suite does.
 10. **Leave a trail.** Every agent ends with a structured report saved in `factory/reports/`.
    Decisions that change the spec go in `docs/DECISIONS.md`.
 
