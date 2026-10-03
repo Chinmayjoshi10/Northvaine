@@ -1,0 +1,855 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.ted.europa.eu/v3/notices/search",
+    "request_json": {
+      "query": "notice-type=can-standard AND classification-cpv IN (45233250 45233260) AND buyer-country IN (FRA DEU) AND publication-date>=20260601 AND publication-date<=20260915",
+      "fields": [
+        "publication-number",
+        "notice-type",
+        "notice-subtype",
+        "notice-version",
+        "notice-identifier",
+        "procedure-identifier",
+        "publication-date",
+        "deadline-receipt-request",
+        "winner-decision-date",
+        "buyer-name",
+        "buyer-country",
+        "winner-name",
+        "winner-country",
+        "classification-cpv",
+        "notice-title",
+        "estimated-value-lot",
+        "total-value"
+      ],
+      "limit": 10,
+      "page": 1
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "notices": [
+        {
+          "notice-identifier": "beef77b4-f391-4521-8014-1316ae22d9f9",
+          "notice-type": "can-standard",
+          "publication-number": "395740-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "c0c51be5-c703-414a-9641-9a979167daff",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 4236370.8,
+          "classification-cpv": [
+            "45233120",
+            "44113000",
+            "34922100",
+            "34928470",
+            "34928471",
+            "34992200",
+            "34992300",
+            "44112410",
+            "44113120",
+            "44113130",
+            "44113600",
+            "44113620",
+            "44113800",
+            "44113900",
+            "44114100",
+            "44114200",
+            "44114250",
+            "44163110",
+            "44212310",
+            "44212315",
+            "44212317",
+            "44423400",
+            "44811000",
+            "45113000",
+            "45111100",
+            "45111200",
+            "45111240",
+            "45112100",
+            "45112340",
+            "45112400",
+            "45112410",
+            "45112420",
+            "45112500",
+            "45112700",
+            "45112730",
+            "45221100",
+            "45221110",
+            "45221111",
+            "45221113",
+            "45221119",
+            "45231100",
+            "45231112",
+            "45231113",
+            "45232450",
+            "45232452",
+            "45232453",
+            "45233125",
+            "45233141",
+            "45233144",
+            "45233161",
+            "45233162",
+            "45233221",
+            "45233222",
+            "45233224",
+            "45233250",
+            "45233290",
+            "45233294",
+            "45233330",
+            "45233340",
+            "45247112",
+            "45261420",
+            "45262100",
+            "45262110",
+            "45262120",
+            "45262210",
+            "45262300",
+            "45262330",
+            "45262370",
+            "45262520",
+            "45262521",
+            "45262522",
+            "45262620",
+            "45262670",
+            "45442200",
+            "63712700",
+            "71900000",
+            "71337000",
+            "71351500",
+            "71351710",
+            "71353100",
+            "71421000",
+            "85111820",
+            "90523100",
+            "90715100",
+            "90715200",
+            "45233120",
+            "44113000",
+            "34922100",
+            "34928470",
+            "34928471",
+            "34992200",
+            "34992300",
+            "44112410",
+            "44113120",
+            "44113130",
+            "44113600",
+            "44113620",
+            "44113800",
+            "44113900",
+            "44114100",
+            "44114200",
+            "44114250",
+            "44163110",
+            "44212310",
+            "44212315",
+            "44212317",
+            "44423400",
+            "44811000",
+            "45113000",
+            "45111100",
+            "45111200",
+            "45111240",
+            "45112100",
+            "45112340",
+            "45112400",
+            "45112410",
+            "45112420",
+            "45112500",
+            "45112700",
+            "45112730",
+            "45221100",
+            "45221110",
+            "45221111",
+            "45221113",
+            "45221119",
+            "45231100",
+            "45231112",
+            "45231113",
+            "45232450",
+            "45232452",
+            "45232453",
+            "45233125",
+            "45233141",
+            "45233144",
+            "45233161",
+            "45233162",
+            "45233221",
+            "45233222",
+            "45233224",
+            "45233250",
+            "45233290",
+            "45233294",
+            "45233330",
+            "45233340",
+            "45247112",
+            "45261420",
+            "45262100",
+            "45262110",
+            "45262120",
+            "45262210",
+            "45262300",
+            "45262330",
+            "45262370",
+            "45262520",
+            "45262521",
+            "45262522",
+            "45262620",
+            "45262670",
+            "45442200",
+            "63712700",
+            "71900000",
+            "71337000",
+            "71351500",
+            "71351710",
+            "71353100",
+            "71421000",
+            "85111820",
+            "90523100",
+            "90715100",
+            "90715200"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-10+02:00",
+          "buyer-name": {
+            "deu": [
+              "Landesbetrieb Straßen, Brücken und Gewässer"
+            ]
+          },
+          "winner-decision-date": [
+            "2026-05-29+02:00"
+          ],
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Eurovia Bau GmbH ZS Hamburg"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Közút építése – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "lav": "Vācija – Ceļu būvdarbi – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "swe": "Tyskland – Vägbygge – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "gle": "An Ghearmáin – Road construction works – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "ell": "Γερμανία – Έργα οδοποιίας – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "spa": "Alemania – Trabajos de construcción de carreteras – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "est": "Saksamaa – Teeehitustööd – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "nld": "Duitsland – Wegenbouwwerken – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "fin": "Saksa – Tienrakennustyöt – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "pol": "Niemcy – Roboty w zakresie budowy dróg – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "hrv": "Njemačka – Građevinski radovi na cesti – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "ces": "Německo – Výstavba silnic – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "dan": "Tyskland – Anlæg af vej – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "ron": "Germania – Lucrări de construcţii de drumuri – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "por": "Alemanha – Construção de estradas – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "slk": "Nemecko – Stavebné práce na výstavbe ciest – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "fra": "Allemagne – Travaux de construction de routes – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "mlt": "Il-Ġermanja – Xogħlijiet tal-kostruzzjoni tat-toroq – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "deu": "Deutschland – Straßenbauarbeiten – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "lit": "Vokietija – Kelių tiesimo darbai – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "ita": "Germania – Lavori di costruzione di strade – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "bul": "Гepмaния – Строителни и монтажни работи на пътища – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "slv": "Nemčija – Gradbena dela na cestah – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau",
+            "eng": "Germany – Road construction works – Knoten Buxtehuder Straße/Hannoversche Straße/Walter-Dudek-Brücke/Moorstraße, Los 1, Straßenbau"
+          }
+        },
+        {
+          "notice-identifier": "f6be0806-35ce-42ec-9406-2609fc52b4b9",
+          "notice-type": "can-standard",
+          "publication-number": "396442-2026",
+          "winner-country": [
+            "FRA"
+          ],
+          "procedure-identifier": "42f5cace-0c9b-462b-912e-5f0c2b22d28e",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 350000,
+          "classification-cpv": [
+            "45211360",
+            "45233162",
+            "45233252",
+            "45211360",
+            "45233162",
+            "45233252"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-10+02:00",
+          "buyer-name": {
+            "fra": [
+              "Ville de Sartrouville"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "EUROVIA ILE DE FRANCE"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Városfejlesztéssel kapcsolatos építési munkák – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "lav": "Francija – Pilsētattīstības celtniecības darbi – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "swe": "Frankrike – Byggnation i samband med stadsplanering – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "gle": "An Fhrainc – Urban development construction work – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "ell": "Γαλλία – Κατασκευαστικές εργασίες για ανάπυξη αστικής περιοχής – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "spa": "Francia – Trabajos de construcción de desarrollo urbano – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "est": "Prantsusmaa – Linnaarendusega seotud ehitustööd – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "nld": "Frankrijk – Bouwwerkzaamheden voor stadsontwikkeling – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "fin": "Ranska – Kaupunkien kehittämiseen liittyvät rakennustyöt – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "pol": "Francja – Roboty budowlane w zakresie rozwoju miast – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "hrv": "Francuska – Građevinski radovi urbanističkog uređenja – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "ces": "Francie – Stavební práce na městské výstavbě – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "dan": "Frankrig – Bygge- og anlægsarbejder i forbindelse med byudvikling – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "ron": "Franţa – Lucrări de construcţii de dezvoltare urbană – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "por": "França – Obras de urbanização – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "slk": "Francúzsko – Stavebné práce na rozvoji miest – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "fra": "France – Travaux de développement urbain – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "mlt": "Franza – Xogħol ta' kostruzzjoni għall-iżvilupp urban – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "deu": "Frankreich – Stadtentwicklungsbauarbeiten – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "lit": "Prancūzija – Miestų plėtros statybos darbai – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "ita": "Francia – Lavori di costruzione di sviluppo urbano – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "bul": "Фpaнция – Строителни и монтажни работи по градско благоустройство – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "slv": "Francija – Gradbena dela pri urbanističnem razvoju – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)",
+            "eng": "France – Urban development construction work – Le présent marché a pour objet le réaménagement du carrefour Mermoz / Champs-de-Mars à Sartrouville (78500)"
+          }
+        },
+        {
+          "notice-identifier": "ade74038-0247-4eae-a885-c84a0652696c",
+          "notice-type": "can-standard",
+          "publication-number": "400141-2026",
+          "winner-country": [
+            "FRA"
+          ],
+          "procedure-identifier": "dd12eb9a-33ce-4a4b-9aed-6872f1042e33",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 500000,
+          "classification-cpv": [
+            "45212140",
+            "45233250",
+            "37535200",
+            "37410000",
+            "45212140",
+            "45233250",
+            "37535200",
+            "37410000"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-11+02:00",
+          "buyer-name": {
+            "fra": [
+              "Commune d'Hyères"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "SAS HEXDALLE France CONSTRUCTION (MOBYSOL)"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Rekreációs létesítmény – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "lav": "Francija – Rekreācijas objekti – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "swe": "Frankrike – Fritidsanläggning – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "gle": "An Fhrainc – Recreation installation – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "ell": "Γαλλία – Εγκατάσταση αναψυχής – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "spa": "Francia – Instalación de recreo – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "est": "Prantsusmaa – Puhkerajatised – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "nld": "Frankrijk – Recreatiefaciliteiten – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "fin": "Ranska – Virkistysalue – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "pol": "Francja – Obiekty rekreacyjne – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "hrv": "Francuska – Rekreacijski objekt – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "ces": "Francie – Rekreační zařízení – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "dan": "Frankrig – Rekreativt anlæg – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "ron": "Franţa – Instalaţie de recreere – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "por": "França – Instalação recreativa – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "slk": "Francúzsko – Rekreačné zariadenia – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "fra": "France – Installation récréative – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "mlt": "Franza – Stallazzjonijiet għar-rekreazzjoni – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "deu": "Frankreich – Freizeiteinrichtung – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "lit": "Prancūzija – Poilsio įrenginiai – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "ita": "Francia – Impianto ricreativo – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "bul": "Фpaнция – Съоръжения за отдих – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "slv": "Francija – Rekreacijski objekt – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande",
+            "eng": "France – Recreation installation – ESPACES VERTS - Travaux et réfection des sols amortissants et structures ludiques des aires de jeux sur le territoire communal - Accord-cadre à bons de commande"
+          }
+        },
+        {
+          "notice-identifier": "2554259f-6811-4e9e-a46d-e0ffdaf10bea",
+          "notice-type": "can-standard",
+          "publication-number": "400785-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "8b9dd34b-bb45-4dd5-80f5-1f369e492414",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45112710",
+            "45233260",
+            "45112710",
+            "45233260"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-11+02:00",
+          "buyer-name": {
+            "deu": [
+              "Amt Stralendorf - Der Amtsvorsteher"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "[natural person redacted 2]"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Tereprendezési munkák zöldterületen – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "lav": "Vācija – Zaļo zonu ainavas veidošana – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "swe": "Tyskland – Utformning av grönområden – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "gle": "An Ghearmáin – Landscaping work for green areas – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "ell": "Γερμανία – Εργασίες διαμόρφωσης τοπίου για χώρους πρασίνου – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "spa": "Alemania – Trabajos de paisajismo en zonas verdes – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "est": "Saksamaa – Haljasalade maastikukujundustööd – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "nld": "Duitsland – Landschappelijk ontwerp voor groenzones – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "fin": "Saksa – Viheralueiden maisemarakennustyöt – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "pol": "Niemcy – Roboty w zakresie kształtowania terenów zielonych – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "hrv": "Njemačka – Radovi krajobraznog uređenja zelenih površina – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "ces": "Německo – Krajinné úpravy zelených ploch – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "dan": "Tyskland – Landskabsarkitektarbejde i forbindelse med grønne områder – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "ron": "Germania – Lucrări de arhitectură peisagistică a spaţiilor verzi – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "por": "Alemanha – Trabalhos de paisagismo em áreas verdes – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "slk": "Nemecko – Terénne úpravy trávnatých oblastí – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "fra": "Allemagne – Travaux d'aménagement paysager d'espaces verts – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "mlt": "Il-Ġermanja – Xogħol ta’ l-irranġar tal-pajsaġġ għal żoni ħodor – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "deu": "Deutschland – Landschaftsgärtnerische Bauleistungen für Grünanlagen – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "lit": "Vokietija – Kraštovaizdžio darbai žaliosiose zonose – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "ita": "Germania – Lavori di architettura paesaggistica per aree verdi – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "bul": "Гepмaния – Строителни работи по оформяне на зелени площи – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "slv": "Nemčija – Krajinsko oblikovanje za zelene površine – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen",
+            "eng": "Germany – Landscaping work for green areas – Amt Stralendorf - Neubau einer Zweifeldsporthalle in 19073 Stralendorf - Los 31 Außenanlagen"
+          }
+        },
+        {
+          "notice-identifier": "17d0e7cc-a83e-49de-b598-719eaab58ff5",
+          "notice-type": "can-standard",
+          "publication-number": "407080-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "dea13df3-1ed0-43ce-8278-1cd22d6d841a",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45000000",
+            "45233124",
+            "45233251",
+            "45233221",
+            "63712700",
+            "45000000",
+            "45233124",
+            "45233251",
+            "45233221",
+            "63712700"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-15+02:00",
+          "buyer-name": {
+            "deu": [
+              "Die Autobahn GmbH des Bundes - NL Rheinland"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Gerhard Tummes GmbH & Co. KG"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Építési munkák – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "lav": "Vācija – Celtniecības darbi – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "swe": "Tyskland – Anläggningsarbete – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "gle": "An Ghearmáin – Construction work – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "ell": "Γερμανία – Κατασκευαστικές εργασίες – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "spa": "Alemania – Trabajos de construcción – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "est": "Saksamaa – Ehitustööd – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "nld": "Duitsland – Bouwwerkzaamheden – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "fin": "Saksa – Rakennustyöt – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "pol": "Niemcy – Roboty budowlane – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "hrv": "Njemačka – Građevinski radovi – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "ces": "Německo – Stavební práce – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "dan": "Tyskland – Bygge- og anlægsarbejder – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "ron": "Germania – Lucrări de construcţii – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "por": "Alemanha – Construção – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "slk": "Nemecko – Stavebné práce – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "fra": "Allemagne – Travaux de construction – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "deu": "Deutschland – Bauarbeiten – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "lit": "Vokietija – Statybos darbai – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "ita": "Germania – Lavori di costruzione – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "bul": "Гepмaния – Строителни и монтажни работи – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "slv": "Nemčija – Gradbena dela – A57 Sanierung Decke AS Kleve u. AS Goch",
+            "eng": "Germany – Construction work – A57 Sanierung Decke AS Kleve u. AS Goch"
+          }
+        },
+        {
+          "notice-identifier": "50ad1fb4-e9ee-4f38-9f25-f5b19ad80672",
+          "notice-type": "can-standard",
+          "publication-number": "411986-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "9374e0a9-c5d2-4d60-8abd-3df2b6ca984d",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45112700",
+            "45112710",
+            "45221250",
+            "45233260",
+            "45112700",
+            "45112700",
+            "45112710",
+            "45221250",
+            "45233260",
+            "45112710",
+            "45221250",
+            "45233260"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-16+02:00",
+          "buyer-name": {
+            "deu": [
+              "Bundesstadt Bonn - Referat Vergabedienste"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Jüngling Gala-Bau GmbH",
+              "Jüngling Gala-Bau GmbH",
+              "Jüngling Gala-Bau GmbH",
+              "Jüngling Gala-Bau GmbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Tereprendezési munkák – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "lav": "Vācija – Ainavas veidošana – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "swe": "Tyskland – Landskapsplanering – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "gle": "An Ghearmáin – Landscaping work – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "ell": "Γερμανία – Εργασίες διαμόρφωσης τοπίου – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "spa": "Alemania – Trabajos de paisajismo – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "est": "Saksamaa – Maastikukujundustööd – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "nld": "Duitsland – Werkzaamheden voor landschapsarchitectuur – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "fin": "Saksa – Maisemarakennustyöt – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "pol": "Niemcy – Roboty w zakresie kształtowania terenu – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "hrv": "Njemačka – Radovi krajobraznog uređenja – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "ces": "Německo – Krajinné úpravy – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "dan": "Tyskland – Arbejder i forbindelse med landskabsarkitektur – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "ron": "Germania – Lucrări de arhitectură peisagistică – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "por": "Alemanha – Trabalhos de paisagismo – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "slk": "Nemecko – Terénne úpravy – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "fra": "Allemagne – Travaux d'aménagement paysager – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "mlt": "Il-Ġermanja – Xogħol ta’ l-irranġar tal-pajsaġġ – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "deu": "Deutschland – Landschaftsgärtnerische Arbeiten – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "lit": "Vokietija – Kraštovaizdžio darbai – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "ita": "Germania – Lavori di architettura paesaggistica – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "bul": "Гepмaния – Строителни работи, свързани с озеленяването – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "slv": "Nemčija – Krajinsko oblikovanje – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen",
+            "eng": "Germany – Landscaping work – Bundesstadt Bonn: Friedrich-List-Berufskolleg - Außenanlagen"
+          }
+        },
+        {
+          "notice-identifier": "962f88bf-c0a7-45d2-a56a-a64530b7c093",
+          "notice-type": "can-standard",
+          "publication-number": "412297-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "cd1e467e-839f-4af7-9741-47a33705f84a",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 634727.22,
+          "classification-cpv": [
+            "45112700",
+            "45112710",
+            "45112720",
+            "45112723",
+            "45233253",
+            "45247110",
+            "45112700",
+            "45112710",
+            "45112720",
+            "45112723",
+            "45233253",
+            "45247110"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-16+02:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Halle (Saale), Fachbereich Recht, Team Vergabe Bauleistungen/Bauplanungen"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "GrünFlächenGestaltung Halle GmbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Tereprendezési munkák – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "lav": "Vācija – Ainavas veidošana – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "swe": "Tyskland – Landskapsplanering – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "gle": "An Ghearmáin – Landscaping work – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "ell": "Γερμανία – Εργασίες διαμόρφωσης τοπίου – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "spa": "Alemania – Trabajos de paisajismo – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "est": "Saksamaa – Maastikukujundustööd – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "nld": "Duitsland – Werkzaamheden voor landschapsarchitectuur – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "fin": "Saksa – Maisemarakennustyöt – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "pol": "Niemcy – Roboty w zakresie kształtowania terenu – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "hrv": "Njemačka – Radovi krajobraznog uređenja – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "ces": "Německo – Krajinné úpravy – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "dan": "Tyskland – Arbejder i forbindelse med landskabsarkitektur – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "ron": "Germania – Lucrări de arhitectură peisagistică – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "por": "Alemanha – Trabalhos de paisagismo – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "slk": "Nemecko – Terénne úpravy – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "fra": "Allemagne – Travaux d'aménagement paysager – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "mlt": "Il-Ġermanja – Xogħol ta’ l-irranġar tal-pajsaġġ – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "deu": "Deutschland – Landschaftsgärtnerische Arbeiten – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "lit": "Vokietija – Kraštovaizdžio darbai – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "ita": "Germania – Lavori di architettura paesaggistica – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "bul": "Гepмaния – Строителни работи, свързани с озеленяването – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "slv": "Nemčija – Krajinsko oblikovanje – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau",
+            "eng": "Germany – Landscaping work – Sanierung Kita Tabaluga - Fuchs & Elster, Garten- und Landschaftsbau"
+          }
+        },
+        {
+          "notice-identifier": "2377d0a5-891b-4d77-9918-80bb946f89fe",
+          "notice-type": "can-standard",
+          "publication-number": "428902-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "a8962df8-4202-4cee-81cb-9554d7422458",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45214210",
+            "45262310",
+            "45112700",
+            "45233253",
+            "71421000",
+            "45214210",
+            "45262310",
+            "45112700",
+            "45233253",
+            "71421000"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-24+02:00",
+          "buyer-name": {
+            "deu": [
+              "Landratsamt Hildburghausen"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "[natural person redacted 1]"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Elemi iskola építése – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "lav": "Vācija – Pamatskolas celtniecības darbi – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "swe": "Tyskland – Byggnation av låg- och mellanstadieskola – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "gle": "An Ghearmáin – Primary school construction work – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "ell": "Γερμανία – Κατασκευαστικές εργασίες για σχολεία πρωτοβάθμιας εκπαίδευσης – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "spa": "Alemania – Trabajos de construcción de centros de enseñanza primaria – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "est": "Saksamaa – Algkoolide ehitustööd – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "nld": "Duitsland – Bouwen van basisschool – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "fin": "Saksa – Alemman perusasteen koulujen rakennustyöt – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "pol": "Niemcy – Roboty budowlane w zakresie szkół podstawowych – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "hrv": "Njemačka – Građevinski radovi na osnovnim školama – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "ces": "Německo – Výstavba základních škol – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "dan": "Tyskland – Opførelse af grundskoler – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "ron": "Germania – Lucrări de construcţii de şcoli primare – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "por": "Alemanha – Construção de escola primária – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "slk": "Nemecko – Stavebné práce na objektoch základných škôl – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "fra": "Allemagne – Travaux de construction d'écoles primaires – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "mlt": "Il-Ġermanja – Xogħol ta' kostruzzjoni ta' skejjel primarji – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "deu": "Deutschland – Bau von Grundschulen – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "lit": "Vokietija – Pradinių mokyklų statybos darbai – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "ita": "Germania – Lavori di costruzione di scuole elementari – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "bul": "Гepмaния – Строителни и монтажни работи по общо изграждане на основни училища – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "slv": "Nemčija – Gradbena dela na osnovni šoli – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB",
+            "eng": "Germany – Primary school construction work – Neubau Haus 1 Grundschule (GS) Hildburghausen - Los 25 Freianlagen/Infrastruktur/RRB"
+          }
+        },
+        {
+          "notice-identifier": "643d69a4-8191-42e4-9224-31b6921a37c4",
+          "notice-type": "can-standard",
+          "publication-number": "432133-2026",
+          "winner-country": [
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "d03a51d5-6dde-4ab0-adf6-096ad1d022d8",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 633290,
+          "classification-cpv": [
+            "45112700",
+            "45111000",
+            "45233222",
+            "45233330",
+            "45112700",
+            "45112700",
+            "45233252",
+            "45111000",
+            "45233222",
+            "45233330",
+            "45112710",
+            "45111000",
+            "45233222",
+            "45233330"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-25+02:00",
+          "buyer-name": {
+            "fra": [
+              "Ville de Versailles"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "COLAS FRANCE - ETABLISSEMENT DE VILLEPREUX",
+              "ESPACE DECO OUEST"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Tereprendezési munkák – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "lav": "Francija – Ainavas veidošana – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "swe": "Frankrike – Landskapsplanering – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "gle": "An Fhrainc – Landscaping work – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "ell": "Γαλλία – Εργασίες διαμόρφωσης τοπίου – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "spa": "Francia – Trabajos de paisajismo – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "est": "Prantsusmaa – Maastikukujundustööd – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "nld": "Frankrijk – Werkzaamheden voor landschapsarchitectuur – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "fin": "Ranska – Maisemarakennustyöt – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "pol": "Francja – Roboty w zakresie kształtowania terenu – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "hrv": "Francuska – Radovi krajobraznog uređenja – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "ces": "Francie – Krajinné úpravy – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "dan": "Frankrig – Arbejder i forbindelse med landskabsarkitektur – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "ron": "Franţa – Lucrări de arhitectură peisagistică – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "por": "França – Trabalhos de paisagismo – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "slk": "Francúzsko – Terénne úpravy – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "fra": "France – Travaux d'aménagement paysager – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "mlt": "Franza – Xogħol ta’ l-irranġar tal-pajsaġġ – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "deu": "Frankreich – Landschaftsgärtnerische Arbeiten – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "lit": "Prancūzija – Kraštovaizdžio darbai – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "ita": "Francia – Lavori di architettura paesaggistica – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "bul": "Фpaнция – Строителни работи, свързани с озеленяването – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "slv": "Francija – Krajinsko oblikovanje – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert",
+            "eng": "France – Landscaping work – Travaux d'aménagement de l'entrée de ville - rue du pont Colbert"
+          }
+        },
+        {
+          "notice-identifier": "7615ef88-984d-4e27-b76c-7e77f3d81f8e",
+          "notice-type": "can-standard",
+          "publication-number": "448932-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "736e7b8b-d4f8-410e-92d3-390fd8c9f7be",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 1369961.98,
+          "classification-cpv": [
+            "45232450",
+            "34928200",
+            "45112700",
+            "45112720",
+            "45212212",
+            "45233252",
+            "45233253",
+            "45247110",
+            "45262620",
+            "77310000",
+            "77314100",
+            "45232450",
+            "34928200",
+            "45112700",
+            "45112720",
+            "45212212",
+            "45233252",
+            "45233253",
+            "45247110",
+            "45262620",
+            "77310000",
+            "77314100"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-30+02:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Essen, vertreten durch die GVE Grundstücksverwaltung Stadt Essen GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Wilhelm Heikaus GmbH & Co. KG"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Vízelvezető rendszer építése – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "lav": "Vācija – Drenāžas izbūve – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "swe": "Tyskland – Anläggningsarbeten för dränering – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "gle": "An Ghearmáin – Drainage construction works – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ell": "Γερμανία – Εργασίες κατασκευής δικτύου αποστράγγισης – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "spa": "Alemania – Trabajos de construcción de sistemas de desagüe – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "est": "Saksamaa – Drenaažiehitustööd – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "nld": "Duitsland – Bouwwerkzaamheden voor afwatering – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "fin": "Saksa – Vedenpoistojärjestelmän rakennustyöt – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "pol": "Niemcy – Roboty budowlane w zakresie budowy upustów – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "hrv": "Njemačka – Građevinski radovi na drenaži – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ces": "Německo – Výstavba drenážních systémů – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "dan": "Tyskland – Bygge-anlægsarbejder: dræningssystemer – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ron": "Germania – Lucrări de construcţii de drenaje – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "por": "Alemanha – Obras de construção para drenagem – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "slk": "Nemecko – Odvodňovacie stavebné práce – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "fra": "Allemagne – Travaux de construction pour système de drainage – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni tad-drenaġġi – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "deu": "Deutschland – Bauarbeiten für Entwässerungsanlagen – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "lit": "Vokietija – Drenažo statybos darbai – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ita": "Germania – Lavori di costruzione di scarichi – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "bul": "Гepмaния – Дренажни работи – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "slv": "Nemčija – Gradbena dela na odvodnjavanju – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "eng": "Germany – Drainage construction works – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen"
+          }
+        }
+      ],
+      "totalNoticeCount": 25,
+      "iterationNextToken": null,
+      "timedOut": false
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-03T19:44:51.501547Z"
+  }
+]

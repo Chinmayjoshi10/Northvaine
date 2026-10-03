@@ -1,0 +1,664 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.ted.europa.eu/v3/notices/search",
+    "request_json": {
+      "query": "notice-type=cn-standard AND classification-cpv IN (45331000 45331200) AND buyer-country IN (DEU FRA ITA ESP) AND publication-date>=20260201 AND publication-date<=20260531",
+      "fields": [
+        "publication-number",
+        "notice-type",
+        "notice-subtype",
+        "notice-version",
+        "notice-identifier",
+        "procedure-identifier",
+        "publication-date",
+        "deadline-receipt-request",
+        "winner-decision-date",
+        "buyer-name",
+        "buyer-country",
+        "winner-name",
+        "winner-country",
+        "classification-cpv",
+        "notice-title",
+        "estimated-value-lot",
+        "total-value"
+      ],
+      "limit": 10,
+      "page": 1
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "notices": [
+        {
+          "notice-identifier": "83067d5b-0005-4517-a3bb-9b86258bd600",
+          "deadline-receipt-request": [
+            "2026-03-06T11:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "71964-2026",
+          "procedure-identifier": "cca0727d-d932-4d07-968c-db2569f3a49a",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331000",
+            "45331000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadtverwaltung Grimma"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fűtés, szellőzés és légkondicionálás szerelése – Neubau Bauhof Grimma; Heizung",
+            "lav": "Vācija – Apkures, ventilācijas un gaisa kondicionieru uzstādīšana – Neubau Bauhof Grimma; Heizung",
+            "swe": "Tyskland – Installation av värme, ventilation och luftkonditionering – Neubau Bauhof Grimma; Heizung",
+            "gle": "An Ghearmáin – Heating, ventilation and air-conditioning installation work – Neubau Bauhof Grimma; Heizung",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων θέρμανσης, αερισμού και κλιματισμού – Neubau Bauhof Grimma; Heizung",
+            "spa": "Alemania – Trabajos de instalación de calefacción, ventilación y aire acondicionado – Neubau Bauhof Grimma; Heizung",
+            "est": "Saksamaa – Kütte-, ventilatsiooni- ja kliimaseadmete paigaldustööd – Neubau Bauhof Grimma; Heizung",
+            "nld": "Duitsland – Installeren van verwarming, ventilatie en airconditioning – Neubau Bauhof Grimma; Heizung",
+            "fin": "Saksa – Lämmitys-, ilmanvaihto- ja ilmastointilaitteiden asennustyöt – Neubau Bauhof Grimma; Heizung",
+            "pol": "Niemcy – Instalowanie urządzeń grzewczych, wentylacyjnych i klimatyzacyjnych – Neubau Bauhof Grimma; Heizung",
+            "hrv": "Njemačka – Radovi instaliranja grijanja, ventilacije i klimatizacije – Neubau Bauhof Grimma; Heizung",
+            "ces": "Německo – Instalace a montáž topení, větrání a klimatizace – Neubau Bauhof Grimma; Heizung",
+            "dan": "Tyskland – Installation af varme-, ventilations- og klimaanlæg – Neubau Bauhof Grimma; Heizung",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire, de ventilare şi de aer condiţionat – Neubau Bauhof Grimma; Heizung",
+            "por": "Alemanha – Instalação de aquecimento, ventilação e ar condicionado – Neubau Bauhof Grimma; Heizung",
+            "slk": "Nemecko – Inštalovanie kúrenia, ventilácie a klimatizácie – Neubau Bauhof Grimma; Heizung",
+            "fra": "Allemagne – Travaux d'installation de matériel de chauffage, de ventilation et de climatisation – Neubau Bauhof Grimma; Heizung",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana, ventilazzjoni u ta’ l-arja kkondizzjonata – Neubau Bauhof Grimma; Heizung",
+            "deu": "Deutschland – Installation von Heizungs-, Lüftungs- und Klimaanlagen – Neubau Bauhof Grimma; Heizung",
+            "lit": "Vokietija – Šildymo, vėdinimo ir oro kondicionavimo įrengimo darbai – Neubau Bauhof Grimma; Heizung",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento, ventilazione e climatizzazione – Neubau Bauhof Grimma; Heizung",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни, вентилационни и климатични тръбопроводни инсталации – Neubau Bauhof Grimma; Heizung",
+            "slv": "Nemčija – Inštalacija ogrevalnih, prezračevalnih in klimatskih naprav – Neubau Bauhof Grimma; Heizung",
+            "eng": "Germany – Heating, ventilation and air-conditioning installation work – Neubau Bauhof Grimma; Heizung"
+          }
+        },
+        {
+          "notice-identifier": "9a83d59a-d56f-4ad1-8770-5e3a8133d6e3",
+          "deadline-receipt-request": [
+            "2026-03-11T10:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "71971-2026",
+          "procedure-identifier": "2e79188d-3991-4a65-9f02-547c41801fc2",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331000",
+            "45331000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Singen FB 1 Gebäudemanagement / Haustechnik"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fűtés, szellőzés és légkondicionálás szerelése – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "lav": "Vācija – Apkures, ventilācijas un gaisa kondicionieru uzstādīšana – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "swe": "Tyskland – Installation av värme, ventilation och luftkonditionering – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "gle": "An Ghearmáin – Heating, ventilation and air-conditioning installation work – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων θέρμανσης, αερισμού και κλιματισμού – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "spa": "Alemania – Trabajos de instalación de calefacción, ventilación y aire acondicionado – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "est": "Saksamaa – Kütte-, ventilatsiooni- ja kliimaseadmete paigaldustööd – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "nld": "Duitsland – Installeren van verwarming, ventilatie en airconditioning – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "fin": "Saksa – Lämmitys-, ilmanvaihto- ja ilmastointilaitteiden asennustyöt – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "pol": "Niemcy – Instalowanie urządzeń grzewczych, wentylacyjnych i klimatyzacyjnych – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "hrv": "Njemačka – Radovi instaliranja grijanja, ventilacije i klimatizacije – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "ces": "Německo – Instalace a montáž topení, větrání a klimatizace – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "dan": "Tyskland – Installation af varme-, ventilations- og klimaanlæg – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire, de ventilare şi de aer condiţionat – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "por": "Alemanha – Instalação de aquecimento, ventilação e ar condicionado – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "slk": "Nemecko – Inštalovanie kúrenia, ventilácie a klimatizácie – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "fra": "Allemagne – Travaux d'installation de matériel de chauffage, de ventilation et de climatisation – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana, ventilazzjoni u ta’ l-arja kkondizzjonata – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "deu": "Deutschland – Installation von Heizungs-, Lüftungs- und Klimaanlagen – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "lit": "Vokietija – Šildymo, vėdinimo ir oro kondicionavimo įrengimo darbai – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento, ventilazione e climatizzazione – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни, вентилационни и климатични тръбопроводни инсталации – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "slv": "Nemčija – Inštalacija ogrevalnih, prezračevalnih in klimatskih naprav – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)",
+            "eng": "Germany – Heating, ventilation and air-conditioning installation work – Erweiterung Zeppelin-Realschule (Heizungsarbeiten)"
+          }
+        },
+        {
+          "notice-identifier": "44387517-a534-4481-8d26-83fa39be64b6",
+          "deadline-receipt-request": [
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00",
+            "2026-03-02T17:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "72250-2026",
+          "procedure-identifier": "a5c0e956-5223-48d5-9bd0-be7274276d24",
+          "buyer-country": [
+            "FRA"
+          ],
+          "classification-cpv": [
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45454000",
+            "45112500",
+            "45262660",
+            "45223220",
+            "45261100",
+            "45261220",
+            "45420000",
+            "44316500",
+            "45421131",
+            "45421152",
+            "45421000",
+            "45432110",
+            "45442100",
+            "45331100",
+            "45311200",
+            "09331200",
+            "44610000",
+            "42122180"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "fra": [
+              "Département de l'Isère"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Franciaország – Szerkezetátalakítás – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "lav": "Francija – Pārbūves darbi – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "swe": "Frankrike – Ombyggnadstjänster – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "gle": "An Fhrainc – Restructuring work – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "ell": "Γαλλία – Εργασίες αναδόμησης – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "spa": "Francia – Trabajos de reestructuración – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "est": "Prantsusmaa – Ümberehitustööd – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "nld": "Frankrijk – Herstructurering – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "fin": "Ranska – Uudelleenorganisointityöt – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "pol": "Francja – Roboty restrukturyzacyjne – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "hrv": "Francuska – Radovi na rekonstrukciji – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "ces": "Francie – Přestavba budov – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "dan": "Frankrig – Omstrukturering – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "ron": "Franţa – Lucrări de restructurare – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "por": "França – Obras de reestruturação – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "slk": "Francúzsko – Obnovovacie práce – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "fra": "France – Travaux de restructuration – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "mlt": "Franza – Xogħol ta’ ristrutturar – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "deu": "Frankreich – Mit der Umstrukturierung verbundene Arbeiten – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "lit": "Prancūzija – Pertvarkymo darbai – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "ita": "Francia – Lavori di ristrutturazione – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "bul": "Фpaнция – Строителни работи по преустройство – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "slv": "Francija – Rekonstrukcijska dela – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze",
+            "eng": "France – Restructuring work – Marché de travaux pour la réhabilitation et extension du CER (centre d'entretien routier) de Saint-Vincent-de-Mercuze"
+          }
+        },
+        {
+          "notice-identifier": "da74332f-cad6-4088-9b72-7e8bdb972744",
+          "deadline-receipt-request": [
+            "2026-03-03T09:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "72625-2026",
+          "procedure-identifier": "aea68490-5c1d-4fde-baaf-552cf3d22a32",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331000",
+            "45331000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Bezirksamt Reinickendorf von Berlin"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fűtés, szellőzés és légkondicionálás szerelése – 20250627_1240_Lüftungsinstallation",
+            "lav": "Vācija – Apkures, ventilācijas un gaisa kondicionieru uzstādīšana – 20250627_1240_Lüftungsinstallation",
+            "swe": "Tyskland – Installation av värme, ventilation och luftkonditionering – 20250627_1240_Lüftungsinstallation",
+            "gle": "An Ghearmáin – Heating, ventilation and air-conditioning installation work – 20250627_1240_Lüftungsinstallation",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων θέρμανσης, αερισμού και κλιματισμού – 20250627_1240_Lüftungsinstallation",
+            "spa": "Alemania – Trabajos de instalación de calefacción, ventilación y aire acondicionado – 20250627_1240_Lüftungsinstallation",
+            "est": "Saksamaa – Kütte-, ventilatsiooni- ja kliimaseadmete paigaldustööd – 20250627_1240_Lüftungsinstallation",
+            "nld": "Duitsland – Installeren van verwarming, ventilatie en airconditioning – 20250627_1240_Lüftungsinstallation",
+            "fin": "Saksa – Lämmitys-, ilmanvaihto- ja ilmastointilaitteiden asennustyöt – 20250627_1240_Lüftungsinstallation",
+            "pol": "Niemcy – Instalowanie urządzeń grzewczych, wentylacyjnych i klimatyzacyjnych – 20250627_1240_Lüftungsinstallation",
+            "hrv": "Njemačka – Radovi instaliranja grijanja, ventilacije i klimatizacije – 20250627_1240_Lüftungsinstallation",
+            "ces": "Německo – Instalace a montáž topení, větrání a klimatizace – 20250627_1240_Lüftungsinstallation",
+            "dan": "Tyskland – Installation af varme-, ventilations- og klimaanlæg – 20250627_1240_Lüftungsinstallation",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire, de ventilare şi de aer condiţionat – 20250627_1240_Lüftungsinstallation",
+            "por": "Alemanha – Instalação de aquecimento, ventilação e ar condicionado – 20250627_1240_Lüftungsinstallation",
+            "slk": "Nemecko – Inštalovanie kúrenia, ventilácie a klimatizácie – 20250627_1240_Lüftungsinstallation",
+            "fra": "Allemagne – Travaux d'installation de matériel de chauffage, de ventilation et de climatisation – 20250627_1240_Lüftungsinstallation",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana, ventilazzjoni u ta’ l-arja kkondizzjonata – 20250627_1240_Lüftungsinstallation",
+            "deu": "Deutschland – Installation von Heizungs-, Lüftungs- und Klimaanlagen – 20250627_1240_Lüftungsinstallation",
+            "lit": "Vokietija – Šildymo, vėdinimo ir oro kondicionavimo įrengimo darbai – 20250627_1240_Lüftungsinstallation",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento, ventilazione e climatizzazione – 20250627_1240_Lüftungsinstallation",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни, вентилационни и климатични тръбопроводни инсталации – 20250627_1240_Lüftungsinstallation",
+            "slv": "Nemčija – Inštalacija ogrevalnih, prezračevalnih in klimatskih naprav – 20250627_1240_Lüftungsinstallation",
+            "eng": "Germany – Heating, ventilation and air-conditioning installation work – 20250627_1240_Lüftungsinstallation"
+          }
+        },
+        {
+          "notice-identifier": "be5f22d5-dea4-49b4-95d7-682f07b05863",
+          "deadline-receipt-request": [
+            "2026-03-05T13:30:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "72630-2026",
+          "procedure-identifier": "e9df78e7-bcdd-471c-8478-184410fc96a7",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331210",
+            "45331210"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadtverwaltung Grimma"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "lav": "Vācija – Ventilācijas ierīkošana – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "swe": "Tyskland – Installation av ventilation – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "gle": "An Ghearmáin – Ventilation installation work – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "spa": "Alemania – Trabajos de instalación de ventilación – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "pol": "Niemcy – Instalowanie wentylacji – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "ces": "Německo – Instalace a montáž větrání – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "por": "Alemanha – Instalação de ventilação – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "slk": "Nemecko – Inštalovanie ventilácie – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "fra": "Allemagne – Travaux d'installation de ventilation – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – Neubau Bauhof Grimma; Lüftung und Kälte",
+            "eng": "Germany – Ventilation installation work – Neubau Bauhof Grimma; Lüftung und Kälte"
+          }
+        },
+        {
+          "notice-identifier": "52ae5be9-2acd-4d2d-a30b-79a1d52cdbfb",
+          "deadline-receipt-request": [
+            "2026-03-10T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "72780-2026",
+          "procedure-identifier": "9e87295b-5b79-4d92-9469-65fff2bfcb96",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331231",
+            "45331231"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Bauwerke Münster GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fagyasztóberendezés szerelése – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "lav": "Vācija – Saldēšanas iekārtu uzstādīšana – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "swe": "Tyskland – Installation av kyl- och frysanläggningar – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "gle": "An Ghearmáin – Installation work of refrigeration equipment – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης εξοπλισμού ψύξης – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "spa": "Alemania – Trabajos de instalación de equipos técnicos de refrigeración – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "est": "Saksamaa – Külmutusseadmete paigaldustööd – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "nld": "Duitsland – Installeren van koel- en vriesuitrusting – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "fin": "Saksa – Kylmälaitteistojen asennustyöt – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "pol": "Niemcy – Instalowanie urządzeń mrożących – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "hrv": "Njemačka – Radovi instaliranja opreme za zamrzavanje – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "ces": "Německo – Instalace a montáž mrazicích zařízení – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "dan": "Tyskland – Installation af køletekniske anlæg – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "ron": "Germania – Lucrări de instalare de echipament frigorific – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "por": "Alemanha – Instalação de equipamento de refrigeração – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "slk": "Nemecko – Inštalačné práce na zariadení chladničiek – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "fra": "Allemagne – Travaux d'installation de matériel de réfrigération – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni ta’ l-apparat tar-refriġerazzjoni – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "deu": "Deutschland – Installation von kältetechnischen Anlagen – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "lit": "Vokietija – Šaldymo įrenginių montavimo darbai – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "ita": "Germania – Lavori di installazione di impianti di refrigerazione – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "bul": "Гepмaния – Строителни и монтажни работи на инсталации за замразяване – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "slv": "Nemčija – Inštalacija naprav s hladilno tehniko – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH",
+            "eng": "Germany – Installation work of refrigeration equipment – Kältetechnik - Neubau Stadthaus 4 - Bauwerke Münster GmbH"
+          }
+        },
+        {
+          "notice-identifier": "0a338e4a-a079-4f65-aaf0-a93580d0b322",
+          "deadline-receipt-request": [
+            "2026-03-04T10:30:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "72920-2026",
+          "procedure-identifier": "9bed1a91-45d5-4ccc-9419-7bfa010234a6",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331210",
+            "45331210"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Landkreis Ludwigslust-Parchim - Der Landrat"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "lav": "Vācija – Ventilācijas ierīkošana – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "swe": "Tyskland – Installation av ventilation – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "gle": "An Ghearmáin – Ventilation installation work – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "spa": "Alemania – Trabajos de instalación de ventilación – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "pol": "Niemcy – Instalowanie wentylacji – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "ces": "Německo – Instalace a montáž větrání – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "por": "Alemanha – Instalação de ventilação – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "slk": "Nemecko – Inštalovanie ventilácie – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "fra": "Allemagne – Travaux d'installation de ventilation – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen",
+            "eng": "Germany – Ventilation installation work – Landkreis Ludwigslust-Parchim - Sanierung und Erweiterung der Sporthalle am Gymnasium in 19370 Parchim; Los B22 - Raumlufttechnische Anlagen"
+          }
+        },
+        {
+          "notice-identifier": "38af592b-f19d-4a0d-9fd1-e839ba7cfd36",
+          "deadline-receipt-request": [
+            "2026-03-05T10:30:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "73017-2026",
+          "procedure-identifier": "b3e6f413-09b5-4274-8f83-7e0e6a733e25",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331100",
+            "45331000",
+            "44621200",
+            "45321000",
+            "45311200",
+            "45262600",
+            "45331100",
+            "45331000",
+            "45321000",
+            "45311200",
+            "45262600"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "ZweckverbandAbfallbehandlung Kahlenberg"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Központi fűtés szerelése – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "lav": "Vācija – Centrālapkures ierīkošana – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "swe": "Tyskland – Installation av centralvärme – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "gle": "An Ghearmáin – Central-heating installation work – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης κεντρικής θέρμανσης – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "spa": "Alemania – Trabajos de instalación de calefacción central – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "est": "Saksamaa – Keskkütte paigaldamine – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "nld": "Duitsland – Installeren van centrale verwarming – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "fin": "Saksa – Keskuslämmityslaitteiden asennustyöt – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "pol": "Niemcy – Instalowanie centralnego ogrzewania – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "hrv": "Njemačka – Radovi instaliranja centralnoga grijanja – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "ces": "Německo – Instalace a montáž ústředního topení – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "dan": "Tyskland – Installation af centralvarmeanlæg – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire centrală – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "por": "Alemanha – Instalação de aquecimento central – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "slk": "Nemecko – Inštalovanie ústredného kúrenia – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "fra": "Allemagne – Travaux d'installation de chauffage central – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana ċentrali – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "deu": "Deutschland – Installation von Zentralheizungen – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "lit": "Vokietija – Centrinio šildymo įrengimo darbai – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento centrale – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни тръбопроводни инсталации – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "slv": "Nemčija – Inštalacija centralnega ogrevanja – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg",
+            "eng": "Germany – Central-heating installation work – EU-weite Ausschreibung eines Heizungsanlagenbaus zur Optimierung der Wärmeversorgung für den Zweckverband Abfallbehandlung Kahlenberg"
+          }
+        },
+        {
+          "notice-identifier": "df18d293-65dd-4087-b86f-e822ee740a0a",
+          "deadline-receipt-request": [
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00",
+            "2026-03-02T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "73144-2026",
+          "procedure-identifier": "ffd8b386-c10e-4320-abfe-86f8a1a73477",
+          "buyer-country": [
+            "FRA"
+          ],
+          "classification-cpv": [
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "45211340",
+            "90500000",
+            "45262210",
+            "45261000",
+            "45261210",
+            "45261420",
+            "45443000",
+            "45421000",
+            "44316500",
+            "45422100",
+            "45410000",
+            "45421000",
+            "45262321",
+            "45432111",
+            "45442110",
+            "90911100",
+            "45313100",
+            "45315000",
+            "45331000",
+            "45112500",
+            "45231112",
+            "45112700"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "fra": [
+              "HABITAT SUD ATLANTIC"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Franciaország – Többlakásos épületek kivitelezése – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "lav": "Francija – Daudzdzīvokļu ēku celtniecības darbi – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "swe": "Frankrike – Byggnation av flerfamiljshus – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "gle": "An Fhrainc – Multi-dwelling buildings construction work – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "ell": "Γαλλία – Κατασκευαστικές εργασίες για πολυκατοικίες – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "spa": "Francia – Trabajos de construcción de inmuebles de viviendas colectivas – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "est": "Prantsusmaa – Korterelamute ehitustööd – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "nld": "Frankrijk – Bouwen van meergezinswoningen – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "fin": "Ranska – Rivi- ja kerrostalojen rakennustyöt – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "pol": "Francja – Roboty budowlane w zakresie budownictwa wielorodzinnego – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "hrv": "Francuska – Građevinski radovi na višestambenim zgradama – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "ces": "Francie – Výstavba bytových domů – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "dan": "Frankrig – Opførelse af ejendomme med flere boliger – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "ron": "Franţa – Lucrări de construcţii de imobile colective – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "por": "França – Construção de blocos de apartamentos – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "slk": "Francúzsko – Stavebné práce na objektoch viacbytových budov – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "fra": "France – Travaux de construction d'immeubles collectifs – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "mlt": "Franza – Xogħol ta' kostruzzjoni ta' binjiet b'bosta abitazzjonijiet – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "deu": "Frankreich – Bau von Mehrfamilienhäusern – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "lit": "Prancūzija – Daugiabučių pastatų statybos darbai – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "ita": "Francia – Lavori di costruzione di condomini – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "bul": "Фpaнция – Строителни и монтажни работи по общо изграждане на многофамилни жилищни сгради – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "slv": "Francija – Gradbena dela na večstanovanjskih stavbah – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre",
+            "eng": "France – Multi-dwelling buildings construction work – Travaux de construction d'un ensemble immobilier de 59 logements sociaux (30 LLS et 29 BRS) et de l'ensemble des aménagements VRD et paysagers du projet - Opération GOIZA à Mouguerre"
+          }
+        },
+        {
+          "notice-identifier": "a412bddc-6977-4525-99eb-784f5af0c575",
+          "deadline-receipt-request": [
+            "2026-03-05T11:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "73473-2026",
+          "procedure-identifier": "81ef0882-4375-4497-8105-2d209d8dc7a8",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331210",
+            "45331210"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Sprinkenhof GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – Raumlufttechnische Anlagen (KG 430)",
+            "lav": "Vācija – Ventilācijas ierīkošana – Raumlufttechnische Anlagen (KG 430)",
+            "swe": "Tyskland – Installation av ventilation – Raumlufttechnische Anlagen (KG 430)",
+            "gle": "An Ghearmáin – Ventilation installation work – Raumlufttechnische Anlagen (KG 430)",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – Raumlufttechnische Anlagen (KG 430)",
+            "spa": "Alemania – Trabajos de instalación de ventilación – Raumlufttechnische Anlagen (KG 430)",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – Raumlufttechnische Anlagen (KG 430)",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – Raumlufttechnische Anlagen (KG 430)",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – Raumlufttechnische Anlagen (KG 430)",
+            "pol": "Niemcy – Instalowanie wentylacji – Raumlufttechnische Anlagen (KG 430)",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – Raumlufttechnische Anlagen (KG 430)",
+            "ces": "Německo – Instalace a montáž větrání – Raumlufttechnische Anlagen (KG 430)",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – Raumlufttechnische Anlagen (KG 430)",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – Raumlufttechnische Anlagen (KG 430)",
+            "por": "Alemanha – Instalação de ventilação – Raumlufttechnische Anlagen (KG 430)",
+            "slk": "Nemecko – Inštalovanie ventilácie – Raumlufttechnische Anlagen (KG 430)",
+            "fra": "Allemagne – Travaux d'installation de ventilation – Raumlufttechnische Anlagen (KG 430)",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – Raumlufttechnische Anlagen (KG 430)",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – Raumlufttechnische Anlagen (KG 430)",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – Raumlufttechnische Anlagen (KG 430)",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – Raumlufttechnische Anlagen (KG 430)",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – Raumlufttechnische Anlagen (KG 430)",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – Raumlufttechnische Anlagen (KG 430)",
+            "eng": "Germany – Ventilation installation work – Raumlufttechnische Anlagen (KG 430)"
+          }
+        }
+      ],
+      "totalNoticeCount": 1323,
+      "iterationNextToken": null,
+      "timedOut": false
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-03T19:44:42.099203Z"
+  }
+]

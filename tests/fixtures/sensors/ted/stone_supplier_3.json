@@ -1,0 +1,643 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.ted.europa.eu/v3/notices/search",
+    "request_json": {
+      "query": "notice-type=cn-standard AND classification-cpv IN (45233250 45233260) AND buyer-country IN (FRA DEU) AND publication-date>=20260201 AND publication-date<=20260531",
+      "fields": [
+        "publication-number",
+        "notice-type",
+        "notice-subtype",
+        "notice-version",
+        "notice-identifier",
+        "procedure-identifier",
+        "publication-date",
+        "deadline-receipt-request",
+        "winner-decision-date",
+        "buyer-name",
+        "buyer-country",
+        "winner-name",
+        "winner-country",
+        "classification-cpv",
+        "notice-title",
+        "estimated-value-lot",
+        "total-value"
+      ],
+      "limit": 10,
+      "page": 1
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "notices": [
+        {
+          "notice-identifier": "c529fc26-8497-419a-aa53-a5a7cacf69d6",
+          "deadline-receipt-request": [
+            "2026-03-05T09:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "78961-2026",
+          "procedure-identifier": "c4521470-3ad6-4aaa-a269-4101e578ec5a",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45000000",
+            "45200000",
+            "45233260",
+            "45112710",
+            "45112000",
+            "45000000",
+            "45200000",
+            "45233260",
+            "45112710",
+            "45112000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "deu": [
+              "Markt Glonn"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Építési munkák – 027 - Außenanlagen",
+            "lav": "Vācija – Celtniecības darbi – 027 - Außenanlagen",
+            "swe": "Tyskland – Anläggningsarbete – 027 - Außenanlagen",
+            "gle": "An Ghearmáin – Construction work – 027 - Außenanlagen",
+            "ell": "Γερμανία – Κατασκευαστικές εργασίες – 027 - Außenanlagen",
+            "spa": "Alemania – Trabajos de construcción – 027 - Außenanlagen",
+            "est": "Saksamaa – Ehitustööd – 027 - Außenanlagen",
+            "nld": "Duitsland – Bouwwerkzaamheden – 027 - Außenanlagen",
+            "fin": "Saksa – Rakennustyöt – 027 - Außenanlagen",
+            "pol": "Niemcy – Roboty budowlane – 027 - Außenanlagen",
+            "hrv": "Njemačka – Građevinski radovi – 027 - Außenanlagen",
+            "ces": "Německo – Stavební práce – 027 - Außenanlagen",
+            "dan": "Tyskland – Bygge- og anlægsarbejder – 027 - Außenanlagen",
+            "ron": "Germania – Lucrări de construcţii – 027 - Außenanlagen",
+            "por": "Alemanha – Construção – 027 - Außenanlagen",
+            "slk": "Nemecko – Stavebné práce – 027 - Außenanlagen",
+            "fra": "Allemagne – Travaux de construction – 027 - Außenanlagen",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni – 027 - Außenanlagen",
+            "deu": "Deutschland – Bauarbeiten – 027 - Außenanlagen",
+            "lit": "Vokietija – Statybos darbai – 027 - Außenanlagen",
+            "ita": "Germania – Lavori di costruzione – 027 - Außenanlagen",
+            "bul": "Гepмaния – Строителни и монтажни работи – 027 - Außenanlagen",
+            "slv": "Nemčija – Gradbena dela – 027 - Außenanlagen",
+            "eng": "Germany – Construction work – 027 - Außenanlagen"
+          }
+        },
+        {
+          "notice-identifier": "37272592-5592-481a-a174-4d4fb5a51991",
+          "deadline-receipt-request": [
+            "2026-03-06T11:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "79222-2026",
+          "procedure-identifier": "26313f7c-0fa4-48fc-afcb-1b4e3c0f3fca",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45233120",
+            "45233251",
+            "45233222",
+            "45231113",
+            "44163111",
+            "45332000",
+            "45332200",
+            "45330000",
+            "45221230",
+            "45233120",
+            "45233251",
+            "45233222",
+            "45231113",
+            "44163111",
+            "45332000",
+            "45332200",
+            "45330000",
+            "45221230"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-04+01:00",
+          "buyer-name": {
+            "deu": [
+              "Städtische Klinikum \"St. Georg\" Leipzig"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Közút építése – Medienverlegung - Verkehrsanlagen",
+            "lav": "Vācija – Ceļu būvdarbi – Medienverlegung - Verkehrsanlagen",
+            "swe": "Tyskland – Vägbygge – Medienverlegung - Verkehrsanlagen",
+            "gle": "An Ghearmáin – Road construction works – Medienverlegung - Verkehrsanlagen",
+            "ell": "Γερμανία – Έργα οδοποιίας – Medienverlegung - Verkehrsanlagen",
+            "spa": "Alemania – Trabajos de construcción de carreteras – Medienverlegung - Verkehrsanlagen",
+            "est": "Saksamaa – Teeehitustööd – Medienverlegung - Verkehrsanlagen",
+            "nld": "Duitsland – Wegenbouwwerken – Medienverlegung - Verkehrsanlagen",
+            "fin": "Saksa – Tienrakennustyöt – Medienverlegung - Verkehrsanlagen",
+            "pol": "Niemcy – Roboty w zakresie budowy dróg – Medienverlegung - Verkehrsanlagen",
+            "hrv": "Njemačka – Građevinski radovi na cesti – Medienverlegung - Verkehrsanlagen",
+            "ces": "Německo – Výstavba silnic – Medienverlegung - Verkehrsanlagen",
+            "dan": "Tyskland – Anlæg af vej – Medienverlegung - Verkehrsanlagen",
+            "ron": "Germania – Lucrări de construcţii de drumuri – Medienverlegung - Verkehrsanlagen",
+            "por": "Alemanha – Construção de estradas – Medienverlegung - Verkehrsanlagen",
+            "slk": "Nemecko – Stavebné práce na výstavbe ciest – Medienverlegung - Verkehrsanlagen",
+            "fra": "Allemagne – Travaux de construction de routes – Medienverlegung - Verkehrsanlagen",
+            "mlt": "Il-Ġermanja – Xogħlijiet tal-kostruzzjoni tat-toroq – Medienverlegung - Verkehrsanlagen",
+            "deu": "Deutschland – Straßenbauarbeiten – Medienverlegung - Verkehrsanlagen",
+            "lit": "Vokietija – Kelių tiesimo darbai – Medienverlegung - Verkehrsanlagen",
+            "ita": "Germania – Lavori di costruzione di strade – Medienverlegung - Verkehrsanlagen",
+            "bul": "Гepмaния – Строителни и монтажни работи на пътища – Medienverlegung - Verkehrsanlagen",
+            "slv": "Nemčija – Gradbena dela na cestah – Medienverlegung - Verkehrsanlagen",
+            "eng": "Germany – Road construction works – Medienverlegung - Verkehrsanlagen"
+          }
+        },
+        {
+          "notice-identifier": "0f174c68-5bbd-4168-95e9-79838c7a7a8f",
+          "deadline-receipt-request": [
+            "2026-03-09T13:00:00+01:00",
+            "2026-03-09T13:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "82941-2026",
+          "procedure-identifier": "de3cc0a1-2547-4f06-905d-f280891df04e",
+          "buyer-country": [
+            "FRA"
+          ],
+          "classification-cpv": [
+            "45233162",
+            "45233162",
+            "45233162",
+            "45233162",
+            "45233260",
+            "45316110"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-05+01:00",
+          "buyer-name": {
+            "fra": [
+              "COMMUNE DU TAMPON"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Franciaország – Kerékpárút építése – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "lav": "Francija – Riteņbraucēju celiņa būvdarbi – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "swe": "Frankrike – Anläggningsarbeten för cykelvägar – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "gle": "An Fhrainc – Cycle path construction work – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "ell": "Γαλλία – Κατασκευαστικές εργασίες για οδούς για ποδήλατα – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "spa": "Francia – Trabajos de construcción de pistas para bicicletas – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "est": "Prantsusmaa – Jalgrattateede ehitustööd – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "nld": "Frankrijk – Aanleggen van fietspad – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "fin": "Ranska – Pyöräteiden rakennustyöt – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "pol": "Francja – Roboty budowlane w zakresie ścieżek rowerowych – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "hrv": "Francuska – Građevinski radovi na biciklističkim stazama – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "ces": "Francie – Výstavba cyklistických stezek – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "dan": "Frankrig – Anlægsarbejde: cykelstier – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "ron": "Franţa – Lucrări de construcţii de piste de biciclete – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "por": "França – Construção de via para ciclistas – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "slk": "Francúzsko – Stavebné práce na stavbe cyklistických trás – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "fra": "France – Travaux de construction de pistes cyclables – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "mlt": "Franza – Xogħol ta' kostruzzjoni ta' mogħdijiet għar-roti – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "deu": "Frankreich – Bau von Fahrradwegen – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "lit": "Prancūzija – Dviračių takų statybos darbai – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "ita": "Francia – Lavori di costruzione di piste ciclabili – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "bul": "Фpaнция – Строителни работи по изграждане на пътеки за велосипедисти – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "slv": "Francija – Gradbena dela na kolesarski poti – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)",
+            "eng": "France – Cycle path construction work – TRAVAUX D'AMENAGEMENT D'UNE VOIE VERTE ET TOURISTIQUE ENTRE LA RN3 ET LA GRANDE FERME (2ème procédure)"
+          }
+        },
+        {
+          "notice-identifier": "b559448c-2e62-4989-b3da-90e4a58a9512",
+          "deadline-receipt-request": [
+            "2026-03-10T09:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "86778-2026",
+          "procedure-identifier": "7cce7004-576d-4d20-87a0-4a2ebb9e39f1",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45233200",
+            "45233250",
+            "45233200",
+            "45233250"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-06+01:00",
+          "buyer-name": {
+            "deu": [
+              "Die Autobahn GmbH des Bundes - NL Westfalen"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Különféle útburkolatok – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "lav": "Vācija – Dažādi ceļu seguma būvdarbi – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "swe": "Tyskland – Diverse ytbehandling – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "gle": "An Ghearmáin – Various surface works – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "ell": "Γερμανία – Διάφορες εργασίες επικάλυψης του οδοστρώματος – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "spa": "Alemania – Trabajos diversos de pavimentación – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "est": "Saksamaa – Mitmesugused pindamistööd – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "nld": "Duitsland – Diverse oppervlaktewerkzaamheden – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "fin": "Saksa – Erilaiset päällystystyöt – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "pol": "Niemcy – Roboty w zakresie różnych nawierzchni – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "hrv": "Njemačka – Različiti radovi na površinskom sloju – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "ces": "Německo – Různé povrchové práce – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "dan": "Tyskland – Diverse belægningsarbejder – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "ron": "Germania – Diverse lucrări de îmbrăcare – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "por": "Alemanha – Obras diversas de pavimentação – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "slk": "Nemecko – Rôzne práce vrchnej stavby – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "fra": "Allemagne – Travaux de revêtement divers – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "mlt": "Il-Ġermanja – Diversi xogħlijiet fuq l-uċuħ – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "deu": "Deutschland – Diverse Oberbauarbeiten – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "lit": "Vokietija – Įvairūs dangos darbai – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "ita": "Germania – Lavori di superficie vari – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "bul": "Гepмaния – Строителни работи по полагане на пътна настилка на пътища – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "slv": "Nemčija – Različna dela na zgornjem ustroju – A1; Modul 1.2 Straßenbau; AK Do/Un",
+            "eng": "Germany – Various surface works – A1; Modul 1.2 Straßenbau; AK Do/Un"
+          }
+        },
+        {
+          "notice-identifier": "b19079ab-c8fc-4db9-b6ac-1d4de64c5113",
+          "deadline-receipt-request": [
+            "2026-03-13T08:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "88844-2026",
+          "procedure-identifier": "6933649f-dd36-41f1-bf95-050fd25a20cf",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 1264382,
+          "classification-cpv": [
+            "45112723",
+            "45111200",
+            "45212100",
+            "45214210",
+            "45233220",
+            "45233260",
+            "45112723"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-06+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Harsewinkel Zentrale Vergabestelle"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Tereprendezési munkák játszótereken – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "lav": "Vācija – Rotaļu laukumu ainavas veidošana – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "swe": "Tyskland – Utformning av lekplatser – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "gle": "An Ghearmáin – Landscaping work for playgrounds – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "ell": "Γερμανία – Εργασίες διαμόρφωσης τοπίου για παιχνιδιότοπους – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "spa": "Alemania – Trabajos de paisajismo en parques infantiles – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "est": "Saksamaa – Mänguväljakute maastikukujundustööd – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "nld": "Duitsland – Landschappelijk ontwerp voor speelterreinen – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "fin": "Saksa – Leikkipuistojen maisemarakennustyöt – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "pol": "Niemcy – Roboty w zakresie kształtowania placów zabaw – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "hrv": "Njemačka – Radovi krajobraznog uređenja igrališta – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "ces": "Německo – Krajinné úpravy dětských hřišť – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "dan": "Tyskland – Landskabsarkitektarbejde i forbindelse med legepladser – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "ron": "Germania – Lucrări de arhitectură peisagistică a terenurilor de joacă – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "por": "Alemanha – Trabalhos de paisagismo em áreas de recreação – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "slk": "Nemecko – Terénne úpravy ihrísk – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "fra": "Allemagne – Travaux d'aménagement paysager de terrains de jeux – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "mlt": "Il-Ġermanja – Xogħol ta’ l-irranġar tal-pajsaġġ għal postijiet ta’ fejn jilagħbu t-tfal – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "deu": "Deutschland – Landschaftsgärtnerische Bauleistungen für Spielplätze – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "lit": "Vokietija – Kraštovaizdžio darbai žaidimų aikštelėse – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "ita": "Germania – Lavori di architettura paesaggistica per campi gioco – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "bul": "Гepмaния – Строителни работи по оформяне на зелени площи на игрищата – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "slv": "Nemčija – Krajinsko oblikovanje za otroška igrišča – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau",
+            "eng": "Germany – Landscaping work for playgrounds – Schulprojekt Kardinal-von-Galen-Schule - Außenanlagen Schulhof, Fahrbahn Wegebau"
+          }
+        },
+        {
+          "notice-identifier": "a290bb4f-ed72-4768-8e7f-910cf1b96dcb",
+          "deadline-receipt-request": [
+            "2026-02-23T11:30:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "98449-2026",
+          "procedure-identifier": "45dfb3d4-81ed-4760-8b66-ce8787296f14",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45233100",
+            "45233000",
+            "45233100",
+            "45233120",
+            "45233122",
+            "45233125",
+            "45233128",
+            "45233220",
+            "45233260",
+            "45233290",
+            "45233100",
+            "45233000",
+            "45233100",
+            "45233120",
+            "45233122",
+            "45233125",
+            "45233128",
+            "45233220",
+            "45233260",
+            "45233290"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-11+01:00",
+          "buyer-name": {
+            "deu": [
+              "Samtgemeinde Emlichheim"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Autópálya és közút építése – Verlängerung Obenholt: Neubau Straße",
+            "lav": "Vācija – Automaģistrāļu un ceļu būvdarbi – Verlängerung Obenholt: Neubau Straße",
+            "swe": "Tyskland – Anläggning av huvudvägar och andra vägar – Verlängerung Obenholt: Neubau Straße",
+            "gle": "An Ghearmáin – Construction work for highways, roads – Verlängerung Obenholt: Neubau Straße",
+            "ell": "Γερμανία – Κατασκευή αυτοκινητοδρόμων και οδών – Verlängerung Obenholt: Neubau Straße",
+            "spa": "Alemania – Trabajos de construcción de autopistas y carreteras – Verlängerung Obenholt: Neubau Straße",
+            "est": "Saksamaa – Kiir- ja maanteede ehitustööd – Verlängerung Obenholt: Neubau Straße",
+            "nld": "Duitsland – Bouwwerkzaamheden voor hoofdwegen en wegen – Verlängerung Obenholt: Neubau Straße",
+            "fin": "Saksa – Tierakennustyöt – Verlängerung Obenholt: Neubau Straße",
+            "pol": "Niemcy – Roboty w zakresie budowy autostrad, dróg – Verlängerung Obenholt: Neubau Straße",
+            "hrv": "Njemačka – Građevinski radovi na autocestama, cestama – Verlängerung Obenholt: Neubau Straße",
+            "ces": "Německo – Stavební úpravy pro komunikace – Verlängerung Obenholt: Neubau Straße",
+            "dan": "Tyskland – Byggearbejde i forbindelse med anlæg af hovedveje, veje – Verlängerung Obenholt: Neubau Straße",
+            "ron": "Germania – Lucrări de construcţii de autostrăzi şi de drumuri – Verlängerung Obenholt: Neubau Straße",
+            "por": "Alemanha – Construção de estradas e vias rápidas – Verlängerung Obenholt: Neubau Straße",
+            "slk": "Nemecko – Stavebné práce na výstavbe diaľnic, ciest – Verlängerung Obenholt: Neubau Straße",
+            "fra": "Allemagne – Travaux de construction d'autoroutes, de routes – Verlängerung Obenholt: Neubau Straße",
+            "mlt": "Il-Ġermanja – Kostruzzjoni għal toroq u toroq ewlenija – Verlängerung Obenholt: Neubau Straße",
+            "deu": "Deutschland – Bauarbeiten für Fernstraßen und Straßen – Verlängerung Obenholt: Neubau Straße",
+            "lit": "Vokietija – Greitkelių, kelių tiesimo darbai – Verlängerung Obenholt: Neubau Straße",
+            "ita": "Germania – Lavori di costruzione di strade e autostrade – Verlängerung Obenholt: Neubau Straße",
+            "bul": "Гepмaния – Строителни и монтажни работи на автомагистрали и пътища – Verlängerung Obenholt: Neubau Straße",
+            "slv": "Nemčija – Gradbena dela na daljinskih cestah in cestah – Verlängerung Obenholt: Neubau Straße",
+            "eng": "Germany – Construction work for highways, roads – Verlängerung Obenholt: Neubau Straße"
+          }
+        },
+        {
+          "notice-identifier": "f46b09c5-5e94-4746-8bb7-c7dcb4edc2e9",
+          "deadline-receipt-request": [
+            "2026-03-17T09:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "105131-2026",
+          "procedure-identifier": "01501940-9b5f-452f-ad07-4c5a3dbfceb7",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45233100",
+            "45233251",
+            "45233252",
+            "45233100",
+            "45233251",
+            "45233252"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-13+01:00",
+          "buyer-name": {
+            "deu": [
+              "Staatliches Bauamt Passau"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Autópálya és közút építése – Straßenbauarbeiten",
+            "lav": "Vācija – Automaģistrāļu un ceļu būvdarbi – Straßenbauarbeiten",
+            "swe": "Tyskland – Anläggning av huvudvägar och andra vägar – Straßenbauarbeiten",
+            "gle": "An Ghearmáin – Construction work for highways, roads – Straßenbauarbeiten",
+            "ell": "Γερμανία – Κατασκευή αυτοκινητοδρόμων και οδών – Straßenbauarbeiten",
+            "spa": "Alemania – Trabajos de construcción de autopistas y carreteras – Straßenbauarbeiten",
+            "est": "Saksamaa – Kiir- ja maanteede ehitustööd – Straßenbauarbeiten",
+            "nld": "Duitsland – Bouwwerkzaamheden voor hoofdwegen en wegen – Straßenbauarbeiten",
+            "fin": "Saksa – Tierakennustyöt – Straßenbauarbeiten",
+            "pol": "Niemcy – Roboty w zakresie budowy autostrad, dróg – Straßenbauarbeiten",
+            "hrv": "Njemačka – Građevinski radovi na autocestama, cestama – Straßenbauarbeiten",
+            "ces": "Německo – Stavební úpravy pro komunikace – Straßenbauarbeiten",
+            "dan": "Tyskland – Byggearbejde i forbindelse med anlæg af hovedveje, veje – Straßenbauarbeiten",
+            "ron": "Germania – Lucrări de construcţii de autostrăzi şi de drumuri – Straßenbauarbeiten",
+            "por": "Alemanha – Construção de estradas e vias rápidas – Straßenbauarbeiten",
+            "slk": "Nemecko – Stavebné práce na výstavbe diaľnic, ciest – Straßenbauarbeiten",
+            "fra": "Allemagne – Travaux de construction d'autoroutes, de routes – Straßenbauarbeiten",
+            "mlt": "Il-Ġermanja – Kostruzzjoni għal toroq u toroq ewlenija – Straßenbauarbeiten",
+            "deu": "Deutschland – Bauarbeiten für Fernstraßen und Straßen – Straßenbauarbeiten",
+            "lit": "Vokietija – Greitkelių, kelių tiesimo darbai – Straßenbauarbeiten",
+            "ita": "Germania – Lavori di costruzione di strade e autostrade – Straßenbauarbeiten",
+            "bul": "Гepмaния – Строителни и монтажни работи на автомагистрали и пътища – Straßenbauarbeiten",
+            "slv": "Nemčija – Gradbena dela na daljinskih cestah in cestah – Straßenbauarbeiten",
+            "eng": "Germany – Construction work for highways, roads – Straßenbauarbeiten"
+          }
+        },
+        {
+          "notice-identifier": "70fd582e-9620-4c63-9fe7-b4d71359dbc0",
+          "deadline-receipt-request": [
+            "2026-03-17T10:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "108082-2026",
+          "procedure-identifier": "e4fb9e3f-a6c3-4426-951a-4c052785d390",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45212212",
+            "45112720",
+            "45112713",
+            "45233222",
+            "45233253",
+            "45262620",
+            "45247110",
+            "77314100",
+            "77310000",
+            "45112720",
+            "45212212",
+            "45112713",
+            "45233222",
+            "45233253",
+            "45262620",
+            "45247110",
+            "77310000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-16+01:00",
+          "buyer-name": {
+            "deu": [
+              "BäderBetriebe Frankfurt GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Uszoda vagy úszómedence kivitelezése – Neubau Rebstockbad Frankfurt am Main",
+            "lav": "Vācija – Peldbaseina celtniecības darbi – Neubau Rebstockbad Frankfurt am Main",
+            "swe": "Tyskland – Anläggningsarbete för simbassäng – Neubau Rebstockbad Frankfurt am Main",
+            "gle": "An Ghearmáin – Construction work for swimming pool – Neubau Rebstockbad Frankfurt am Main",
+            "ell": "Γερμανία – Κατασκευαστικές εργασίες για κολυμβητήριο – Neubau Rebstockbad Frankfurt am Main",
+            "spa": "Alemania – Trabajos de construcción de piscinas – Neubau Rebstockbad Frankfurt am Main",
+            "est": "Saksamaa – Ujumisbasseini ehitustööd – Neubau Rebstockbad Frankfurt am Main",
+            "nld": "Duitsland – Bouwwerkzaamheden voor zwembad – Neubau Rebstockbad Frankfurt am Main",
+            "fin": "Saksa – Uimahallin rakennustyöt – Neubau Rebstockbad Frankfurt am Main",
+            "pol": "Niemcy – Roboty budowlane w zakresie basenów pływackich – Neubau Rebstockbad Frankfurt am Main",
+            "hrv": "Njemačka – Građevinski radovi na plivačkom bazenu – Neubau Rebstockbad Frankfurt am Main",
+            "ces": "Německo – Stavební úpravy plováren – Neubau Rebstockbad Frankfurt am Main",
+            "dan": "Tyskland – Byggearbejde i forbindelse med svømmebassiner – Neubau Rebstockbad Frankfurt am Main",
+            "ron": "Germania – Lucrări de construcţii de piscine – Neubau Rebstockbad Frankfurt am Main",
+            "por": "Alemanha – Construção de piscinas – Neubau Rebstockbad Frankfurt am Main",
+            "slk": "Nemecko – Stavebné práce na stavbe bazénov – Neubau Rebstockbad Frankfurt am Main",
+            "fra": "Allemagne – Travaux de construction de piscines – Neubau Rebstockbad Frankfurt am Main",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni għall-pixxini ta’ l-għawm – Neubau Rebstockbad Frankfurt am Main",
+            "deu": "Deutschland – Bauarbeiten für Schwimmbäder – Neubau Rebstockbad Frankfurt am Main",
+            "lit": "Vokietija – Plaukimo baseino statybos darbai – Neubau Rebstockbad Frankfurt am Main",
+            "ita": "Germania – Lavori di costruzione per piscine – Neubau Rebstockbad Frankfurt am Main",
+            "bul": "Гepмaния – Строителни и монтажни работи по общо изграждане на плувни басейни – Neubau Rebstockbad Frankfurt am Main",
+            "slv": "Nemčija – Gradbena dela na kopališčih – Neubau Rebstockbad Frankfurt am Main",
+            "eng": "Germany – Construction work for swimming pool – Neubau Rebstockbad Frankfurt am Main"
+          }
+        },
+        {
+          "notice-identifier": "9078d802-f729-43f0-a082-b293245b7a3d",
+          "deadline-receipt-request": [
+            "2026-03-23T11:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "121071-2026",
+          "procedure-identifier": "07394cc4-1f2f-410f-8faf-ff5ac82bf60d",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45233120",
+            "45112000",
+            "45233162",
+            "45233251",
+            "45233120",
+            "45112000",
+            "45233162",
+            "45233251"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-20+01:00",
+          "buyer-name": {
+            "deu": [
+              "Landratsamt Passau"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Közút építése – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "lav": "Vācija – Ceļu būvdarbi – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "swe": "Tyskland – Vägbygge – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "gle": "An Ghearmáin – Road construction works – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "ell": "Γερμανία – Έργα οδοποιίας – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "spa": "Alemania – Trabajos de construcción de carreteras – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "est": "Saksamaa – Teeehitustööd – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "nld": "Duitsland – Wegenbouwwerken – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "fin": "Saksa – Tienrakennustyöt – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "pol": "Niemcy – Roboty w zakresie budowy dróg – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "hrv": "Njemačka – Građevinski radovi na cesti – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "ces": "Německo – Výstavba silnic – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "dan": "Tyskland – Anlæg af vej – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "ron": "Germania – Lucrări de construcţii de drumuri – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "por": "Alemanha – Construção de estradas – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "slk": "Nemecko – Stavebné práce na výstavbe ciest – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "fra": "Allemagne – Travaux de construction de routes – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "mlt": "Il-Ġermanja – Xogħlijiet tal-kostruzzjoni tat-toroq – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "deu": "Deutschland – Straßenbauarbeiten – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "lit": "Vokietija – Kelių tiesimo darbai – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "ita": "Germania – Lavori di costruzione di strade – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "bul": "Гepмaния – Строителни и монтажни работи на пътища – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "slv": "Nemčija – Gradbena dela na cestah – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott",
+            "eng": "Germany – Road construction works – Kreisstraße PA 15; Ersatzneubau der Rottbrücke, Neubau eines Radweges und Instandsetzung der Straßenbrücke über die Rott"
+          }
+        },
+        {
+          "notice-identifier": "0a0602a4-fdd2-4f04-a6ed-a63a82805e3a",
+          "deadline-receipt-request": [
+            "2026-03-30T10:00:00+02:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "134240-2026",
+          "procedure-identifier": "736e7b8b-d4f8-410e-92d3-390fd8c9f7be",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45232450",
+            "34928200",
+            "45112700",
+            "45112720",
+            "45212212",
+            "45233252",
+            "45233253",
+            "45247110",
+            "45262620",
+            "77310000",
+            "77314100",
+            "45232450",
+            "34928200",
+            "45112700",
+            "45112720",
+            "45212212",
+            "45233252",
+            "45233253",
+            "45247110",
+            "45262620",
+            "77310000",
+            "77314100"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-26+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Essen, vertreten durch die GVE Grundstücksverwaltung Stadt Essen GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Vízelvezető rendszer építése – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "lav": "Vācija – Drenāžas izbūve – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "swe": "Tyskland – Anläggningsarbeten för dränering – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "gle": "An Ghearmáin – Drainage construction works – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ell": "Γερμανία – Εργασίες κατασκευής δικτύου αποστράγγισης – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "spa": "Alemania – Trabajos de construcción de sistemas de desagüe – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "est": "Saksamaa – Drenaažiehitustööd – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "nld": "Duitsland – Bouwwerkzaamheden voor afwatering – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "fin": "Saksa – Vedenpoistojärjestelmän rakennustyöt – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "pol": "Niemcy – Roboty budowlane w zakresie budowy upustów – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "hrv": "Njemačka – Građevinski radovi na drenaži – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ces": "Německo – Výstavba drenážních systémů – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "dan": "Tyskland – Bygge-anlægsarbejder: dræningssystemer – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ron": "Germania – Lucrări de construcţii de drenaje – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "por": "Alemanha – Obras de construção para drenagem – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "slk": "Nemecko – Odvodňovacie stavebné práce – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "fra": "Allemagne – Travaux de construction pour système de drainage – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni tad-drenaġġi – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "deu": "Deutschland – Bauarbeiten für Entwässerungsanlagen – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "lit": "Vokietija – Drenažo statybos darbai – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "ita": "Germania – Lavori di costruzione di scarichi – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "bul": "Гepмaния – Дренажни работи – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "slv": "Nemčija – Gradbena dela na odvodnjavanju – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen",
+            "eng": "Germany – Drainage construction works – 216_6-500 HBB Neubau Hallenbad Essen-Borbeck hier: Außenanlagen"
+          }
+        }
+      ],
+      "totalNoticeCount": 58,
+      "iterationNextToken": null,
+      "timedOut": false
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-03T19:44:49.577058Z"
+  }
+]

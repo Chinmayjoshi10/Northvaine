@@ -1,0 +1,899 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.ted.europa.eu/v3/notices/search",
+    "request_json": {
+      "query": "notice-type=can-standard AND classification-cpv IN (45331000 45331200) AND buyer-country IN (DEU FRA ITA ESP) AND publication-date>=20260601 AND publication-date<=20260915",
+      "fields": [
+        "publication-number",
+        "notice-type",
+        "notice-subtype",
+        "notice-version",
+        "notice-identifier",
+        "procedure-identifier",
+        "publication-date",
+        "deadline-receipt-request",
+        "winner-decision-date",
+        "buyer-name",
+        "buyer-country",
+        "winner-name",
+        "winner-country",
+        "classification-cpv",
+        "notice-title",
+        "estimated-value-lot",
+        "total-value"
+      ],
+      "limit": 10,
+      "page": 1
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "notices": [
+        {
+          "notice-identifier": "be5afd70-7a1c-4bc3-9fc6-0d7162c87185",
+          "notice-type": "can-standard",
+          "publication-number": "370752-2026",
+          "winner-country": [
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "72bdf773-1c88-4662-b228-76e3a7f1defa",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 1550000,
+          "classification-cpv": [
+            "45311200",
+            "45330000",
+            "45311200",
+            "45330000",
+            "45421000",
+            "45410000",
+            "45331000",
+            "45441000",
+            "45442100"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "fra": [
+              "Etablissement Public Foncier Ile-de-France"
+            ]
+          },
+          "winner-decision-date": [
+            "2025-06-11+02:00",
+            "2025-06-11+02:00",
+            "2025-06-11+02:00"
+          ],
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "HFC Technics",
+              "HFC Technics",
+              "ACORUS-PEINTISOL"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Villamos szerelés – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "lav": "Francija – Elektroinstalācijas darbi – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "swe": "Frankrike – Elektriska kopplingsarbeten – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "gle": "An Fhrainc – Electrical fitting work – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "ell": "Γαλλία – Εγκατάσταση ηλεκτρικών εξαρτημάτων – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "spa": "Francia – Trabajos de instalación de accesorios eléctricos – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "est": "Prantsusmaa – Elektriseadmete paigaldustööd – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "nld": "Frankrijk – Aanbrengen van elektrische fittings – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "fin": "Ranska – Sähköasennustyöt – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "pol": "Francja – Roboty w zakresie instalacji elektrycznych – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "hrv": "Francuska – Elektromontažni radovi – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "ces": "Francie – Instalace a montáž elektrických zařízení – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "dan": "Frankrig – Installation af elarmaturer – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "ron": "Franţa – Lucrări de conexiuni electrice – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "por": "França – Instalação de acessórios eléctricos – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "slk": "Francúzsko – Elektroinštalačné práce v neobytných budovách – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "fra": "France – Travaux d'installations électriques – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "mlt": "Franza – Xogħol tal-apparati elettriċi – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "deu": "Frankreich – Elektroinstallationsarbeiten – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "lit": "Prancūzija – Elektros įrengimo darbai – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "ita": "Francia – Lavori di connessione elettrici – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "bul": "Фpaнция – Работи по свързване на електрически инсталации – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "slv": "Francija – Inštalacija električnega pribora (fitingov) – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France",
+            "eng": "France – Electrical fitting work – Travaux de bâtiments divers corps d'état pour les biens acquis et loués par l'EPF Île-de-France"
+          }
+        },
+        {
+          "notice-identifier": "f5fb3731-ff0c-4943-9437-4bfa55459b46",
+          "notice-type": "can-standard",
+          "publication-number": "371346-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "7b1577c5-82cc-4e1e-899e-6643de210e5c",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 1376661.77,
+          "classification-cpv": [
+            "45331200",
+            "45331210",
+            "45331220",
+            "45212212",
+            "45331200",
+            "45331210",
+            "45331220",
+            "45212212"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Leinfelden-Echterdingen, Amt für Hochbau"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Julius Gaiser GmbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Szellőzés és légkondicionálás szerelése – Hallenbad LE - Lüftungstechnik",
+            "lav": "Vācija – Ventilācijas un gaisa kondicionēšanas ierīču uzstādīšana – Hallenbad LE - Lüftungstechnik",
+            "swe": "Tyskland – Installation av ventilation och luftkonditionering – Hallenbad LE - Lüftungstechnik",
+            "gle": "An Ghearmáin – Ventilation and air-conditioning installation work – Hallenbad LE - Lüftungstechnik",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων αερισμού και κλιματισμού – Hallenbad LE - Lüftungstechnik",
+            "spa": "Alemania – Trabajos de instalación de ventilación y aire acondicionado – Hallenbad LE - Lüftungstechnik",
+            "est": "Saksamaa – Ventilatsiooni- ja kliimaseadmete paigaldamine – Hallenbad LE - Lüftungstechnik",
+            "nld": "Duitsland – Installeren van ventilatie en airconditioning – Hallenbad LE - Lüftungstechnik",
+            "fin": "Saksa – Ilmanvaihto- ja ilmastointilaitteiden asennustyöt – Hallenbad LE - Lüftungstechnik",
+            "pol": "Niemcy – Instalowanie urządzeń wentylacyjnych i klimatyzacyjnych – Hallenbad LE - Lüftungstechnik",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije i klimatizacije – Hallenbad LE - Lüftungstechnik",
+            "ces": "Německo – Instalace a montáž větrání a klimatizace – Hallenbad LE - Lüftungstechnik",
+            "dan": "Tyskland – Installation af ventilations- og klimaanlæg – Hallenbad LE - Lüftungstechnik",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie şi de aer condiţionat – Hallenbad LE - Lüftungstechnik",
+            "por": "Alemanha – Instalação de ventilação e de ar condicionado – Hallenbad LE - Lüftungstechnik",
+            "slk": "Nemecko – Inštalovanie ventilácie a klimatizácie – Hallenbad LE - Lüftungstechnik",
+            "fra": "Allemagne – Travaux d'installation de matériel de ventilation et de climatisation – Hallenbad LE - Lüftungstechnik",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni u ta’ l-arja kkondizzjonata – Hallenbad LE - Lüftungstechnik",
+            "deu": "Deutschland – Installation von Lüftungs- und Klimaanlagen – Hallenbad LE - Lüftungstechnik",
+            "lit": "Vokietija – Vėdinimo ir oro kondicionavimo įrengimo darbai – Hallenbad LE - Lüftungstechnik",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione e climatizzazione – Hallenbad LE - Lüftungstechnik",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни и климатични тръбопроводни инсталации – Hallenbad LE - Lüftungstechnik",
+            "slv": "Nemčija – Inštalacija prezračevalnih in klimatskih naprav – Hallenbad LE - Lüftungstechnik",
+            "eng": "Germany – Ventilation and air-conditioning installation work – Hallenbad LE - Lüftungstechnik"
+          }
+        },
+        {
+          "notice-identifier": "181f37c1-5383-4b0c-ad20-b7c81ec9388b",
+          "notice-type": "can-standard",
+          "publication-number": "371787-2026",
+          "estimated-value-lot": [
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00",
+            "0.00"
+          ],
+          "winner-country": [
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "8c3ce524-6fff-4d14-b8fb-f949888175b0",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 4524664.34,
+          "classification-cpv": [
+            "45000000",
+            "45262660",
+            "45111100",
+            "45261420",
+            "45443000",
+            "45421100",
+            "45340000",
+            "45324000",
+            "45431000",
+            "45432111",
+            "45421150",
+            "45313100",
+            "45310000",
+            "45331000"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "fra": [
+              "EST METROPOLE HABITAT"
+            ]
+          },
+          "winner-decision-date": [
+            "2026-02-03+02:00",
+            "2026-02-03+02:00",
+            "2026-02-03+02:00",
+            "2025-12-16+02:00",
+            "2025-12-16+02:00",
+            "2026-02-03+02:00",
+            "2026-02-03+02:00",
+            "2026-02-03+02:00",
+            "2026-02-03+02:00",
+            "2026-02-19+02:00",
+            "2026-02-19+02:00",
+            "2026-02-03+02:00",
+            "2025-12-16+02:00"
+          ],
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "QUALITR",
+              "MACONNERIE DU CLUZEL",
+              "BBE",
+              "ROLANDO & POISSON SAS",
+              "LORILLARD",
+              "STEPHAN METALLERIE",
+              "EDP",
+              "SERVBAT",
+              "CHANEL",
+              "TUCI MENUISERIE",
+              "ACAF Lyon",
+              "JASON",
+              "DOUZET"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Építési munkák – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "lav": "Francija – Celtniecības darbi – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "swe": "Frankrike – Anläggningsarbete – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "gle": "An Fhrainc – Construction work – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "ell": "Γαλλία – Κατασκευαστικές εργασίες – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "spa": "Francia – Trabajos de construcción – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "est": "Prantsusmaa – Ehitustööd – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "nld": "Frankrijk – Bouwwerkzaamheden – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "fin": "Ranska – Rakennustyöt – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "pol": "Francja – Roboty budowlane – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "hrv": "Francuska – Građevinski radovi – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "ces": "Francie – Stavební práce – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "dan": "Frankrig – Bygge- og anlægsarbejder – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "ron": "Franţa – Lucrări de construcţii – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "por": "França – Construção – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "slk": "Francúzsko – Stavebné práce – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "fra": "France – Travaux de construction – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "mlt": "Franza – Xogħol tal-kostruzzjoni – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "deu": "Frankreich – Bauarbeiten – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "lit": "Prancūzija – Statybos darbai – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "ita": "Francia – Lavori di costruzione – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "bul": "Фpaнция – Строителни и монтажни работи – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "slv": "Francija – Gradbena dela – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800",
+            "eng": "France – Construction work – Réhabilitation énergétique et restructuration de 60 logements collectifs en site vide de la résidence Bellevue - Bâtiments A (20 logements) et J (40 logements) - Alloti en 13 lots à Saint-Priest 69800"
+          }
+        },
+        {
+          "notice-identifier": "2a94031f-a402-4658-9a86-f63c969f9821",
+          "notice-type": "can-standard",
+          "publication-number": "371788-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "820c045a-c2db-4978-b483-92c590d3223b",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 15718637.09,
+          "classification-cpv": [
+            "45331210",
+            "45331210"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "deu": [
+              "Universität zu Köln Vergabestelle Bau"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Pleitz GmbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "lav": "Vācija – Ventilācijas ierīkošana – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "swe": "Tyskland – Installation av ventilation – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "gle": "An Ghearmáin – Ventilation installation work – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "spa": "Alemania – Trabajos de instalación de ventilación – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "pol": "Niemcy – Instalowanie wentylacji – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "ces": "Německo – Instalace a montáž větrání – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "por": "Alemanha – Instalação de ventilação – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "slk": "Nemecko – Inštalovanie ventilácie – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "fra": "Allemagne – Travaux d'installation de ventilation – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik",
+            "eng": "Germany – Ventilation installation work – UzK, Geb. 330, Neubau Chemie, Raumlufttechnik"
+          }
+        },
+        {
+          "notice-identifier": "bcdae20d-44a7-4d1d-bc89-1095e46812fa",
+          "notice-type": "can-standard",
+          "publication-number": "371884-2026",
+          "winner-country": [
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "47bf44ed-ac21-4928-9742-12a7f6ceacfc",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 13134048,
+          "classification-cpv": [
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45211000",
+            "45111291",
+            "45223220",
+            "45261420",
+            "45262650",
+            "45421152",
+            "45421000",
+            "44220000",
+            "44316500",
+            "45431100",
+            "45331000",
+            "45317000",
+            "45442110",
+            "45261220"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "fra": [
+              "SA ERILIA, société à mission"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "MIDI TRAVAUX PUBLICS",
+              "SOCIETE DE CONSTRUCTION ALPINE",
+              "ETANCHEITE COUVERTURE FACADE MEDITERRANEE",
+              "BATOIT",
+              "E.U.R.L. VETERO ISOLATION",
+              "LES ZELLES",
+              "PB MENUISERIE",
+              "ETABLISSEMENT BERTON",
+              "SARL JOLISOL",
+              "AMD ENERGIES",
+              "SERTI",
+              "SPECIAL BATIMENT PEINTURE",
+              "SOCIETE GENERALE ENTREPRISE RENOVATION"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Többlakásos épületek és önálló házak kivitelezése – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "lav": "Francija – Daudzdzīvokļu ēku un individuālo māju celtniecības darbi – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "swe": "Frankrike – Anläggningsarbeten för flerfamiljshus – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "gle": "An Fhrainc – Construction work for multi-dwelling buildings and individual houses – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "ell": "Γαλλία – Γενικές κατασκευαστικές εργασίες για πολυκατοικίες και μονοκατοικίες – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "spa": "Francia – Trabajos de construcción de inmuebles de viviendas colectivas y unifamiliares – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "est": "Prantsusmaa – Korterelamute ja eramute ehitustööd – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "nld": "Frankrijk – Bouwwerkzaamheden voor meergezins- en eengezinswoningen – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "fin": "Ranska – Rivi- ja kerrostalojen sekä erillistalojen rakennustyöt – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "pol": "Francja – Roboty budowlane w zakresie budownictwa wielorodzinnego i domów jednorodzinnych – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "hrv": "Francuska – Radovi na podizanju višestambenih zgrada i obiteljskih kuća – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "ces": "Francie – Stavební úpravy bytových domů a rodinných domů – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "dan": "Frankrig – Byggearbejder på enfamiliehuse og boligejendomme – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "ron": "Franţa – Lucrări de construcţii de imobile colective şi de case individuale – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "por": "França – Construção de edifícios de vários fogos e de moradias independentes – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "slk": "Francúzsko – Stavebné práce na stavbe viacbytových budov a rodinných domov – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "fra": "France – Travaux de construction d'immeubles collectifs et de maisons individuelles – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "mlt": "Franza – Xogħol tal-kostruzzjoni ta’ binja b’ħafna abitazzjonijiet u ta’ djar individwali – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "deu": "Frankreich – Bauarbeiten für Mehrfamilienhäuser und Einfamilienhäuser – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "lit": "Prancūzija – Daugiabučių ir individualių namų statybos darbai – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "ita": "Francia – Lavori di costruzione di condomini e case unifamiliari – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "bul": "Фpaнция – Строителни и монтажни работи по общо изграждане на жилищни сгради – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "slv": "Francija – Gradbena dela na večstanovanjskih stavbah in enodružinskih stavbah – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang",
+            "eng": "France – Construction work for multi-dwelling buildings and individual houses – Marchés de travaux pour la construction de 62 logements et annexes à Berre l'Etang"
+          }
+        },
+        {
+          "notice-identifier": "7d5d0a0b-3006-490d-85c3-eb1648fc924b",
+          "notice-type": "can-standard",
+          "publication-number": "372438-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "efcd4b75-aa79-4627-b59b-24cbb2abf848",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 190831.72,
+          "classification-cpv": [
+            "45331210",
+            "45331200",
+            "42512300",
+            "45331210",
+            "45331200",
+            "42512300"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "deu": [
+              "Verbandsgemeindeverwaltung Trier-Land"
+            ]
+          },
+          "winner-decision-date": [
+            "2026-05-29+02:00"
+          ],
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "Hand in Hand Industriemontage GmbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "lav": "Vācija – Ventilācijas ierīkošana – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "swe": "Tyskland – Installation av ventilation – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "gle": "An Ghearmáin – Ventilation installation work – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "spa": "Alemania – Trabajos de instalación de ventilación – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "pol": "Niemcy – Instalowanie wentylacji – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "ces": "Německo – Instalace a montáž větrání – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "por": "Alemanha – Instalação de ventilação – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "slk": "Nemecko – Inštalovanie ventilácie – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "fra": "Allemagne – Travaux d'installation de ventilation – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel",
+            "eng": "Germany – Ventilation installation work – Lüftungsarbeiten im Rahmen der Generalsanierung der Grundschule Kordel"
+          }
+        },
+        {
+          "notice-identifier": "ec361934-3bbc-4ea0-8d9f-f075d5e1b201",
+          "notice-type": "can-standard",
+          "publication-number": "372755-2026",
+          "winner-country": [
+            "DEU"
+          ],
+          "procedure-identifier": "ecf6675a-fc23-4e79-9aca-6bb49b055167",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331000",
+            "45324000",
+            "45331000",
+            "45324000"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Frankfurt am Main - Amt für Bau und Immobilien"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "deu": [
+              "EDO-Gesellschaft für Trockenbau mbH"
+            ]
+          },
+          "notice-title": {
+            "hun": "Németország – Fűtés, szellőzés és légkondicionálás szerelése – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "lav": "Vācija – Apkures, ventilācijas un gaisa kondicionieru uzstādīšana – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "swe": "Tyskland – Installation av värme, ventilation och luftkonditionering – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "gle": "An Ghearmáin – Heating, ventilation and air-conditioning installation work – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων θέρμανσης, αερισμού και κλιματισμού – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "spa": "Alemania – Trabajos de instalación de calefacción, ventilación y aire acondicionado – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "est": "Saksamaa – Kütte-, ventilatsiooni- ja kliimaseadmete paigaldustööd – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "nld": "Duitsland – Installeren van verwarming, ventilatie en airconditioning – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "fin": "Saksa – Lämmitys-, ilmanvaihto- ja ilmastointilaitteiden asennustyöt – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "pol": "Niemcy – Instalowanie urządzeń grzewczych, wentylacyjnych i klimatyzacyjnych – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "hrv": "Njemačka – Radovi instaliranja grijanja, ventilacije i klimatizacije – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "ces": "Německo – Instalace a montáž topení, větrání a klimatizace – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "dan": "Tyskland – Installation af varme-, ventilations- og klimaanlæg – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire, de ventilare şi de aer condiţionat – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "por": "Alemanha – Instalação de aquecimento, ventilação e ar condicionado – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "slk": "Nemecko – Inštalovanie kúrenia, ventilácie a klimatizácie – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "fra": "Allemagne – Travaux d'installation de matériel de chauffage, de ventilation et de climatisation – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana, ventilazzjoni u ta’ l-arja kkondizzjonata – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "deu": "Deutschland – Installation von Heizungs-, Lüftungs- und Klimaanlagen – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "lit": "Vokietija – Šildymo, vėdinimo ir oro kondicionavimo įrengimo darbai – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento, ventilazione e climatizzazione – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни, вентилационни и климатични тръбопроводни инсталации – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "slv": "Nemčija – Inštalacija ogrevalnih, prezračevalnih in klimatskih naprav – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke",
+            "eng": "Germany – Heating, ventilation and air-conditioning installation work – Personal- und Organisationsamt, Lüftungsdruckdecke und Kühldecke"
+          }
+        },
+        {
+          "notice-identifier": "4eb9efb1-5ea1-4bbf-9856-b20e1e7fab3e",
+          "notice-type": "can-standard",
+          "publication-number": "373927-2026",
+          "winner-country": [
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "3f9ea6bd-03f8-4ba8-8013-ece0d450095d",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 3823709.91,
+          "classification-cpv": [
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45260000",
+            "45223220",
+            "45262660",
+            "45261000",
+            "45421000",
+            "45410000",
+            "45421146",
+            "45440000",
+            "45432111",
+            "45260000",
+            "45432130",
+            "45260000",
+            "45311200",
+            "45331000",
+            "45212422",
+            "45421151",
+            "45212500",
+            "90911200"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "fra": [
+              "Département de L'Indre"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "Mommers Habitat Construction",
+              "3D SECUR",
+              "PASQUET",
+              "SARL LEVOUX PASCAL",
+              "MENUISERIE ESCALIER COMBLE",
+              "ENTREPRISE LECOMTE",
+              "COULEURS DECO",
+              "[natural person redacted 3]",
+              "GAUGRY D.P",
+              "SARL PROCESS SOL",
+              "ALGECO",
+              "FENELEC",
+              "BRUNET",
+              "ILLICO",
+              "AXIMA REFRIGERATION FRANCE",
+              "groupe benard",
+              "MULTIS"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Tetőfedés és egyéb különleges szakipari munkák – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "lav": "Francija – Jumtu klāšanas darbi un citi amatspecifiski celtniecības darbi – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "swe": "Frankrike – Takarbeten och andra byggarbeten som kräver specialkunskaper eller specialverktyg – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "gle": "An Fhrainc – Roof works and other special trade construction works – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "ell": "Γαλλία – Στεγαστικές εργασίες και άλλες κατασκευαστικές εργασίες ειδικής φύσης – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "spa": "Francia – Trabajos de techado y otros trabajos de construcción especializados – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "est": "Prantsusmaa – Katusetööd ja muud eriehitustööd – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "nld": "Frankrijk – Dakdekkers- en andere gespecialiseerde bouwwerkzaamheden – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "fin": "Ranska – Kattotyöt ja muut rakennusalan erikoistyöt – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "pol": "Francja – Roboty w zakresie wykonywania pokryć i konstrukcji dachowych i inne podobne roboty specjalistycze – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "hrv": "Francuska – Radovi na krovu i drugi posebni građevinski zanatski radovi – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "ces": "Francie – Střešní práce a jiné specializované stavební práce – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "dan": "Frankrig – Tagarbejde og andet specialarbejde inden for byggefagene – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "ron": "Franţa – Lucrări de acoperire şi alte lucrări speciale de construcţii – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "por": "França – Edificação de coberturas e outras construções especializadas – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "slk": "Francúzsko – Zastrešovacie práce a iné špeciálne remeselné stavebné práce – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "fra": "France – Travaux de couverture et travaux d'autres corps de métier spécialisés – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "mlt": "Franza – Xogħlijiet tas-suqfa u xogħlijiet oħrajn speċjali tas-sena tal-kostruzzjoni – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "deu": "Frankreich – Dachdeckarbeiten und Spezialbauarbeiten – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "lit": "Prancūzija – Stogų dengimas ir kiti specialieji profesiniai statybos darbai – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "ita": "Francia – Lavori di copertura ed altri lavori speciali di costruzione – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "bul": "Фpaнция – Покривни и други специализирани строителни и монтажни работи – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "slv": "Francija – Krovska dela in druga gradbena dela specialnih strok – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre",
+            "eng": "France – Roof works and other special trade construction works – Travaux Décret tertiaire - Demi-Pension - Couvertures au collège George Sand de La Châtre"
+          }
+        },
+        {
+          "notice-identifier": "511f7574-4615-482d-adee-0839888ada0d",
+          "notice-type": "can-standard",
+          "publication-number": "374032-2026",
+          "winner-country": [
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA",
+            "FRA"
+          ],
+          "procedure-identifier": "3287cc74-c41c-4b12-9703-c73b8ca0b111",
+          "buyer-country": [
+            "FRA"
+          ],
+          "total-value": 13634046,
+          "classification-cpv": [
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45210000",
+            "45110000",
+            "45262210",
+            "45261210",
+            "45422000",
+            "44220000",
+            "45421150",
+            "45421152",
+            "45432130",
+            "45421146",
+            "44800000",
+            "45421140",
+            "45330000",
+            "45331000",
+            "45311200",
+            "42416100",
+            "45317000",
+            "45255500",
+            "45231112",
+            "45112700",
+            "45331230",
+            "45111213"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-01+02:00",
+          "buyer-name": {
+            "fra": [
+              "Tours métropole Val de Loire"
+            ]
+          },
+          "notice-version": 1,
+          "winner-name": {
+            "fra": [
+              "HENOT TP",
+              "BRIAND CONSTRUCTION",
+              "ESTA",
+              "CRUARD CHARPENRE ET CONSTRUCTION",
+              "MENUISERIE G. DUBOIS",
+              "MENUISERIE G. DUBOIS",
+              "ARARAT",
+              "DORDOIGNE",
+              "DORDOIGNE",
+              "ACTIF SARL",
+              "SZYMANSKI FRERES",
+              "EIFFAGE ENERGIE",
+              "EIFFAGE ENERGIE",
+              "CEGELEC VAL DE LOIRE",
+              "KONE",
+              "SOLARSCIENCE",
+              "DRILLHEAT",
+              "EUROVIA CENTRE LOIRE",
+              "ANVALIA",
+              "VITRIPRO"
+            ]
+          },
+          "notice-title": {
+            "hun": "Franciaország – Magasépítési munka – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "lav": "Francija – Ēku celtniecības darbi – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "swe": "Frankrike – Byggnadsanläggning – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "gle": "An Fhrainc – Building construction work – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "ell": "Γαλλία – Εργασίες κατασκευής κτιρίων – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "spa": "Francia – Trabajos de construcción de inmuebles – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "est": "Prantsusmaa – Hoonete ehitustööd – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "nld": "Frankrijk – Bouwen van gebouwen – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "fin": "Ranska – Talonrakentaminen – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "pol": "Francja – Roboty budowlane w zakresie budynków – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "hrv": "Francuska – Radovi na podizanju zgrada – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "ces": "Francie – Bytová výstavba – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "dan": "Frankrig – Byggearbejde – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "ron": "Franţa – Lucrări de construcţii de clădiri – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "por": "França – Construção de edifícios – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "slk": "Francúzsko – Stavebné práce na stavbe budov – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "fra": "France – Travaux de construction de bâtiments – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "mlt": "Franza – Xogħol tal-kostruzzjoni tal-bini – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "deu": "Frankreich – Bauleistungen im Hochbau – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "lit": "Prancūzija – Pastatų statybos darbai – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "ita": "Francia – Lavori generali di costruzione di edifici – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "bul": "Фpaнция – Строителни и монтажни работи по общо изграждане на сгради – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "slv": "Francija – Gradbena dela na stavbah – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours",
+            "eng": "France – Building construction work – Construction d'un bâtiment d'accueil et de restauration labellisé Passivhaus sur le site de la Cité des Formations à Tours"
+          }
+        },
+        {
+          "notice-identifier": "a69b84e4-148c-4707-a2a0-5e4a4be7c116",
+          "notice-type": "can-standard",
+          "publication-number": "374930-2026",
+          "winner-country": [
+            "ESP"
+          ],
+          "procedure-identifier": "daa53a25-3712-4066-8fd4-22d54ed593df",
+          "buyer-country": [
+            "ESP"
+          ],
+          "total-value": 336800,
+          "classification-cpv": [
+            "42510000",
+            "45331000",
+            "42510000",
+            "45331000"
+          ],
+          "notice-subtype": "29",
+          "publication-date": "2026-06-02+02:00",
+          "buyer-name": {
+            "spa": [
+              "Junta de Gobierno del Ayuntamiento de Torrevieja"
+            ]
+          },
+          "winner-decision-date": [
+            "2026-04-30+02:00"
+          ],
+          "notice-version": 1,
+          "winner-name": {
+            "spa": [
+              "ITERSA INSTALACIONES, SL"
+            ]
+          },
+          "notice-title": {
+            "hun": "Spanyolország – Hőcserélő egység, légkondicionáló, hűtő- és szűrőberendezés – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "lav": "Spānija – Siltummaiņi, gaisa kondicionēšanas un dzesēšanas iekārtas un filtrēšanas ierīces – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "swe": "Spanien – Värmeväxlare, luftkonditionerings- och kylutrustning samt filtreringsapparater – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "gle": "An Spáinn – Heat-exchange units, air-conditioning and refrigerating equipment, and filtering machinery – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "ell": "Ισπανία – Μονάδες εναλλαγής θερμότητας, κλιματιστικός και ψυκτικός εξοπλισμός, μηχανήματα διήθησης – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "spa": "España – Intercambiadores de calor, equipos de aire acondicionado y refrigeración y aparatos para filtrar – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "est": "Hispaania – Soojusvahetid, kliima- ja jahutusseadmed ja filtreerimisseadmed – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "nld": "Spanje – Warmtewisselaars, luchtbehandelings- en koeluitrusting en filtertoestellen – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "fin": "Espanja – Lämmönvaihtimet, ilmastointi-, jäähdytys- ja suodatuslaitteet – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "pol": "Hiszpania – Wymienniki ciepła, urządzenia do konfekcjonowania powietrza i urządzenia chłodzące oraz maszyny filtrujące – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "hrv": "Španjolska – Izmjenjivači topline, oprema za klimatizaciju i hlađenje i uređaji za filtriranje – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "ces": "Španělsko – Výměníky tepla, klimatizační nebo chladící zařízení a filtrační stroje – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "dan": "Spanien – Varmevekslere, udstyr til luftkonditionering og køling, apparater til filtrering – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "ron": "Spania – Schimbătoare de căldură, echipamente de climatizare şi refrigerare şi dispozitive de filtrare – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "por": "Espanha – Permutadores de calor, equipamento de ar condicionado e de refrigeração, aparelhos de filtragem – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "slk": "Španielsko – Výmenníky tepla, klimatizačné a chladiace zariadenia a filtračné stroje – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "fra": "Espagne – Échangeurs de chaleur, matériel de climatisation et de réfrigération et matériel de filtration – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "mlt": "Spanja – Unitajiet ta' l-iskambji tas-sħana, apparat ta' l-arja kondizzjonata u tar-rifriġerazzjoni, u makkinarju ta' l-iffiltrar – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "deu": "Spanien – Wärmeaustauscher, Klimaanlagen und Kältemaschinen sowie Filtriergeräte – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "lit": "Ispanija – Šilumokaičiai, oro kondicionavimo ir šaldymo įrenginiai ir filtravimo mašinos – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "ita": "Spagna – Scambiatori di calore, apparecchiature refrigeranti, condizionatori e dispositivi di filtraggio – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "bul": "Иcпaния – Топлообменници, оборудване за климатизиране и охлаждане и оборудване за филтриране – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "slv": "Španija – Toplotni izmenjalniki, klimatske naprave in naprave za hlajenje ter stroji za filtriranje – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto",
+            "eng": "Spain – Heat-exchange units, air-conditioning and refrigerating equipment, and filtering machinery – Contratación de la adquisición de máquinas de aire acondicionado para diversos inmuebles del Ayuntamiento, mediante tramitación anticipada del gasto"
+          }
+        }
+      ],
+      "totalNoticeCount": 710,
+      "iterationNextToken": null,
+      "timedOut": false
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-03T19:44:43.952155Z"
+  }
+]

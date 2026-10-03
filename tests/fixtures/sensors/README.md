@@ -36,3 +36,11 @@ Each file is a JSON list of `RecordedExchange` objects (`northvaine/sensors/repl
 ## Attribution
 
 Source: TED, Publications Office of the European Union, ted.europa.eu
+
+## Natural-person redaction (orchestrator review, 2026-10-04)
+
+The by-eye review of the TED recording replaced three `winner-name` values whose legal form makes
+the name a natural person (a German sole trader `e.K.` naming its owner, a `GbR` of two named
+individuals, a French `Ets` with a full personal name) with `[natural person redacted N]`.
+Limited companies named after founders (GmbH, S.A., SARL...) are legal entities and are kept.
+Placeholders are distinct, so de-duplication behaviour is unchanged.

@@ -1,0 +1,638 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.ted.europa.eu/v3/notices/search",
+    "request_json": {
+      "query": "notice-type=cn-standard AND classification-cpv IN (42500000 42510000) AND buyer-country IN (DEU FRA ITA ESP) AND publication-date>=20260201 AND publication-date<=20260531",
+      "fields": [
+        "publication-number",
+        "notice-type",
+        "notice-subtype",
+        "notice-version",
+        "notice-identifier",
+        "procedure-identifier",
+        "publication-date",
+        "deadline-receipt-request",
+        "winner-decision-date",
+        "buyer-name",
+        "buyer-country",
+        "winner-name",
+        "winner-country",
+        "classification-cpv",
+        "notice-title",
+        "estimated-value-lot",
+        "total-value"
+      ],
+      "limit": 10,
+      "page": 1
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "notices": [
+        {
+          "notice-identifier": "8e75bc1d-11f4-43ac-a03b-a7c304b4a767",
+          "deadline-receipt-request": [
+            "2026-03-03T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "74344-2026",
+          "procedure-identifier": "8e75bc1d-11f4-43ac-a03b-a7c304b4a767",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45251000",
+            "42511110",
+            "45251000"
+          ],
+          "notice-subtype": "17",
+          "publication-date": "2026-02-02+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadtwerke Kiel AG"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Erőmű és fűtőmű építése – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "lav": "Vācija – Elektrostaciju un termocentrāļu celtniecības darbi – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "swe": "Tyskland – Bygg- och anläggningsarbeten: kraftverk och värmekraftverk – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "gle": "An Ghearmáin – Construction works for power plants and heating plants – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "ell": "Γερμανία – Κατασκευαστικές εργασίες για μονάδες ηλεκτροπαραγωγής και θερμοηλεκτρισμού – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "spa": "Alemania – Trabajos de construcción de centrales eléctricas y plantas de calefacción – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "est": "Saksamaa – Elektri- ja soojusjaamade ehitustööd – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "nld": "Duitsland – Bouwwerkzaamheden voor krachtcentrales en verwarmingsinstallaties – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "fin": "Saksa – Voimaloiden ja lämpökeskusten rakentamistyöt – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "pol": "Niemcy – Roboty budowlane w zakresie budowy elektrowni i elektrociepłowni – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "hrv": "Njemačka – Građevinski radovi na elektranama i toplanama – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "ces": "Německo – Výstavba elektráren a tepláren – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "dan": "Tyskland – Bygge- og anlægsarbejde i forbindelse med kraftværker og varmeværker – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "ron": "Germania – Lucrări de construcţii de centrale electrice şi de centrale termice – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "por": "Alemanha – Construção de centrais eléctricas e instalações de aquecimento – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "slk": "Nemecko – Výstavba elektrární a teplární – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "fra": "Allemagne – Travaux de construction de centrales électriques et de centrales thermiques – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "mlt": "Il-Ġermanja – Xogħol tal-kostruzzjoni għall-impjanti ta’ l-enerġija u l-impjanti tas-sħana – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "deu": "Deutschland – Bauarbeiten für Kraftwerke und Heizkraftwerke – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "lit": "Vokietija – Jėgainių ir katilinių statybos darbai – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "ita": "Germania – Lavori di costruzione di centrali elettriche e impianti di riscaldamento – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "bul": "Гepмaния – Строителни и монтажни работи по общо изграждане на електроцентрали и топлоцентрали – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "slv": "Nemčija – Gradbena dela na elektrarnah in toplarnah – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR",
+            "eng": "Germany – Construction works for power plants and heating plants – Errichtung einer Großwärmepumpenanlage im Rahmen des Gesamtprojektes CALOR"
+          }
+        },
+        {
+          "notice-identifier": "60cd1c8d-52a2-4e11-b703-6166f2e1c9bd",
+          "deadline-receipt-request": [
+            "2026-02-23T19:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "75868-2026",
+          "procedure-identifier": "b2a552e4-4de7-47a1-b851-4f75bac5fa37",
+          "buyer-country": [
+            "ESP"
+          ],
+          "total-value": 363390.68,
+          "classification-cpv": [
+            "42500000",
+            "42500000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "spa": [
+              "Rectorado de la Universitat de València"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Spanyolország – Hűtő- és szellőzőberendezések – Suministro e instalación de un equipo de producción de climatización",
+            "lav": "Spānija – Dzesēšanas un ventilācijas iekārtas – Suministro e instalación de un equipo de producción de climatización",
+            "swe": "Spanien – Kyl- och ventilationsutrustning – Suministro e instalación de un equipo de producción de climatización",
+            "gle": "An Spáinn – Cooling and ventilation equipment – Suministro e instalación de un equipo de producción de climatización",
+            "ell": "Ισπανία – Εξοπλισμός ψύξης και αερισμού – Suministro e instalación de un equipo de producción de climatización",
+            "spa": "España – Equipos de refrigeración y ventilación – Suministro e instalación de un equipo de producción de climatización",
+            "est": "Hispaania – Jahutus- ja ventilatsiooniseadmed – Suministro e instalación de un equipo de producción de climatización",
+            "nld": "Spanje – Koel- en ventilatie-uitrusting – Suministro e instalación de un equipo de producción de climatización",
+            "fin": "Espanja – Jäähdytys- ja ilmanvaihtolaitteet – Suministro e instalación de un equipo de producción de climatización",
+            "pol": "Hiszpania – Urządzenia chłodzące i wentylacyjne – Suministro e instalación de un equipo de producción de climatización",
+            "hrv": "Španjolska – Rashladni uređaji i uređaji za provjetravanje – Suministro e instalación de un equipo de producción de climatización",
+            "ces": "Španělsko – Chlazení a ventilace – Suministro e instalación de un equipo de producción de climatización",
+            "dan": "Spanien – Køle- og ventilationsudstyr – Suministro e instalación de un equipo de producción de climatización",
+            "ron": "Spania – Echipamente de răcire şi de ventilare – Suministro e instalación de un equipo de producción de climatización",
+            "por": "Espanha – Equipamento de refrigeração e ventilação – Suministro e instalación de un equipo de producción de climatización",
+            "slk": "Španielsko – Chladiace a ventilačné zariadenia – Suministro e instalación de un equipo de producción de climatización",
+            "fra": "Espagne – Matériel de réfrigération et de ventilation – Suministro e instalación de un equipo de producción de climatización",
+            "mlt": "Spanja – Apparat tat-tkessieħ u l-ventilazzjoni – Suministro e instalación de un equipo de producción de climatización",
+            "deu": "Spanien – Kühl- und Lüftungseinrichtungen – Suministro e instalación de un equipo de producción de climatización",
+            "lit": "Ispanija – Aušinimo ir vėdinimo įrenginiai – Suministro e instalación de un equipo de producción de climatización",
+            "ita": "Spagna – Apparecchiature di raffreddamento e ventilazione – Suministro e instalación de un equipo de producción de climatización",
+            "bul": "Иcпaния – Оборудване за охлаждане и вентилиране – Suministro e instalación de un equipo de producción de climatización",
+            "slv": "Španija – Naprave za hlajenje in prezračevanje – Suministro e instalación de un equipo de producción de climatización",
+            "eng": "Spain – Cooling and ventilation equipment – Suministro e instalación de un equipo de producción de climatización"
+          }
+        },
+        {
+          "notice-identifier": "b6779f41-0328-4059-b636-de2813955055",
+          "deadline-receipt-request": [
+            "2026-03-06T10:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "75877-2026",
+          "estimated-value-lot": [
+            "333000.00"
+          ],
+          "procedure-identifier": "cd8d20a9-0fca-4908-8ca5-fdb8d1a7e688",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 11735000,
+          "classification-cpv": [
+            "45315000",
+            "42511110",
+            "44163121",
+            "45331100",
+            "45315000",
+            "42511110",
+            "44163121",
+            "45331100"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "deu": [
+              "SBH | Schulbau Hamburg"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fűtés és egyéb villamosépület-berendezések villamos szerelése – Brödermannsweg 2 - Heizung",
+            "lav": "Vācija – Apkures un citu ēkas elektroietaišu ierīkošanas darbi – Brödermannsweg 2 - Heizung",
+            "swe": "Tyskland – Elektriska installationer av värme och övrig elektrisk utrustning för byggnader – Brödermannsweg 2 - Heizung",
+            "gle": "An Ghearmáin – Electrical installation work of heating and other electrical building-equipment – Brödermannsweg 2 - Heizung",
+            "ell": "Γερμανία – Ηλεκτρολογικές εργασίες εγκατάστασης θέρμανσης και άλλου ηλεκτρολογικού εξοπλισμού κτιρίων – Brödermannsweg 2 - Heizung",
+            "spa": "Alemania – Trabajos de instalación eléctrica de equipos de calefacción y otros equipos eléctricos para edificios – Brödermannsweg 2 - Heizung",
+            "est": "Saksamaa – Kütteseadmete ja muude elektriliste hooneseadmete elektripaigaldustööd – Brödermannsweg 2 - Heizung",
+            "nld": "Duitsland – Elektrische installatiewerkzaamheden voor verwarming en andere elektrische apparatuur in gebouwen – Brödermannsweg 2 - Heizung",
+            "fin": "Saksa – Lämmityslaitteiden ja rakennusten muiden sähkölaitteiden sähköasennukset – Brödermannsweg 2 - Heizung",
+            "pol": "Niemcy – Instalowanie urządzeń elektrycznego ogrzewania i innego sprzętu elektrycznego w budynkach – Brödermannsweg 2 - Heizung",
+            "hrv": "Njemačka – Radovi na postavljanju električne instalacije za grijanje i druge električne opreme u zgradama – Brödermannsweg 2 - Heizung",
+            "ces": "Německo – Elektroinstalační práce pro vytápění budov a montáž jiných elektrická zařízení – Brödermannsweg 2 - Heizung",
+            "dan": "Tyskland – Installation af el-varme og andre elektriske apparater i bygninger – Brödermannsweg 2 - Heizung",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire şi de alte echipamente electrice pentru clădiri – Brödermannsweg 2 - Heizung",
+            "por": "Alemanha – Instalação de equipamento para aquecimento e de outro equipamento eléctrico em edifícios – Brödermannsweg 2 - Heizung",
+            "slk": "Nemecko – Elektroinštalácie kúrenia a iných elektrických zariadení v budovách – Brödermannsweg 2 - Heizung",
+            "fra": "Allemagne – Travaux d'installation de chauffage électrique et d'autres équipements électriques de bâtiment – Brödermannsweg 2 - Heizung",
+            "mlt": "Il-Ġermanja – Xogħol ta’ l-istallazzjoni elettrika ta’ l-apparat tas-sħana u apparat elettriku ieħor tal-bini – Brödermannsweg 2 - Heizung",
+            "deu": "Deutschland – Heizungs- und sonstige Elektroinstallationen in Gebäuden – Brödermannsweg 2 - Heizung",
+            "lit": "Vokietija – Šildymo ir kitos pastato elektros įrangos elektros instaliacijos montavimo darbai – Brödermannsweg 2 - Heizung",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento e di altri impianti elettrici per edifici – Brödermannsweg 2 - Heizung",
+            "bul": "Гepмaния – Строителни и монтажни работи на електрическо отопление и други електрически уредби в сгради – Brödermannsweg 2 - Heizung",
+            "slv": "Nemčija – Elektroinštalacijska dela na ogrevanju in drugi električni opremi v stavbah – Brödermannsweg 2 - Heizung",
+            "eng": "Germany – Electrical installation work of heating and other electrical building-equipment – Brödermannsweg 2 - Heizung"
+          }
+        },
+        {
+          "notice-identifier": "73e81758-c44d-4408-8d53-513f2f6c37ae",
+          "deadline-receipt-request": [
+            "2026-03-09T10:30:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "76720-2026",
+          "procedure-identifier": "bdb48073-b03f-42ed-8747-63b2452db698",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331210",
+            "45331200",
+            "42512300",
+            "45331210",
+            "45331200",
+            "42512300"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "deu": [
+              "Stadt Waldenbuch"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés szerelése – Lüftungstechnische Anlagen",
+            "lav": "Vācija – Ventilācijas ierīkošana – Lüftungstechnische Anlagen",
+            "swe": "Tyskland – Installation av ventilation – Lüftungstechnische Anlagen",
+            "gle": "An Ghearmáin – Ventilation installation work – Lüftungstechnische Anlagen",
+            "ell": "Γερμανία – Εργασίες εγκατάστασης αερισμού – Lüftungstechnische Anlagen",
+            "spa": "Alemania – Trabajos de instalación de ventilación – Lüftungstechnische Anlagen",
+            "est": "Saksamaa – Ventilatsiooniseadmete paigaldustööd – Lüftungstechnische Anlagen",
+            "nld": "Duitsland – Installeren van ventilatiesystemen – Lüftungstechnische Anlagen",
+            "fin": "Saksa – Ilmanvaihtojärjestelmän rakennustyöt – Lüftungstechnische Anlagen",
+            "pol": "Niemcy – Instalowanie wentylacji – Lüftungstechnische Anlagen",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije – Lüftungstechnische Anlagen",
+            "ces": "Německo – Instalace a montáž větrání – Lüftungstechnische Anlagen",
+            "dan": "Tyskland – Arbejde i forbindelse med ventilationsanlæg – Lüftungstechnische Anlagen",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie – Lüftungstechnische Anlagen",
+            "por": "Alemanha – Instalação de ventilação – Lüftungstechnische Anlagen",
+            "slk": "Nemecko – Inštalovanie ventilácie – Lüftungstechnische Anlagen",
+            "fra": "Allemagne – Travaux d'installation de ventilation – Lüftungstechnische Anlagen",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni – Lüftungstechnische Anlagen",
+            "deu": "Deutschland – Installation von Lüftungsanlagen – Lüftungstechnische Anlagen",
+            "lit": "Vokietija – Vėdinimo įrengimo darbai – Lüftungstechnische Anlagen",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione – Lüftungstechnische Anlagen",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни тръбопроводни инсталации – Lüftungstechnische Anlagen",
+            "slv": "Nemčija – Inštalacija prezračevalnih naprav – Lüftungstechnische Anlagen",
+            "eng": "Germany – Ventilation installation work – Lüftungstechnische Anlagen"
+          }
+        },
+        {
+          "notice-identifier": "f7c24a1c-cd47-4a30-9e65-067030f911d4",
+          "deadline-receipt-request": [
+            "2026-03-06T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "77877-2026",
+          "procedure-identifier": "c740c973-5701-46d1-a27a-425096f373e7",
+          "buyer-country": [
+            "FRA"
+          ],
+          "classification-cpv": [
+            "42512300",
+            "42512300",
+            "42510000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "fra": [
+              "VILLE DE SAINT ANDRÉ"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Franciaország – Hűtőegységet és a hűtő-fűtő ciklus megfordítására alkalmas szelepet is tartalmazó berendezés – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "lav": "Francija – Apkures, ventilācijas un klimatkontroles ierīču komplekti – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "swe": "Frankrike – Värme-, ventilations- och luftkonditioneringsenheter – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "gle": "An Fhrainc – HVAC packages – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "ell": "Γαλλία – Συγκροτήματα θέρμανσης, αερισμού και κλιματισμού – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "spa": "Francia – Unidades de climatización – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "est": "Prantsusmaa – Kütte-, ventilatsiooni- ja kliimaseadmed – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "nld": "Frankrijk – Verwarmings-, ventilatie- en luchtbehandelingspakketten – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "fin": "Ranska – Lämmitys-, ilmanvaihto- ja ilmastointilaitteistot – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "pol": "Francja – Układy HVAC – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "hrv": "Francuska – Paket uređaji za grijanje, prozračivanje i klimatizaciju (HVAC) – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "ces": "Francie – Zařízení pro topení, větrání a klimatizaci – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "dan": "Frankrig – Klima-aggregater – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "ron": "Franţa – Unităţi de climatizare – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "por": "França – Sistemas de aquecimento, ventilação e ar condicionado – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "slk": "Francúzsko – Súpravy HVAC (na použitie na ropných a plynových plošinách) – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "fra": "France – Unités de climatisation – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "mlt": "Franza – Pakketti HVAC – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "deu": "Frankreich – Heizungs-, Lüftungs- und Klimaanlagen – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "lit": "Prancūzija – Šildymo, vėdinimo ir oro kondicionavimo įrangos komplektai – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "ita": "Francia – Unità di riscaldamento, ventilazione e condizionamento d'aria – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "bul": "Фpaнция – Климатични агрегати – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "slv": "Francija – Naprave za ogrevanje, prezračevanje in klimatizacijo – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE",
+            "eng": "France – HVAC packages – ACQUISITION DE CLIMATISEURS ET DIVERSES FOURNITURES POUR LA COMMUNE DE SAINT- ANDRE"
+          }
+        },
+        {
+          "notice-identifier": "51be9cb7-07ab-4f3c-a24a-06e22ad2f014",
+          "deadline-receipt-request": [
+            "2026-02-09T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "78025-2026",
+          "procedure-identifier": "d9dfe67c-b700-4460-9fbb-a9ebc7b70e09",
+          "buyer-country": [
+            "DEU"
+          ],
+          "total-value": 1,
+          "classification-cpv": [
+            "45331000",
+            "45331210",
+            "42500000",
+            "45331000",
+            "45331210",
+            "42500000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "deu": [
+              "Universitätsklinikum Bonn AöR"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Fűtés, szellőzés és légkondicionálás szerelése – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "lav": "Vācija – Apkures, ventilācijas un gaisa kondicionieru uzstādīšana – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "swe": "Tyskland – Installation av värme, ventilation och luftkonditionering – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "gle": "An Ghearmáin – Heating, ventilation and air-conditioning installation work – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων θέρμανσης, αερισμού και κλιματισμού – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "spa": "Alemania – Trabajos de instalación de calefacción, ventilación y aire acondicionado – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "est": "Saksamaa – Kütte-, ventilatsiooni- ja kliimaseadmete paigaldustööd – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "nld": "Duitsland – Installeren van verwarming, ventilatie en airconditioning – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "fin": "Saksa – Lämmitys-, ilmanvaihto- ja ilmastointilaitteiden asennustyöt – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "pol": "Niemcy – Instalowanie urządzeń grzewczych, wentylacyjnych i klimatyzacyjnych – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "hrv": "Njemačka – Radovi instaliranja grijanja, ventilacije i klimatizacije – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "ces": "Německo – Instalace a montáž topení, větrání a klimatizace – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "dan": "Tyskland – Installation af varme-, ventilations- og klimaanlæg – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "ron": "Germania – Lucrări de instalare de echipamente de încălzire, de ventilare şi de aer condiţionat – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "por": "Alemanha – Instalação de aquecimento, ventilação e ar condicionado – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "slk": "Nemecko – Inštalovanie kúrenia, ventilácie a klimatizácie – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "fra": "Allemagne – Travaux d'installation de matériel de chauffage, de ventilation et de climatisation – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tas-sħana, ventilazzjoni u ta’ l-arja kkondizzjonata – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "deu": "Deutschland – Installation von Heizungs-, Lüftungs- und Klimaanlagen – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "lit": "Vokietija – Šildymo, vėdinimo ir oro kondicionavimo įrengimo darbai – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "ita": "Germania – Lavori di installazione di impianti di riscaldamento, ventilazione e climatizzazione – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "bul": "Гepмaния – Строителни и монтажни работи на отоплителни, вентилационни и климатични тръбопроводни инсталации – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "slv": "Nemčija – Inštalacija ogrevalnih, prezračevalnih in klimatskih naprav – OPZ -Teilsanierung: Lüftungsarbeiten",
+            "eng": "Germany – Heating, ventilation and air-conditioning installation work – OPZ -Teilsanierung: Lüftungsarbeiten"
+          }
+        },
+        {
+          "notice-identifier": "7fb281f4-963a-4194-b236-3b7c7a2c082d",
+          "deadline-receipt-request": [
+            "2026-03-13T09:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "78808-2026",
+          "procedure-identifier": "c97f1d79-9ca1-4b7b-91fd-61eed82471a0",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331200",
+            "42512000",
+            "45331220",
+            "42512000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-03+01:00",
+          "buyer-name": {
+            "deu": [
+              "Landeshauptstadt Hannover - Fachbereich Gebäudemanagement"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés és légkondicionálás szerelése – 434 Kältetechnik",
+            "lav": "Vācija – Ventilācijas un gaisa kondicionēšanas ierīču uzstādīšana – 434 Kältetechnik",
+            "swe": "Tyskland – Installation av ventilation och luftkonditionering – 434 Kältetechnik",
+            "gle": "An Ghearmáin – Ventilation and air-conditioning installation work – 434 Kältetechnik",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων αερισμού και κλιματισμού – 434 Kältetechnik",
+            "spa": "Alemania – Trabajos de instalación de ventilación y aire acondicionado – 434 Kältetechnik",
+            "est": "Saksamaa – Ventilatsiooni- ja kliimaseadmete paigaldamine – 434 Kältetechnik",
+            "nld": "Duitsland – Installeren van ventilatie en airconditioning – 434 Kältetechnik",
+            "fin": "Saksa – Ilmanvaihto- ja ilmastointilaitteiden asennustyöt – 434 Kältetechnik",
+            "pol": "Niemcy – Instalowanie urządzeń wentylacyjnych i klimatyzacyjnych – 434 Kältetechnik",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije i klimatizacije – 434 Kältetechnik",
+            "ces": "Německo – Instalace a montáž větrání a klimatizace – 434 Kältetechnik",
+            "dan": "Tyskland – Installation af ventilations- og klimaanlæg – 434 Kältetechnik",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie şi de aer condiţionat – 434 Kältetechnik",
+            "por": "Alemanha – Instalação de ventilação e de ar condicionado – 434 Kältetechnik",
+            "slk": "Nemecko – Inštalovanie ventilácie a klimatizácie – 434 Kältetechnik",
+            "fra": "Allemagne – Travaux d'installation de matériel de ventilation et de climatisation – 434 Kältetechnik",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni u ta’ l-arja kkondizzjonata – 434 Kältetechnik",
+            "deu": "Deutschland – Installation von Lüftungs- und Klimaanlagen – 434 Kältetechnik",
+            "lit": "Vokietija – Vėdinimo ir oro kondicionavimo įrengimo darbai – 434 Kältetechnik",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione e climatizzazione – 434 Kältetechnik",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни и климатични тръбопроводни инсталации – 434 Kältetechnik",
+            "slv": "Nemčija – Inštalacija prezračevalnih in klimatskih naprav – 434 Kältetechnik",
+            "eng": "Germany – Ventilation and air-conditioning installation work – 434 Kältetechnik"
+          }
+        },
+        {
+          "notice-identifier": "a5e52d03-c894-46b1-bc1e-911fb48646fa",
+          "deadline-receipt-request": [
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00",
+            "2026-03-10T12:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "79474-2026",
+          "procedure-identifier": "bbd0572e-fd8d-4ebf-9915-2fcb53d18373",
+          "buyer-country": [
+            "FRA"
+          ],
+          "classification-cpv": [
+            "45212222",
+            "45421140",
+            "45315300",
+            "45313100",
+            "45421130",
+            "45421141",
+            "42521000",
+            "44316500",
+            "45112710",
+            "45223220",
+            "45262311",
+            "45261100",
+            "45261420",
+            "45410000",
+            "45330000",
+            "44142000",
+            "45331000",
+            "45300000",
+            "45432110",
+            "45442100",
+            "45421146",
+            "45231112",
+            "45231112",
+            "45262311",
+            "45261100",
+            "45261420",
+            "45421130",
+            "45421140",
+            "45410000",
+            "45421141",
+            "45300000",
+            "45432110",
+            "45432110",
+            "45331000",
+            "45315300",
+            "45313100",
+            "45112710",
+            "44316500",
+            "45442100",
+            "45421146",
+            "45330000",
+            "42521000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-04+01:00",
+          "buyer-name": {
+            "fra": [
+              "MAIRIE DE LOGNES"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Franciaország – Edzőterem, tornacsarnok építése – Construction du gymnase La Maillière Michel Ricart",
+            "lav": "Francija – Vingrošanas zāles celtniecības darbi – Construction du gymnase La Maillière Michel Ricart",
+            "swe": "Frankrike – Byggnation av gymnastiksal – Construction du gymnase La Maillière Michel Ricart",
+            "gle": "An Fhrainc – Gymnasium construction work – Construction du gymnase La Maillière Michel Ricart",
+            "ell": "Γαλλία – Κατασκευαστικές εργασίες για γυμναστήρια – Construction du gymnase La Maillière Michel Ricart",
+            "spa": "Francia – Trabajos de construcción de gimnasios – Construction du gymnase La Maillière Michel Ricart",
+            "est": "Prantsusmaa – Võimlate ehitustööd – Construction du gymnase La Maillière Michel Ricart",
+            "nld": "Frankrijk – Bouwen van gymnastiekzaal – Construction du gymnase La Maillière Michel Ricart",
+            "fin": "Ranska – Voimistelusalien rakennustyöt – Construction du gymnase La Maillière Michel Ricart",
+            "pol": "Francja – Roboty budowlane związane z salami gimnastycznymi – Construction du gymnase La Maillière Michel Ricart",
+            "hrv": "Francuska – Građevinski radovi na gimnastičkim dvoranama – Construction du gymnase La Maillière Michel Ricart",
+            "ces": "Francie – Výstavba tělocvičen – Construction du gymnase La Maillière Michel Ricart",
+            "dan": "Frankrig – Opførelse af gymnastiksale – Construction du gymnase La Maillière Michel Ricart",
+            "ron": "Franţa – Lucrări de construcţii de săli de gimnastică – Construction du gymnase La Maillière Michel Ricart",
+            "por": "França – Construção de ginásio – Construction du gymnase La Maillière Michel Ricart",
+            "slk": "Francúzsko – Stavebné práce na telocvičniach – Construction du gymnase La Maillière Michel Ricart",
+            "fra": "France – Travaux de construction de gymnases – Construction du gymnase La Maillière Michel Ricart",
+            "mlt": "Franza – Xogħol ta' kostruzzjoni ta' ġimms – Construction du gymnase La Maillière Michel Ricart",
+            "deu": "Frankreich – Bau von Turnhallen – Construction du gymnase La Maillière Michel Ricart",
+            "lit": "Prancūzija – Gimnastikos salių statybos darbai – Construction du gymnase La Maillière Michel Ricart",
+            "ita": "Francia – Lavori di costruzione di palestre – Construction du gymnase La Maillière Michel Ricart",
+            "bul": "Фpaнция – Строителни и монтажни работи по общо изграждане на гимнастически салони – Construction du gymnase La Maillière Michel Ricart",
+            "slv": "Francija – Gradbena dela na telovadnicah – Construction du gymnase La Maillière Michel Ricart",
+            "eng": "France – Gymnasium construction work – Construction du gymnase La Maillière Michel Ricart"
+          }
+        },
+        {
+          "notice-identifier": "d0647ad7-8d9b-406c-b804-c110bb7f01c2",
+          "deadline-receipt-request": [
+            "2026-02-16T15:00:00+01:00",
+            "2026-02-16T15:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "80718-2026",
+          "estimated-value-lot": [
+            "351000",
+            "515264"
+          ],
+          "procedure-identifier": "3882f093-736c-42b5-89e4-f313de4b07c4",
+          "buyer-country": [
+            "ESP"
+          ],
+          "total-value": 866264,
+          "classification-cpv": [
+            "33100000",
+            "33157400",
+            "33195000",
+            "42512300",
+            "33195000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-04+01:00",
+          "buyer-name": {
+            "spa": [
+              "Departamento de Salud de Valencia Clínico. Dirección Económica-Gerencia"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Spanyolország – Orvosi felszerelések – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "lav": "Spānija – Medicīniskās ierīces – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "swe": "Spanien – Medicinsk utrustning – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "gle": "An Spáinn – Medical equipments – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "ell": "Ισπανία – Ιατρικές συσκευές – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "spa": "España – Equipamiento médico – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "est": "Hispaania – Meditsiiniseadmed – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "nld": "Spanje – Medische apparatuur – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "fin": "Espanja – Lääketieteelliset laitteet – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "pol": "Hiszpania – Urządzenia medyczne – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "hrv": "Španjolska – Medicinske naprave – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "ces": "Španělsko – Zdravotnické přístroje – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "dan": "Spanien – Medicinsk udstyr – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "ron": "Spania – Echipamente medicale – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "por": "Espanha – Equipamento médico – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "slk": "Španielsko – Zdravotnícke vybavenie – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "fra": "Espagne – Équipements médicaux – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "mlt": "Spanja – Tagħmir mediku – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "deu": "Spanien – Medizinische Geräte – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "lit": "Ispanija – Medicinos įranga – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "ita": "Spagna – Apparecchiature mediche – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "bul": "Иcпaния – Медицинско оборудване – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "slv": "Španija – Medicinska oprema – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia.",
+            "eng": "Spain – Medical equipments – Suministro de respiradores y sistemas de monitorización para Area de paciente crítico adulto con destino al Servicio de Medicina Intensiva del Hospital Clínico Universitario de Valencia, del Departamento de Salud Clínico-Malvarrosa de Valencia."
+          }
+        },
+        {
+          "notice-identifier": "ec757eee-7cc4-4b5f-9b50-2a5626b97c7e",
+          "deadline-receipt-request": [
+            "2026-03-05T10:00:00+01:00"
+          ],
+          "notice-type": "cn-standard",
+          "publication-number": "82128-2026",
+          "procedure-identifier": "87ebf364-f8c5-4acd-9868-9e82524818fb",
+          "buyer-country": [
+            "DEU"
+          ],
+          "classification-cpv": [
+            "45331200",
+            "42521000",
+            "45331210",
+            "45333000",
+            "45333000",
+            "45331200",
+            "42521000",
+            "45331210",
+            "45333000",
+            "45333000"
+          ],
+          "notice-subtype": "16",
+          "publication-date": "2026-02-04+01:00",
+          "buyer-name": {
+            "deu": [
+              "GVE Grundstücksverwaltung Stadt Essen GmbH"
+            ]
+          },
+          "notice-version": 1,
+          "notice-title": {
+            "hun": "Németország – Szellőzés és légkondicionálás szerelése – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "lav": "Vācija – Ventilācijas un gaisa kondicionēšanas ierīču uzstādīšana – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "swe": "Tyskland – Installation av ventilation och luftkonditionering – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "gle": "An Ghearmáin – Ventilation and air-conditioning installation work – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "ell": "Γερμανία – Εργασίες εγκαταστάσεων αερισμού και κλιματισμού – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "spa": "Alemania – Trabajos de instalación de ventilación y aire acondicionado – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "est": "Saksamaa – Ventilatsiooni- ja kliimaseadmete paigaldamine – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "nld": "Duitsland – Installeren van ventilatie en airconditioning – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "fin": "Saksa – Ilmanvaihto- ja ilmastointilaitteiden asennustyöt – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "pol": "Niemcy – Instalowanie urządzeń wentylacyjnych i klimatyzacyjnych – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "hrv": "Njemačka – Radovi instaliranja ventilacije i klimatizacije – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "ces": "Německo – Instalace a montáž větrání a klimatizace – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "dan": "Tyskland – Installation af ventilations- og klimaanlæg – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "ron": "Germania – Lucrări de instalare de echipament de ventilaţie şi de aer condiţionat – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "por": "Alemanha – Instalação de ventilação e de ar condicionado – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "slk": "Nemecko – Inštalovanie ventilácie a klimatizácie – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "fra": "Allemagne – Travaux d'installation de matériel de ventilation et de climatisation – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "mlt": "Il-Ġermanja – Xogħol ta’ stallazzjoni tal-ventilazzjoni u ta’ l-arja kkondizzjonata – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "deu": "Deutschland – Installation von Lüftungs- und Klimaanlagen – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "lit": "Vokietija – Vėdinimo ir oro kondicionavimo įrengimo darbai – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "ita": "Germania – Lavori di installazione di impianti di ventilazione e climatizzazione – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "bul": "Гepмaния – Строителни и монтажни работи на вентилационни и климатични тръбопроводни инсталации – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "slv": "Nemčija – Inštalacija prezračevalnih in klimatskih naprav – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage",
+            "eng": "Germany – Ventilation and air-conditioning installation work – 217-400FWH-2026 Neubau Feuerwehrgerätehaus, hier: Lufttechnische Anlage und Abgasanlage"
+          }
+        }
+      ],
+      "totalNoticeCount": 278,
+      "iterationNextToken": null,
+      "timedOut": false
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-03T19:44:38.273707Z"
+  }
+]
