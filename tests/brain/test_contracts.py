@@ -234,19 +234,29 @@ def test_validate_configured_models_passes_with_real_ids() -> None:
 
 # --- brain/llm.py, budget.py, fencing.py, prompts/: frozen signatures ------------------------
 
+# T2.4 adds two keyword-only parameters to the three call entry points. Both are required by
+# findings that postdate the frozen contract, not conveniences:
+#   `session`  - check_budget and record_call need it. Without a session the day and lifetime
+#                caps are never summed, so the two caps that protect the wallet across processes
+#                would silently not apply (D1, D3).
+#   `max_tokens` - probe P1 found the API publishes no max_output_tokens, only context_length,
+#                so the output bound has to come from the caller (T2.0 "two traps").
 LLM_CONTRACT = {
     "complete_json": [
         ("tier", KW, NO), ("prompt", KW, NO), ("variables", KW, NO), ("output_model", KW, NO),
         ("purpose", KW, NO), ("run", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
-        ("reasoning_effort", KW, "none"),
+        ("reasoning_effort", KW, "none"), ("session", KW, None),
+        ("max_tokens", KW, 1024),
     ],
     "complete_text": [
         ("tier", KW, NO), ("prompt", KW, NO), ("variables", KW, NO), ("purpose", KW, NO),
         ("run", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
-        ("reasoning_effort", KW, "none"),
+        ("reasoning_effort", KW, "none"), ("session", KW, None),
+        ("max_tokens", KW, 1024),
     ],
     "embed": [
         ("text", KW, NO), ("purpose", KW, NO), ("run", KW, NO), ("workspace_id", KW, None),
+        ("session", KW, None),
     ],
     "list_models": [],
     "estimate_cost": [("model", POS, NO), ("usage", POS, NO)],
