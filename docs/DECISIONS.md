@@ -286,3 +286,28 @@ EUROVIA CZ 7x, COLAS FRANCE 3x, PORR 3x, SWIETELSKY 3x.
   putting a qualified, sourced, dated company in front of a human, who then finds mutual
   contacts and negotiates. CLAUDE.md #5 stands: AI never negotiates. The evidence discipline is
   what makes that handoff worth acting on.
+
+## 2026-10-03 — The product, in the founder's words
+
+- **D26 — Northvaine is an assistant that does the laborious research a business's own sales
+  team would have missed.** Not a replacement for salespeople: a tireless, multilingual
+  researcher working beside them.
+  **Founder, 3 Oct, verbatim in substance:** *"we just want to give an assistant who will do the
+  laborious research for them that they would have missed - their team of 20 salesmen have
+  missed."*
+  **Why this is the right framing, and load-bearing rather than marketing:**
+  - It is **honest about the claim**. Twenty capable salespeople still cannot read Latvian,
+    Romanian and Polish procurement portals every morning. That is not a failing of theirs; it
+    is a limit of human attention. The claim is tirelessness and language reach, not superior
+    judgement.
+  - It is **already the metric**. "What the team missed" is exactly net-new reach (ARCHITECTURE
+    §0.1), and the one-tap "did you already know about this?" (D17) is its test. The headline
+    claim and its measurement are the same quantity - so the product cannot drift into claiming
+    something it does not measure.
+  - It **sets the bar correctly**. A good lead the owner already had is worth little. The
+    product is only working when it surfaces something a competent team would have missed.
+  - It **keeps the human in the deal** (CLAUDE.md #5). The assistant researches; a person calls,
+    finds who they know, and negotiates.
+
+  **Use this sentence** as the opening line of the README and the demo video. The temptation
+  when writing those will be to claim more; claiming more would make the headline unmeasurable.
