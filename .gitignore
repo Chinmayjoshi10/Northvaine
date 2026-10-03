@@ -17,6 +17,10 @@ env/
 .env
 .env.local
 .env.*.local
+# Catch-all: any .env sidecar (.env.bak, .env.old, .env.prod, editor backups).
+# .env.example is the one exception - it lists names only, never values.
+.env*
+!.env.example
 
 # IDE
 .vscode/
