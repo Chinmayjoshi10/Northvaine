@@ -53,3 +53,38 @@ rendered. General, one place, and it covers every future test rather than the db
 
 Parked here rather than done in M2 because no M2 ticket owns `tests/conftest.py`, and the M2
 board has already lost three build runs to tickets reaching outside their write scope.
+
+## Distributor / channel-partner lens (validated 3 Oct 2026, build after the hackathon)
+
+**The engine already computes this and currently throws it away.** The buyer-or-seller gate
+(CLAUDE.md #3) rejects competitors and sellers of the client's own offer. A company that already
+sells the client's product in a target market is exactly either a competitor **or** a channel
+partner - the same classification, opposite verdict depending on the lens.
+
+**Evidenced live, TED CPV 44912000 (stone products), award notices since Jan 2025:** 99 notices,
+naming real suppliers into those markets - ARABESQUE, EUROETANS INDUSTRI, AMP GRUP, M&M FRIMAR,
+TEHCOM (RO), Benders Sverige AB (SE).
+
+**Why low volume is acceptable here, unlike the buyer lens.** A business needs five good
+distributors, not six hundred leads. One channel partner doing EUR 1M a year outweighs a year of
+prospecting, so a lens producing ~99 candidates a year across the EU is a result rather than a
+trickle. The ROI arithmetic is different in kind from the radar's.
+
+**Two honest limits:**
+- Competitor vs. partner is a commercial judgement, not a data fact. The system can surface and
+  evidence the company; the owner decides which it is. (Consistent with CLAUDE.md #5.)
+- The strongest distributor signal - company-level import/customs data - is not public in the EU
+  the way it is for the US or India. The EU route is award winners, company registries, trade
+  fair exhibitor lists and trade press: weaker, but demonstrably non-empty.
+
+### The one cheap thing to do *before* then
+
+**Make the gate persist what it rejects, labelled with why.** Rejected sellers are computed
+today and discarded. Keeping them - a `rejected_as` reason on the record rather than a delete -
+costs almost nothing now and preserves the entire lens for later. Discarding them is
+unrecoverable, the same asymmetry as `llm_calls.provider` (D15): everything else about this lens
+is reversible configuration, but data never written cannot be reconstructed.
+
+Fold into whichever milestone first implements the gate (M4/M5), as a column and a non-delete,
+**not** as a distributor feature. The lens itself stays out of hackathon scope (ARCHITECTURE
+§0.2: B2B radar is the hackathon product).
