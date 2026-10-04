@@ -46,12 +46,7 @@ def test_upgrade_downgrade_upgrade_round_trip(migrated_url: str) -> None:
             await conn.execute(text("SELECT count(*) FROM event_concepts WHERE level = 0"))
         ).scalar_one()
         views = (
-            await conn.execute(
-                text(
-                    "SELECT count(*) FROM pg_views "
-                    "WHERE viewname IN ('patterns', 'verified_claims')"
-                )
-            )
+            await conn.execute(text("SELECT count(*) FROM pg_views WHERE viewname = 'patterns'"))
         ).scalar_one()
         embedding = (
             await conn.execute(
@@ -67,7 +62,7 @@ def test_upgrade_downgrade_upgrade_round_trip(migrated_url: str) -> None:
     assert "vector" in extensions
     print("pgcrypto present:", "pgcrypto" in extensions)  # reported, not asserted
     assert concepts == 12
-    assert views == 2
+    assert views == 1
     # 0003 sizes the vectors (D7/D14): a round trip to base and back must end at the head's
     # shape, not M1's dimensionless one.
     assert embedding == f"vector({EMBED_DIM_EXPECTED})"

@@ -22,10 +22,6 @@ NETWORK_LIBS = {"httpx", "requests", "aiohttp", "urllib3", "socket", "tavily"}
 NETWORK_ALLOWED_PREFIXES = ("northvaine/sensors/",)
 NETWORK_ALLOWED_FILES = {"northvaine/brain/llm.py"}
 
-CLAIMS_SQL_ALLOWED = {"northvaine/core/ledger.py"}
-CLAIMS_SQL = re.compile(r"\b(FROM|JOIN|INTO|UPDATE)\s+claims\b")
-CLAIM_ROW_ALLOWED = {"northvaine/core/models.py", "northvaine/core/ledger.py"}
-
 SENDING_LIBS = {"smtplib", "sendgrid", "twilio", "slack_sdk", "telegram", "mailgun", "postmarker"}
 
 SECRET_PATTERNS = [
@@ -34,9 +30,7 @@ SECRET_PATTERNS = [
     re.compile(r"(?<![A-Za-z0-9])tvly-[A-Za-z0-9_\-]{10,}"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
     re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
-    re.compile(
-        r"""(?i)(api[_-]?key|secret|token|password)\s*[:=]\s*['"][A-Za-z0-9_\-/+]{16,}['"]"""
-    ),
+    re.compile(r"""(?i)(api[_-]?key|secret|token|password)\s*[:=]\s*['"][A-Za-z0-9_\-/+]{16,}['"]"""),
 ]
 SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache", "dist", "build"}
 
@@ -79,59 +73,14 @@ def check_sql_banned_terms(files: list[Path], terms: list[str]) -> list[str]:
     return _scan_terms(files, terms, "SQL", r"(?<![A-Za-z0-9])", r"(?![A-Za-z0-9])")
 
 
-def prompt_files() -> list[Path]:
-    """The prompt templates under northvaine/brain/prompts/ (rule a: no industry words)."""
-    directory = APP / "brain" / "prompts"
-    return sorted(directory.glob("*.md")) if directory.exists() else []
-
-
-def check_prompt_banned_terms(files: list[Path], terms: list[str]) -> list[str]:
-    """Prompts are code too (CLAUDE.md #1): business knowledge reaches them as data."""
-    return _scan_terms(files, terms, "a prompt")
-
-
-def check_claims_sql(py_files: list[Path]) -> list[str]:
-    """Rule b: SQL on `claims` lives only in core/ledger.py (migrations, schema, tests exempt)."""
-    problems = []
-    for path in py_files:
-        name = rel(path)
-        if name in CLAIMS_SQL_ALLOWED:
-            continue
-        for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            if CLAIMS_SQL.search(line):
-                problems.append(
-                    f"{name}:{n}: SQL on claims; only core/ledger.py may touch the table "
-                    "(read through the verified_claims view)"
-                )
-    return problems
-
-
-def check_claim_row_imports(py_files: list[Path]) -> list[str]:
-    """Rule c: `ClaimRow` is imported only in core/models.py and core/ledger.py."""
-    problems = []
-    for path in py_files:
-        name = rel(path)
-        if name in CLAIM_ROW_ALLOWED:
-            continue
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and any(a.name == "ClaimRow" for a in node.names):
-                problems.append(
-                    f"{name}:{node.lineno}: imports ClaimRow; use core/ledger.py instead"
-                )
-    return problems
-
-
 def sql_files() -> list[Path]:
     """schema.sql plus every .sql and .py file under migrations/."""
     files = [ROOT / "schema.sql"] if (ROOT / "schema.sql").is_file() else []
     migrations = ROOT / "migrations"
     if migrations.exists():
         files += sorted(
-            p
-            for p in migrations.rglob("*")
-            if p.is_file()
-            and p.suffix in {".sql", ".py"}
+            p for p in migrations.rglob("*")
+            if p.is_file() and p.suffix in {".sql", ".py"}
             and not SKIP_DIRS.intersection(p.relative_to(ROOT).parts)
         )
     return files
@@ -172,16 +121,12 @@ def tracked_files() -> list[Path]:
     try:
         out = subprocess.run(
             ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=True,
+            cwd=ROOT, capture_output=True, text=True, check=True,
         ).stdout
         return [ROOT / line for line in out.splitlines() if line]
     except (OSError, subprocess.CalledProcessError):
         return [
-            p
-            for p in ROOT.rglob("*")
+            p for p in ROOT.rglob("*")
             if p.is_file() and not SKIP_DIRS.intersection(p.relative_to(ROOT).parts)
         ]
 
@@ -212,18 +157,13 @@ def main() -> int:
     problems = (
         check_banned_terms(code_files, terms)
         + check_sql_banned_terms(sql, terms)
-        + check_prompt_banned_terms(prompt_files(), terms)
-        + check_claims_sql(py_files)
-        + check_claim_row_imports(py_files)
         + check_imports(py_files)
         + check_secrets(tracked_files())
     )
     for problem in problems:
         print(f"INVARIANT  {problem}")
-    print(
-        f"invariants: {len(problems)} violation(s) in {len(code_files)} code files"
-        f" and {len(sql)} SQL/migration files"
-    )
+    print(f"invariants: {len(problems)} violation(s) in {len(code_files)} code files"
+          f" and {len(sql)} SQL/migration files")
     return 1 if problems else 0
 
 

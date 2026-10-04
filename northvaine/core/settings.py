@@ -81,40 +81,11 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = Field(default=30.0, gt=0)
     llm_max_retries: int = Field(default=2, ge=0)
 
-    # evidence ledger (M4, D45-D51). Thresholds and rules are data, never literals in radar/.
-    quote_min_chars: int = Field(default=20, ge=1)
-    quote_match_min_ratio: float = Field(default=0.95, gt=0, le=1)
-    extract_max_doc_chars: int = Field(default=12000, ge=1)
-    extract_max_claims: int = Field(default=8, ge=1)
-    extract_max_tokens: int = Field(default=1500, ge=1)
-    support_max_tokens: int = Field(default=600, ge=1)
-    concept_match_min_cosine: float = Field(default=0.80, gt=0, le=1)
-    event_cluster_min_cosine: float = Field(default=0.85, gt=0, le=1)
-    event_cluster_window_days: int = Field(default=30, ge=1)
-    extract_excluded_event_types: tuple[str, ...] = (
-        "reorder_due",
-        "quote_stale",
-        "inbound_question",
-    )
-    evidence_source_rules: dict[str, str] = Field(
-        default_factory=lambda: {"ted": "structured", "website": "full_text", "tavily": "raw_only"}
-    )
-
     # queue
     job_lease_seconds: int = Field(default=300, ge=1)
     job_max_attempts: int = Field(default=5, ge=1)
     job_backoff_base_seconds: float = 30.0
     job_backoff_max_seconds: float = 3600.0
-
-    @field_validator("evidence_source_rules")
-    @classmethod
-    def _rules_are_known(cls, value: dict[str, str]) -> dict[str, str]:
-        for source, rule in value.items():
-            if rule not in {"structured", "full_text", "raw_only"}:
-                raise ValueError(
-                    f"evidence_source_rules[{source!r}] must be structured, full_text or raw_only"
-                )
-        return value
 
     @field_validator("ted_availability_lag_days")
     @classmethod

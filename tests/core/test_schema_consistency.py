@@ -188,10 +188,9 @@ def test_schema_sql_equals_replayed_migrations(rendered_sql: str, schema_tables:
 def test_views_and_indexes_agree(rendered_sql: str) -> None:
     schema = parse_schema(SCHEMA.read_text(encoding="utf-8"))
     replay = parse_schema(rendered_sql)
-    assert schema.views == replay.views == {"patterns", "verified_claims"}
+    assert schema.views == replay.views == {"patterns"}
     assert schema.indexes == replay.indexes
     assert {"cases_open_unique", "events_concept", "jobs_claim", "jobs_lease"} <= schema.indexes
-    assert {"claims_document", "events_type_occurred"} <= schema.indexes
     assert "jobs_ready" not in replay.indexes
 
 
@@ -209,8 +208,7 @@ def test_every_vector_column_is_sized(rendered_sql: str, schema_tables: Tables) 
             if info.type.startswith("vector")
         }
         assert set(vectors) == {
-            "document_chunks.embedding", "event_concepts.embedding", "events.embedding",
-            "theses.embedding",
+            "document_chunks.embedding", "event_concepts.embedding", "theses.embedding",
         }, label  # fmt: skip
         expected = f"vector({EMBED_DIM_EXPECTED})"
         assert set(vectors.values()) == {expected}, f"{label}: {vectors}"

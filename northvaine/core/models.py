@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal
 from enum import StrEnum
-from typing import Annotated, Any, Generic, Literal, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -337,17 +337,6 @@ class DocumentChunkRow(NorthvaineModel):
     embedding: list[float] | None
 
 
-class ClaimStatus(StrEnum):
-    """Why a claim is or is not verified (migration 0005 CHECK list, D49)."""
-
-    PENDING = "pending"
-    VERIFIED = "verified"
-    QUOTE_NOT_FOUND = "quote_not_found"
-    QUOTE_TOO_SHORT = "quote_too_short"
-    UNSUPPORTED = "unsupported"
-    INELIGIBLE_DOCUMENT = "ineligible_document"
-
-
 class ClaimRow(NorthvaineModel):
     id: UUID
     company_id: UUID | None
@@ -359,9 +348,6 @@ class ClaimRow(NorthvaineModel):
     verified_by: str | None
     extracted_by: str
     created_at: datetime
-    status: ClaimStatus
-    meta: Json
-    fingerprint: str
 
 
 class EventConceptRow(NorthvaineModel):
@@ -387,10 +373,6 @@ class EventRow(NorthvaineModel):
     created_at: datetime
     concept_id: UUID | None
     slots: Json
-    available_at: datetime | None
-    description: str | None
-    embedding: list[float] | None
-    fingerprint: str
 
 
 # ============ PRIVATE LAYER ============
@@ -817,166 +799,3 @@ class AuditLogRow(NorthvaineModel):
     target: str | None
     details: Json | None
     created_at: datetime
-
-
-# ---------------------------------------------------------------------------
-# M4 (evidence ledger, factory/board/M4/PLAN.md "Frozen contracts"). Plain values passed between
-# radar/ and core/ledger.py; none of them is a table row.
-# ---------------------------------------------------------------------------
-
-Iso2 = Annotated[str, Field(pattern=r"^[A-Z]{2}$")]
-SnakeCase = Annotated[str, Field(pattern=SNAKE)]
-
-
-class EvidenceKind(StrEnum):
-    """How a document may be used as evidence (D45)."""
-
-    STRUCTURED = "structured"
-    FULL_TEXT = "full_text"
-    LEAD = "lead"
-
-
-class QuoteMode(StrEnum):
-    """`extracted`: normalized exact then fuzzy. `structured`: one whole line, exact (D48)."""
-
-    EXTRACTED = "extracted"
-    STRUCTURED = "structured"
-
-
-class Eligibility(NorthvaineModel):
-    kind: EvidenceKind
-    reason: str | None = None
-
-
-class EvidenceDocument(NorthvaineModel):
-    id: UUID
-    source_name: str
-    url: str
-    title: str | None = None
-    text: str
-    available_at: datetime | None = None
-    workspace_id: UUID | None = None
-    group_key: str | None = None
-    meta: dict[str, Any] = Field(default_factory=dict)
-
-
-class SubjectMention(NorthvaineModel):
-    name: str
-    country: Iso2 | None = None
-    role: SnakeCase
-
-
-class ClaimDraft(NorthvaineModel):
-    statement: str
-    source_quote: str
-    subject: SubjectMention | None = None
-    extracted_by: str
-    meta: dict[str, Any] = Field(default_factory=dict)
-
-
-class QuoteMatch(NorthvaineModel):
-    found: bool
-    offset: int | None = None
-    length: int | None = None
-    ratio: float
-    method: Literal["exact", "line", "fuzzy"] | None = None
-    reason: ClaimStatus | None = None
-
-
-class ClaimCheck(NorthvaineModel):
-    document_id: UUID
-    draft: ClaimDraft
-    status: ClaimStatus
-    quote_offset: int | None = None
-    verified_by: str | None = None
-    fingerprint: str
-
-    @property
-    def verified(self) -> bool:
-        return self.status == ClaimStatus.VERIFIED
-
-
-class EventDraft(NorthvaineModel):
-    event_type: str
-    claim_indices: list[int]
-    subject: SubjectMention | None = None
-    date_text: str | None = None
-    occurred_on: date | None = None
-    group_key: str | None = None
-    slots: dict[str, Any] = Field(default_factory=dict)
-    concept_label: str | None = None
-    concept_hint: str | None = None
-
-
-class ConceptAssignment(NorthvaineModel):
-    concept_id: UUID | None = None
-    parent_id: UUID | None = None
-    level: int = Field(ge=0)
-    label: str
-    description: str
-    status: str
-    is_new: bool
-    embedding: list[float] | None = None
-
-
-class ClusterCandidate(NorthvaineModel):
-    event_id: UUID | None = None
-    cluster_id: UUID
-    event_type: str
-    occurred_on: date | None = None
-    subject_key: str | None = None
-    group_key: str | None = None
-    embedding: list[float] | None = None
-    available_at: datetime | None = None
-
-
-class PendingEvent(NorthvaineModel):
-    event_type: str
-    claim_fingerprints: list[str]
-    occurred_on: date | None = None
-    available_at: datetime | None = None
-    subject: SubjectMention | None = None
-    description: str
-    embedding: list[float] | None = None
-    concept: ConceptAssignment
-    cluster_id: UUID
-    slots: dict[str, Any] = Field(default_factory=dict)
-    details: dict[str, Any] = Field(default_factory=dict)
-    fingerprint: str
-
-
-class NewEvent(NorthvaineModel):
-    """What `core.ledger.save_events` takes: a PendingEvent with stored claim ids."""
-
-    event_type: str
-    claim_ids: list[UUID]
-    occurred_on: date | None = None
-    available_at: datetime | None = None
-    subject: SubjectMention | None = None
-    description: str
-    embedding: list[float] | None = None
-    concept_id: UUID | None = None
-    cluster_id: UUID
-    slots: dict[str, Any] = Field(default_factory=dict)
-    details: dict[str, Any] = Field(default_factory=dict)
-    fingerprint: str
-
-
-class VerifiedClaim(NorthvaineModel):
-    id: UUID
-    document_id: UUID
-    statement: str
-    source_quote: str
-    quote_offset: int
-    verified_by: str
-    available_at: datetime | None = None
-    workspace_id: UUID | None = None
-    meta: dict[str, Any] = Field(default_factory=dict)
-
-
-class LedgerResult(NorthvaineModel):
-    document_id: UUID
-    eligibility: Eligibility
-    checks: list[ClaimCheck] = Field(default_factory=list)
-    events: list[PendingEvent] = Field(default_factory=list)
-    llm_calls: int = 0

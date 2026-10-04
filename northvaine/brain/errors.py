@@ -17,7 +17,6 @@ __all__ = [
     "ConfigError",
     "LlmError",
     "LlmInvalidOutput",
-    "LlmReplayMismatch",
     "LlmTimeout",
     "LlmTransportError",
     "PricingUnknown",
@@ -38,14 +37,6 @@ class LlmTransportError(LlmError):
 
 class LlmInvalidOutput(LlmError):
     """The model's output could not be parsed into the caller's Pydantic model after retries."""
-
-
-class LlmReplayMismatch(AssertionError):
-    """A recorded-replay client got a request with no recorded exchange (T4.1).
-
-    An AssertionError, not an LlmError: it is a test failure (the prompt or settings changed
-    since recording), and `llm.py` must not retry or classify it.
-    """
 
 
 class PricingUnknown(LlmError):

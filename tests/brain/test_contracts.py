@@ -63,11 +63,7 @@ def test_brain_imports_without_env_or_api_key(tmp_path: Path) -> None:
     env = {k: v for k, v in os.environ.items() if k.upper() not in hidden}
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
     result = subprocess.run(
-        [sys.executable, "-c", code],
-        cwd=tmp_path,
-        capture_output=True,
-        text=True,
-        env=env,
+        [sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True, env=env,
         check=False,
     )
     assert result.returncode == 0, result.stderr
@@ -84,11 +80,9 @@ def test_importing_brain_builds_no_settings_instance() -> None:
         path = Path(module.__file__)  # type: ignore[arg-type]
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in tree.body:  # module level only; function bodies are not walked
-            for call in (
-                ast.walk(node)
-                if not isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef)
-                else []
-            ):
+            for call in ast.walk(node) if not isinstance(
+                node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+            ) else []:
                 if isinstance(call, ast.Call):
                     name = getattr(call.func, "id", getattr(call.func, "attr", ""))
                     assert name not in {"Settings", "get_settings"}, f"{path.name}: {name}()"
@@ -149,7 +143,9 @@ def test_llm_result_parameterizes_and_validates() -> None:
     assert isinstance(result.value, _Answer)
     assert result.value.city == "Paris"
     with pytest.raises(ValidationError):
-        LlmResult[_Answer](value={"city": "Paris"}, usage=usage, cost_usd=Decimal("0"), model="x")
+        LlmResult[_Answer](
+            value={"city": "Paris"}, usage=usage, cost_usd=Decimal("0"), model="x"
+        )
 
 
 def test_llm_call_row_has_the_four_new_columns() -> None:
@@ -168,17 +164,6 @@ def test_error_hierarchy() -> None:
         assert issubclass(cls, errors.LlmError)
     assert issubclass(errors.PricingUnknown, errors.LlmError)
     assert issubclass(errors.BudgetExceeded, errors.LlmError)
-
-
-def test_replay_mismatch_is_an_assertion_error() -> None:
-    """T4.0: a recorded-replay miss is a test failure, never retried or classified by llm.py."""
-    assert issubclass(errors.LlmReplayMismatch, AssertionError)
-    assert not issubclass(errors.LlmReplayMismatch, errors.LlmError)
-
-
-def test_client_override_is_a_sync_context_manager_taking_one_client() -> None:
-    assert params(llm.client_override) == [("client", POS, NO)]
-    assert not inspect.iscoroutinefunction(llm.client_override)
 
 
 def test_budget_exceeded_message_names_the_cap() -> None:
@@ -258,35 +243,19 @@ def test_validate_configured_models_passes_with_real_ids() -> None:
 #                so the output bound has to come from the caller (T2.0 "two traps").
 LLM_CONTRACT = {
     "complete_json": [
-        ("tier", KW, NO),
-        ("prompt", KW, NO),
-        ("variables", KW, NO),
-        ("output_model", KW, NO),
-        ("purpose", KW, NO),
-        ("run", KW, NO),
-        ("workspace_id", KW, None),
-        ("case_id", KW, None),
-        ("reasoning_effort", KW, "none"),
-        ("session", KW, None),
+        ("tier", KW, NO), ("prompt", KW, NO), ("variables", KW, NO), ("output_model", KW, NO),
+        ("purpose", KW, NO), ("run", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
+        ("reasoning_effort", KW, "none"), ("session", KW, None),
         ("max_tokens", KW, 1024),
     ],
     "complete_text": [
-        ("tier", KW, NO),
-        ("prompt", KW, NO),
-        ("variables", KW, NO),
-        ("purpose", KW, NO),
-        ("run", KW, NO),
-        ("workspace_id", KW, None),
-        ("case_id", KW, None),
-        ("reasoning_effort", KW, "none"),
-        ("session", KW, None),
+        ("tier", KW, NO), ("prompt", KW, NO), ("variables", KW, NO), ("purpose", KW, NO),
+        ("run", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
+        ("reasoning_effort", KW, "none"), ("session", KW, None),
         ("max_tokens", KW, 1024),
     ],
     "embed": [
-        ("text", KW, NO),
-        ("purpose", KW, NO),
-        ("run", KW, NO),
-        ("workspace_id", KW, None),
+        ("text", KW, NO), ("purpose", KW, NO), ("run", KW, NO), ("workspace_id", KW, None),
         ("session", KW, None),
     ],
     "list_models": [],
@@ -296,17 +265,9 @@ LLM_CONTRACT = {
 BUDGET_CONTRACT = {
     "check_budget": [("run", POS, NO), ("estimated_cost", POS, NO), ("session", KW, None)],
     "record_call": [
-        ("run", POS, NO),
-        ("session", KW, None),
-        ("model", KW, NO),
-        ("purpose", KW, NO),
-        ("usage", KW, NO),
-        ("cost_usd", KW, NO),
-        ("ok", KW, NO),
-        ("error", KW, NO),
-        ("latency_ms", KW, NO),
-        ("workspace_id", KW, None),
-        ("case_id", KW, None),
+        ("run", POS, NO), ("session", KW, None), ("model", KW, NO), ("purpose", KW, NO),
+        ("usage", KW, NO), ("cost_usd", KW, NO), ("ok", KW, NO), ("error", KW, NO),
+        ("latency_ms", KW, NO), ("workspace_id", KW, None), ("case_id", KW, None),
         ("prompt_version", KW, None),
         # D15 postdates this frozen contract: every row records which API served the call.
         ("provider", KW, "nebius"),

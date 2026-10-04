@@ -23,9 +23,6 @@ from __future__ import annotations
 import asyncio
 import json
 import random
-from collections.abc import Iterator
-from contextlib import contextmanager
-from contextvars import ContextVar
 from decimal import Decimal
 from functools import lru_cache
 from typing import Any, TypeVar
@@ -77,34 +74,13 @@ def _cached_client(base_url: str, key: str, timeout: float) -> AsyncOpenAI:
     return AsyncOpenAI(base_url=base_url, api_key=key, timeout=timeout, max_retries=0)
 
 
-# Set by `client_override`; `get_client` returns it before any settings check (T4.0).
-_CLIENT_OVERRIDE: ContextVar[Any] = ContextVar("northvaine_llm_client_override", default=None)
-
-
-@contextmanager
-def client_override(client: Any) -> Iterator[None]:
-    """Make `get_client()` return `client` inside the block (recorder, replay, tests).
-
-    Only the client is swapped, so every call still goes through the budget guard and writes
-    its `llm_calls` row. Isolated per task (ContextVar) and restored on exit, also on error.
-    """
-    token = _CLIENT_OVERRIDE.set(client)
-    try:
-        yield
-    finally:
-        _CLIENT_OVERRIDE.reset(token)
-
-
 def get_client() -> AsyncOpenAI:
-    """The lazily built, cached SDK client (or the `client_override` one).
+    """The lazily built, cached SDK client.
 
     The key is held as `SecretStr` in settings and only unwrapped here, at the moment it is
     handed to the SDK. It is never logged, never formatted into an exception and never written
     to an `llm_calls` row.
     """
-    override = _CLIENT_OVERRIDE.get()
-    if override is not None:
-        return override  # type: ignore[no-any-return]
     settings = get_settings()
     if settings.nebius_api_key is None:
         raise ConfigError("NEBIUS_API_KEY is not set; no model call can be made.")
