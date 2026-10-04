@@ -95,9 +95,14 @@ def test_the_shipped_prompt_loads_renders_and_declares_untrusted() -> None:
     assert SNIPPET in out and PREAMBLE in out
 
 
-def test_exactly_one_prompt_ships_in_m2() -> None:
-    """M4/M5 bring the gate and judge prompts with their golden set; M2 ships one."""
-    assert sorted(p.name for p in PROMPT_DIR.glob("*.v*.md")) == ["smoke_ping.v1.md"]
+def test_every_shipped_prompt_loads_and_fences_untrusted_input() -> None:
+    """Every prompt that ships must load, name a tier and declare its untrusted inputs."""
+    names = sorted({p.name.split(".v")[0] for p in PROMPT_DIR.glob("*.v*.md")})
+    assert "smoke_ping" in names
+    for name in names:
+        prompt = load_prompt(name)
+        assert prompt.tier in {"fast", "mid", "deep"}, name
+        assert prompt.untrusted_vars, f"{name} declares no untrusted inputs"
 
 
 def test_loading_needs_no_settings_database_or_network(monkeypatch: pytest.MonkeyPatch) -> None:
