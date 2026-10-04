@@ -108,9 +108,7 @@ def _env(monkeypatch: pytest.MonkeyPatch, clean_settings: None) -> None:
     llm.get_settings.cache_clear()
 
 
-async def run_gate(
-    r: dict[str, Any], candidate: Candidate | None = None
-) -> tuple[Any, FakeClient]:
+async def run_gate(r: dict[str, Any], candidate: Candidate | None = None) -> tuple[Any, FakeClient]:
     client = FakeClient(r)
     with llm.client_override(client):
         decision = await gate_candidate(candidate or make_candidate(), SPEC, run=RunContext())
@@ -220,3 +218,12 @@ async def test_candidate_text_is_fenced_and_injection_stays_inside() -> None:
     name_block = re.search(r"BEGIN CANDIDATE_NAME.*?END CANDIDATE_NAME DATA \w+-----", prompt, re.S)
     assert name_block and "Acme Works" in name_block.group(0)
     assert "Acme Works" not in outside.replace(name_block.group(0), "")
+
+
+def test_a_citation_that_copies_the_whole_claim_line_still_names_its_ref() -> None:
+    from northvaine.radar.gate import ref_of
+
+    assert ref_of('C1: Rainett introduced a refill / "quote" (tavily)') == "C1"
+    assert ref_of("C12") == "C12"
+    assert ref_of(" C3 ") == "C3"
+    assert ref_of("not a ref") == "not a ref"  # left as is, so the caller drops it

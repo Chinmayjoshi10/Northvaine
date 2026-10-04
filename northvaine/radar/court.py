@@ -13,7 +13,7 @@ from northvaine.brain.fencing import Untrusted
 from northvaine.brain.prompts import load_prompt
 from northvaine.core.models import ModelTier, NorthvaineModel
 from northvaine.core.settings import Settings, get_settings
-from northvaine.radar.gate import claim_lines, numbers_grounded
+from northvaine.radar.gate import claim_lines, numbers_grounded, ref_of
 from northvaine.radar.models import (
     AgainstPoint,
     Candidate,
@@ -73,11 +73,11 @@ async def skeptic(
 
     quotes = {c.ref: c.source_quote for c in candidate.claims}
     against = [
-        AgainstPoint(claim_ref=item.claim_ref, why=item.why.strip())
+        AgainstPoint(claim_ref=ref, why=item.why.strip())
         for item in out.against
-        if item.claim_ref in quotes
+        if (ref := ref_of(item.claim_ref)) in quotes
         and item.why.strip()
-        and numbers_grounded(item.why, [quotes[item.claim_ref]])
+        and numbers_grounded(item.why, [quotes[ref]])
     ]
     all_quotes = list(quotes.values())
     questions = [

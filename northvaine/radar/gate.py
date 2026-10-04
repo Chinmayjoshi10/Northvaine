@@ -36,6 +36,16 @@ class GateOutput(NorthvaineModel):
     cited_refs: list[str] = Field(max_length=8)
 
 
+_REF_HEAD = re.compile(r"^\s*([A-Za-z]+\d+)\s*(?::|$|\s)")
+
+
+def ref_of(cited: str) -> str:
+    """The claim ref a citation names: models sometimes copy the whole claim line ("C1: ...")
+    instead of "C1" (D77). Callers still keep only refs the candidate actually has."""
+    match = _REF_HEAD.match(cited)
+    return match.group(1) if match else cited.strip()
+
+
 _NUMBER = re.compile(r"\d(?:[\d.,]*\d)?")
 _THOUSANDS = re.compile(r"^\d{1,3}(?:[.,]\d{3})+$")
 
@@ -129,7 +139,7 @@ async def gate_candidate(
     out = result.value
 
     by_ref = {c.ref: c for c in candidate.claims}
-    refs = [r for r in dict.fromkeys(out.cited_refs) if r in by_ref]
+    refs = [r for r in dict.fromkeys(ref_of(c) for c in out.cited_refs) if r in by_ref]
     quotes = [by_ref[r].source_quote for r in refs]
     reason = out.reason.strip()
 

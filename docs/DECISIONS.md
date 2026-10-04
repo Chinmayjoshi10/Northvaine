@@ -605,3 +605,7 @@ brief with Claude's five corrections (docs/COLLAB.md).
   `ted_natural_person_markers` legal form with a stable "[natural person, name withheld <hash>]"
   placeholder. The radar recorder applies the same function, so replay equals live. Such names
   never become candidates. Firm names such as "ETS GIFFARD" are kept.
+- **D77 — A citation is read by its leading ref.** Nemotron sometimes copies the whole claim line
+  into `cited_refs` ("C1: ... / quote") instead of "C1". Code dropped those as unknown refs and
+  held 9 of 11 packaging buyers back as insufficient evidence. `ref_of` now takes the leading ref
+  before a colon; only refs the candidate actually has are kept, in the gate and the skeptic.
