@@ -249,8 +249,8 @@ def print_plan(spec: ClientSpec, as_of: datetime, settings: Settings) -> None:
         total = f"${sum(p for p in parts if p is not None):.4f}"
     print(f"  estimated model cost, upper bound: {total}")
     print(f"  run cap: ${settings.radar_run_budget_usd} (radar_run_budget_usd)")
-    print("  note: calls are not written to llm_calls here (no database); the per-call and per-run")
-    print("  caps of llm.py apply, the per-day and lifetime sums are not checked")
+    print("  every model call writes an llm_calls row (DATABASE_URL) and is held to the per-call,")
+    print("  per-run, per-day and lifetime caps of llm.py")
 
 
 def check_preconditions(spec: ClientSpec, settings: Settings) -> None:
@@ -319,12 +319,22 @@ async def run_record(
     inner_transport: httpx.AsyncBaseTransport | None = None,
     client_factory: ClientFactory | None = None,
     fetcher_factory: FetcherFactory | None = None,
+    session_factory: Any = None,
 ) -> tuple[RadarRun, Recording]:
     """The live run, with every HTTP exchange and model exchange recorded (not yet redacted)."""
     http_recorder = RecordingTransport(inner_transport or httpx.AsyncHTTPTransport())
     llm_recorder = RecordingClient((client_factory or llm.get_client)())
     fetcher = (fetcher_factory or (lambda s: LivePageFetcher(settings=s)))(settings)
-    async with httpx.AsyncClient(transport=http_recorder, timeout=60.0) as client:
+    if session_factory is None:
+        # A live run writes an llm_calls row per call and is held to the daily and lifetime
+        # caps, like every other live model call (CLAUDE.md #8).
+        from northvaine.core.db import session_scope
+
+        session_factory = session_scope
+    async with (
+        httpx.AsyncClient(transport=http_recorder, timeout=60.0) as client,
+        session_factory() as session,
+    ):
         with llm.client_override(llm_recorder):
             run = await run_radar(
                 spec,
@@ -334,6 +344,7 @@ async def run_record(
                 concepts=seeded_concepts(),
                 run=RunContext(),
                 settings=settings,
+                session=session,
             )
     meta = RadarMeta(
         client=spec.id,
@@ -417,6 +428,7 @@ def main(
     inner_transport: httpx.AsyncBaseTransport | None = None,
     client_factory: ClientFactory | None = None,
     fetcher_factory: FetcherFactory | None = None,
+    session_factory: Any = None,
 ) -> int:
     args = build_parser().parse_args(argv)
     if args.yes and not args.record:
@@ -452,6 +464,7 @@ def main(
                 inner_transport=inner_transport,
                 client_factory=client_factory,
                 fetcher_factory=fetcher_factory,
+                session_factory=session_factory,
             )
         )
         clean = redact_recording(recording, base)

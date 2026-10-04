@@ -561,3 +561,7 @@ brief with Claude's five corrections (docs/COLLAB.md).
   exact name inside the claim's own quote, an event to cite at least one claim naming its
   subject, and no events from general profile or strategy statements. Event typing is still loose
   on news-index pages; judging that is the M5 gate's job, not the extractor's.
+- **D69 — A live radar recording logs every model call and obeys every cap.** T5.6 recorded with
+  no database session, so calls skipped `llm_calls` and the per-day and lifetime caps (CLAUDE.md
+  #8). `run_radar` now takes `session` and passes it to extraction, gate and skeptic; `record-radar`
+  opens `session_scope` like `record-llm`. Replay still passes no session.

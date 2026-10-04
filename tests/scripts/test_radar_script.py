@@ -11,6 +11,8 @@ import hashlib
 import importlib.util
 import json
 import sys
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -190,6 +192,12 @@ def write_spec(clients_dir: Path, client_id: str) -> tuple[Any, list[Any], list[
     return spec, exchanges, pages
 
 
+@asynccontextmanager
+async def no_session() -> AsyncIterator[None]:
+    """A stand-in for session_scope: the round trip writes no llm_calls rows."""
+    yield None
+
+
 def test_record_then_replay_gives_the_same_brief_with_no_network(
     radar: ModuleType,
     tmp_path: Path,
@@ -219,6 +227,7 @@ def test_record_then_replay_gives_the_same_brief_with_no_network(
         inner_transport=replay_transport(exchanges, match_body=False),
         client_factory=ScriptedLlm,
         fetcher_factory=lambda settings: RecordedPageFetcher(pages),
+        session_factory=no_session,
     )
     out = capsys.readouterr().out
     assert code == 0, out

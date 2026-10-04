@@ -99,8 +99,8 @@ def test_signatures_match_the_plan() -> None:
     assert params(brief.write_reports) == ["run", "out_dir"]
     assert params(run.seeded_concepts) == []
     assert params(run.run_radar) == [
-        "spec", "as_of", "http", "fetcher", "concepts", "run", "settings",
-    ]  # fmt: skip
+        "spec", "as_of", "http", "fetcher", "concepts", "run", "settings", "session",
+    ]  # fmt: skip  (session added by D69: a live run logs every call in llm_calls)
 
 
 def test_keyword_only_parameters() -> None:

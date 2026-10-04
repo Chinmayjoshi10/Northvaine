@@ -84,6 +84,7 @@ async def run_radar(
     concepts: list[EventConceptRow],
     run: RunContext,
     settings: Settings | None = None,
+    session: Any = None,
 ) -> RadarRun:
     """Run the whole radar pipeline for one client and return the run record (D61)."""
     settings = settings or get_settings()
@@ -113,7 +114,9 @@ async def run_radar(
             stopped = True
             break
         try:
-            result = await build_evidence(doc, concepts, [], run=run, settings=settings)
+            result = await build_evidence(
+                doc, concepts, [], run=run, session=session, settings=settings
+            )
         except BudgetExceeded as exc:
             notes.append(f"stopped reading documents: {exc}")
             stopped = True
@@ -145,7 +148,9 @@ async def run_radar(
             continue
         decision: GateDecision | None = None
         try:
-            decision = await gate_candidate(candidate, spec, run=run, settings=settings)
+            decision = await gate_candidate(
+                candidate, spec, run=run, session=session, settings=settings
+            )
             if candidate.claims:
                 llm_calls += 1  # a candidate with no claim is rejected by code, no call
             if not decision.passed:
@@ -155,7 +160,9 @@ async def run_radar(
                 not_investigated.append(candidate.name)
                 stopped = True
                 continue
-            finding = await skeptic(candidate, decision, spec, run=run, settings=settings)
+            finding = await skeptic(
+                candidate, decision, spec, run=run, session=session, settings=settings
+            )
             llm_calls += 1
         except BudgetExceeded as exc:
             notes.append(f"stopped: {exc}")
