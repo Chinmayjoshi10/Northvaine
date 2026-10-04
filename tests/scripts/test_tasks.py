@@ -62,6 +62,8 @@ def test_task_names_in_order(tasks: ModuleType) -> None:
         "smoke",
         "record-sensors",
         "record-llm",
+        "radar",
+        "record-radar",
     ]
 
 
@@ -100,6 +102,9 @@ def test_exact_argv_for_every_task(
         "record-sensors": [[PY, "scripts/record_sensor_fixtures.py"]],
         # Spends real money; orchestrator only, never invoked by the gate (T4.1).
         "record-llm": [[PY, "scripts/record_llm_fixtures.py"]],
+        # Offline replay of a recorded radar run (T5.6); the record variant spends money.
+        "radar": [[PY, "scripts/radar.py"]],
+        "record-radar": [[PY, "scripts/radar.py", "--record"]],
     }
     assert set(expected) == set(tasks.TASKS)
     for name, argv in expected.items():
@@ -228,3 +233,18 @@ def test_record_llm_dispatches_with_passthrough(
     line = capsys.readouterr().out.strip()
     assert "record_llm_fixtures.py" in line
     assert line.endswith("--yes --client stone_supplier")
+
+
+def test_radar_tasks_have_help_and_pass_arguments_through(
+    tasks: ModuleType, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert "radar" in tasks.HELP and "record-radar" in tasks.HELP
+    assert "SPENDS MONEY" in tasks.HELP["record-radar"]
+    assert "offline" in tasks.HELP["radar"]
+    assert tasks.main(["--print", "radar", "--", "--client", "stone_supplier"]) == 0
+    line = capsys.readouterr().out.strip()
+    assert "radar.py" in line and "--record" not in line
+    assert line.endswith("--client stone_supplier")
+    assert tasks.main(["--print", "record-radar", "--", "--client", "stone_supplier", "--yes"]) == 0
+    line = capsys.readouterr().out.strip()
+    assert line.endswith("radar.py --record --client stone_supplier --yes")

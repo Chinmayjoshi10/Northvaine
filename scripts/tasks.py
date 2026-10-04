@@ -128,6 +128,16 @@ def record_llm() -> list[list[str]]:
     return [_py("scripts/record_llm_fixtures.py")]
 
 
+def radar() -> list[list[str]]:
+    """One radar run for a client, offline from its recording (add -- --client <id>)."""
+    return [_py("scripts/radar.py")]
+
+
+def record_radar() -> list[list[str]]:
+    """Record a radar run live. Spends Tavily credits and money; orchestrator only (D65)."""
+    return [_py("scripts/radar.py", "--record")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -142,6 +152,8 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "smoke": smoke,
     "record-sensors": record_sensors,
     "record-llm": record_llm,
+    "radar": radar,
+    "record-radar": record_radar,
 }
 
 HELP = {
@@ -158,9 +170,12 @@ HELP = {
     "smoke": "live LLM smoke run - SPENDS REAL MONEY (add -- --yes to confirm)",
     "record-sensors": "record redacted TED/Tavily fixtures from live APIs (add -- --yes)",
     "record-llm": "record LLM fixtures for the evidence ledger - SPENDS MONEY (add -- --yes)",
+    "radar": "radar brief for one client, offline from its recording (add -- --client <id>)",
+    "record-radar": "record a radar run live - SPENDS MONEY (add -- --client <id> --yes)",
 }
 
-PASSTHROUGH = {"smoke", "record-sensors", "record-llm"}  # arguments after `--` go to the script
+# arguments after `--` go to the script
+PASSTHROUGH = {"smoke", "record-sensors", "record-llm", "radar", "record-radar"}
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
 
