@@ -580,3 +580,8 @@ brief with Claude's five corrections (docs/COLLAB.md).
   showed buyer, dates and CPV codes but not what the tender is for, so the founder could not judge
   relevance. Structured evidence now adds one `Title [..]` line (English when present) as a
   code-verified claim on tender and award events.
+- **D73 — One document or candidate the model cannot answer is a note, not a failed run.** The
+  packaging recording crashed when Nemotron's extraction was cut off mid-JSON three times.
+  `extract_max_tokens` rises from 1500 to 3000 (8 claims with long quotes need it), and
+  `run_radar` turns `LlmInvalidOutput`, `LlmTimeout` and `LlmTransportError` on one item into a
+  "skipped" note. Replay mismatches still fail loudly.

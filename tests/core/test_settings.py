@@ -191,7 +191,7 @@ def test_ledger_defaults() -> None:
     assert s.quote_match_min_ratio == 0.95
     assert s.extract_max_doc_chars == 12000
     assert s.extract_max_claims == 8
-    assert s.extract_max_tokens == 1500
+    assert s.extract_max_tokens == 3000  # D73
     assert s.support_max_tokens == 600
     assert s.concept_match_min_cosine == 0.80
     assert s.event_cluster_min_cosine == 0.85

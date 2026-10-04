@@ -15,7 +15,12 @@ from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
 from northvaine.brain.budget import RunContext
-from northvaine.brain.errors import BudgetExceeded
+from northvaine.brain.errors import (
+    BudgetExceeded,
+    LlmInvalidOutput,
+    LlmTimeout,
+    LlmTransportError,
+)
 from northvaine.core.models import (
     ConceptStatus,
     EventConceptRow,
@@ -39,6 +44,10 @@ from northvaine.radar.models import (
 )
 
 __all__ = ["run_radar", "seeded_concepts"]
+
+# One document or candidate the model could not answer is a note, not a failed run (D73).
+# A replay mismatch is an AssertionError and is never caught here.
+_ITEM_FAILURES = (LlmInvalidOutput, LlmTimeout, LlmTransportError)
 
 MIGRATION_0002 = (
     Path(__file__).resolve().parents[2] / "migrations" / "versions" / "0002_architecture_v2.py"
@@ -126,6 +135,9 @@ async def run_radar(
             notes.append(f"stopped reading documents: {exc}")
             stopped = True
             break
+        except _ITEM_FAILURES as exc:
+            notes.append(f"document skipped ({type(exc).__name__}): {doc.url}")
+            continue
         llm_calls += result.llm_calls
         results.append((doc, result))
         kind = result.eligibility.kind.value
@@ -176,6 +188,9 @@ async def run_radar(
                 not_investigated.append(candidate.name)
             else:
                 not_gated += 1
+            continue
+        except _ITEM_FAILURES as exc:
+            notes.append(f"candidate skipped ({type(exc).__name__}): {candidate.name}")
             continue
         passed.append((candidate, decision, finding))
     if not_gated:

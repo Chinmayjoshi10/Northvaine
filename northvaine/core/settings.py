@@ -86,7 +86,7 @@ class Settings(BaseSettings):
     quote_match_min_ratio: float = Field(default=0.95, gt=0, le=1)
     extract_max_doc_chars: int = Field(default=12000, ge=1)
     extract_max_claims: int = Field(default=8, ge=1)
-    extract_max_tokens: int = Field(default=1500, ge=1)
+    extract_max_tokens: int = Field(default=3000, ge=1)  # 1500 truncated long pages (D73)
     support_max_tokens: int = Field(default=600, ge=1)
     concept_match_min_cosine: float = Field(default=0.80, gt=0, le=1)
     event_cluster_min_cosine: float = Field(default=0.85, gt=0, le=1)

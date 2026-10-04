@@ -331,3 +331,25 @@ async def test_a_run_already_over_budget_reads_and_gates_nothing(
     assert result.entries == []
     assert any("not read" in n for n in result.notes)
     assert all(p.stat().st_size > 0 for p in write_reports(result, tmp_path))
+
+
+async def test_a_document_the_model_cannot_answer_is_skipped_with_a_note(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from northvaine.brain.errors import LlmInvalidOutput
+
+    real = run_module.build_evidence
+    failed: list[str] = []
+
+    async def flaky(doc: Any, *args: Any, **kwargs: Any) -> Any:
+        if not failed:
+            failed.append(doc.url)
+            raise LlmInvalidOutput("truncated output")
+        return await real(doc, *args, **kwargs)
+
+    monkeypatch.setattr(run_module, "build_evidence", flaky)
+    result = await radar("stone_supplier", FakeLlm())
+    assert failed and any(
+        f"document skipped (LlmInvalidOutput): {failed[0]}" in n for n in result.notes
+    )
+    assert result.entries or result.rejected  # the run went on past the bad document
