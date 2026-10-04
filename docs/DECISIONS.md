@@ -552,3 +552,6 @@ brief with Claude's five corrections (docs/COLLAB.md).
 - **D66 — Generated reports are not committed** (founder, 5 Oct: shared privately, never committed): `reports/radar/` is in
   `.gitignore`.
 
+- **D67 — Radar modules take the HTTP client as `Any`.** Network imports stay confined to
+  `northvaine/sensors/` (check_invariants); `discover.py` and `run.py` receive a client built by
+  sensor helpers rather than importing httpx, even for type hints (T5.0 contract note).
