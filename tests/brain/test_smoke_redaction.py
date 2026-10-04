@@ -114,3 +114,8 @@ def test_the_smoke_script_imports_no_http_client_or_llm_sdk() -> None:
     modules = imported_modules(SMOKE)
     assert not (modules & LLM_SDKS), modules & LLM_SDKS
     assert not (modules & NETWORK_LIBS), modules & NETWORK_LIBS
+
+
+def test_a_key_prefix_inside_a_word_is_ordinary_text(smoke) -> None:
+    slug = "https://trans.info/de/maers" + "k-nimmt-neues-logistikzentrum-in-deutschland"
+    assert smoke.redact({"text": slug}, ()) == {"text": slug}

@@ -73,7 +73,8 @@ SECRET_KEYS = {
     "organization",
     "user",
 }
-KEY_PATTERN = re.compile(r"(nvapi|sk|eyJ)[-_A-Za-z0-9.]{12,}")
+# Word boundary first: page text such as "maersk-nimmt-neues-..." is not a key (D70).
+KEY_PATTERN = re.compile(r"(?<![A-Za-z0-9])(nvapi-|sk-|eyJ)[-_A-Za-z0-9.]{12,}")
 
 
 def redact(value: Any, secrets: tuple[str, ...] = ()) -> Any:

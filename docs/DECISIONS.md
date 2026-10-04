@@ -565,3 +565,8 @@ brief with Claude's five corrections (docs/COLLAB.md).
   no database session, so calls skipped `llm_calls` and the per-day and lifetime caps (CLAUDE.md
   #8). `run_radar` now takes `session` and passes it to extraction, gate and skeptic; `record-radar`
   opens `session_scope` like `record-llm`. Replay still passes no session.
+- **D70 — The recording secret scan needs a word boundary and a real key prefix.**
+  `smoke_llm.KEY_PATTERN` matched "sk" inside ordinary words ("maersk-nimmt-neues-..."), which
+  refused a whole live radar recording. It now needs a non-alphanumeric character before
+  `nvapi-`, `sk-` or `eyJ`. Keys actually in use are still caught by exact match (known secrets).
+  Same fix as check_invariants on 4 Oct.
