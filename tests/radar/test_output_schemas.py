@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from northvaine.brain import llm
 from northvaine.core.settings import Settings
@@ -138,6 +138,23 @@ def test_build_request_nests_the_schema_and_is_strict(model: type[BaseModel]) ->
     assert spec["json_schema"]["strict"] is True
     assert spec["json_schema"]["name"] == model.__name__
     assert spec["json_schema"]["schema"] == model.model_json_schema()
+
+
+def test_every_claim_and_event_field_is_required() -> None:
+    defs = ExtractionOutput.model_json_schema()["$defs"]
+    for name in ("ExtractedClaim", "ExtractedEvent"):
+        node = defs[name]
+        assert set(node["required"]) == set(node["properties"]), name
+    for field in ("subject_name", "subject_country", "subject_role"):
+        assert defs["ExtractedClaim"]["properties"][field]["anyOf"][-1] == {"type": "null"}
+    for field in ("subject_name", "date_text", "group_hint", "concept_label", "concept_hint"):
+        assert defs["ExtractedEvent"]["properties"][field]["anyOf"][-1] == {"type": "null"}
+
+
+def test_a_reply_that_leaves_a_field_out_is_rejected() -> None:
+    reply = '{"claims": [{"statement": "s", "source_quote": "q"}], "events": []}'
+    with pytest.raises(ValidationError):
+        ExtractionOutput.model_validate_json(reply)
 
 
 def test_extraction_output_accepts_a_reply_with_nulls() -> None:

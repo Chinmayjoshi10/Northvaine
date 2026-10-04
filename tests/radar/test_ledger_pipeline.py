@@ -158,11 +158,28 @@ def website_doc(text: str = TEXT) -> EvidenceDocument:
 
 
 def claim(quote: str, statement: str = "A statement.", **kw: Any) -> dict[str, Any]:
-    return {"statement": statement, "source_quote": quote, **kw}
+    base: dict[str, Any] = {
+        "statement": statement,
+        "source_quote": quote,
+        "subject_name": None,
+        "subject_country": None,
+        "subject_role": None,
+    }
+    base.update(kw)
+    return base
 
 
 def event(**kw: Any) -> dict[str, Any]:
-    base: dict[str, Any] = {"event_type": "facility_opened", "claim_indices": [0], "slots": []}
+    base: dict[str, Any] = {
+        "event_type": "facility_opened",
+        "claim_indices": [0],
+        "subject_name": None,
+        "date_text": None,
+        "group_hint": None,
+        "slots": [],
+        "concept_label": None,
+        "concept_hint": None,
+    }
     base.update(kw)
     return base
 
