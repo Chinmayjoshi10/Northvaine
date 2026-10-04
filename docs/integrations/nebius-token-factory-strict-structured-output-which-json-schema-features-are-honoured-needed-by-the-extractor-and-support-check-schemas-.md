@@ -70,3 +70,41 @@ Reply (HTTP 200, `finish_reason: stop`): two claims only, valid enum values, no 
 To re-run on the real schema (does not print the key):
 `uv run python -c "from northvaine.brain.llm import ...; print(ExtractionOutput.model_json_schema())"`,
 then POST it as `response_format.json_schema.schema` with `strict: true` and `reasoning_effort: "none"`.
+
+## PF1b on the frozen schemas (2026-10-04)
+
+Source: live calls on main (T4.0 merged), checked 2026-10-04. Confidence: confirmed by live call.
+Method: `llm.build_request()` (exact body llm.py sends: `temperature 0`, `max_tokens 600`,
+`reasoning_effort: "none"`, `response_format.json_schema{name, strict: true, schema}`) posted with the
+openai SDK directly (not `complete_json`) so no `llm_calls` row was written; production DB is at 0004
+and the ledger write path was deliberately not exercised. Fast tier model from `MODEL_FAST`.
+No key, .env line or connection string appears below.
+
+| | ExtractionOutput | SupportOutput |
+|---|---|---|
+| Schema keywords present | `$defs, $ref, anyOf, default, items, maxItems, properties, required, title, type` | `$defs, $ref, items, properties, required, title, type` |
+| Keywords outside the allow-list | none (`additionalProperties`/`enum` not emitted by these models) | none |
+| HTTP status | 200 | 200 |
+| finish_reason | stop | stop |
+| Tokens in/out | 102 / 168 | 93 / 31 |
+| Validated by Pydantic | yes | yes |
+| Cost (pricing.json) | $0.0000464 | $0.0000130 |
+
+Total spend: about $0.00006 (two calls). No keyword rejected.
+
+Null behaviour (ExtractionOutput, nullable fields are `anyOf [string, null]`, `default null`, not in
+`required`): the model returned an explicit `"group_hint": null` where the text gave no group.
+Other nullable fields (`date_text`, `concept_label`, `concept_hint`, `subject_country`, ...) were
+omitted rather than sent as null; that validates because they are not `required`. Code must treat
+absent and null identically (Pydantic does, via the default).
+
+Excerpts (redacted, no secrets present):
+- Extraction: `{"claims": [], "events": [{"event_type": "contract_signing", "claim_indices": [], "subject_name": "Acme Tiles Ltd", "group_hint": null, "slots": [{"name": "subject_country", "value": "Portugal"}, ...]}]}`
+- Support: `{"verdicts": [{"index": 0, "supported": true}, {"index": 1, "supported": false}]}` (second claim was deliberately unsupported; correct).
+
+Observations (not schema failures): with my ad hoc prompt the model returned empty `claims` and put
+claim-like fields into `slots`. That is prompt quality for T4.3 to fix, not a schema issue.
+`maxItems` is accepted (no 4xx); whether it is enforced server-side was not tested (needs >8 items).
+
+Verdict: both frozen schemas accepted and validated on the fast tier; T4.0 needs no change.
+Script (throwaway, not committed): scratchpad `pf1b.py`.
