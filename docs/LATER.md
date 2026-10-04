@@ -141,3 +141,8 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
 - Tavily `/extract` instead of page fetch; Wayback snapshots for replay-safe web pages.
 - Per-provider concurrency caps; Tavily credit ledger; the nightly `discover` job wiring.
 
+- Move `radar_non_name_pronouns`, `radar_non_name_words` and `radar_name_max_words` from
+  `radar/entities.py` defaults into `core/settings.py` the next time settings is touched (T5.2
+  reads them as optional settings attributes already).
+- Client spec flag for "the business the owner knows", so the scorecard can name that client
+  without an industry word in code (T5.5 uses a generic wording).
