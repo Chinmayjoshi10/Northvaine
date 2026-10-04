@@ -241,7 +241,13 @@ async def discover(
         seen_hashes.add(sdoc.content_hash)
         seen_urls.add(sdoc.url)
         doc = evidence_document_from_sensor(sdoc)
-        if is_evidence_document(doc, settings).kind is EvidenceKind.LEAD:
+        kind = is_evidence_document(doc, settings).kind
+        if kind is not EvidenceKind.STRUCTURED and doc.text:
+            # Search-result text is third-party page text: strip contacts before any model sees
+            # it, as for fetched pages (D59). Structured records are rendered by code and their
+            # quote check is a whole-line match, so they are left untouched.
+            doc = doc.model_copy(update={"text": strip_contacts(doc.text)})
+        if kind is EvidenceKind.LEAD:
             leads.append(doc)
         else:
             documents.append(doc)

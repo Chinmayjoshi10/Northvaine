@@ -55,6 +55,7 @@ from northvaine.radar.discover import (  # noqa: E402
     PageFetcher,
     RecordedPageFetcher,
     shift_queries,
+    strip_contacts,
 )
 from northvaine.radar.models import (  # noqa: E402
     ClientSpec,
@@ -282,6 +283,26 @@ def _secrets(settings: Settings) -> tuple[str, ...]:
     return tuple(s for s in found if s)
 
 
+def _strip_search_contacts(ex: Any, tavily_prefix: str) -> Any:
+    """Strip contacts from search-result text with the pipeline's own `strip_contacts`, so the
+    replayed documents are byte-identical to what the live run fed the model (discover strips
+    the same fields before any model call)."""
+    body = ex.body_json
+    if not ex.url.startswith(tavily_prefix) or not isinstance(body, dict):
+        return ex
+    results = []
+    for result in body.get("results") or []:
+        if isinstance(result, dict):
+            result = {
+                k: strip_contacts(v)
+                if k in ("title", "content", "raw_content") and isinstance(v, str)
+                else v
+                for k, v in result.items()
+            }
+        results.append(result)
+    return ex.model_copy(update={"body_json": {**body, "results": results}})
+
+
 def redact_recording(recording: Recording, settings: Settings) -> Recording:
     """The recording after the sensor and LLM redaction rules; `Refused` if anything survives."""
     sensors, llm_script = sibling("record_sensor_fixtures"), sibling("record_llm_fixtures")
@@ -296,6 +317,7 @@ def redact_recording(recording: Recording, settings: Settings) -> Recording:
         )
         for ex in recording.exchanges
     ]
+    exchanges = [_strip_search_contacts(ex, tavily_prefix) for ex in exchanges]
     problems = sensors.find_pii([e.model_dump(mode="json") for e in exchanges], "http")
     problems += sensors.find_pii([p.model_dump(mode="json") for p in recording.pages], "pages")
     problems += sensors.find_pii(recording.meta.model_dump(mode="json"), "meta")

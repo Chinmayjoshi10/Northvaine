@@ -292,3 +292,27 @@ def test_record_refuses_to_write_when_a_phone_number_survives(
     with pytest.raises(radar.Refused) as exc:
         radar.redact_recording(recording, record_settings())
     assert "email or phone" in str(exc.value)
+
+
+def test_search_result_contacts_are_stripped_the_way_the_pipeline_strips_them(
+    radar: ModuleType,
+) -> None:
+    from northvaine.radar.discover import strip_contacts
+    from northvaine.sensors.replay import RecordedExchange
+
+    raw = "Call +44 20 7946 0000 or write to " + "sales" + "@" + "example.org today."
+    ex = RecordedExchange.model_validate(
+        {
+            "method": "POST",
+            "url": "https://api.tavily.com/search",
+            "request_json": {"query": "q"},
+            "status": 200,
+            "body_json": {"results": [{"url": "https://x.test", "raw_content": raw, "score": 1}]},
+            "recorded_at": "2026-10-05T00:00:00+00:00",
+        }
+    )
+    out = radar._strip_search_contacts(ex, "https://api.tavily.com")
+    kept = out.body_json["results"][0]
+    assert kept["raw_content"] == strip_contacts(raw)
+    assert strip_contacts(kept["raw_content"]) == kept["raw_content"]  # idempotent: replay = live
+    assert "example.org" not in kept["raw_content"] and kept["score"] == 1
