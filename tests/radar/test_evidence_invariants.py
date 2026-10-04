@@ -5,8 +5,9 @@ re-derived here with the REAL `find_quote` and the standards helpers, independen
 own bookkeeping. The replayed results come from `test_ledger_replay.replay_group`.
 
 Facts about the recorded data these tests deliberately do not hide (they are printed or noted, not
-fixed): the extractor never fills `subject_name`, so extracted events carry no subject; some event
-types are loose (an investment announcement typed `contract_awarded`).
+fixed): since extractor v3 (T5.1) most extracted events carry a grounded subject, but event types
+are still loose on news-index pages (an investment announcement can be typed `contract_awarded`);
+the M5 gate and skeptic, not these tests, are where that is judged.
 """
 
 from __future__ import annotations

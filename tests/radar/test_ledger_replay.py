@@ -460,8 +460,10 @@ async def test_a_support_request_never_contains_the_document(group: str) -> None
             blocks, outside = fenced(text)
             assert blocks and [label for label, _ in blocks] == ["CLAIMS"]
             assert r.doc.url not in text
+            # A title may equal the company name, which statements now carry (T5.1), so it is
+            # only forbidden outside the fenced claims.
             if r.doc.title and len(r.doc.title) >= 8:
-                assert r.doc.title not in text
+                assert r.doc.title not in outside
             # Outside the one fence there is only the prompt; inside it only claim lines.
             for piece in windows(r.doc.text):
                 assert piece not in outside, f"{r.doc.url}: document text outside the quotes"

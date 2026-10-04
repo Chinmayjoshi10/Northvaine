@@ -555,3 +555,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
 - **D67 — Radar modules take the HTTP client as `Any`.** Network imports stay confined to
   `northvaine/sensors/` (check_invariants); `discover.py` and `run.py` receive a client built by
   sensor helpers rather than importing httpx, even for type hints (T5.0 contract note).
+- **D68 — Checkpoint A passed on prompt v3 (5 Oct): 5/6 = 83% of extracted events carry a
+  grounded company, 0 misses.** v2 reached 50%: the model named the company but tied events to
+  quotes that did not contain the name, so grounding (correctly) dropped it. v3 requires the
+  exact name inside the claim's own quote, an event to cite at least one claim naming its
+  subject, and no events from general profile or strategy statements. Event typing is still loose
+  on news-index pages; judging that is the M5 gate's job, not the extractor's.

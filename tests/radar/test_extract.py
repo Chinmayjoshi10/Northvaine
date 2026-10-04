@@ -258,7 +258,7 @@ async def test_the_v2_prompt_fences_untrusted_text_and_has_no_banned_term() -> N
 
 def test_prompt_states_claims_and_slots_rule() -> None:
     prompt = load_prompt("evidence_extract")
-    assert prompt.version_label == "evidence_extract.v2"
+    assert prompt.version_label == "evidence_extract.v3"
     assert "Never name a person as a subject" in prompt.template
     assert "not a contract award" in prompt.template
     assert prompt.untrusted_vars == {"doc_title", "doc_url", "doc_text"}
