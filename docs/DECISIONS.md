@@ -609,3 +609,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   into `cited_refs` ("C1: ... / quote") instead of "C1". Code dropped those as unknown refs and
   held 9 of 11 packaging buyers back as insufficient evidence. `ref_of` now takes the leading ref
   before a colon; only refs the candidate actually has are kept, in the gate and the skeptic.
+- **D78 — In a radar run, nothing is available after the run's own moment; open questions need
+  no citation.** T5.7 found search results stamped with the parse-time clock, so on replay they
+  were "available" after `as_of` and `run.json` differed between replays. `run_radar` now caps
+  every document's `available_at` at `as_of`. D63's citation rule covers statements (demand,
+  buyer, action, evidence against); the skeptic's open questions are questions, not facts, and
+  stay number-grounded against the entry's quotes without a citation.

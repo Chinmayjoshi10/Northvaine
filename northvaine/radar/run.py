@@ -113,6 +113,14 @@ async def run_radar(
     queries = prepare_queries(spec.sensors, as_of.date(), settings)
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
     notes.extend(found.notes)
+    # A page fetched during this run is available at the run's moment, never later: sensors
+    # stamp search results with the clock, which on replay would be today (D78).
+    found.documents[:] = [
+        d.model_copy(update={"available_at": as_of})
+        if d.available_at is not None and d.available_at > as_of
+        else d
+        for d in found.documents
+    ]
 
     # 2. the evidence ledger, per document (no database)
     results: list[tuple[EvidenceDocument, LedgerResult]] = []

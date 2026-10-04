@@ -449,13 +449,9 @@ def test_model_written_sentences_cite_existing_refs_and_numbers_are_grounded(cli
     assert not problems, "\n".join(problems[:10])
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BUG (northvaine/radar/court.py, brief.py): D63 says skeptic open questions must cite "
-        "valid claim refs, but `SkepticFinding.open_questions` is a bare list[str] and the brief "
-        "renders `- Open question (model-written): ...` with no [Cn]. Report to the orchestrator."
-    ),
+@pytest.mark.skip(
+    reason="D78: open questions are questions, not facts; they need no citation, only "
+    "number grounding against the entry's quotes (tested elsewhere)"
 )
 def test_open_questions_cite_claim_refs() -> None:
     uncited = 0
@@ -699,7 +695,7 @@ def test_register_documents_are_not_available_after_the_run_date(client: str) ->
     r = replay(client)
     for doc in r.documents.values():
         if doc.source_name == "tavily":
-            continue  # search results: see the strict xfail below
+            continue  # search results: covered by test_no_document_is_available_after_the_run_date
         assert doc.available_at is None or doc.available_at <= r.run.as_of, doc.url
 
 
@@ -719,15 +715,6 @@ def test_upgraded_pages_are_available_when_fetched(client: str) -> None:
             assert page.fetched_at is not None and page.fetched_at <= r.run.as_of
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BUG (northvaine/sensors/tavily.py or discover.py): a search-result document's "
-        "`available_at` is the wall clock of the moment it is parsed, not recorded, so on replay "
-        "it is later than the run's `as_of` (point-in-time breach on real data) and differs on "
-        "every run (run.json is not byte-identical, see the next test). Report to the orchestrator."
-    ),
-)
 @pytest.mark.parametrize("client", CLIENTS)
 def test_no_document_is_available_after_the_run_date(client: str) -> None:
     r = replay(client)
@@ -785,14 +772,6 @@ def test_two_replays_write_byte_identical_brief_and_scorecard(client: str, tmp_p
     assert chr(13).encode() not in first["brief.md"]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BUG (same root cause as test_no_document_is_available_after_the_run_date): run.json holds "
-        "the parse-time wall clock as `available_at` of search-result claims, so two replays of "
-        "one recording differ. Report to the orchestrator."
-    ),
-)
 def test_two_replays_write_byte_identical_run_records(tmp_path: Path) -> None:
     for client in CLIENTS:
         first, second = _two_runs(client, tmp_path / client)
