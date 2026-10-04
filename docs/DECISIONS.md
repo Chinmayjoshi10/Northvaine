@@ -549,6 +549,6 @@ brief with Claude's five corrections (docs/COLLAB.md).
   date (same length); a radar recording (HTTP exchanges, fetched pages, LLM exchanges, meta with
   `as_of` and the shifted queries) lives in `tests/fixtures/radar/<client>/`. Replay is the
   default; only the orchestrator records. M3/M4 fixtures stay as they are (except T5.1's re-record).
-- **D66 — Generated reports are not committed** (pending founder Q1): `reports/radar/` is in
+- **D66 — Generated reports are not committed** (founder, 5 Oct: shared privately, never committed): `reports/radar/` is in
   `.gitignore`.
 
