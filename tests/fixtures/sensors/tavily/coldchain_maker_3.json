@@ -1,0 +1,81 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.tavily.com/search",
+    "request_json": {
+      "query": "nouvel entrepot frigorifique construction annonce",
+      "topic": "general",
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_raw_content": "text",
+      "include_published_date": true,
+      "include_usage": true,
+      "start_date": "2026-07-01",
+      "end_date": "2026-10-01",
+      "country": "france"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "query": "nouvel entrepot frigorifique construction annonce",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "url": "https://www.instagram.com/reel/Dcb-X0qJBda",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.76002824,
+          "raw_content": null,
+          "published_date": null,
+          "id": "aa500a-00"
+        },
+        {
+          "url": "https://www.faq-logistique.com/Actualites-Immobilier.htm",
+          "title": "L'actualité de l'immobilier logistique",
+          "content": "La construction d’un nouvel entrepôt de 33 000m2 a été lancée en avril 2019, afin de faire face à la saturation du site actuel. [...] P3, premier développeur et gestionnaire de biens immobiliers en logistique paneuropéenne, a commencé la construction d'un nouvel entrepôt de 16 500 m² au parc P3 Mszczonów, le 3ème développement en Pologne pour P3 en 2017.\nP3 LOGISTIC PARKSP3 Bedburg : le premier projet de redéveloppement de P3 en Allemagne - 06/06/2017 [...] DERET, filiale de GROUPE DERET, et leader dans le secteur de la logistique sur mesure et à la pièce pour le luxe, le textile et la cosmétique, annonce l’ouverture de son nouvel entrepôt à Sorigny (37), situé au cœur de la région Centre Val de Loire. Dès sa conception, le btiment a été pensé pour répondre aux plus hautes exigences en matière d’innovation et de respect de l’environnement.",
+          "score": 0.6708892,
+          "raw_content": "|  |  |\n --- |\n|  |  |\n ACTUALITÉ\n+ TOUTES LES NEWS\n+ • CONSEIL\n+ • SOLUTIONS\n+ • EQUIPEMENTS\n+ • IMMOBILIER\n+ • PRESTATION\n+ • NOMINATIONS\n+ • ÉVÈNEMENTS\n+ WEBINAIRES\n+ REVUE DE PRESSE\n+ NEWSLETTER\n+ 👉 PUBLIER SES NEWS\n ENTRETIENS\n+ LES DOSSIERS FAQ LOGISTIQUE\n+ • ENTREPÔT\n+ • TRANSPORT\n+ • WMS / TMS\n+ • SUPPLY / CHAIN\n+ LES PAROLES D'EXPERT\n+ TOUTES LES INTERVIEWS\n+ 👉 PRENDRE LA PAROLE\n+ 👉 PLANNING EDITORIAL\n ANNUAIRE\n+ TOUS LES ACTEURS\n+ • CONSEIL\n+ • SOLUTIONS\n+ • INTEGRATION\n+ • FORMATION\n+ • IMMOBILIER\n+ • INTRALOGISTIQUE\n+ • PRESTATION LOGISTIQUE\n+ • RECRUTEMENT\n+ 👉 INSCRIRE SA SOCIÉTÉ\n LIVRES BLANCS\n NEWSLETTER\n CONTACT\n+ KIT MEDIA\n+ 👉 INSCRIRE SA SOCIÉTÉ\n+ 👉 PUBLIER SES NEWS\n+ 👉 ANNONCER SUR FAQ\n+ 👉 PRENDRE LA PAROLE\n+ 👉 PROMOUVOIR SON WEBINAR\n+ 👉 PROMOUVOIR SON LIVRE BLANC\n+ PLAN. EDITORIAL\n KIT MEDIA\nActualité > Immobilier Logistique\nDACHSER investit 12 M€ pour agrandir son hub de FribourgDACHSER investit 12 M€ pour agrandir son hub de Fribourg - 08/07/2026  \nCe nouvel investissement associe logistique alimentaire sous température dirigée, renforcement des capacités industrielles et accélération de la transition énergétique.\nID Logistics ouvre un quatrième site logistique au Royaume-UniID Logistics ouvre un quatrième site logistique au Royaume-Uni - 06/07/2026  \nTrois ans après son arrivée sur le marché britannique, ID Logistics poursuit le développement de son réseau avec l'ouverture d'un quatrième site à Rugby, dans le Warwickshire.\nDHL Supply Chain France invest [truncated]",
+          "published_date": "Wed, 08 Jul 2026 00:00:00 GMT",
+          "id": "e5d2a8-01"
+        },
+        {
+          "url": "https://www.agenceecofin.com/actualites-agro/1707-140298-apres-le-maroc-l-operateur-international-de-chaine-du-froid-ifria-s-installe-au-senegal",
+          "title": "Après le Maroc, l'opérateur international de chaîne du froid ...",
+          "content": "... construction d'un entrepôt frigorifique au sein de la plateforme industrielle de Diamniadio. D'un coût estimé à 11,5 milliards FCFA (20 millions $), cette",
+          "score": 0.6141863,
+          "raw_content": null,
+          "published_date": "Fri, 17 Jul 2026 00:00:00 GMT",
+          "id": "af96ab-02"
+        },
+        {
+          "url": "https://www.lemoniteur.fr/centre-val-de-loire/indre-et-loire/indre-et-loire-un-nouvel-entrepot-refrigere-pour-danone-a-sorigny.TT4ZST2QBBGKBMVPYYFBAGPE7M.html",
+          "title": "Indre-et-Loire : un nouvel entrepôt réfrigéré pour Danone, ...",
+          "content": "Engagé à l'été 2025, après la signature d'un BEFA (bail en l'état futur d'achèvement), le projet est désormais achevé. Cette nouvelle implantation",
+          "score": 0.5518883,
+          "raw_content": null,
+          "published_date": "Thu, 16 Jul 2026 00:00:00 GMT",
+          "id": "a4e7c8-03"
+        },
+        {
+          "url": "https://www.facebook.com/journal.paysdauge/posts/%C3%A0-lisieux-la-sca-normande-construit-un-nouvel-entrep%C3%B4t-de-6-000-m%C2%B2-d%C3%A9di%C3%A9-aux-pro/1832190355580988",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.3648686,
+          "raw_content": null,
+          "published_date": null,
+          "id": "1bd2a0-04"
+        }
+      ],
+      "response_time": 1.49,
+      "usage": {
+        "credits": 1
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-04T09:04:27.276608Z"
+  }
+]

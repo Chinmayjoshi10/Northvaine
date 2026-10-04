@@ -44,3 +44,16 @@ the name a natural person (a German sole trader `e.K.` naming its owner, a `GbR`
 individuals, a French `Ets` with a full personal name) with `[natural person redacted N]`.
 Limited companies named after founders (GmbH, S.A., SARL...) are legal entities and are kept.
 Placeholders are distinct, so de-duplication behaviour is unchanged.
+
+## Tavily recording and redaction (orchestrator review, 2026-10-04)
+
+Recorded with `tasks.py record-sensors`; 3 of 8 Tavily responses were refused by the recorder
+(an email or phone survived), so `coldchain_maker_1`, `packaging_supplier_1` and
+`stone_supplier_3` have no Tavily fixture. The TED folder was restored from git after the run
+(old windows are never re-recorded, D36 note). By-eye review then:
+
+- replaced `title`, `content` and `raw_content` of social-media results (Facebook, Instagram,
+  LinkedIn) with `[social media post redacted]`, keeping `url` and `published_date` (often null)
+  so the result shape is unchanged;
+- truncated any `raw_content` over 1,500 characters, marked ` [truncated]` (third-party page text);
+- replaced two journalist bylines with `[journalist redacted]`.

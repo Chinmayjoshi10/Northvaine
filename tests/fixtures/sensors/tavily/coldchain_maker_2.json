@@ -1,0 +1,81 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.tavily.com/search",
+    "request_json": {
+      "query": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant",
+      "topic": "general",
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_raw_content": "text",
+      "include_published_date": true,
+      "include_usage": true,
+      "start_date": "2026-07-01",
+      "end_date": "2026-10-01",
+      "country": "germany"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "query": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "url": "https://transport-online.de/news/fiege-newsuebersicht-zum-logistikunternehmen-186989.html",
+          "title": "Fiege: Newsübersicht zum Logistikunternehmen - Logistik- bzw. Transport-Dienstleistungen | News | TRANSPORT - die Zeitung für den Güterverkehr (Lkw, Speditionen, Fuhrpark, Nutzfahrzeuge, Verkehrspolitik, Wirtschaft)",
+          "content": "↑ zurück zum Index ↑\nFiege: Neues Logistikzentrum in Hamminkeln im Bau\nNews vom 08.09.2025 von [journalist redacted]\nDer Logistikdienstleister baut ein neues Multi-User-Center in Hamminkeln und will damit sein Standortnetz am Niederrhein erweitern. Die Fertigstellung des Logistikzentrums ist für Herbst 2026 geplant. [...] ↑ zurück zum Index ↑\nFiege: Neues Logistikzentrum mit circa 52.000 Quadratmetern in der Nähe von Kassel\nNews vom 03.06.2026 von Anna Barbara Brüggmann\nLogistikdienstleister Fiege errichtet ein neues Multi-User-Center in Hessisch Lichtenau: Ankerkunde der circa 52.000 Quadratmeter großen Anlage ist die Reifenmarke Dunlop.\nAm 02. Juni 2026 hat die Fiege-Gruppe das Richtfest für ein neues Logistikzentrum in Hessisch Lichtenau gefeiert. Die Fertigstellung der Immobilie ist für Herbst 2026 geplant. [...] > „Nachhaltigkeit ist für uns ein elementarer Wert, deswegen setzen wir auch auf langfristige Partnerschaften. Mit Fiege haben wir einen Partner gefunden, bei dem sich unsere Kunden aus den verschiedensten Branchen auf maximale Verfügbarkeit und absolute Liefertreue verlassen können.“\n↑ zurück zum Index ↑\nZürich: Fiege eröffnet neues Logistikzentrum\nNews vom 02.09.2024 von Christine Harttmann",
+          "score": 0.42577294,
+          "raw_content": "Direkt zum Inhalt\nLogo Transport\nZum Huss-Shop\nLogo Zeitung TRANSPORT\nTests aktueller Lkw-Modelle\nMehr erfahren »\nZeitung online lesen + e-Paper\nJetzt informieren »\nSuche\nNewsletter\nFacebook\nLinkedIn\nXing\nE-Mail\nLogin\nMagazin\nZum Huss-Shop\nECOOLTEC auf der IAA TRANSPORTATION: Transportkälte für E-Lkw und neue Einkammeranlage » (Werbung)\nNutzfahrzeuge in Minuten mieten – FLEETLOOP zur IAA TRANSPORTATION 2026 » (Werbung)\nLogo Transport\nMenü\nSuche\nNewsletter\nFacebook\nLinkedIn\nXing\nE-Mail\nLogin\nMagazin\nZum Huss-Shop\nTransport-Newsletter »\nLogistik- bzw. Transport-Dienstleistungen\nFiege: Newsübersicht zum Logistikunternehmen\n01. August 2026, 07:57 Uhr\nRedaktion (allg.)\nDie Meldungen zeigen die kontinuierliche Entwicklung der Fiege-Gruppe zu einem international tätigen Logistikdienstleister. Im Fokus stehen der Ausbau von Standorten und Services, internationale Expansion sowie strategische Partnerschaften. Gleichzeitig prägen Investitionen in Nachhaltigkeit, Digitalisierung und Automatisierung das Unternehmensprofil.\nSymbolbild Logistra Best Practice\nLOGISTRA best practice: Innovationen 2026\nWas halten Sie für die spannendste Innovation der vergangenen Monate? Was könnte für Ihre Logistik Effizienzgewinne und Einsparpotenziale eröffnen?\nJetzt abstimmen!\nDie Meldungen zeigen die kontinuierliche Entwicklung der Fiege-Gruppe zu einem international tätigen Logistikdienstleister Foto: Fiege\nDie Meldungen zeigen die kontinuierliche Entwicklung der Fiege-Gruppe zu einem international täti [truncated]",
+          "published_date": "Sat, 01 Aug 2026 00:00:00 GMT",
+          "id": "c11124-00"
+        },
+        {
+          "url": "https://trans.info/de/maersk-nimmt-neues-logistikzentrum-in-deutschland-in-betrieb-505626",
+          "title": "Maersk eröffnet neues Logistikzentrum in Deutschland",
+          "content": "Maersk eröffnet in Herleshausen ein Logistikzentrum mit 71.800 Quadratmetern Fläche und bis zu 1.000 Beschäftigten in der Hochsaison.",
+          "score": 0.4051433,
+          "raw_content": null,
+          "published_date": "Tue, 29 Sep 2026 09:00:00 GMT",
+          "id": "b12cfa-01"
+        },
+        {
+          "url": "https://logistik-heute.de/news/amazon-deutschland-newsuebersicht-zu-aktuellen-entwicklungen-e-commerce-logistik-und-innovationen-217662.html",
+          "title": "Amazon Deutschland: Newsübersicht zu aktuellen Entwicklungen in E-Commerce, Logistik und Innovationen - E-Commerce,Unternehmens-, Wirtschaft- und Branchen-Nachrichten (sonst.),Neubau (Logistikimmobilien) | News | LOGISTIK HEUTE - Das deutsche Logistikmagazin",
+          "content": "Logistikimmobilien: Live Fast Die Young Clothing eröffnet neuen Lagerstandort in Düsseldorf\nZollpolitik: Trump senkt Zollkosten für Temu und Co. nur geringfügig\nNeubau: Amazon errichtet neues Logistikzentrum in Dortmund\nNews vom 27.10.2016 von [journalist redacted]\n1.000 neue Stellen und Ausweitung von „Fulfilment by Amazon“ geplant. [...] Fulfillment Center soll westeuropäischen Markt bedienen.\nDer Onlinehändler Amazon baut ein neues Logistikzentrum in Polen. Dies teilt der Immobilienentwickler Panattoni Europe mit, der das Objekt für den E-Commerce-Konzern entwickelt. In der Stadt Sosnowiec in Oberschlesien soll bis Oktober 2017 ein 135.000 Quadratmeter großes Gebäude mit Hochregallagern entstehen. Laut Panattoni will Amazon vom neuen Fulfillment Center aus vor allem Schuhe und Bekleidung im westeuropäischen Markt verteilen. [...] Bis zum Frühjahr 2021 soll in Emden auf einer Fläche von 30.500 Quadratmetern ein neues Logistikzentrum entstehen.",
+          "score": 0.32756126,
+          "raw_content": "Für die fehlerfreie bzw. beabsichtigte Darstellung der Webseite aktivieren Sie bitte Java-Script in Ihren Browsereinstellungen.\nLogo LOGISTIK HEUTE\nLogo LOGISTIK HEUTE\nUnsere Expertenbeiträge\nHelfen Sie uns besser werden\nLogo LOGISTIK HEUTE\nHauptnavigation\nAmazon Deutschland: Newsübersicht zu aktuellen Entwicklungen in E-Commerce, Logistik und Innovationen\nAmazon Deutschland treibt Innovation und Expansion gezielt voran – mit neuen Logistikzentren in Dummerstorf, Horn-Bad Meinberg und Sachsen-Anhalt, Same Day Delivery, KI-Rechenzentren und nachhaltiger Verpackung. Der Online-Riese setzt auf Elektromobilität, Robotik mit Tastsinn und strategische Partnerschaften wie mit Knuspr. Über 4.000 neue Jobs, 15 Millionen entfernte Fälschungen und Investitionen in Höhe von zehn Milliarden Euro zeigen: Amazon bleibt Motor für den E-Commerce und die Logistik in Deutschland.\nSymbolbild Laptop mit Umfragescreen\nSymbolbild Laptop mit Umfragescreen\nNehmen Sie an unser Online-Leserbefragung teil und helfen Sie LOGISTIK HEUTE mit Ihrer Meinung.\nNewsübersicht zu Amazon Deutschland (Bild: Amazon)\nNewsübersicht zu Amazon Deutschland (Bild: Amazon)\n\nInhaltsverzeichnis: Navigieren Sie mühelos durch unsere umfassende Newssammlung zum Thema Amazon Deutschland (klicken, um zur entsprechenden News zu springen und am Ende jeder News wieder einfach per Klick hierher zum Index zurückkehren)\nDieser Artikel besteht aus folgenden Amazon Deutschland News:\nAmazon Deutschland News aus dem Jahr 2026:\nAmazon Deuts [truncated]",
+          "published_date": "Thu, 30 Jul 2026 00:00:00 GMT",
+          "id": "e37e64-02"
+        },
+        {
+          "url": "https://logistra.de/news/panattoni-entwickelt-neuen-regionalstandort-fuer-nagel-group-bremen-501941.html",
+          "title": "Panattoni entwickelt neuen Regionalstandort für Nagel- ...",
+          "content": "Panattoni entwickelt das 36.650 m² große Logistikzentrum als Build-to-suit-Projekt auf einem 90.510 m² großen Grundstück, die letzte zusammenhängende Fläche auf",
+          "score": 0.22268362,
+          "raw_content": null,
+          "published_date": "Thu, 23 Jul 2026 00:00:00 GMT",
+          "id": "6b5d39-03"
+        },
+        {
+          "url": "https://www.instagram.com/reel/Db-7gEJibQ-",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.18229482,
+          "raw_content": null,
+          "published_date": null,
+          "id": "92d06a-04"
+        }
+      ],
+      "response_time": 1.48,
+      "usage": {
+        "credits": 1
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-04T09:04:25.368633Z"
+  }
+]

@@ -66,9 +66,7 @@ def test_banned_word_in_migration_py_is_reported(inv: ModuleType, tmp_path: Path
     _clean_tree(tmp_path)
     _write(tmp_path, "migrations/versions/0002_bad.py", f"x = 1\nTABLE = '{WORD.upper()}'\n")
     problems = inv.check_sql_banned_terms(inv.sql_files(), inv.load_banned_terms())
-    assert problems == [
-        f"migrations/versions/0002_bad.py:2: industry word '{WORD.upper()}' in SQL"
-    ]
+    assert problems == [f"migrations/versions/0002_bad.py:2: industry word '{WORD.upper()}' in SQL"]
     assert inv.main() == 1
 
 
@@ -161,6 +159,15 @@ def test_secrets_scan(inv: ModuleType, tmp_path: Path) -> None:
     binary.write_bytes(FAKE_KEY.encode())
     assert inv.check_secrets([bad]) == ["config/local.py:1: looks like a secret"]
     assert inv.check_secrets([good, binary]) == []
+
+
+def test_secrets_scan_ignores_key_prefix_inside_a_word(inv: ModuleType, tmp_path: Path) -> None:
+    slug = _write(
+        tmp_path,
+        "fixture.json",
+        '"url": "https://example.org/maers' + 'k-nimmt-neues-zentrum-in-x"\n',
+    )
+    assert inv.check_secrets([slug]) == []
 
 
 def test_main_reports_a_secret(inv: ModuleType, tmp_path: Path) -> None:

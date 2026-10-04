@@ -1,0 +1,81 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.tavily.com/search",
+    "request_json": {
+      "query": "natural stone paving specification new public realm scheme",
+      "topic": "general",
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_raw_content": "text",
+      "include_published_date": true,
+      "include_usage": true,
+      "start_date": "2026-07-01",
+      "end_date": "2026-10-01",
+      "country": "united kingdom"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "query": "natural stone paving specification new public realm scheme",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "url": "https://tloughman.com/case-studies/westgate-square-public-realm-improvements",
+          "title": "Westgate Square Public Realm Improvements - Welcome to Loughman",
+          "content": "The works comprised the installation of high-specification natural stone paving and granite sett carriageways, constructed to exacting tolerances and demanding quality standards to deliver a premium public realm finish befitting the historic setting. The project also included extensive highway reconstruction, utility diversions, drainage infrastructure, soft landscaping and tree pits, street lighting, traffic signals, highway signage, cycle parking and associated civil engineering works. [...] The successful delivery of the scheme demonstrates T. Loughman’s expertise in delivering complex public realm and highway infrastructure projects within constrained, live urban environments. Combining exceptional workmanship with meticulous planning, stakeholder management and engineering expertise, the completed development provides a durable, attractive and accessible public space that respects Canterbury’s historic character while creating a lasting asset for residents, businesses and [...] Project: Westgate Square Public Realm Improvements  \nClient: Canterbury City Council  \nService: Public Realm and Highways Improvements\nLoughman was appointed as Principal Contractor by Canterbury City Council to deliver the Westgate Square Public Realm Improvements, a flagship regeneration scheme transforming one of Canterbury’s most historically significant public spaces.",
+          "score": 0.8098936,
+          "raw_content": "CUSTOMER CASE STUDIES\nPublic Realm and Highways Improvements\n\nProject: Westgate Square Public Realm Improvements  \nClient: Canterbury City Council  \nService: Public Realm and Highways Improvements\nLoughman was appointed as Principal Contractor by Canterbury City Council to deliver the Westgate Square Public Realm Improvements, a flagship regeneration scheme transforming one of Canterbury’s most historically significant public spaces.\nThe project involved the complete reconstruction of the public realm surrounding the Grade I listed Westgate Towers, creating a high-quality civic space that enhances the historic setting while significantly improving accessibility, pedestrian movement and the overall visitor experience.\nThe works comprised the installation of high-specification natural stone paving and granite sett carriageways, constructed to exacting tolerances and demanding quality standards to deliver a premium public realm finish befitting the historic setting. The project also included extensive highway reconstruction, utility diversions, drainage infrastructure, soft landscaping and tree pits, street lighting, traffic signals, highway signage, cycle parking and associated civil engineering works.\nConstructing within the heart of Canterbury’s busy city centre presented significant engineering, logistical and heritage challenges. Working immediately adjacent to the Grade I listed Westgate Towers required carefully planned construction methodologies and close coordination wi [truncated]",
+          "published_date": "Thu, 06 Aug 2026 00:00:00 GMT",
+          "id": "5cb186-00"
+        },
+        {
+          "url": "https://www.linkedin.com/posts/stone-federation-gb_naturalstone-choosenaturalstone-landscapearchitecture-activity-7497571670782734336-nNvY",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.71687365,
+          "raw_content": null,
+          "published_date": null,
+          "id": "7685d9-01"
+        },
+        {
+          "url": "https://www.facebook.com/Denfindstone/videos/great-projects-begin-long-before-installation-union-street-dundee-is-a-significa/2041523563405023",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.6768127,
+          "raw_content": null,
+          "published_date": null,
+          "id": "e69e19-02"
+        },
+        {
+          "url": "https://www.instagram.com/p/DbSl87HGjBn",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.60610276,
+          "raw_content": null,
+          "published_date": null,
+          "id": "07c2ba-03"
+        },
+        {
+          "url": "https://www.facebook.com/larsenbuildingproductsltd/posts/from-the-bedding-layer-to-the-finished-joint-every-stage-matters-%EF%B8%8Fwork-is-progre/122248252550273999",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.20890462,
+          "raw_content": null,
+          "published_date": "Tue, 25 Aug 2026 00:00:00 GMT",
+          "id": "aacfe6-04"
+        }
+      ],
+      "response_time": 1.08,
+      "usage": {
+        "credits": 1
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-04T09:04:33.184154Z"
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.tavily.com/search",
+    "request_json": {
+      "query": "pavage en pierre naturelle projet d'amenagement place publique",
+      "topic": "general",
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_raw_content": "text",
+      "include_published_date": true,
+      "include_usage": true,
+      "start_date": "2026-07-01",
+      "end_date": "2026-10-01",
+      "country": "france"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "query": "pavage en pierre naturelle projet d'amenagement place publique",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "url": "https://www.facebook.com/UBPMauritius/posts/envie-dun-am%C3%A9nagement-qui-laisse-une-place-%C3%A0-la-verdure-dans-ce-nouvel-%C3%A9pisode-d/1638387564738957",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.61140573,
+          "raw_content": null,
+          "published_date": null,
+          "id": "189e82-00"
+        },
+        {
+          "url": "https://www.minjistone.com/fr/applications",
+          "title": "Applications de pavés de granit naturel - Shanghai Minji",
+          "content": "Convient aux places municipales, aux places commerciales, à la décoration des trottoirs des parcs de la ville, au pavage des zones de loisirs carrées et à la",
+          "score": 0.54564947,
+          "raw_content": null,
+          "published_date": "Sat, 04 Jul 2026 00:00:00 GMT",
+          "id": "27bf71-01"
+        },
+        {
+          "url": "https://www.pavesderue.com/blog/paves-de-gres-ile-de-france-pour-amenagements-exterieurs",
+          "title": "Pavés de grès en Île-de-France pour aménagements ...",
+          "content": "Pavés de grès ancien type Île-de-France : pierre naturelle de récupération pour cour, allée, terrasse, place ou voie carrossable.",
+          "score": 0.5417246,
+          "raw_content": null,
+          "published_date": "Sun, 23 Aug 2026 00:00:00 GMT",
+          "id": "9b9911-02"
+        },
+        {
+          "url": "https://www.facebook.com/iPavage/posts/un-nouveau-projet-termin%C3%A9pour-cet-am%C3%A9nagement-nous-avons-choisi-des-pav%C3%A9s-en-gra/1698830182248175",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.40021065,
+          "raw_content": null,
+          "published_date": null,
+          "id": "12e8e9-03"
+        },
+        {
+          "url": "https://www.instagram.com/p/DbomUlJDLmQ",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.3172258,
+          "raw_content": null,
+          "published_date": null,
+          "id": "e42c55-04"
+        }
+      ],
+      "response_time": 1.42,
+      "usage": {
+        "credits": 1
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-04T09:04:34.893454Z"
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.tavily.com/search",
+    "request_json": {
+      "query": "marque de cosmetiques lance une nouvelle gamme de soins",
+      "topic": "general",
+      "search_depth": "basic",
+      "max_results": 5,
+      "include_raw_content": "text",
+      "include_published_date": true,
+      "include_usage": true,
+      "start_date": "2026-07-01",
+      "end_date": "2026-10-01",
+      "country": "france"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "query": "marque de cosmetiques lance une nouvelle gamme de soins",
+      "follow_up_questions": null,
+      "answer": null,
+      "images": [],
+      "results": [
+        {
+          "url": "https://stylespeak.com/fr/unilever-launches-new-body-care-product-to-support-sustainable-beauty-movement",
+          "title": "Unilever lance un nouveau produit de soin du corps pour ...",
+          "content": "Unilever prévoit de lancer une nouvelle gamme de soins corporels appelée Love Beauty and Planet afin de soutenir le mouvement de la beauté durable initié au",
+          "score": 0.76596165,
+          "raw_content": null,
+          "published_date": "Wed, 30 Sep 2026 09:00:00 GMT",
+          "id": "f45f08-00"
+        },
+        {
+          "url": "https://www.lapresse.ca/societe/mode-et-beaute/2026-08-16/jean-coutu-et-brunet/zya-nouvelle-marque-de-soins-de-beaute.php",
+          "title": "Jean Coutu et Brunet | Zya., nouvelle marque de soins de ...",
+          "content": "Zya. est une nouvelle marque de soins de beauté lancée par Jean Coutu et Brunet et pensée pour la génération Z avec des produits simples et efficaces.",
+          "score": 0.72629017,
+          "raw_content": null,
+          "published_date": "Sun, 16 Aug 2026 00:00:00 GMT",
+          "id": "032855-01"
+        },
+        {
+          "url": "https://www.fortunebusinessinsights.com/fr/skin-care-market-102544",
+          "title": "Taille, part et tendances du marché des soins de la peau",
+          "content": "MAC a lancé une nouvelle collection de produits de soins de beauté, « Hyper Real », conçue pour améliorer la qualité de la peau des femmes.",
+          "score": 0.6757865,
+          "raw_content": null,
+          "published_date": "Mon, 07 Sep 2026 00:00:00 GMT",
+          "id": "b04fd0-02"
+        },
+        {
+          "url": "https://www.facebook.com/actubretagne/posts/bretagne-cette-nouvelle-marque-de-cosm%C3%A9tiques-propose-de-r%C3%A9concilier-la-peau-et-/1623969153064936",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.62879556,
+          "raw_content": null,
+          "published_date": null,
+          "id": "e93856-03"
+        },
+        {
+          "url": "https://www.facebook.com/mamaisonalafrancaise/posts/bonjour-les-amis%EF%B8%8Fapr%C3%A8s-des-mois-dattente-ma-nouvelle-aventure-commence-enfin-en-/1576874177166164",
+          "title": "[social media post redacted]",
+          "content": "[social media post redacted]",
+          "score": 0.07177981,
+          "raw_content": null,
+          "published_date": null,
+          "id": "497f1c-04"
+        }
+      ],
+      "response_time": 2.02,
+      "usage": {
+        "credits": 1
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-04T09:04:31.821584Z"
+  }
+]

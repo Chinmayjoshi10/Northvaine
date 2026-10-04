@@ -25,8 +25,9 @@ NETWORK_ALLOWED_FILES = {"northvaine/brain/llm.py"}
 SENDING_LIBS = {"smtplib", "sendgrid", "twilio", "slack_sdk", "telegram", "mailgun", "postmarker"}
 
 SECRET_PATTERNS = [
-    re.compile(r"sk-[A-Za-z0-9_\-]{20,}"),
-    re.compile(r"tvly-[A-Za-z0-9_\-]{10,}"),
+    # The lookbehind stops URL slugs such as ".../maersk-nimmt-..." matching as a key.
+    re.compile(r"(?<![A-Za-z0-9])sk-[A-Za-z0-9_\-]{20,}"),
+    re.compile(r"(?<![A-Za-z0-9])tvly-[A-Za-z0-9_\-]{10,}"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
     re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
     re.compile(r"""(?i)(api[_-]?key|secret|token|password)\s*[:=]\s*['"][A-Za-z0-9_\-/+]{16,}['"]"""),
