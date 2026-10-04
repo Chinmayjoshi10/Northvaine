@@ -253,6 +253,11 @@ async def build_evidence(
         concept = assign_concept(grounded, embedding, concepts, settings=settings)
         subject_key = _subject_key(grounded.subject)
         group_key = grounded.group_key
+        if not structured and group_key is not None:
+            # An extracted group hint is model output: keep it only if a verified quote has it.
+            quotes = [checks[i].draft.source_quote for i in grounded.claim_indices]
+            if not any(quote_contains(q, group_key) for q in quotes):
+                group_key = None
         candidate = ClusterCandidate(
             cluster_id=uuid4(),
             event_type=grounded.event_type,

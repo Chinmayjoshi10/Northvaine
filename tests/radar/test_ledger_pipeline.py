@@ -418,7 +418,7 @@ async def test_full_text_pipeline_orders_calls_and_grounds_every_field() -> None
     assert event.occurred_on == date(2026, 3, 5) and event.available_at == AVAILABLE
     assert event.subject is not None and event.subject.country is None  # DE is not quoted
     assert event.slots["city"] == "Rotterdam" and "ghost" not in event.slots
-    assert event.slots["group_key"] == "harbourside-plant"
+    assert "group_key" not in event.slots  # "harbourside-plant" is not in any verified quote
     assert event.slots["subject_key"] == "harbourside works"
     assert event.embedding == unit(3)
     assert event.description == (
@@ -429,6 +429,19 @@ async def test_full_text_pipeline_orders_calls_and_grounds_every_field() -> None
     assert event.concept.is_new and event.concept.label == "new_plant"
     assert event.concept.parent_id == CONCEPTS[0].id and event.concept.status == "proposed"
     assert len(event.claim_fingerprints) == 2
+
+
+async def test_an_extracted_group_hint_is_kept_only_when_quoted() -> None:
+    replies = full_text_replies()
+    replies[0]["events"][0]["group_hint"] = "Rotterdam"
+    client = Recorder(replies)
+    client.vectors = [unit(3)]
+    with llm_module.client_override(client):
+        result = await build_evidence(
+            website_doc(), CONCEPTS, [], run=RunContext(), settings=SETTINGS
+        )
+    (event,) = result.events
+    assert event.slots["group_key"] == "Rotterdam"
 
 
 async def test_an_event_with_no_verified_claim_costs_no_embed_call() -> None:
