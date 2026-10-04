@@ -615,3 +615,19 @@ brief with Claude's five corrections (docs/COLLAB.md).
   every document's `available_at` at `as_of`. D63's citation rule covers statements (demand,
   buyer, action, evidence against); the skeptic's open questions are questions, not facts, and
   stay number-grounded against the entry's quotes without a citation.
+
+## 2026-10-05 — Scope for the rest of the build (founder)
+
+- **D79 — The full learning system is in scope; simulated data is allowed, labelled as
+  simulated, and real public history comes first.** The founder: build the product fully, and use
+  invented data where real customer data cannot arrive in time. CTO rules for this:
+  1. **Real public history first.** Tender -> award chains on TED are real outcomes (D28): who
+     won what, after which signals and with what lag. The buying-pattern and world-state learners
+     train on these before anything is simulated.
+  2. **A simulated owner** (ARCHITECTURE M10) gives feedback where no customer exists yet. Its
+     preferences are written down as data, and every result it drives is marked `simulated`.
+  3. **Never presented as customer evidence.** Demos, the README and the pitch say which results
+     come from public history, which from simulation, and which from real users.
+  4. **Learners are swappable**, so real partner outcomes replace simulated ones without code
+     changes.
+  Order: Phase 0 first (ROADMAP.md), then the learners on public history, then the simulated owner.

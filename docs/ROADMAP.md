@@ -40,12 +40,10 @@ general engine with nothing hard-coded per industry.
 - the head-to-head (our brief vs manual ChatGPT research, same exporter, same week) shows ours
   at least equal on verified, new and actionable leads.
 
-**Deferred from the original plan (founder to confirm):**
-- the full four learners and the attention allocator;
-- missed-opportunity post-mortems;
-- the Gateway.
-
-These are built after the hackathon, on real outcome data.
+**Founder decision (5 Oct, D79):** the full product is in scope, including the four learners,
+the allocator, post-mortems and the Gateway. They are built after the Phase 0 items. The learners
+train first on real public history (tender -> award outcomes), then on a simulated owner,
+labelled as simulated. Real partner outcomes replace the simulation as they arrive.
 
 ## Phase 1: Design partners (Nov)
 - 3-5 exporters receive weekly briefs, delivered by hand through the agency.
