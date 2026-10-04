@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from collections.abc import AsyncIterator, Iterator
 from functools import lru_cache
 
@@ -23,9 +24,15 @@ def clean_settings(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     for name in Settings.model_fields:
         monkeypatch.delenv(name.upper(), raising=False)
         monkeypatch.delenv(name, raising=False)
-    settings_module.get_settings.cache_clear()
+    original = settings_module.get_settings
+    original.cache_clear()
     patched = lru_cache(maxsize=1)(lambda: Settings(_env_file=None))
-    monkeypatch.setattr(settings_module, "get_settings", patched)
+    # Modules that did `from ...settings import get_settings` hold their own reference
+    # (e.g. brain/llm.py), so patch every loaded northvaine module that bound the original.
+    for module in list(sys.modules.values()):
+        bound = getattr(module, "get_settings", None) is original
+        if module is not None and module.__name__.startswith("northvaine") and bound:
+            monkeypatch.setattr(module, "get_settings", patched)
     yield
     patched.cache_clear()
     monkeypatch.undo()
