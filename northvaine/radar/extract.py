@@ -50,9 +50,9 @@ class SlotValue(BaseModel):
 class ExtractedClaim(BaseModel):
     statement: str
     source_quote: str
-    subject_name: str | None = None
-    subject_country: str | None = None
-    subject_role: str | None = None
+    subject_name: str | None
+    subject_country: str | None
+    subject_role: str | None
 
 
 # claim_indices point into ExtractionOutput.claims; event_type is a label from the data-driven
@@ -60,12 +60,12 @@ class ExtractedClaim(BaseModel):
 class ExtractedEvent(BaseModel):
     event_type: str
     claim_indices: list[int]
-    subject_name: str | None = None
-    date_text: str | None = None
-    group_hint: str | None = None
+    subject_name: str | None
+    date_text: str | None
+    group_hint: str | None
     slots: list[SlotValue]
-    concept_label: str | None = None
-    concept_hint: str | None = None
+    concept_label: str | None
+    concept_hint: str | None
 
 
 class ExtractionOutput(BaseModel):

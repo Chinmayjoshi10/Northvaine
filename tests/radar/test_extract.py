@@ -20,6 +20,7 @@ from northvaine.core.settings import Settings
 from northvaine.radar.extract import ExtractionOutput, document_event_types, extract
 
 MODEL = "nvidia/Nemotron-3_5-Lightning"
+ROOT = Path(__file__).resolve().parents[2]
 HOME = Path(__file__).resolve().parents[1] / "fixtures" / "web" / "home.html"
 
 
@@ -73,11 +74,28 @@ def document(text: str = "Acme opened a new plant in Lyon on 3 March 2026.") -> 
 
 
 def claim(quote: str = "Acme opened a new plant in Lyon", **kw: Any) -> dict[str, Any]:
-    return {"statement": "Acme opened a plant", "source_quote": quote, **kw}
+    base: dict[str, Any] = {
+        "statement": "Acme opened a plant",
+        "source_quote": quote,
+        "subject_name": None,
+        "subject_country": None,
+        "subject_role": None,
+    }
+    base.update(kw)
+    return base
 
 
 def event(**kw: Any) -> dict[str, Any]:
-    base: dict[str, Any] = {"event_type": "facility_opened", "claim_indices": [0], "slots": []}
+    base: dict[str, Any] = {
+        "event_type": "facility_opened",
+        "claim_indices": [0],
+        "subject_name": None,
+        "date_text": None,
+        "group_hint": None,
+        "slots": [],
+        "concept_label": None,
+        "concept_hint": None,
+    }
     base.update(kw)
     return base
 
@@ -208,19 +226,41 @@ async def test_claims_are_capped_and_later_indices_dangle() -> None:
     assert len(claims) == 8 and events[0].claim_indices == [7]
 
 
-async def test_absent_and_null_optional_fields_are_the_same() -> None:
-    reply = {
-        "claims": [{"statement": "s", "source_quote": "q", "subject_name": None}],
-        "events": [{"event_type": "facility_opened", "claim_indices": [0], "slots": []}],
-    }
-    (claims, events), _ = await run_extract(reply)
+async def test_a_null_subject_yields_no_subject() -> None:
+    (claims, events), _ = await run_extract({"claims": [claim()], "events": [event()]})
     assert claims[0].subject is None and events[0].subject is None
     assert events[0].occurred_on is None
 
 
+async def test_a_named_subject_and_role_yield_a_subject_mention() -> None:
+    reply = {
+        "claims": [claim(subject_name="Acme", subject_country="FR", subject_role="operator")],
+        "events": [event(subject_name="Acme", date_text="2026-03-03")],
+    }
+    (claims, events), _ = await run_extract(reply)
+    assert claims[0].subject is not None
+    assert (claims[0].subject.name, claims[0].subject.country) == ("Acme", "FR")
+    assert claims[0].subject.role == "operator"
+    assert events[0].subject == claims[0].subject
+    assert events[0].occurred_on == date(2026, 3, 3)
+
+
+async def test_the_v2_prompt_fences_untrusted_text_and_has_no_banned_term() -> None:
+    _, client = await run_extract({"claims": [], "events": []})
+    for label in ("DOC_TITLE", "DOC_URL", "DOC_TEXT"):
+        assert re.search(rf"-----BEGIN {label} DATA [0-9a-f]{{32}}-----", client.prompt)
+    template = load_prompt("evidence_extract").template.casefold()
+    banned = (ROOT / "factory" / "banned_terms.txt").read_text(encoding="utf-8").splitlines()
+    terms = [t.strip().casefold() for t in banned if t.strip() and not t.startswith("#")]
+    assert terms
+    assert not [t for t in terms if re.search(rf"\b{re.escape(t)}\b", template)]
+
+
 def test_prompt_states_claims_and_slots_rule() -> None:
     prompt = load_prompt("evidence_extract")
-    assert prompt.version_label == "evidence_extract.v1"
+    assert prompt.version_label == "evidence_extract.v2"
+    assert "Never name a person as a subject" in prompt.template
+    assert "not a contract award" in prompt.template
     assert prompt.untrusted_vars == {"doc_title", "doc_url", "doc_text"}
     assert 'Every fact goes in "claims"' in prompt.template
     assert "Slots never replace claims" in prompt.template
