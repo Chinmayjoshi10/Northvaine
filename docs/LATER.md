@@ -126,3 +126,18 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
 - Distillation dataset export of verified claims and support verdicts.
 - Gate persistence of rejected sellers with `rejected_as`: M5.
 
+
+## Parked from Milestone 5 planning (2026-10-05)
+
+- DB persistence of radar runs: `companies` upsert by match key, `cases` (stage gated/dismissed,
+  `rejected_as` column), `case_evidence` stances, `case_open_questions` (M6 case file; D61).
+- LLM-assisted entity resolution for uncertain pairs; domain-based company keys; aliases across
+  languages; the project graph (M6).
+- Bidder inference for tenders (likely bidders = repeat winners of similar works, D19/D23 join).
+- Judge (deep model), calibrated confidence, thesis weights in the ranking (SPEC §5 steps 8-9).
+- SPEC §5 filter/match stages (recency drop, blocked aggregators beyond the deny list, embeddings
+  match to theses); skeptic with its own search budget (ARCHITECTURE §10).
+- Clients as workspaces in the database (the radar reads specs from the fixtures dir in M5).
+- Tavily `/extract` instead of page fetch; Wayback snapshots for replay-safe web pages.
+- Per-provider concurrency caps; Tavily credit ledger; the nightly `discover` job wiring.
+

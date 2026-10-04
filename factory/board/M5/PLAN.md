@@ -1,6 +1,6 @@
 # Milestone 5 plan: First Reviewable Radar
 
-status: **proposed** (architect, 5 Oct 2026; lean plan, no separate research or critique pass)
+status: **approved** (orchestrator, 5 Oct 2026; founder answered Q1 and Q2 on 5 Oct)
 date: 2026-10-05
 baseline: `main` at 3ac2e7a (M4 closed: gate green, 1083 unit + 50 golden, migration head 0005).
 requirements: `docs/COLLAB.md` (ChatGPT's M5 brief + Claude's five corrections), `factory/reports/M4.md`
@@ -281,6 +281,8 @@ ledger bug.
    the run notes say how many.
 
 ## Questions for the founder
+
+**Answered 5 Oct 2026:** Q1 = briefs shared privately, never committed. Q2 = an honest thin packaging brief is a pass.
 
 1. **Reports in the public repo?** The briefs name real companies from public records and may name
    a sole trader who won a tender. Recommended: keep `reports/radar/` out of git and share the

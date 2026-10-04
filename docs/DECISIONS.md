@@ -505,3 +505,50 @@ results are leads, not evidence).
 - Derived slots `subject_key` and `group_key` are computed by code (for TED, the procedure id
   from the record), not model output; an extracted `group_hint` is kept only when a verified
   quote contains it (D50).
+
+## 2026-10-05 — Milestone 5 First Reviewable Radar (from factory/board/M5/PLAN.md)
+
+Founder answered 5 Oct: generated briefs are shared privately and never committed (D66); an
+honest 'sources are thin' packaging brief with no padding is a pass. Brief source: ChatGPT's M5
+brief with Claude's five corrections (docs/COLLAB.md).
+
+- **D57 — Extractor v2 names the company.** `subject_name`, `subject_role` and `date_text` (claims
+  and events) become required-nullable fields of the strict schema, and the prompt requires the
+  quote to contain the organisation's name (otherwise grounding drops it, D50). An event type is
+  used only when its seeded description fits; otherwise no event. Re-record, never hand-edit (D53).
+- **D58 — Entity resolution in M5 is one explicit code rule.** Match key = NFKC, casefold,
+  punctuation stripped, legal-form tokens removed (a settings list, not industry words), plus the
+  ISO2 country. A country-less mention joins the single countried key with the same name, else it
+  stays separate. No LLM pair resolution, no domains, no merging across different countries.
+- **D59 — A lead is upgraded once by fetching its publisher page.** Robots.txt, the deny list
+  (rule #9) and `safe_fetch` apply; emails and phone numbers are stripped from the text before it
+  becomes a `website` document (`available_at = fetched_at`, `meta.upgraded_from` = lead URL);
+  at most `radar_max_lead_upgrades` per run; every refusal is kept with its reason.
+- **D60 — Three streams on every brief entry.** `tender` (enumerable; window = publication to the
+  earliest stated deadline, else +30 days marked *estimated*, D27), `award` (enumerable; account
+  intelligence, D23; no window), `announcement` (not enumerable; specification window; date only
+  as stated). Recall is reported only for enumerable streams (D30). A company seen in several
+  streams is one entry with a primary stream (tender > announcement > award).
+- **D61 — M5 persists the radar run as a JSON run record; database cases wait for their first
+  reader.** `run.json` keeps every candidate, passed and rejected, with `rejected_as`, reason and
+  `by`, never deleted. Writing `companies`/`cases`/`case_evidence` (and a `rejected_as` column)
+  lands with the case file in M6, mapped from this record. Keeps M5 offline and DB-free.
+- **D62 — Gate and skeptic.** Code rejects candidates with no named company (`unidentified`)
+  before any model call. The gate is one mid-tier call per candidate over its verified claims and
+  the client's offer, choosing buyer / competitor / reseller / publisher / not_a_buyer /
+  not_an_organisation; a natural person is rejected and their name withheld from reports. The
+  skeptic runs only on passed candidates (mid tier) and must cite claim refs, else `unknown` with
+  open questions. No judge / deep model in M5.
+- **D63 — Model-written brief sentences cite claims and never introduce a number.** Demand
+  reason, buyer reason, suggested action, skeptic reasons and open questions must cite valid claim
+  refs, and every number in them must appear in a cited verified quote; otherwise the sentence is
+  shown as "not stated". Facts are rendered only as verified statements with verbatim quotes.
+- **D64 — Ranking is lexicographic and explained.** Order by (evidence strength, window urgency or
+  recency, direct buyer); each component is printed as a reason line. No numeric score.
+- **D65 — Radar runs are fresh and replayable.** Query date ranges are shifted to end at the run
+  date (same length); a radar recording (HTTP exchanges, fetched pages, LLM exchanges, meta with
+  `as_of` and the shifted queries) lives in `tests/fixtures/radar/<client>/`. Replay is the
+  default; only the orchestrator records. M3/M4 fixtures stay as they are (except T5.1's re-record).
+- **D66 — Generated reports are not committed** (pending founder Q1): `reports/radar/` is in
+  `.gitignore`.
+
