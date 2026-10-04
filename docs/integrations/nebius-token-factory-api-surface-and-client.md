@@ -277,3 +277,5 @@ three-word input and `completion_tokens: 0`.
 `vector_cosine_ops` — comfortably under pgvector's 2,000 index limit. The 4096 native dimension is
 confirmed unindexable (above the 4,000 `halfvec` ceiling), so the `dimensions` parameter is not an
 optimization here, it is what makes indexed vector search possible at all.
+
+- **Strict structured output (2026-10-04):** which JSON Schema keywords Token Factory honours with `strict=true` - see `nebius-token-factory-strict-structured-output-which-json-schema-features-are-honoured-needed-by-the-extractor-and-support-check-schemas-.md`.
