@@ -18,8 +18,19 @@ ROOT = Path(__file__).resolve().parents[2]
 NOW = datetime(2026, 1, 1, tzinfo=UTC)
 
 STAGES = {
-    "candidate", "gated", "investigated", "briefed", "approved", "contacted", "replied",
-    "meeting", "samples", "quoted", "won", "lost", "dismissed",
+    "candidate",
+    "gated",
+    "investigated",
+    "briefed",
+    "approved",
+    "contacted",
+    "replied",
+    "meeting",
+    "samples",
+    "quoted",
+    "won",
+    "lost",
+    "dismissed",
 }
 LEARNERS = {"world", "org", "buying", "research", "allocator"}
 
@@ -42,11 +53,21 @@ EXPECTED: dict[type[StrEnum], set[str]] = {
     m.Learner: LEARNERS,
     m.ConceptStatus: {"active", "proposed", "merged", "retired"},
     m.HypothesisStatus: {
-        "proposed", "exploring", "exploiting", "degraded", "retired", "rejected",
+        "proposed",
+        "exploring",
+        "exploiting",
+        "degraded",
+        "retired",
+        "rejected",
     },
     m.HypothesisOrigin: {
-        "llm_prior", "history_mining", "world_lift", "error_driven", "missed_opportunity",
-        "cross_org", "owner",
+        "llm_prior",
+        "history_mining",
+        "world_lift",
+        "error_driven",
+        "missed_opportunity",
+        "cross_org",
+        "owner",
     },
     m.PlaybookStatus: {"active", "exploring", "retired"},
     m.ProgramStatus: {"active", "trial", "paused", "retired"},
@@ -54,7 +75,11 @@ EXPECTED: dict[type[StrEnum], set[str]] = {
     m.DecisionKind: {"brief", "search", "investigation", "question"},
     m.MissedSource: {"inbound", "win", "public_award"},
     m.PostmortemStatus: {
-        "pending", "not_surfaced", "surfaced_dropped", "surfaced_late", "surfaced_in_time",
+        "pending",
+        "not_surfaced",
+        "surfaced_dropped",
+        "surfaced_late",
+        "surfaced_in_time",
     },
     m.OpenQuestionStatus: {"open", "answered", "dropped"},
 }
@@ -109,10 +134,20 @@ def test_unknown_field_is_rejected() -> None:
 
 def _case_data() -> dict[str, object]:
     return {
-        "id": uuid4(), "workspace_id": uuid4(), "company_id": None, "direction": "inbound",
-        "thesis_id": None, "pattern_id": None, "stage": "candidate", "verdict": None,
-        "window_start": None, "window_end": None, "assigned_to": None, "trace": [],
-        "created_at": NOW, "updated_at": NOW,
+        "id": uuid4(),
+        "workspace_id": uuid4(),
+        "company_id": None,
+        "direction": "inbound",
+        "thesis_id": None,
+        "pattern_id": None,
+        "stage": "candidate",
+        "verdict": None,
+        "window_start": None,
+        "window_end": None,
+        "assigned_to": None,
+        "trace": [],
+        "created_at": NOW,
+        "updated_at": NOW,
     }
 
 
@@ -122,15 +157,25 @@ def _case() -> m.CaseRow:
 
 def _company(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": uuid4(), "primary_domain": None, "name": "Acme", "aliases": [], "country": "DE",
-        "locality": None, "industry_codes": [], "attributes": {}, "updated_at": NOW,
+        "id": uuid4(),
+        "primary_domain": None,
+        "name": "Acme",
+        "aliases": [],
+        "country": "DE",
+        "locality": None,
+        "industry_codes": [],
+        "attributes": {},
+        "updated_at": NOW,
     }
     return {**data, **over}
 
 
 def _outcome(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "case_id": uuid4(), "stage": "won", "value": Decimal("10.5"), "currency": "EUR",
+        "case_id": uuid4(),
+        "stage": "won",
+        "value": Decimal("10.5"),
+        "currency": "EUR",
         "recorded_at": NOW,
     }
     return {**data, **over}
@@ -138,17 +183,32 @@ def _outcome(**over: object) -> dict[str, object]:
 
 def _decision(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": 1, "workspace_id": None, "kind": "brief", "case_id": None, "company_id": None,
-        "features": {}, "choice": {}, "value_estimate": None, "propensity": 0.5,
-        "cost_usd": Decimal("0"), "strategy_version": 0, "created_at": NOW,
+        "id": 1,
+        "workspace_id": None,
+        "kind": "brief",
+        "case_id": None,
+        "company_id": None,
+        "features": {},
+        "choice": {},
+        "value_estimate": None,
+        "propensity": 0.5,
+        "cost_usd": Decimal("0"),
+        "strategy_version": 0,
+        "created_at": NOW,
     }
     return {**data, **over}
 
 
 def _attribution(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": uuid4(), "feedback_id": uuid4(), "code": "wrong_region", "learner": "org",
-        "component": "gate", "target_id": None, "weight": 1.0, "confirmed": False,
+        "id": uuid4(),
+        "feedback_id": uuid4(),
+        "code": "wrong_region",
+        "learner": "org",
+        "component": "gate",
+        "target_id": None,
+        "weight": 1.0,
+        "confirmed": False,
         "created_at": NOW,
     }
     return {**data, **over}
@@ -156,8 +216,14 @@ def _attribution(**over: object) -> dict[str, object]:
 
 def _concept(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": uuid4(), "parent_id": None, "level": 0, "label": "facility_opened",
-        "description": "d", "embedding": None, "status": "active", "merged_into": None,
+        "id": uuid4(),
+        "parent_id": None,
+        "level": 0,
+        "label": "facility_opened",
+        "description": "d",
+        "embedding": None,
+        "status": "active",
+        "merged_into": None,
         "created_at": NOW,
     }
     return {**data, **over}
@@ -165,9 +231,18 @@ def _concept(**over: object) -> dict[str, object]:
 
 def _hypothesis(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": uuid4(), "workspace_id": None, "learner": "world", "kind": "pattern",
-        "parent_id": None, "body": {}, "schema_ver": "1", "status": "proposed",
-        "origin": "owner", "proposed_at": NOW, "tests": [], "decided_at": None,
+        "id": uuid4(),
+        "workspace_id": None,
+        "learner": "world",
+        "kind": "pattern",
+        "parent_id": None,
+        "body": {},
+        "schema_ver": "1",
+        "status": "proposed",
+        "origin": "owner",
+        "proposed_at": NOW,
+        "tests": [],
+        "decided_at": None,
         "strategy_version": 0,
     }
     return {**data, **over}
@@ -175,19 +250,36 @@ def _hypothesis(**over: object) -> dict[str, object]:
 
 def _belief(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": 1, "learner": "org", "workspace_id": None, "strategy_version": 0,
-        "kind": "rate", "key": "k", "params": {}, "schema_ver": "1", "n_evidence": 0.0,
-        "prior_source": None, "updated_at": NOW,
+        "id": 1,
+        "learner": "org",
+        "workspace_id": None,
+        "strategy_version": 0,
+        "kind": "rate",
+        "key": "k",
+        "params": {},
+        "schema_ver": "1",
+        "n_evidence": 0.0,
+        "prior_source": None,
+        "updated_at": NOW,
     }
     return {**data, **over}
 
 
 def _expectation(**over: object) -> dict[str, object]:
     data: dict[str, object] = {
-        "id": uuid4(), "workspace_id": None, "company_id": uuid4(), "concept_id": uuid4(),
-        "hypothesis_id": None, "window_start": date(2026, 1, 1), "window_end": date(2026, 2, 1),
-        "origin": "world", "status": "pending", "value": None, "met_event_id": None,
-        "created_at": NOW, "resolved_at": None,
+        "id": uuid4(),
+        "workspace_id": None,
+        "company_id": uuid4(),
+        "concept_id": uuid4(),
+        "hypothesis_id": None,
+        "window_start": date(2026, 1, 1),
+        "window_end": date(2026, 2, 1),
+        "origin": "world",
+        "status": "pending",
+        "value": None,
+        "met_event_id": None,
+        "created_at": NOW,
+        "resolved_at": None,
     }
     return {**data, **over}
 
@@ -251,9 +343,14 @@ def test_expectation_window_must_not_end_before_it_starts() -> None:
 def test_control_companies_must_differ() -> None:
     cid = uuid4()
     base = {
-        "id": uuid4(), "workspace_id": uuid4(), "hypothesis_id": None,
-        "positive_company_id": uuid4(), "control_company_id": uuid4(),
-        "as_of": date(2026, 1, 1), "match_on": {}, "created_at": NOW,
+        "id": uuid4(),
+        "workspace_id": uuid4(),
+        "hypothesis_id": None,
+        "positive_company_id": uuid4(),
+        "control_company_id": uuid4(),
+        "as_of": date(2026, 1, 1),
+        "match_on": {},
+        "created_at": NOW,
     }
     m.ControlRow(**base)  # type: ignore[arg-type]
     with pytest.raises(ValidationError):
@@ -265,3 +362,147 @@ def test_enum_fields_reject_unknown_values() -> None:
         m.CaseRow(**{**_case_data(), "stage": "nonsense"})  # type: ignore[arg-type]
     with pytest.raises(ValidationError):
         m.HypothesisRow(**_hypothesis(learner="nobody"))  # type: ignore[arg-type]
+
+
+# --- M4 evidence ledger models (T4.0) ----------------------------------------------------------
+
+
+def test_claim_status_values_equal_the_check_list() -> None:
+    assert [s.value for s in m.ClaimStatus] == [
+        "pending",
+        "verified",
+        "quote_not_found",
+        "quote_too_short",
+        "unsupported",
+        "ineligible_document",
+    ]
+
+
+def test_claim_and_event_rows_have_the_new_fields() -> None:
+    assert {"status", "meta", "fingerprint"} <= set(m.ClaimRow.model_fields)
+    assert {"available_at", "description", "embedding", "fingerprint"} <= set(
+        m.EventRow.model_fields
+    )
+
+
+LEDGER_FIELDS = {
+    "Eligibility": ["kind", "reason"],
+    "EvidenceDocument": [
+        "id",
+        "source_name",
+        "url",
+        "title",
+        "text",
+        "available_at",
+        "workspace_id",
+        "group_key",
+        "meta",
+    ],
+    "SubjectMention": ["name", "country", "role"],
+    "ClaimDraft": ["statement", "source_quote", "subject", "extracted_by", "meta"],
+    "QuoteMatch": ["found", "offset", "length", "ratio", "method", "reason"],
+    "ClaimCheck": ["document_id", "draft", "status", "quote_offset", "verified_by", "fingerprint"],
+    "EventDraft": [
+        "event_type",
+        "claim_indices",
+        "subject",
+        "date_text",
+        "occurred_on",
+        "group_key",
+        "slots",
+        "concept_label",
+        "concept_hint",
+    ],
+    "ConceptAssignment": [
+        "concept_id",
+        "parent_id",
+        "level",
+        "label",
+        "description",
+        "status",
+        "is_new",
+        "embedding",
+    ],
+    "ClusterCandidate": [
+        "event_id",
+        "cluster_id",
+        "event_type",
+        "occurred_on",
+        "subject_key",
+        "group_key",
+        "embedding",
+        "available_at",
+    ],
+    "PendingEvent": [
+        "event_type",
+        "claim_fingerprints",
+        "occurred_on",
+        "available_at",
+        "subject",
+        "description",
+        "embedding",
+        "concept",
+        "cluster_id",
+        "slots",
+        "details",
+        "fingerprint",
+    ],
+    "NewEvent": [
+        "event_type",
+        "claim_ids",
+        "occurred_on",
+        "available_at",
+        "subject",
+        "description",
+        "embedding",
+        "concept_id",
+        "cluster_id",
+        "slots",
+        "details",
+        "fingerprint",
+    ],
+    "VerifiedClaim": [
+        "id",
+        "document_id",
+        "statement",
+        "source_quote",
+        "quote_offset",
+        "verified_by",
+        "available_at",
+        "workspace_id",
+        "meta",
+    ],
+    "LedgerResult": ["document_id", "eligibility", "checks", "events", "llm_calls"],
+}
+
+
+@pytest.mark.parametrize("name", list(LEDGER_FIELDS))
+def test_ledger_model_fields(name: str) -> None:
+    assert list(getattr(m, name).model_fields) == LEDGER_FIELDS[name]
+
+
+def test_evidence_and_quote_enums() -> None:
+    assert {e.value for e in m.EvidenceKind} == {"structured", "full_text", "lead"}
+    assert {e.value for e in m.QuoteMode} == {"extracted", "structured"}
+
+
+def test_subject_mention_checks_country_and_role() -> None:
+    assert m.SubjectMention(name="Acme", country="DE", role="buyer").country == "DE"
+    assert m.SubjectMention(name="Acme", role="buyer").country is None
+    with pytest.raises(ValidationError):
+        m.SubjectMention(name="Acme", country="de", role="buyer")
+    with pytest.raises(ValidationError):
+        m.SubjectMention(name="Acme", country="DE", role="Buyer Co")
+
+
+def test_claim_check_verified_property() -> None:
+    draft = m.ClaimDraft(statement="s", source_quote="q", extracted_by="code")
+    base = {"document_id": uuid4(), "draft": draft, "fingerprint": "f"}
+    ok = m.ClaimCheck(status=m.ClaimStatus.VERIFIED, quote_offset=0, verified_by="code", **base)
+    bad = m.ClaimCheck(status=m.ClaimStatus.UNSUPPORTED, **base)
+    assert ok.verified is True and bad.verified is False
+
+
+def test_ledger_models_reject_unknown_fields() -> None:
+    with pytest.raises(ValidationError):
+        m.Eligibility(kind="lead", surprise=1)  # type: ignore[call-arg]
