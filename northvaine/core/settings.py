@@ -100,6 +100,29 @@ class Settings(BaseSettings):
         default_factory=lambda: {"ted": "structured", "website": "full_text", "tavily": "raw_only"}
     )
 
+    # radar (M5, D57-D66). Paths, caps, windows and the legal-form list are data, not literals.
+    radar_clients_dir: str = "tests/fixtures/clients"
+    radar_reports_dir: str = "reports/radar"
+    radar_fixtures_dir: str = "tests/fixtures/radar"
+    radar_max_lead_upgrades: int = Field(default=15, ge=1)
+    radar_max_gate_candidates: int = Field(default=40, ge=1)
+    radar_brief_entries: int = Field(default=10, ge=1)
+    radar_tender_window_days: int = Field(default=30, ge=1)  # D27
+    radar_recent_days: int = Field(default=90, ge=1)
+    radar_stream_by_event: dict[str, str] = Field(
+        default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
+    )
+    radar_enumerable_sources: tuple[str, ...] = ("ted",)
+    radar_legal_forms: tuple[str, ...] = (
+        "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
+        "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
+        "srl", "spa", "bv", "nv", "ab", "as", "oy", "aps", "sp z o o", "sl", "slu", "oyj",
+        "asa", "se", "pty", "pte", "ou",
+    )  # fmt: skip
+    gate_max_tokens: int = Field(default=700, ge=1)
+    skeptic_max_tokens: int = Field(default=600, ge=1)
+    radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
+
     # queue
     job_lease_seconds: int = Field(default=300, ge=1)
     job_max_attempts: int = Field(default=5, ge=1)
@@ -114,6 +137,23 @@ class Settings(BaseSettings):
                 raise ValueError(
                     f"evidence_source_rules[{source!r}] must be structured, full_text or raw_only"
                 )
+        return value
+
+    @field_validator("radar_stream_by_event")
+    @classmethod
+    def _streams_are_known(cls, value: dict[str, str]) -> dict[str, str]:
+        for event, stream in value.items():
+            if stream not in {"tender", "award", "announcement"}:
+                raise ValueError(
+                    f"radar_stream_by_event[{event!r}] must be tender, award or announcement"
+                )
+        return value
+
+    @field_validator("radar_enumerable_sources")
+    @classmethod
+    def _enumerable_sources_not_empty(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if not value:
+            raise ValueError("radar_enumerable_sources must not be empty")
         return value
 
     @field_validator("ted_availability_lag_days")
