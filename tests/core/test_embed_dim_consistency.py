@@ -82,3 +82,13 @@ def test_the_constant_is_a_plausible_dimension(value: int) -> None:
     """Guards against someone 'fixing' a failure by typing the native 4096 back in."""
     assert value != EMBED_DIM_EXPECTED
     assert EMBED_DIM_EXPECTED > 0
+
+
+REVISION_0005 = ROOT / "migrations" / "versions" / "0005_evidence_ledger.py"
+
+
+def test_migration_0005_uses_exactly_one_dimension_and_it_is_the_constant() -> None:
+    """events.embedding is sized in 0005 with a literal, like 0003 (migrations read no settings)."""
+    found = dimensions_in(REVISION_0005)
+    assert found, "migration 0005 has no sized vector column"
+    assert found == {EMBED_DIM_EXPECTED}, found

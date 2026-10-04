@@ -237,9 +237,7 @@ def test_unsupported_or_inconsistent_ddl_raises(sql: str) -> None:
         ("CREATE TRIGGER", "CREATE TRIGGER t AFTER INSERT ON cases EXECUTE FUNCTION f()"),
     ],
 )
-def test_an_unsupported_ddl_form_raises_and_names_the_statement(
-    label: str, statement: str
-) -> None:
+def test_an_unsupported_ddl_form_raises_and_names_the_statement(label: str, statement: str) -> None:
     """Silently ignoring these is how schema.sql and the migrations drift apart unnoticed."""
     with pytest.raises(DdlParseError) as caught:
         parse_ddl(statement + ";")
@@ -295,3 +293,32 @@ def test_the_llm_calls_columns_migration_0003_adds_are_accepted() -> None:
     for name in ("run_id", "prompt_version", "latency_ms", "error", "provider"):
         assert name in columns, name
     assert columns["provider"].type == "text"
+
+
+def test_named_table_level_check_and_add_constraint_unique_are_accepted() -> None:
+    """Migration 0005 shapes: expression CHECKs (no IN list) and ADD CONSTRAINT ... UNIQUE."""
+    sql = (
+        "CREATE TABLE c (id uuid PRIMARY KEY, verified boolean NOT NULL DEFAULT false,"
+        " quote_offset int, verified_by text);"
+        "ALTER TABLE c ADD COLUMN status text NOT NULL DEFAULT 'pending'"
+        " CHECK (status IN ('pending','verified'));"
+        "ALTER TABLE c ADD COLUMN fingerprint text NOT NULL;"
+        "ALTER TABLE c ADD CONSTRAINT c_fingerprint_key UNIQUE (fingerprint);"
+        "ALTER TABLE c ADD CONSTRAINT c_verified_status CHECK (verified = (status = 'verified'));"
+        "ALTER TABLE c ADD CONSTRAINT c_verified_complete"
+        " CHECK (NOT verified OR (quote_offset IS NOT NULL AND verified_by IS NOT NULL));"
+        "CREATE VIEW v AS SELECT c.* FROM c WHERE c.verified;"
+    )
+    schema = parse_schema(sql)
+    columns = schema.tables["c"]
+    assert columns["status"] == ColumnInfo("text", False, ("pending", "verified"))
+    assert columns["fingerprint"] == ColumnInfo("text", False)
+    assert columns["verified"] == ColumnInfo("boolean", False)
+    assert schema.views == {"v"}
+    dropped = parse_ddl(
+        sql
+        + "ALTER TABLE c DROP CONSTRAINT c_verified_complete;"
+        + "ALTER TABLE c DROP CONSTRAINT c_fingerprint_key;"
+        + "ALTER TABLE c DROP CONSTRAINT c_verified_status;"
+    )
+    assert dropped["c"]["status"].check_values == ("pending", "verified")

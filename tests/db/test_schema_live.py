@@ -67,7 +67,7 @@ def test_tables_columns_and_nullability_equal_schema_sql(migrated_url: str) -> N
         assert live[table] == expected[table], table
 
 
-def test_patterns_view_exists(migrated_url: str) -> None:
+def test_views_exist(migrated_url: str) -> None:
     async def probe(conn: AsyncConnection) -> list[str]:
         rows = await conn.execute(
             text(
@@ -77,11 +77,12 @@ def test_patterns_view_exists(migrated_url: str) -> None:
         )
         return [r[0] for r in rows]
 
-    assert run(migrated_url, probe) == ["patterns"]
+    assert sorted(run(migrated_url, probe)) == ["patterns", "verified_claims"]
 
 
 def test_vector_columns_carry_the_confirmed_dimension(migrated_url: str) -> None:
     """0003 sizes them (D7/D14). pgvector stores N directly in atttypmod; -1 means unsized."""
+
     async def probe(conn: AsyncConnection) -> dict[str, int]:
         rows = await conn.execute(
             text(
@@ -128,5 +129,7 @@ def test_every_embedding_column_has_its_hnsw_index(migrated_url: str) -> None:
     for table in ("document_chunks", "event_concepts", "theses"):
         name = f"{table}_embedding_hnsw"
         assert indexes.get(name) == "hnsw", f"{name}: {indexes.get(name)}"
+    # events.embedding deliberately has no index yet (parked in docs/LATER.md).
+    assert "events_embedding_hnsw" not in indexes
     for name in ("llm_calls_created_at", "llm_calls_workspace_created"):
         assert name in indexes, name
