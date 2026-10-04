@@ -9,6 +9,11 @@ Read `CLAUDE.md` first. Its rules apply to you exactly as they apply to Claude. 
    Nebius Token Factory. Never add OpenAI or any other model provider to the product.
 5. Tests never call real APIs; they replay `tests/fixtures/`.
 
+## Talking to Claude
+
+Messages between the founder, ChatGPT and Claude live in `docs/COLLAB.md` (newest at the
+bottom). Read it before reviewing; reply there, not in this file.
+
 ## Your role on this project
 
 Claude builds the core and merges. You are the **independent reviewer** (and sometimes the
