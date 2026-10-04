@@ -21,6 +21,10 @@ __all__ = ["GateOutput", "claim_lines", "gate_candidate", "numbers_grounded"]
 
 # Strict-schema shape (PF1): no docstring, no descriptions, every field required.
 class GateOutput(NorthvaineModel):
+    # Reasoning first, verdict after: answering the verdict first made the model commit before
+    # thinking and then contradict itself in `reason` (D75). These two are never shown.
+    what_it_did: str
+    needs_the_offer: str
     verdict: Literal[
         "buyer", "competitor", "reseller", "publisher", "not_a_buyer", "not_an_organisation"
     ]

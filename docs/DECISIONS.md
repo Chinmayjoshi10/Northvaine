@@ -591,3 +591,10 @@ brief with Claude's five corrections (docs/COLLAB.md).
   creates packaging demand. Tenders passed only because they state the purchase. Gate prompt v2
   defines buyer by need created (building, opening, expanding, launching, commissioning). The
   packaging sample offer also lost a stray test note ("Announcement stream only.").
+- **D75 — The gate reasons before it decides.** Gate v2 still contradicted itself ("street
+  surface works, which indicates demand for paving" -> not_a_buyer) because `GateOutput` asked
+  for `verdict` first. `GateOutput` now starts with `what_it_did` and `needs_the_offer` (never
+  shown), and prompt v3 makes the verdict follow from them. A live probe on 12 previously
+  rejected candidates (under $0.01) passed the open stone tenders and the launching cosmetics
+  brands; two buyer verdicts with no cited claim were still held back by code. The packaging
+  offer drops "private" (the model read it as "private label").

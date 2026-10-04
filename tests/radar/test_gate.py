@@ -86,6 +86,8 @@ SPEC = ClientSpec(id="c", offer="an offer to serve plants", markets=["FR"], sens
 
 def reply(**kw: Any) -> dict[str, Any]:
     base: dict[str, Any] = {
+        "what_it_did": "it published a notice",
+        "needs_the_offer": "yes, the work needs the offer",
         "verdict": "buyer",
         "direct_buyer": True,
         "reason": "it is building a plant",

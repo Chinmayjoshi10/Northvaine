@@ -135,6 +135,8 @@ class FakeLlm:
 
 def gate_reply(verdict: str, cited: list[str]) -> dict[str, Any]:
     return {
+        "what_it_did": "it published a notice",
+        "needs_the_offer": "yes, the work needs the offer",
         "verdict": verdict,
         "direct_buyer": True,
         "reason": "the notice names it as the contracting body",

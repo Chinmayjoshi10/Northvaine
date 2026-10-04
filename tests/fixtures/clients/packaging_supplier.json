@@ -1,6 +1,6 @@
 {
   "id": "packaging_supplier",
-  "offer": "Packaging (bottles, jars, tubes, cartons) for private cosmetics and skincare brands.",
+  "offer": "Packaging (bottles, jars, tubes, cartons) for cosmetics and skincare brands.",
   "markets": ["GB", "FR"],
   "sensors": {
     "ted": [],
