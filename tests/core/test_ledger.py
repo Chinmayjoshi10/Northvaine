@@ -114,6 +114,13 @@ async def test_save_events_refuses_unverified_and_inserts_nothing() -> None:
     assert "verified_claims" in session.calls[0][0]
 
 
+async def test_save_events_refuses_event_without_claims() -> None:
+    session = FakeSession()
+    with pytest.raises(ledger.UnverifiedClaimError, match="e9"):
+        await ledger.save_events(session, [event([], "e9")])  # type: ignore[arg-type]
+    assert session.calls == []
+
+
 async def test_save_events_inserts_with_subject_in_slots() -> None:
     cid, eid = uuid4(), uuid4()
     session = FakeSession(FakeResult([(cid,)]), FakeResult(), FakeResult([("e1", eid)]))

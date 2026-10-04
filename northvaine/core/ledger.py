@@ -206,9 +206,13 @@ async def set_concept_embedding(session: Any, concept_id: UUID, embedding: Seque
 
 async def save_events(session: Any, events: list[NewEvent]) -> dict[str, UUID]:
     """Insert events with ON CONFLICT (fingerprint) DO NOTHING; returns fingerprint -> id.
-    Raises `UnverifiedClaimError` if any claim id is not verified; nothing is inserted then."""
+    Raises `UnverifiedClaimError` if an event has no claims or a claim id is
+    not verified; nothing is inserted then."""
     if not events:
         return {}
+    empty = sorted(e.fingerprint for e in events if not e.claim_ids)
+    if empty:
+        raise UnverifiedClaimError(f"events without claims: {', '.join(empty)}")
     wanted = {cid for event in events for cid in event.claim_ids}
     if wanted:
         result = await session.execute(

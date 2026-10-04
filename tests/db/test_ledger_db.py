@@ -170,6 +170,8 @@ async def test_save_events_refuses_unverified_and_is_idempotent(
             )
         with pytest.raises(ledger.UnverifiedClaimError):
             await ledger.save_events(s, [new_event([uuid4()], "e2")])
+        with pytest.raises(ledger.UnverifiedClaimError):
+            await ledger.save_events(s, [new_event([], "e2b")])
         assert await count(s, "events") == 0
 
         ev = new_event([ids["ok"]], "e3", concept_id=concept)
