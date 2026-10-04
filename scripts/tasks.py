@@ -123,6 +123,11 @@ def record_sensors() -> list[list[str]]:
     return [_py("scripts/record_sensor_fixtures.py")]
 
 
+def record_llm() -> list[list[str]]:
+    """Record redacted LLM fixtures from the live API. Spends money; orchestrator only (D53)."""
+    return [_py("scripts/record_llm_fixtures.py")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -136,6 +141,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "nightly": nightly,
     "smoke": smoke,
     "record-sensors": record_sensors,
+    "record-llm": record_llm,
 }
 
 HELP = {
@@ -151,9 +157,10 @@ HELP = {
     "nightly": "run one radar cycle",
     "smoke": "live LLM smoke run - SPENDS REAL MONEY (add -- --yes to confirm)",
     "record-sensors": "record redacted TED/Tavily fixtures from live APIs (add -- --yes)",
+    "record-llm": "record LLM fixtures for the evidence ledger - SPENDS MONEY (add -- --yes)",
 }
 
-PASSTHROUGH = {"smoke", "record-sensors"}  # arguments after `--` go to the script
+PASSTHROUGH = {"smoke", "record-sensors", "record-llm"}  # arguments after `--` go to the script
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
 
