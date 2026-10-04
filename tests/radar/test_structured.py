@@ -168,3 +168,14 @@ def test_unknown_country_code_is_dropped_not_guessed() -> None:
     assert result is not None
     subject = result[1][0].subject
     assert subject is not None and subject.country is None
+
+
+def test_the_notice_title_is_a_claim_english_first() -> None:
+    titles = {"deu": "Neugestaltung Marktplatz", "eng": "Redesign of the market square"}
+    doc = doc_for(record(**{"notice-title": titles}))
+    result = structured_evidence(doc)
+    assert result is not None
+    claims, (event,) = result
+    quotes = [claims[i].source_quote for i in event.claim_indices]
+    assert "Title [eng]: Redesign of the market square" in quotes
+    assert not any(q.startswith("Title [deu]") for q in quotes)  # one title, not every language

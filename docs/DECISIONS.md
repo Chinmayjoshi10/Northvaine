@@ -576,3 +576,7 @@ brief with Claude's five corrections (docs/COLLAB.md).
   `focus_queries` now limits tender-stream queries to `radar_tender_lookback_days` (45) and asks
   enumerable sources for up to `radar_enumerable_max_results` (100). Both settings are stored
   with each recording and pinned on replay, so a recording replays with what was actually sent.
+- **D72 — A notice's title is a verified claim on its event.** The first readable stone brief
+  showed buyer, dates and CPV codes but not what the tender is for, so the founder could not judge
+  relevance. Structured evidence now adds one `Title [..]` line (English when present) as a
+  code-verified claim on tender and award events.

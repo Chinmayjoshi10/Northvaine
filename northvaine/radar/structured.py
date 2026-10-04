@@ -109,6 +109,11 @@ def structured_evidence(
         else None
     )
 
+    # What the notice is for: one title line, English when the record has it (D72).
+    title_lines = [line for line in lines if line.startswith("Title [")]
+    title_line = next((t for t in title_lines if t.startswith("Title [eng]")), None) or next(
+        iter(title_lines), None
+    )
     published_line = _find_line(lines, "Published: ")
     buyer_line = _find_line(lines, "Buyer [", "; ".join(buyers)) if buyers else None
     buyer_country_line = _find_line(lines, "Buyer country: ") if buyer_countries else None
@@ -118,6 +123,7 @@ def structured_evidence(
     deadline_lines = [line for line in lines if line.startswith("Deadline: ")]
     decision_lines = [line for line in lines if line.startswith("Winner decision date: ")]
 
+    title_claim = build.add(title_line)
     published = build.add(published_line)
     buyer_claim = build.add(buyer_line, buyer)
     buyer_country_claim = build.add(buyer_country_line)
@@ -152,6 +158,7 @@ def structured_evidence(
 
     if kind == TENDER:
         supporting = present(
+            title_claim,
             published,
             buyer_claim,
             buyer_country_claim,
@@ -192,6 +199,7 @@ def structured_evidence(
             country_claim = build.add(_find_line(lines, "Winner country: ")) if country else None
             supporting = present(
                 winner_claim,
+                title_claim,
                 country_claim,
                 decided_claim,
                 published,
