@@ -1,0 +1,16 @@
+{
+  "exchanges": [],
+  "models": {
+    "deep": "nvidia/Nemotron-3-Ultra-550b-a55b",
+    "embed": "Qwen/Qwen3-Embedding-8B",
+    "fast": "nvidia/Nemotron-3_5-Lightning",
+    "mid": "nvidia/nemotron-3-super-120b-a12b"
+  },
+  "recorded_at": "2026-10-04T16:58:06+00:00",
+  "settings": {
+    "extract_max_claims": 8,
+    "extract_max_doc_chars": 12000,
+    "extract_max_tokens": 1500,
+    "support_max_tokens": 600
+  }
+}
