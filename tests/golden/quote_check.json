@@ -1,0 +1,557 @@
+{
+ "description": "Known-answer cases for radar.quote_check.find_quote (T4.6). 'matched' is the exact slice of the ORIGINAL text expected at offset..offset+length. known_gap marks a case whose correct answer the implementation does not give yet (strict xfail).",
+ "cases": [
+  {
+   "id": "ext_verbatim",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026.",
+   "expect": {
+    "found": true,
+    "matched": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_rewrapped_lines",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new\nplant in Rotterdam on 5 March\n2026. The plant employs 240 staff.",
+   "quote": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026.",
+   "expect": {
+    "found": true,
+    "matched": "Harbourside Works opened a new\nplant in Rotterdam on 5 March\n2026.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_extra_whitespace_and_tabs",
+   "mode": "extracted",
+   "note": "",
+   "text": "The  plant\temploys   240 staff  across three sites.",
+   "quote": "The plant employs 240 staff across three sites.",
+   "expect": {
+    "found": true,
+    "matched": "The  plant\temploys   240 staff  across three sites.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_nbsp_in_text",
+   "mode": "extracted",
+   "note": "",
+   "text": "Opening is planned for the\u00a0first\u00a0quarter of next year.",
+   "quote": "Opening is planned for the first quarter of next year.",
+   "expect": {
+    "found": true,
+    "matched": "Opening is planned for the\u00a0first\u00a0quarter of next year.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_curly_quotes_in_text",
+   "mode": "extracted",
+   "note": "",
+   "text": "The firm\u2019s \u201cNorthern Yard\u201d opened in May.",
+   "quote": "The firm's \"Northern Yard\" opened in May.",
+   "expect": {
+    "found": true,
+    "matched": "The firm\u2019s \u201cNorthern Yard\u201d opened in May.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_curly_quotes_in_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "The firm's \"Northern Yard\" opened in May.",
+   "quote": "The firm\u2019s \u201cNorthern Yard\u201d opened in May.",
+   "expect": {
+    "found": true,
+    "matched": "The firm's \"Northern Yard\" opened in May.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_en_dash_in_text",
+   "mode": "extracted",
+   "note": "",
+   "text": "Opening hours 9\u201317 on weekdays, closed at weekends.",
+   "quote": "Opening hours 9-17 on weekdays, closed at weekends.",
+   "expect": {
+    "found": true,
+    "matched": "Opening hours 9\u201317 on weekdays, closed at weekends.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_em_dash_and_minus_in_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "Stock - last year - rose by 12 percent in the north.",
+   "quote": "Stock \u2014 last year \u2212 rose by 12 percent in the north.",
+   "expect": {
+    "found": true,
+    "matched": "Stock - last year - rose by 12 percent in the north.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_ligature_nfkc",
+   "mode": "extracted",
+   "note": "",
+   "text": "The \ufb01nal contract was signed in Madrid on Friday.",
+   "quote": "The final contract was signed in Madrid on Friday.",
+   "expect": {
+    "found": true,
+    "matched": "The \ufb01nal contract was signed in Madrid on Friday.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_decomposed_umlaut_in_text",
+   "mode": "extracted",
+   "note": "the offset indexes the ORIGINAL (decomposed) text",
+   "text": "Die Anlage wurde in Ko\u0308ln er\u00f6ffnet und beschaeftigt viele Menschen.",
+   "quote": "Die Anlage wurde in K\u00f6ln er\u00f6ffnet und beschaeftigt viele Menschen.",
+   "expect": {
+    "found": true,
+    "matched": "Die Anlage wurde in Ko\u0308ln er\u00f6ffnet und beschaeftigt viele Menschen.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_spans_a_line_break",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "The plant employs 240 staff. A second site follows in Antwerp",
+   "expect": {
+    "found": true,
+    "matched": "The plant employs 240 staff.\nA second site follows in Antwerp",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_first_of_two_occurrences",
+   "mode": "extracted",
+   "note": "offset must be the first occurrence",
+   "text": "The depot is open daily. Filler sentence. The depot is open daily.",
+   "quote": "The depot is open daily.",
+   "expect": {
+    "found": true,
+    "matched": "The depot is open daily.",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_twenty_chars_hit",
+   "mode": "extracted",
+   "note": "exactly 20 characters is long enough",
+   "text": "Prefix text. 12345678901234567890 end.",
+   "quote": "12345678901234567890",
+   "expect": {
+    "found": true,
+    "matched": "12345678901234567890",
+    "method": "exact"
+   }
+  },
+  {
+   "id": "ext_near_miss_094",
+   "mode": "extracted",
+   "note": "similarity 0.94: below the 0.95 threshold",
+   "text": "Intro sentence about something else entirely. The new cold store in Rotterdam will open next spring and will employ about two hundred local staff. Closing sentence of the page.",
+   "quote": "The n#w cold store in #otterdam will o#en next spring a#d will employ a#out two hundred lo#al staff.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_near_miss_096",
+   "mode": "extracted",
+   "note": "similarity 0.96: above the threshold",
+   "text": "Intro sentence about something else entirely. The new cold store in Rotterdam will open next spring and will employ about two hundred local staff. Closing sentence of the page.",
+   "quote": "The new co#d store in Rotterdam will ope# next spring and will employ #bout two hundred local s#aff.",
+   "expect": {
+    "found": true,
+    "matched": "The new cold store in Rotterdam will open next spring and will employ about two hundred local staff.",
+    "method": "fuzzy"
+   }
+  },
+  {
+   "id": "ext_at_threshold_095",
+   "mode": "extracted",
+   "note": "similarity exactly 0.95 is accepted",
+   "text": "Intro sentence about something else entirely. The new cold store in Rotterdam will open next spring and will employ about two hundred local staff. Closing sentence of the page.",
+   "quote": "The n#w cold store in #otterdam will open next spring a#d will employ a#out two hundred lo#al staff.",
+   "expect": {
+    "found": true,
+    "matched": "The new cold store in Rotterdam will open next spring and will employ about two hundred local staff.",
+    "method": "fuzzy"
+   }
+  },
+  {
+   "id": "ext_one_typo_in_long_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "Intro sentence about something else entirely. The new cold store in Rotterdam will open next spring and will employ about two hundred local staff. Closing sentence of the page.",
+   "quote": "The new cold store in Rotterdam will open next spr#ng and will employ about two hundred local staff.",
+   "expect": {
+    "found": true,
+    "matched": "The new cold store in Rotterdam will open next spring and will employ about two hundred local staff.",
+    "method": "fuzzy"
+   }
+  },
+  {
+   "id": "ext_paraphrase_synonyms",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "Harbourside Works inaugurated a fresh factory in Rotterdam in March 2026.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_paraphrase_reordered",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "In Rotterdam, Harbourside Works opened a new plant on 5 March 2026.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_summary_not_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "The company opened a plant in the Netherlands and a second site in Belgium.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_short_single_word",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "Rotterdam",
+   "expect": {
+    "found": false,
+    "reason": "quote_too_short"
+   }
+  },
+  {
+   "id": "ext_nineteen_chars",
+   "mode": "extracted",
+   "note": "",
+   "text": "Prefix text. 1234567890123456789 end.",
+   "quote": "1234567890123456789",
+   "expect": {
+    "found": false,
+    "reason": "quote_too_short"
+   }
+  },
+  {
+   "id": "ext_short_after_normalisation",
+   "mode": "extracted",
+   "note": "runs of whitespace collapse before the length check (11 chars)",
+   "text": "A  b  c  d  e  f  g  h  i  j  k  l  m",
+   "quote": "A   b   c   d   e   f",
+   "expect": {
+    "found": false,
+    "reason": "quote_too_short"
+   }
+  },
+  {
+   "id": "ext_empty_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "",
+   "expect": {
+    "found": false,
+    "reason": "quote_too_short"
+   }
+  },
+  {
+   "id": "ext_whitespace_only_quote",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "                              ",
+   "expect": {
+    "found": false,
+    "reason": "quote_too_short"
+   }
+  },
+  {
+   "id": "ext_quote_from_another_document",
+   "mode": "extracted",
+   "note": "the quote is real, but it came from another document",
+   "text": "Alpine Foods announced a recall of two batches of frozen peas on Monday.",
+   "quote": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_other_document_shares_a_prefix",
+   "mode": "extracted",
+   "note": "the quote is longer than the text: the text is only part of it",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026.",
+   "quote": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026 and a second one in Antwerp in 2027 with a larger team.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_quote_not_anywhere",
+   "mode": "extracted",
+   "note": "",
+   "text": "Harbourside Works opened a new plant in Rotterdam on 5 March 2026. The plant employs 240 staff.\nA second site follows in Antwerp in 2027.",
+   "quote": "This sentence is nowhere in the document at all.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "ext_changed_number_long_quote",
+   "mode": "extracted",
+   "note": "KNOWN GAP: the quote asserts 250 where the document says 240; a fuzzy match at 0.95 accepts it",
+   "text": "Prefix. The plant employs 240 staff across three sites in the north of the country. Suffix.",
+   "quote": "The plant employs 250 staff across three sites in the north of the country.",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   },
+   "known_gap": true
+  },
+  {
+   "id": "str_whole_line_hit",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country: DEU",
+   "expect": {
+    "found": true,
+    "matched": "Buyer country: DEU",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_short_whole_line_hit",
+   "mode": "structured",
+   "note": "no minimum length in structured mode",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Version: 1",
+   "expect": {
+    "found": true,
+    "matched": "Version: 1",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_first_line_hit",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Notice: 74344-2026 (cn-standard 17)",
+   "expect": {
+    "found": true,
+    "matched": "Notice: 74344-2026 (cn-standard 17)",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_last_line_hit",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Deadline: 2026-03-03T12:00:00+01:00",
+   "expect": {
+    "found": true,
+    "matched": "Deadline: 2026-03-03T12:00:00+01:00",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_prefix_of_line_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_value_only_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "DEU",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_substring_of_line_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "country: DEU",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_line_plus_more_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country: DEUX",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_respaced_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer  country: DEU",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_respaced_value_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country:  DEU",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_trailing_space_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country: DEU ",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_case_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "buyer country: deu",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_two_lines_miss",
+   "mode": "structured",
+   "note": "a quote is one line, never two",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_empty_miss",
+   "mode": "structured",
+   "note": "",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_no_unicode_normalisation",
+   "mode": "structured",
+   "note": "no dash normalisation in structured mode",
+   "text": "Title [eng]: Germany \u2013 Works\nVersion: 1",
+   "quote": "Title [eng]: Germany - Works",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  },
+  {
+   "id": "str_verbatim_unicode_hit",
+   "mode": "structured",
+   "note": "",
+   "text": "Title [eng]: Germany \u2013 Works\nVersion: 1",
+   "quote": "Title [eng]: Germany \u2013 Works",
+   "expect": {
+    "found": true,
+    "matched": "Title [eng]: Germany \u2013 Works",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_crlf_line_hit",
+   "mode": "structured",
+   "note": "a CRLF line ending is not part of the line",
+   "text": "Version: 1\r\nBuyer country: DEU\r\nCPV: 45251000",
+   "quote": "Buyer country: DEU",
+   "expect": {
+    "found": true,
+    "matched": "Buyer country: DEU",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_duplicate_line_first_offset",
+   "mode": "structured",
+   "note": "the first matching line wins",
+   "text": "Winner [deu]: Acme\nCPV: 1\nWinner [deu]: Acme",
+   "quote": "Winner [deu]: Acme",
+   "expect": {
+    "found": true,
+    "matched": "Winner [deu]: Acme",
+    "method": "line"
+   }
+  },
+  {
+   "id": "str_quote_from_another_record",
+   "mode": "structured",
+   "note": "a line of a different notice",
+   "text": "Notice: 74344-2026 (cn-standard 17)\nVersion: 1\nPublished: 2026-02-02+01:00\nBuyer [deu]: Stadtwerke Kiel AG\nBuyer country: DEU\nCPV: 45251000, 42511110\nDeadline: 2026-03-03T12:00:00+01:00",
+   "quote": "Buyer country: FRA",
+   "expect": {
+    "found": false,
+    "reason": "quote_not_found"
+   }
+  }
+ ]
+}
