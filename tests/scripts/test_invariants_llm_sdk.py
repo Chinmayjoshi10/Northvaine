@@ -58,3 +58,21 @@ def test_copy_of_llm_py_elsewhere_in_northvaine_is_a_violation(
     problems = module.check_imports([other])
     assert any("imports 'openai'" in p for p in problems)
     assert all("not_llm.py" in p for p in problems)
+
+
+def test_replay_module_duck_types_the_sdk_and_passes_the_import_rule() -> None:
+    """T4.0: brain/replay.py is not allowed to import the SDK, and does not."""
+    module = _load()
+    replay = REPO / "northvaine" / "brain" / "replay.py"
+    assert not module.imported_modules(replay) & {"openai", "anthropic"}
+    assert module.check_imports([replay]) == []
+
+
+def test_real_repo_passes_the_ledger_rules() -> None:
+    module = _load()
+    py_files = sorted(module.APP.rglob("*.py"))
+    terms = module.load_banned_terms()
+    assert module.check_claims_sql(py_files) == []
+    assert module.check_claim_row_imports(py_files) == []
+    assert module.check_prompt_banned_terms(module.prompt_files(), terms) == []
+    assert module.prompt_files(), "the real tree has prompt templates to scan"

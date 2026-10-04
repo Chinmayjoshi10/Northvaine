@@ -180,3 +180,63 @@ def test_tavily_key_is_a_secret_str(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_env_example_lists_the_tavily_key_by_name_only() -> None:
     text = (Path(__file__).resolve().parents[2] / ".env.example").read_text(encoding="utf-8")
     assert any(line.strip() == "TAVILY_API_KEY=" for line in text.splitlines())
+
+
+# --- evidence ledger settings (M4, T4.0) -------------------------------------------------------
+
+
+def test_ledger_defaults() -> None:
+    s = Settings(_env_file=None)
+    assert s.quote_min_chars == 20
+    assert s.quote_match_min_ratio == 0.95
+    assert s.extract_max_doc_chars == 12000
+    assert s.extract_max_claims == 8
+    assert s.extract_max_tokens == 1500
+    assert s.support_max_tokens == 600
+    assert s.concept_match_min_cosine == 0.80
+    assert s.event_cluster_min_cosine == 0.85
+    assert s.event_cluster_window_days == 30
+    assert s.extract_excluded_event_types == ("reorder_due", "quote_stale", "inbound_question")
+    assert s.evidence_source_rules == {
+        "ted": "structured",
+        "website": "full_text",
+        "tavily": "raw_only",
+    }
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("quote_match_min_ratio", 0),
+        ("quote_match_min_ratio", 1.01),
+        ("concept_match_min_cosine", 0),
+        ("concept_match_min_cosine", 1.5),
+        ("event_cluster_min_cosine", 0),
+        ("event_cluster_min_cosine", 1.5),
+        ("quote_min_chars", 0),
+        ("extract_max_doc_chars", 0),
+        ("extract_max_claims", 0),
+        ("extract_max_tokens", 0),
+        ("support_max_tokens", -1),
+        ("event_cluster_window_days", 0),
+    ],
+)
+def test_ledger_settings_reject_out_of_range_values(name: str, value: float) -> None:
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, **{name: value})
+
+
+def test_ledger_boundaries_are_accepted() -> None:
+    s = Settings(_env_file=None, quote_match_min_ratio=1, event_cluster_min_cosine=1)
+    assert s.quote_match_min_ratio == 1 and s.event_cluster_min_cosine == 1
+
+
+def test_evidence_source_rules_values_are_checked() -> None:
+    from pydantic import ValidationError
+
+    ok = Settings(_env_file=None, evidence_source_rules={"x": "structured", "y": "raw_only"})
+    assert ok.evidence_source_rules == {"x": "structured", "y": "raw_only"}
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, evidence_source_rules={"x": "everything"})

@@ -35,7 +35,7 @@ build-backend = "setuptools.build_meta"
 include = ["northvaine*"]
 
 [tool.setuptools.package-data]
-northvaine = ["core/iso3166.csv"]
+northvaine = ["core/iso3166.csv", "brain/prompts/*.md"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
