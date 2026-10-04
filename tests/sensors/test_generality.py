@@ -56,6 +56,8 @@ async def test_same_loop_serves_every_client(path: Path) -> None:
             async with probe as replay_client:
                 sensor = get_sensor(name, client=replay_client, settings=SETTINGS)
                 if not _is_recorded(name, query, sent):
+                    # Only Tavily may have gaps; every TED query must have a recording (D42).
+                    assert name == "tavily", f"{spec['id']} / {name}: query was never recorded"
                     continue
                 result = await sensor.search(query)
             documents.extend(result.documents)
