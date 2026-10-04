@@ -1,0 +1,140 @@
+{
+  "client": "coldchain_maker",
+  "as_of": "2026-10-04T21:45:28Z",
+  "recorded_at": "2026-10-04T21:53:27+00:00",
+  "queries": {
+    "ted": [
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:42500000",
+          "cpv:42510000"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-08-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:42500000",
+          "cpv:42510000"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-06-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:45331000",
+          "cpv:45331200"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-08-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:45331000",
+          "cpv:45331200"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-06-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      }
+    ],
+    "tavily": [
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "DE"
+        ],
+        "languages": [
+          "en"
+        ],
+        "text": "new distribution centre with temperature-controlled storage announced",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "DE"
+        ],
+        "languages": [
+          "de"
+        ],
+        "text": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "FR"
+        ],
+        "languages": [
+          "fr"
+        ],
+        "text": "nouvel entrepot frigorifique construction annonce",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      }
+    ]
+  }
+}

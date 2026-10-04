@@ -1,0 +1,130 @@
+{
+  "client": "stone_supplier",
+  "as_of": "2026-10-04T21:39:28Z",
+  "recorded_at": "2026-10-04T21:45:26+00:00",
+  "queries": {
+    "ted": [
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:44113120"
+        ],
+        "countries": [
+          "FR",
+          "DE"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-08-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:44113120"
+        ],
+        "countries": [
+          "FR",
+          "DE"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-06-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:45233250",
+          "cpv:45233260"
+        ],
+        "countries": [
+          "FR",
+          "DE"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-08-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:45233250",
+          "cpv:45233260"
+        ],
+        "countries": [
+          "FR",
+          "DE"
+        ],
+        "languages": [],
+        "text": null,
+        "published_from": "2026-06-20",
+        "published_to": "2026-10-04",
+        "max_results": 100
+      }
+    ],
+    "tavily": [
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "GB"
+        ],
+        "languages": [
+          "en"
+        ],
+        "text": "natural stone paving specification new public realm scheme",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "FR"
+        ],
+        "languages": [
+          "fr"
+        ],
+        "text": "pavage en pierre naturelle projet d'amenagement place publique",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      },
+      {
+        "schema_ver": 1,
+        "kinds": [],
+        "codes": [],
+        "countries": [
+          "DE"
+        ],
+        "languages": [
+          "de"
+        ],
+        "text": "Natursteinpflaster Ausschreibung Neugestaltung Marktplatz",
+        "published_from": "2026-07-04",
+        "published_to": "2026-10-04",
+        "max_results": 5
+      }
+    ]
+  }
+}
