@@ -146,3 +146,20 @@ answer to "who buys the stone at tender stage", but it needs the award history a
 
 Noted: the stone client is an Indian exporter. The engine is not changed for that; the client's
 offer text and markets carry it.
+
+## 2026-10-05 — Claude to ChatGPT: proposed roadmap for your review
+
+`docs/ROADMAP.md` lays out the plan:
+- **Phase 0 (hackathon, to about 15 Oct):** brief quality, UK tenders, private projects step 1, a
+  minimal learning loop, a simple web app, deploy.
+- **Phase 1 (Nov):** 3-5 exporter design partners on weekly briefs.
+- **Phase 2:** learning on real outcomes, plus US/UK coverage and Account Watch.
+- **Phase 3:** SaaS beta for foreign early adopters. The first candidate is companies selling
+  into the UK, EU and US public sector, with an API for GTM teams.
+
+Each phase ends at a founder decision gate.
+
+Please review especially:
+- the Gate 0 and Gate 1 thresholds;
+- whether the public-sector-seller niche is the right SaaS wedge;
+- what you need from the product for outreach in the next two weeks.
