@@ -267,3 +267,56 @@ def test_main_reports_a_secret(inv: ModuleType, tmp_path: Path) -> None:
     _clean_tree(tmp_path)
     _write(tmp_path, "notes.txt", f"{FAKE_KEY}\n")
     assert inv.main() == 1
+
+
+# --- code-only radar modules (T5.0, D62-D64) ------------------------------------------------
+
+REAL_RADAR = REPO / "northvaine" / "radar"
+
+
+@pytest.mark.parametrize("module", ["brief", "entities"])
+@pytest.mark.parametrize(
+    "planted",
+    [
+        "from northvaine.brain import llm\n",
+        "from northvaine.brain.llm import call_llm\n",
+        "import northvaine.brain.llm\n",
+        "from northvaine.brain import budget, llm\n",
+    ],
+)
+def test_llm_import_in_a_code_only_radar_module_is_reported(
+    inv: ModuleType, tmp_path: Path, module: str, planted: str
+) -> None:
+    copy = _write(
+        tmp_path,
+        f"northvaine/radar/{module}.py",
+        (REAL_RADAR / f"{module}.py").read_text(encoding="utf-8") + planted,
+    )
+    problems = inv.check_code_only_modules([copy])
+    assert len(problems) == 1
+    assert f"northvaine/radar/{module}.py" in problems[0] and "brain.llm" in problems[0]
+
+
+def test_other_modules_may_import_the_llm_and_budget_is_fine(
+    inv: ModuleType, tmp_path: Path
+) -> None:
+    gate = _write(tmp_path, "northvaine/radar/gate.py", "from northvaine.brain import llm\n")
+    clean = _write(
+        tmp_path, "northvaine/radar/brief.py", "from northvaine.brain.budget import RunContext\n"
+    )
+    assert inv.check_code_only_modules([gate, clean]) == []
+
+
+def test_main_runs_the_code_only_rule(inv: ModuleType, tmp_path: Path) -> None:
+    _clean_tree(tmp_path)
+    _write(tmp_path, "northvaine/radar/brief.py", "from northvaine.brain import llm\n")
+    assert inv.main() == 1
+    _write(tmp_path, "northvaine/radar/brief.py", "x = 1\n")
+    assert inv.main() == 0
+
+
+def test_the_real_tree_has_no_code_only_violations() -> None:
+    real = _load()
+    py_files = sorted(real.APP.rglob("*.py"))
+    assert real.check_code_only_modules(py_files) == []
+    assert real.main() == 0

@@ -26,6 +26,10 @@ CLAIMS_SQL_ALLOWED = {"northvaine/core/ledger.py"}
 CLAIMS_SQL = re.compile(r"\b(FROM|JOIN|INTO|UPDATE)\s+claims\b")
 CLAIM_ROW_ALLOWED = {"northvaine/core/models.py", "northvaine/core/ledger.py"}
 
+LLM_MODULE = "northvaine.brain.llm"
+LLM_PACKAGE = "northvaine.brain"
+CODE_ONLY_MODULES = {"northvaine/radar/brief.py", "northvaine/radar/entities.py"}
+
 SENDING_LIBS = {"smtplib", "sendgrid", "twilio", "slack_sdk", "telegram", "mailgun", "postmarker"}
 
 SECRET_PATTERNS = [
@@ -168,6 +172,30 @@ def check_imports(py_files: list[Path]) -> list[str]:
     return problems
 
 
+def check_code_only_modules(py_files: list[Path]) -> list[str]:
+    """Rule d (M5, D62-D64): ranking, rendering and identity are code, so these modules never
+    import `northvaine.brain.llm` (nor `from northvaine.brain import llm`)."""
+    problems = []
+    for path in py_files:
+        name = rel(path)
+        if name not in CODE_ONLY_MODULES:
+            continue
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for node in ast.walk(tree):
+            hit = False
+            if isinstance(node, ast.Import):
+                hit = any(a.name == LLM_MODULE for a in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.level == 0:
+                hit = node.module == LLM_MODULE or (
+                    node.module == LLM_PACKAGE and any(a.name == "llm" for a in node.names)
+                )
+            if hit:
+                problems.append(
+                    f"{name}:{node.lineno}: imports brain.llm; this module is code only"
+                )
+    return problems
+
+
 def tracked_files() -> list[Path]:
     try:
         out = subprocess.run(
@@ -216,6 +244,7 @@ def main() -> int:
         + check_claims_sql(py_files)
         + check_claim_row_imports(py_files)
         + check_imports(py_files)
+        + check_code_only_modules(py_files)
         + check_secrets(tracked_files())
     )
     for problem in problems:

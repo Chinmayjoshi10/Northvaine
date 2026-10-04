@@ -64,3 +64,6 @@ files (2).zip
 # Factory builder worktrees
 .claude/worktrees/
 .neon
+
+# Generated radar reports are shared privately, never committed (D66)
+reports/radar/
