@@ -1,0 +1,39 @@
+{
+  "_note": "Loose ranges, not exact counts: a re-record legitimately changes them (T5.7). Written from the first green replay (stone 39 entries, cold-chain 31, packaging 9); the orchestrator reviews before widening or narrowing.",
+  "stone_supplier": {
+    "documents": [39, 75],
+    "leads": [0, 5],
+    "upgraded": [0, 15],
+    "candidates": [43, 82],
+    "entries": [27, 52],
+    "rejected_by_reason": {"unidentified": [15, 31], "competitor": [0, 6]},
+    "rejected_reasons_allowed": ["unidentified", "competitor", "reseller", "publisher", "not_a_buyer", "not_an_organisation", "insufficient_evidence"],
+    "streams_present": ["tender", "award"],
+    "llm_calls": [91, 172],
+    "max_cost_usd": 0.25
+  },
+  "coldchain_maker": {
+    "documents": [270, 510],
+    "leads": [0, 5],
+    "upgraded": [0, 15],
+    "candidates": [46, 90],
+    "entries": [21, 42],
+    "rejected_by_reason": {"unidentified": [18, 37], "not_a_buyer": [0, 20]},
+    "rejected_reasons_allowed": ["unidentified", "competitor", "reseller", "publisher", "not_a_buyer", "not_an_organisation", "insufficient_evidence"],
+    "streams_present": ["tender"],
+    "llm_calls": [96, 182],
+    "max_cost_usd": 0.25
+  },
+  "packaging_supplier": {
+    "documents": [6, 14],
+    "leads": [0, 5],
+    "upgraded": [0, 15],
+    "candidates": [15, 30],
+    "entries": [3, 14],
+    "rejected_by_reason": {"unidentified": [9, 19]},
+    "rejected_reasons_allowed": ["unidentified", "competitor", "reseller", "publisher", "not_a_buyer", "not_an_organisation", "insufficient_evidence"],
+    "streams_present": ["announcement"],
+    "llm_calls": [41, 78],
+    "max_cost_usd": 0.25
+  }
+}
