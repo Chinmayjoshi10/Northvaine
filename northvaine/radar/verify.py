@@ -168,11 +168,17 @@ async def verify_claims(
             f"{eligibility.kind.value}"
         )
 
+    drafts = list(drafts)  # a fuzzy match below replaces a draft; never touch the caller's list
     checks: list[ClaimCheck | None] = [None] * len(drafts)
     passing: list[tuple[int, int]] = []  # (position in drafts, quote offset)
     for i, draft in enumerate(drafts):
         match = find_quote(doc.text, draft.source_quote, mode=mode, settings=settings)
         if match.found and match.offset is not None:
+            if match.method == "fuzzy" and match.length:
+                # Keep the document's own words, not the model's near-copy, so the support
+                # check and every later reader see what the source actually says.
+                quoted = doc.text[match.offset : match.offset + match.length]
+                drafts[i] = draft = draft.model_copy(update={"source_quote": quoted})
             passing.append((i, match.offset))
         else:
             checks[i] = _check(doc, draft, match.reason or ClaimStatus.QUOTE_NOT_FOUND)

@@ -328,14 +328,13 @@
   {
    "id": "ext_changed_number_long_quote",
    "mode": "extracted",
-   "note": "KNOWN GAP: the quote asserts 250 where the document says 240; a fuzzy match at 0.95 accepts it",
+   "note": "the quote asserts 250 where the document says 240: a fuzzy match must not change a number",
    "text": "Prefix. The plant employs 240 staff across three sites in the north of the country. Suffix.",
    "quote": "The plant employs 250 staff across three sites in the north of the country.",
    "expect": {
     "found": false,
     "reason": "quote_not_found"
-   },
-   "known_gap": true
+   }
   },
   {
    "id": "str_whole_line_hit",

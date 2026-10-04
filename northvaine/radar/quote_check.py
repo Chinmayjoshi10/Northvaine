@@ -8,6 +8,7 @@ fuzzy, no minimum) for structured records. `QuoteMatch.offset` indexes the ORIGI
 
 from __future__ import annotations
 
+import re
 import unicodedata
 from difflib import SequenceMatcher
 
@@ -38,6 +39,7 @@ _DASHES = dict.fromkeys("\u2010\u2011\u2012\u2013\u2014\u2015\u2212\ufe58\ufe63\
 _FUZZY_TEXT_FACTOR = 2
 _FUZZY_SLACK = 0.10
 _FUZZY_MAX_CANDIDATES = 200
+_NUMBERS = re.compile(r"\d+(?:[.,]\d+)*")
 
 
 def _units(text: str) -> list[tuple[int, int, str]]:
@@ -151,6 +153,9 @@ def _find_fuzzy(norm_text: str, norm_quote: str, min_ratio: float) -> tuple[int,
         if best is None or ratio > best[2]:
             best = (span_start, span_end, ratio)
     if best is not None and best[2] >= min_ratio:
+        # A near-copy may differ in wording, never in a number ("250 staff" vs "240 staff").
+        if _NUMBERS.findall(norm_quote) != _NUMBERS.findall(norm_text[best[0] : best[1]]):
+            return None
         return best
     return None
 

@@ -249,6 +249,25 @@ async def test_quote_offset_points_into_the_original_text(
     assert checks[0].fingerprint == claim_fingerprint(doc.id, "A statement.", Q_GOOD)
 
 
+async def test_a_fuzzy_match_stores_and_sends_the_documents_own_words(
+    client: FakeClient, run: RunContext
+) -> None:
+    client.completions.replies = [verdicts(True)]
+    near = Q_GOOD.replace("councils", "council")  # the model's near-copy
+    drafts = [draft(near)]
+    checks = await verify_claims(make_doc(), drafts, run=run, settings=SETTINGS)
+    assert checks[0].status == ClaimStatus.VERIFIED
+    assert checks[0].draft.source_quote == Q_GOOD
+    assert Q_GOOD in client.bodies() and near + '"' not in client.bodies()
+    assert drafts[0].source_quote == near  # the caller's list is untouched
+
+
+async def test_a_fuzzy_match_never_changes_a_number(client: FakeClient, run: RunContext) -> None:
+    changed = Q_GOOD.replace("2026", "2025")
+    checks = await verify_claims(make_doc(), [draft(changed)], run=run, settings=SETTINGS)
+    assert checks[0].status == ClaimStatus.QUOTE_NOT_FOUND and client.requests == []
+
+
 async def test_no_llm_call_when_no_quote_passes(client: FakeClient, run: RunContext) -> None:
     checks = await verify_claims(make_doc(), [draft(Q_MISSING)], run=run, settings=SETTINGS)
     assert checks[0].status == ClaimStatus.QUOTE_NOT_FOUND

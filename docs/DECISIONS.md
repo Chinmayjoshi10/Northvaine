@@ -488,3 +488,20 @@ results are leads, not evidence).
 - **D54** Entity resolution is deferred to M5. Subjects are stored as mentions (name, ISO2 country,
   generic role) in `claims.meta` and `events.slots`; `company_id` stays NULL in M4.
 
+
+## 2026-10-04 — Milestone 4 close-out (from the T4.6 replay suite)
+
+- **D55 — A fuzzy quote match stores the document's words, and never changes a number.** The
+  T4.6 golden set found that a quote saying "250 staff" passed at ratio 0.987 against a page that
+  says "240 staff", and the model's text was then stored and sent to the support check, which
+  cannot see the page. Now (a) a fuzzy match whose numbers differ from the matched span is a
+  `quote_not_found`, and (b) after any fuzzy match `source_quote` is replaced by the document's
+  own span, so the support check and every reader judge the statement against what the source
+  actually says (a dropped "not" is then caught by the support check). Tightens D48.
+- **D56 — An award notice that names no winner yields verified claims but no event.** The
+  `contract_awarded` event exists to identify a winner (D23); with no winner there is no account
+  to learn. T4.6's acceptance wording "every TED notice produces an event" is superseded; the suite
+  asserts instead that the only silent notices are winnerless awards.
+- Derived slots `subject_key` and `group_key` are computed by code (for TED, the procedure id
+  from the record), not model output; an extracted `group_hint` is kept only when a verified
+  quote contains it (D50).
