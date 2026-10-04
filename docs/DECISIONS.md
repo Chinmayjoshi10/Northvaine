@@ -585,3 +585,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   `extract_max_tokens` rises from 1500 to 3000 (8 claims with long quotes need it), and
   `run_radar` turns `LlmInvalidOutput`, `LlmTimeout` and `LlmTransportError` on one item into a
   "skipped" note. Replay mismatches still fail loudly.
+- **D74 — The gate judges whether what an organisation did creates the need, not whether it
+  announced a purchase.** The first packaging run rejected all 17 named cosmetics brands as
+  "no claim indicates X purchases packaging", although a brand launching a range is exactly what
+  creates packaging demand. Tenders passed only because they state the purchase. Gate prompt v2
+  defines buyer by need created (building, opening, expanding, launching, commissioning). The
+  packaging sample offer also lost a stray test note ("Announcement stream only.").
