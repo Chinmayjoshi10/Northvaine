@@ -8,6 +8,8 @@ requested, so no contact data, person names or internet addresses are ever fetch
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import re
 import time
 from collections.abc import Awaitable, Callable, Sequence
 from datetime import UTC, date, datetime, timedelta
@@ -235,6 +237,39 @@ def render_notice_text(record: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+NATURAL_PERSON_PREFIX = "[natural person, name withheld"
+_NAME_FIELDS = ("buyer-name", "winner-name")
+
+
+def withhold_natural_persons(record: dict[str, Any], settings: Settings) -> dict[str, Any]:
+    """A copy of `record` whose buyer and winner names carrying a natural-person legal form
+    (`ted_natural_person_markers`) are replaced by a stable placeholder (D76). Idempotent."""
+    patterns = [
+        re.compile(r"(?<!\w)" + re.escape(m) + r"(?!\w)", re.IGNORECASE)
+        for m in settings.ted_natural_person_markers
+    ]
+
+    def fix(value: Any) -> Any:
+        if isinstance(value, str):
+            if value.startswith(NATURAL_PERSON_PREFIX) or not any(
+                p.search(value) for p in patterns
+            ):
+                return value
+            tag = hashlib.sha256(value.encode("utf-8")).hexdigest()[:8]
+            return f"{NATURAL_PERSON_PREFIX} {tag}]"
+        if isinstance(value, list):
+            return [fix(v) for v in value]
+        if isinstance(value, dict):
+            return {k: fix(v) for k, v in value.items()}
+        return value
+
+    out = dict(record)
+    for field in _NAME_FIELDS:
+        if field in out:
+            out[field] = fix(out[field])
+    return out
+
+
 def parse_notice(
     record: dict[str, Any], *, fetched_at: datetime, settings: Settings | None = None
 ) -> SensorDocument:
@@ -244,6 +279,7 @@ def parse_notice(
     Raises ValueError when the record has no publication-number.
     """
     settings = settings or get_settings()
+    record = withhold_natural_persons(record, settings)
     number = record.get("publication-number")
     if not number:
         raise ValueError("TED record has no publication-number")

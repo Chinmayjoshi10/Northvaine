@@ -445,3 +445,19 @@ async def test_sends_exactly_the_frozen_request_body():
         sensor = TedSensor(client=http, settings=SETTINGS, sleep=no_sleep)
         await sensor.search(q)
     assert calls == [ted.build_request(q, page=1, settings=SETTINGS)]
+
+
+def test_natural_person_names_are_withheld_at_parse_time() -> None:
+    from northvaine.sensors.ted import NATURAL_PERSON_PREFIX, withhold_natural_persons
+
+    settings = Settings(_env_file=None)
+    record = {
+        "winner-name": {"deu": ["Erika Muster" + "frau e.K.", "Bau AG"]},
+        "buyer-name": {"fra": ["Ville de Exemple"]},
+    }
+    out = withhold_natural_persons(record, settings)
+    first, second = out["winner-name"]["deu"]
+    assert first.startswith(NATURAL_PERSON_PREFIX) and "Muster" not in first
+    assert second == "Bau AG" and out["buyer-name"] == record["buyer-name"]
+    assert withhold_natural_persons(out, settings) == out  # idempotent: replay equals live
+    assert "Muster" in record["winner-name"]["deu"][0]  # input untouched

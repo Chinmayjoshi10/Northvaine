@@ -388,6 +388,8 @@ def test_ted_awards_yield_winner_candidates_and_tenders_yield_buyer_windows(ted_
     by_name = {n: c for c in candidates for n in [c.name, *c.aliases]}
     for award in awards:
         assert award.subject is not None and award.subject.role == "winner"
+        if award.subject.name.startswith("["):
+            continue  # a withheld natural-person name is never a candidate (D76)
         cand = by_name[award.subject.name]
         assert RadarStream.AWARD in cand.streams
     for tender in tenders:
@@ -427,3 +429,9 @@ def test_recorded_tender_deadlines_make_non_estimated_windows(ted_results) -> No
     for cand in estimated:
         assert cand.window_end is not None and cand.window_start is not None
         assert (cand.window_end - cand.window_start).days == SETTINGS.radar_tender_window_days
+
+
+def test_a_withheld_name_is_never_a_candidate() -> None:
+    from northvaine.radar.entities import subject_problem
+
+    assert subject_problem("[natural person, name withheld 1a2b3c4d]") is not None

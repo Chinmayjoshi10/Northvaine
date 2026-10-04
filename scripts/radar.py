@@ -73,6 +73,7 @@ from northvaine.sensors.replay import (  # noqa: E402
     replay_transport,
     save_exchanges,
 )
+from northvaine.sensors.ted import withhold_natural_persons  # noqa: E402
 
 META, HTTP, PAGES, LLM = "meta.json", "http.json", "pages.json", "llm.json"
 FILES = (META, HTTP, PAGES, LLM)
@@ -306,6 +307,19 @@ def _strip_search_contacts(ex: Any, tavily_prefix: str) -> Any:
     return ex.model_copy(update={"body_json": {**body, "results": results}})
 
 
+def _withhold_ted_persons(ex: Any, tavily_prefix: str, settings: Settings) -> Any:
+    """Withhold natural-person names in TED notices with the sensor's own function, so the
+    replayed documents are identical to what the live run parsed (D76)."""
+    body = ex.body_json
+    if ex.url.startswith(tavily_prefix) or not isinstance(body, dict):
+        return ex
+    notices = body.get("notices")
+    if not isinstance(notices, list):
+        return ex
+    cleaned = [withhold_natural_persons(n, settings) if isinstance(n, dict) else n for n in notices]
+    return ex.model_copy(update={"body_json": {**body, "notices": cleaned}})
+
+
 def redact_recording(recording: Recording, settings: Settings) -> Recording:
     """The recording after the sensor and LLM redaction rules; `Refused` if anything survives."""
     sensors, llm_script = sibling("record_sensor_fixtures"), sibling("record_llm_fixtures")
@@ -321,6 +335,7 @@ def redact_recording(recording: Recording, settings: Settings) -> Recording:
         for ex in recording.exchanges
     ]
     exchanges = [_strip_search_contacts(ex, tavily_prefix) for ex in exchanges]
+    exchanges = [_withhold_ted_persons(ex, tavily_prefix, settings) for ex in exchanges]
     problems = sensors.find_pii([e.model_dump(mode="json") for e in exchanges], "http")
     problems += sensors.find_pii([p.model_dump(mode="json") for p in recording.pages], "pages")
     problems += sensors.find_pii(recording.meta.model_dump(mode="json"), "meta")

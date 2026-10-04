@@ -598,3 +598,10 @@ brief with Claude's five corrections (docs/COLLAB.md).
   rejected candidates (under $0.01) passed the open stone tenders and the launching cosmetics
   brands; two buyer verdicts with no cited claim were still held back by code. The packaging
   offer drops "private" (the model read it as "private label").
+- **D76 — Names of natural persons in TED notices are withheld at parse time.** The cold-chain
+  and stone recordings held about nine winners whose legal form makes them natural persons
+  (German `e.K.` sole traders, `GbR` partnerships), several named after their owner. The repo will
+  be public. `parse_notice` now replaces buyer and winner names carrying a
+  `ted_natural_person_markers` legal form with a stable "[natural person, name withheld <hash>]"
+  placeholder. The radar recorder applies the same function, so replay equals live. Such names
+  never become candidates. Firm names such as "ETS GIFFARD" are kept.

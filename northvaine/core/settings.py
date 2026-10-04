@@ -64,6 +64,20 @@ class Settings(BaseSettings):
     ted_min_interval_seconds: float = Field(default=1.5, ge=0)
     ted_availability_lag_days: int = 1
     ted_extreme_lag_days: int = Field(default=365, ge=1)
+    # Legal forms whose holder is a natural person: such buyer and winner names are withheld
+    # at parse time, before anything stores or shows them (D76). Legal terms, not industry words.
+    ted_natural_person_markers: tuple[str, ...] = (
+        "e.K.",
+        "e. K.",
+        "e.Kfm.",
+        "e.Kfr.",
+        "Inhaber",
+        "Inh.",
+        "GbR",
+        "Einzelunternehmen",
+        "EIRL",
+        "Entreprise individuelle",
+    )
     tavily_api_url: str = "https://api.tavily.com"
     tavily_max_calls_per_run: int = Field(default=20, ge=1)
     sensor_max_results: int = Field(default=250, ge=1)

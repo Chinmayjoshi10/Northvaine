@@ -96,6 +96,8 @@ def subject_problem(name: str, settings: Settings | None = None) -> str | None:
     text = unicodedata.normalize("NFKC", name).strip()
     if not any(ch.isalpha() for ch in text):
         return "contains no letter"
+    if text.startswith("["):
+        return "is a withheld or placeholder name"
     if "://" in text or text.casefold().startswith("www.") or _URL_LIKE.match(text):
         return "is a URL"
     tokens = _normalize(text).split()
