@@ -151,12 +151,15 @@ class Spy:
     def __init__(self, fake: FakeLlm, monkeypatch: pytest.MonkeyPatch) -> None:
         self.events: list[tuple[str, str]] = []
         self.claims: dict[str, int] = {}
+        self.closed: dict[str, bool] = {}
         real_gate, real_skeptic = run_module.gate_candidate, run_module.skeptic
 
         async def gate(candidate: Any, *args: Any, **kwargs: Any) -> Any:
             fake.key = candidate.key
             self.events.append(("gate", candidate.key))
             self.claims[candidate.key] = len(candidate.claims)
+            end = candidate.window_end
+            self.closed[candidate.key] = end is None or end < AS_OF.date()
             return await real_gate(candidate, *args, **kwargs)
 
         async def skeptic(candidate: Any, *args: Any, **kwargs: Any) -> Any:
@@ -251,7 +254,8 @@ async def test_gate_order_is_most_claims_first_then_key(monkeypatch: pytest.Monk
     fake = FakeLlm()
     spy = Spy(fake, monkeypatch)
     await radar("stone_supplier", fake)
-    order = [(-spy.claims[k], k) for k in spy.of("gate")]
+    # open tender windows first (D71), then most claims, then key
+    order = [(spy.closed[k], -spy.claims[k], k) for k in spy.of("gate")]
     assert order == sorted(order)
 
 

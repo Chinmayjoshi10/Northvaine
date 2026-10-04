@@ -155,7 +155,7 @@ def window_for(
         start = min(dates) if dates else None
         end = _earliest_deadline(tenders)
         if end is not None:
-            return start, end, False, "Open until the stated deadline."
+            return start, end, False, "Deadline as stated in the notice."
         if start is None:
             return None, None, False, "No publication date or deadline stated."
         end = start + timedelta(days=settings.radar_tender_window_days)

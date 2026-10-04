@@ -8,7 +8,7 @@ module knows about a client or an industry: everything comes from the `ClientSpe
 from __future__ import annotations
 
 import importlib.util
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -70,9 +70,14 @@ def seeded_concepts() -> list[EventConceptRow]:
     ]
 
 
-def _gate_order(candidates: list[Candidate]) -> list[Candidate]:
-    """Most claims first, then key: the gate cap keeps the best-evidenced candidates."""
-    return sorted(candidates, key=lambda c: (-len(c.claims), c.key))
+def _gate_order(candidates: list[Candidate], today: date) -> list[Candidate]:
+    """Open tender windows first (a seller can still bid), then most claims, then key, so the
+    gate cap never drops an actionable tender in favour of a closed one (D71)."""
+
+    def still_open(c: Candidate) -> bool:
+        return c.window_end is not None and c.window_end >= today
+
+    return sorted(candidates, key=lambda c: (not still_open(c), -len(c.claims), c.key))
 
 
 async def run_radar(
@@ -131,7 +136,7 @@ async def run_radar(
     rejected = list(rejected)
 
     # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
-    ordered = _gate_order(candidates)
+    ordered = _gate_order(candidates, as_of.date())
     limit = settings.radar_max_gate_candidates
     if len(ordered) > limit:
         notes.append(f"{len(ordered) - limit} candidate(s) not gated: cap of {limit} reached")
