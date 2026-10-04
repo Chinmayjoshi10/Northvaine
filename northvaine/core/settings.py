@@ -108,6 +108,8 @@ class Settings(BaseSettings):
     radar_max_gate_candidates: int = Field(default=40, ge=1)
     radar_brief_entries: int = Field(default=10, ge=1)
     radar_tender_window_days: int = Field(default=30, ge=1)  # D27
+    radar_tender_lookback_days: int = Field(default=45, ge=1)  # D71
+    radar_enumerable_max_results: int = Field(default=100, ge=1)  # D71
     radar_recent_days: int = Field(default=90, ge=1)
     radar_stream_by_event: dict[str, str] = Field(
         default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}

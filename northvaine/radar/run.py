@@ -25,7 +25,7 @@ from northvaine.core.models import (
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.brief import rank
 from northvaine.radar.court import skeptic
-from northvaine.radar.discover import PageFetcher, discover, shift_queries
+from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.entities import build_candidates
 from northvaine.radar.gate import gate_candidate
 from northvaine.radar.ledger import build_evidence
@@ -96,7 +96,7 @@ async def run_radar(
         return run.spent > cap
 
     # 1. discover (sensors with queries shifted to the run date, then lead upgrade)
-    queries = shift_queries(spec.sensors, as_of.date())
+    queries = prepare_queries(spec.sensors, as_of.date(), settings)
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
     notes.extend(found.notes)
 

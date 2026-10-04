@@ -74,6 +74,8 @@ def record_settings(**extra: Any) -> Settings:
         "model_fast": MODEL_FAST,
         "model_mid": MODEL_MID,
         "model_embed": EMBED_MODEL,
+        # The M3 recordings hold one page of 10; replay must reuse this recorded value (D71).
+        "radar_enumerable_max_results": 10,
     }
     values.update(extra)
     return Settings(_env_file=None, **values)

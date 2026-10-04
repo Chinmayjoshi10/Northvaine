@@ -38,7 +38,10 @@ AS_OF = datetime(2026, 10, 5, tzinfo=UTC)
 MODEL_FAST = "nvidia/Nemotron-3_5-Lightning"
 MODEL_MID = "nvidia/nemotron-3-super-120b-a12b"
 SETTINGS = Settings(
-    _env_file=None, ted_min_interval_seconds=0, tavily_api_key=SecretStr("replay-only-key-0123")
+    _env_file=None,
+    ted_min_interval_seconds=0,
+    tavily_api_key=SecretStr("replay-only-key-0123"),
+    radar_enumerable_max_results=10,  # the M3 recordings hold one page of 10 per query
 )
 
 

@@ -7,7 +7,7 @@ page fetch per lead (robots, deny list, safe fetch, contacts stripped).
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any, Protocol
 from urllib.parse import urlsplit
 from uuid import NAMESPACE_URL, UUID, uuid5
@@ -35,6 +35,8 @@ __all__ = [
     "PageFetcher",
     "RecordedPageFetcher",
     "discover",
+    "focus_queries",
+    "prepare_queries",
     "shift_queries",
     "strip_contacts",
     "upgraded_document",
@@ -72,6 +74,43 @@ def shift_queries(
                 out.append(q.model_copy())
         shifted[sensor_name] = out
     return shifted
+
+
+def focus_queries(
+    queries: dict[str, list[SensorQuery]], settings: Settings
+) -> dict[str, list[SensorQuery]]:
+    """Point shifted queries at what a seller can still act on (D71).
+
+    A query for an event the settings map to the tender stream looks back at most
+    `radar_tender_lookback_days`, since a bidding window is about a month (D27). A query to an
+    enumerable source asks for up to `radar_enumerable_max_results` records, so recent notices
+    are not cut off by a small page. Returns copies."""
+    tender_kinds = {k for k, stream in settings.radar_stream_by_event.items() if stream == "tender"}
+    lookback = timedelta(days=settings.radar_tender_lookback_days)
+    wanted = min(settings.radar_enumerable_max_results, settings.sensor_max_results)
+    focused: dict[str, list[SensorQuery]] = {}
+    for sensor_name, items in queries.items():
+        out: list[SensorQuery] = []
+        for q in items:
+            update: dict[str, Any] = {}
+            if (
+                tender_kinds.intersection(q.kinds)
+                and q.published_to is not None
+                and (q.published_from is None or q.published_to - q.published_from > lookback)
+            ):
+                update["published_from"] = q.published_to - lookback
+            if sensor_name in settings.radar_enumerable_sources and q.max_results < wanted:
+                update["max_results"] = wanted
+            out.append(q.model_copy(update=update))
+        focused[sensor_name] = out
+    return focused
+
+
+def prepare_queries(
+    queries: dict[str, list[SensorQuery]], as_of: date, settings: Settings
+) -> dict[str, list[SensorQuery]]:
+    """The queries a radar run sends: shifted to `as_of`, then focused."""
+    return focus_queries(shift_queries(queries, as_of), settings)
 
 
 def strip_contacts(text: str) -> str:

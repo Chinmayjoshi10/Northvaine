@@ -570,3 +570,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   refused a whole live radar recording. It now needs a non-alphanumeric character before
   `nvapi-`, `sk-` or `eyJ`. Keys actually in use are still caught by exact match (known secrets).
   Same fix as check_invariants on 4 Oct.
+- **D71 — Radar queries are focused on what a seller can still act on.** The first live stone
+  brief listed only closed tenders: TED returns oldest first, the run read one page of 10 (57
+  matched), and the tender lookback was 4 months against a ~30-day bidding window (D27).
+  `focus_queries` now limits tender-stream queries to `radar_tender_lookback_days` (45) and asks
+  enumerable sources for up to `radar_enumerable_max_results` (100). Both settings are stored
+  with each recording and pinned on replay, so a recording replays with what was actually sent.

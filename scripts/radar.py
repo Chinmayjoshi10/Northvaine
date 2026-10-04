@@ -54,7 +54,7 @@ from northvaine.radar.discover import (  # noqa: E402
     LivePageFetcher,
     PageFetcher,
     RecordedPageFetcher,
-    shift_queries,
+    prepare_queries,
     strip_contacts,
 )
 from northvaine.radar.models import (  # noqa: E402
@@ -84,6 +84,8 @@ SHAPING_SETTINGS = (
     "support_max_tokens",
     "gate_max_tokens",
     "skeptic_max_tokens",
+    "radar_tender_lookback_days",  # the query focus (D71) is part of what was sent
+    "radar_enumerable_max_results",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.
 GATE_TOKENS = (2000, 300)
@@ -182,15 +184,16 @@ def write_recording(folder: Path, recording: Recording) -> list[Path]:
 async def run_replay(spec: ClientSpec, recording: Recording) -> RadarRun:
     """The whole pipeline on recorded HTTP, pages and model replies; no `.env`, no network."""
     as_of = recording.meta.as_of
-    if shift_queries(spec.sensors, as_of.date()) != recording.meta.queries:
-        raise Refused(
-            f"the client spec {spec.id!r} no longer matches its recording (queries differ). "
-            "Re-record it with record-radar."
-        )
     with replay_environment(recording.llm):
+        # Inside the pinned environment, so the query focus settings are the recorded ones.
         settings = Settings(
             _env_file=None, ted_min_interval_seconds=0, tavily_api_key=SecretStr("replay-only")
         )
+        if prepare_queries(spec.sensors, as_of.date(), settings) != recording.meta.queries:
+            raise Refused(
+                f"the client spec {spec.id!r} no longer matches its recording (queries differ). "
+                "Re-record it with record-radar."
+            )
         transport = replay_transport(recording.exchanges)
         async with httpx.AsyncClient(transport=transport) as client:
             with llm.client_override(ReplayClient(recording.llm)):
@@ -228,7 +231,7 @@ def _cost(model: str | None, tokens: tuple[int, int], calls: int) -> Decimal | N
 
 
 def print_plan(spec: ClientSpec, as_of: datetime, settings: Settings) -> None:
-    queries = shift_queries(spec.sensors, as_of.date())
+    queries = prepare_queries(spec.sensors, as_of.date(), settings)
     uploads = settings.radar_max_lead_upgrades
     gates = settings.radar_max_gate_candidates
     docs = uploads + 5  # upgraded pages plus a few full-text snippets: a plan, not a measurement

@@ -313,3 +313,31 @@ async def test_discover_turns_sensor_errors_into_notes() -> None:
     assert result.documents == [] and result.leads == 0
     assert any("tavily" in n for n in result.notes)
     assert any("nonesuch" in n for n in result.notes)
+
+
+def test_focus_narrows_tender_lookback_and_widens_enumerable_pages() -> None:
+    from northvaine.radar.discover import focus_queries, prepare_queries
+    from northvaine.sensors.base import SensorQuery
+
+    settings = Settings(_env_file=None)
+    tender = SensorQuery(
+        kinds=["tender_published"],
+        published_from=date(2026, 6, 1),
+        published_to=date(2026, 10, 4),
+        max_results=10,
+    )
+    award = SensorQuery(
+        kinds=["contract_awarded"],
+        published_from=date(2026, 6, 1),
+        published_to=date(2026, 10, 4),
+        max_results=10,
+    )
+    out = focus_queries({"ted": [tender, award], "tavily": [tender]}, settings)
+    lookback = settings.radar_tender_lookback_days
+    assert (out["ted"][0].published_to - out["ted"][0].published_from).days == lookback
+    assert out["ted"][1].published_from == date(2026, 6, 1)  # awards keep their span
+    assert out["ted"][0].max_results == settings.radar_enumerable_max_results
+    assert out["tavily"][0].max_results == 10  # not an enumerable source
+    assert tender.published_from == date(2026, 6, 1)  # input untouched
+    shifted = prepare_queries({"ted": [tender]}, date(2026, 10, 4), settings)
+    assert shifted["ted"][0].published_to == date(2026, 10, 4)
