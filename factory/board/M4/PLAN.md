@@ -1,6 +1,6 @@
 # Milestone 4 plan: the evidence ledger (verified claims to events)
 
-status: **proposed** (architect, 4 Oct 2026; revised after research and critique)
+status: **approved** (orchestrator, 4 Oct 2026, per founder delegation; founder answered Q1 yes and Q2 yes on 4 Oct)
 date: 2026-10-04
 baseline: `main` at ad9aca3 (gate green: 729 passed, 25 deselected; migration head 0004).
 `northvaine/radar/` holds only an empty `__init__.py`. Already on main: `ClaimRow`, `EventRow`,
@@ -351,6 +351,8 @@ process_document: load_concepts + events_for_clustering(as_of) -> build_evidence
    `save_events` refusal of unverified claim ids.
 
 ## Questions for the founder
+
+**Answered 4 Oct 2026:** Q1 = yes (D46, code-only for structured records). Q2 = yes (D45, snippets are leads).
 
 1. **Code-only verification for structured official records (D46).** SPEC §5 says the code quote
    check is followed by a fast-model yes/no support check. For TED notices the statement is a

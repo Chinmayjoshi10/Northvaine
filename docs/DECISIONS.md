@@ -439,3 +439,52 @@ Tender sensor in M3 (parked). Migration 0004 approved by the orchestrator (techn
   dated by the change. The replay risk is therefore *loss* of the original notice from its date
   window, not early leakage of new content. Documents with `notice-version > 1` are flagged, and
   old fixture windows are never re-recorded to "refresh" them (a re-record returns a different set).
+
+## 2026-10-04 — Milestone 4 evidence ledger (from factory/board/M4/PLAN.md)
+
+Founder answered both questions on 4 Oct: Q1 yes (code-only verification for structured
+official records, a spec change to SPEC §5 for that source class only), Q2 yes (snippet-only
+results are leads, not evidence).
+
+- **D45** A document is evidence only by an explicit, data-driven source rule
+  (`evidence_source_rules`): `structured` (TED), `full_text` (website), `raw_only` (Tavily with
+  `text_kind='raw'`). Everything else, including snippet-only results and unknown sources or
+  text kinds, is a **lead**: no extraction, no claims, no LLM spend (fail-closed). M5's discover
+  stage upgrades a lead by fetching the publisher URL through `safe_fetch` into a website document.
+- **D46 (founder Q1)** Structured official records (TED, D39 rendering) yield claims and events
+  by code. `source_quote` is one exact rendered line, the statement is a generic template over the
+  same field, the quote check is a whole-line exact match, and `verified_by='code'`. No LLM
+  extraction or support check.
+- **D47** Extraction and normalization are one fast-tier call per full-text document. The support
+  check is one fast-tier call per document, batching only claims whose quotes passed; it sees
+  statements and quotes only (no document, no goal), all fenced. A missing verdict = unsupported.
+- **D48** Quote check, extracted mode: NFKC + quote/dash/whitespace normalization, exact match
+  first, then a stdlib `difflib` window fallback at ratio >= 0.95, minimum 20 characters.
+  Structured mode: exact whole-line match, no minimum. `quote_offset` indexes the original
+  `documents.text`. No new dependency.
+- **D49** Every extracted claim is stored with a status (verified or a rejection reason) to measure
+  extraction precision. Consumers read only the `verified_claims` view. CHECKs tie `verified` to its
+  status and require `quote_offset` and `verified_by`. `check_invariants` forbids SQL on claims and
+  `ClaimRow` imports outside `core/ledger.py`. `save_events` refuses unverified claim ids.
+- **D50** The LLM never decides a fact on an event. Dates are written text parsed by code
+  (`sensors.dates.parse_date`), and every event field (date text, subject, country, string slots)
+  is kept only if it appears in a verified quote of that event; otherwise it is dropped. The event
+  description is composed by code from verified statements. `available_at` = the latest
+  `available_at` of its claims' documents (in M4: its document's).
+- **D51** Concepts: the extractor picks the level-0 type from the seeded labels (data, minus
+  `extract_excluded_event_types`). Level 1 = nearest child at cosine >= 0.80, else a `proposed`
+  child named by the extractor (its first event's embedding seeds it). Dedup: events share a
+  cluster when type matches, subject key or group_key matches, the date window holds, and cosine
+  >= 0.85; events without embeddings cluster deterministically on (type, group_key) or (type,
+  subject key, window). Candidates are filtered by `as_of`. Thresholds are settings in M4.
+- **D52** Migration 0005 as in the frozen contracts (claims status/meta/fingerprint and two CHECKs;
+  events available_at/description/embedding/fingerprint; the `verified_claims` view). Events are
+  idempotent on `fingerprint`.
+- **D53** LLM fixtures are recorded only by the orchestrator (`tasks.py record-llm`) through
+  `llm.client_override` + `RecordingClient`, redacted with `smoke_llm.redact`, never hand-edited.
+  Replay is keyed by sha256 of the nonce-normalized request body (a prompt change needs a
+  re-record) and pinned to the recorded model ids by `replay_environment`. Vectors stored rounded
+  to 6 decimals.
+- **D54** Entity resolution is deferred to M5. Subjects are stored as mentions (name, ISO2 country,
+  generic role) in `claims.meta` and `events.slots`; `company_id` stays NULL in M4.
+

@@ -107,3 +107,22 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
 - Gate persisting rejected sellers with `rejected_as`: M4/M5.
 - DNS pinning in `safe_fetch` (rebinding protection).
 
+
+## Parked from Milestone 4 planning (2026-10-04)
+
+- Entity resolution of subject mentions to `companies` rows; the award -> winner hop (D20): M5.
+- Upgrading leads by safe-fetching the publisher page into a website document: M5 discover.
+- Re-recording the 3 refused Tavily queries; more full-text announcement documents: M5.
+- Events from private (workspace) documents: an `events.workspace_id` column and scoped reads.
+- Chunked extraction for documents longer than `extract_max_doc_chars`; `document_chunks`
+  embeddings and the SPEC §5 "match" stage.
+- Ledger and concept thresholds in `policy_params` with update rules; concept split/merge by
+  usefulness; promoting proposed concepts to active; an LLM concept-naming pass.
+- Batch embeddings (a list input) in `llm.embed`; an HNSW index on `events.embedding`.
+- Multi-document event `available_at` (latest of its claims' documents) once events merge across
+  documents.
+- Source-reliability updates from verification failures and "wrong fact" feedback (W learner, M7).
+- Retention for claims and documents (180 days unless referenced, SPEC §11).
+- Distillation dataset export of verified claims and support verdicts.
+- Gate persistence of rejected sellers with `rejected_as`: M5.
+
