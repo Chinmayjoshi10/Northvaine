@@ -31,8 +31,19 @@ Handler = Callable[[Job], Awaitable[None]]
 
 ERROR_MAX_CHARS = 2000
 _COLUMNS = (
-    "id", "kind", "payload", "status", "attempts", "max_attempts", "run_after",
-    "locked_at", "locked_by", "error", "workspace_id", "created_at", "finished_at",
+    "id",
+    "kind",
+    "payload",
+    "status",
+    "attempts",
+    "max_attempts",
+    "run_after",
+    "locked_at",
+    "locked_by",
+    "error",
+    "workspace_id",
+    "created_at",
+    "finished_at",
 )
 
 

@@ -93,7 +93,7 @@ def test_signatures_match_the_plan() -> None:
     assert params(gate.numbers_grounded) == ["text", "quotes"]
     assert params(gate.gate_candidate) == ["candidate", "spec", "run", "session", "settings"]
     assert params(court.skeptic) == ["candidate", "gate", "spec", "run", "session", "settings"]
-    assert params(brief.rank) == ["passed", "as_of", "settings"]
+    assert params(brief.rank) == ["passed", "as_of", "settings", "offer"]  # offer: D80
     assert params(brief.render_brief) == ["run"]
     assert params(brief.render_scorecard) == ["run"]
     assert params(brief.write_reports) == ["run", "out_dir"]

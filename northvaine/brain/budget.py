@@ -136,9 +136,7 @@ async def check_budget(
         )
 
     if run.spent_usd + estimated_cost > settings.run_budget_usd:
-        raise BudgetExceeded(
-            BudgetKind.RUN, settings.run_budget_usd, run.spent_usd, estimated_cost
-        )
+        raise BudgetExceeded(BudgetKind.RUN, settings.run_budget_usd, run.spent_usd, estimated_cost)
 
     if session is None:
         return  # the two shared caps need the ledger; callers without one get the local checks
@@ -148,9 +146,7 @@ async def check_budget(
         session, DAY_SUM, {"start": start, "end": end, "workspace_id": run.workspace_id}
     )
     if spent_today + estimated_cost > settings.daily_budget_usd:
-        raise BudgetExceeded(
-            BudgetKind.DAY, settings.daily_budget_usd, spent_today, estimated_cost
-        )
+        raise BudgetExceeded(BudgetKind.DAY, settings.daily_budget_usd, spent_today, estimated_cost)
 
     spent_ever = await _scalar(session, TOTAL_SUM)
     if spent_ever + estimated_cost > settings.total_budget_usd:

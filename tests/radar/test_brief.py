@@ -120,7 +120,7 @@ def ranked(items, **kw) -> list[RankedEntry]:
 # ----------------------------------------------------------------------------- ranking
 
 
-def test_strength_beats_urgency_and_reasons_are_plain() -> None:
+def test_window_then_strength_and_reasons_are_plain() -> None:
     strong = candidate("Zed Strong", two_docs("z"))
     one_doc = uuid4()
     medium = candidate(
@@ -136,9 +136,14 @@ def test_strength_beats_urgency_and_reasons_are_plain() -> None:
     assert [e.candidate.name for e in out] == ["Zed Strong", "Alpha Medium", "Beta Weak"]
     assert [e.strength for e in out] == ["strong", "medium", "weak"]
     assert [e.rank for e in out] == [1, 2, 3]
-    assert out[0].rank_reasons[0] == "Evidence: 2 verified claims from 2 pages"
-    assert out[1].rank_reasons[1] == "Window: tender closes in 2 days (stated deadline)"
-    assert out[1].rank_reasons[2] == "Buyer: buys directly"
+    # No offer given: every requirement is inferred. Tenders closing in under 5 days drop
+    # below the undated announcement (D80).
+    assert out[0].rank_reasons[0].startswith("Requirement: inferred")
+    assert out[0].rank_reasons[2] == "Evidence: 2 verified claims from 2 pages"
+    assert out[1].rank_reasons[1] == (
+        "Window: tender closes in 2 days (stated deadline): likely too late to prepare a bid"
+    )
+    assert out[1].rank_reasons[3] == "Buyer: buys directly"
 
 
 def test_three_structured_claims_from_one_record_are_strong() -> None:
@@ -146,7 +151,7 @@ def test_three_structured_claims_from_one_record_are_strong() -> None:
     claims = [claim(f"C{i}", f"q{i}", doc=doc, kind=EvidenceKind.STRUCTURED) for i in (1, 2, 3)]
     out = ranked([(candidate("Record Co", claims), gate(), UNKNOWN)])
     assert out[0].strength == "strong"
-    assert out[0].rank_reasons[0] == "Evidence: 3 verified claims from 1 official record"
+    assert out[0].rank_reasons[2] == "Evidence: 3 verified claims from 1 official record"
 
 
 def test_open_window_before_recent_before_undated_before_closed() -> None:
@@ -190,9 +195,41 @@ def test_direct_buyer_first_then_name_breaks_ties() -> None:
     ]
     out = ranked(items)
     assert [e.candidate.name for e in out] == ["Beta", "Zulu", "Alpha", "Mid"]
-    assert out[2].rank_reasons[2] == "Buyer: does not buy directly (reached through others)"
-    assert out[3].rank_reasons[2] == "Buyer: not stated whether it buys directly"
+    assert out[2].rank_reasons[3] == "Buyer: does not buy directly (reached through others)"
+    assert out[3].rank_reasons[3] == "Buyer: not stated whether it buys directly"
     assert ranked(list(reversed(items))) == out
+
+
+def test_offer_terms_are_content_words_of_the_offer() -> None:
+    terms = brief.offer_terms("Supplier of widgets and sprockets, selling across the EU.")
+    assert terms == {"widgets", "sprockets"}
+
+
+def test_a_stated_requirement_ranks_before_any_inferred_one() -> None:
+    offer = "Maker of widgets for public buildings."
+    stated = candidate("Zed Stated", [claim("C1", "The hall needs new widget panels.")])
+    inferred = candidate("Alpha Inferred", two_docs("a hall is built"))
+    out = ranked([(inferred, gate(), UNKNOWN), (stated, gate(), UNKNOWN)], offer=offer)
+    assert [e.candidate.name for e in out] == ["Zed Stated", "Alpha Inferred"]
+    assert (out[0].requirement, out[0].requirement_ref) == ("stated", "C1")
+    assert out[0].rank_reasons[0] == (
+        "Requirement: stated (a verified quote names what you sell) [C1]"
+    )
+    assert out[1].requirement == "inferred" and out[1].requirement_ref is None
+
+
+def test_requirement_matches_plurals_and_compounds_but_not_stopwords() -> None:
+    terms = brief.offer_terms("Supplier of paving and kerbs")
+    assert terms == {"paving", "kerbs"}
+    assert brief.requirement_of(candidate("A", [claim("C1", "new kerb line")]), terms)[0] == (
+        "stated"
+    )
+    assert brief.requirement_of(candidate("B", [claim("C1", "full repaving works")]), terms)[0] == (
+        "stated"
+    )
+    assert brief.requirement_of(candidate("C", [claim("C1", "a new supplier")]), terms)[0] == (
+        "inferred"
+    )
 
 
 # ----------------------------------------------------------------------------- fixtures
@@ -226,7 +263,7 @@ def make_run(n_passed: int = 2, *, extra_rejected: bool = True) -> RadarRun:
                 AGAINST,
             )
         )
-    ranked_entries = ranked(entries)
+    ranked_entries = ranked(entries, offer="Invented offer")  # quotes name "invented"
     rejected = []
     if extra_rejected:
         person = candidate("Jane Q Person", [claim("C1", "a quote")])
@@ -409,14 +446,15 @@ def test_model_text_only_in_sections_4_7_8_9() -> None:
 def test_uncertainty_always_has_content_and_code_flags() -> None:
     c = candidate(
         "Flag Co",
-        [claim("C1", "one", upgraded="https://lead.test/z")],
+        [claim("C1", "Flag Co orders widgets", upgraded="https://lead.test/z")],
         stream=RadarStream.TENDER,
         window_end=date(2026, 10, 20),
         estimated=True,
     )
-    entry = ranked([(c, gate(), SkepticFinding(stance="unknown", against=[], open_questions=[]))])[
-        0
-    ]
+    entry = ranked(
+        [(c, gate(), SkepticFinding(stance="unknown", against=[], open_questions=[]))],
+        offer="widgets",
+    )[0]
     section = entry_sections(
         brief.render_brief(make_run().model_copy(update={"entries": [entry]}))
     )[0]
@@ -448,7 +486,7 @@ def test_thin_sources_paragraph_and_rejected_table() -> None:
     run = make_run(n_passed=2)
     text = brief.render_brief(run)
     assert "## Thin sources" in text
-    assert "Only 2 of a possible 10 entries passed" in text
+    assert "Only 2 entries are strong enough for a full write-up" in text
     assert "Nothing was added to fill the space" in text
     table = text.split("## Rejected", 1)[1]
     assert "| Rival Supplies Ltd | competitor | llm | sells the same thing \\| rival |" in table
@@ -462,11 +500,11 @@ def test_no_thin_paragraph_when_full_and_extra_entries_listed_one_line() -> None
     run = make_run(n_passed=12)
     text = brief.render_brief(run)
     assert "## Thin sources" not in text
-    assert len(entry_sections(text)) == 10
-    also = text.split("## Also passed", 1)[1].split("## Rejected")[0]
-    assert len([ln for ln in also.splitlines() if ln.startswith("- ")]) == 2
-    assert "11. Invented Buyer" in also or "12. Invented Buyer" in also
-    assert text.count("A person decides and makes contact.") == 10
+    assert len(entry_sections(text)) == 5  # radar_brief_main_entries (D80)
+    also = text.split("## Also found, weaker", 1)[1].split("## Rejected")[0]
+    assert len([ln for ln in also.splitlines() if re.match(r"\| \d+ \|", ln)]) == 7
+    assert "| 12 | Invented Buyer" in also
+    assert text.count("A person decides and makes contact.") == 5
 
 
 def test_empty_run_is_honest() -> None:

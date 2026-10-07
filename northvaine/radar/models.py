@@ -165,6 +165,10 @@ class RankedEntry(NorthvaineModel):
     skeptic: SkepticFinding
     strength: Literal["strong", "medium", "weak"]
     rank_reasons: list[str]
+    # M5.1 (D80): "stated" when a verified quote names a term of the client's offer, found by
+    # code; "inferred" otherwise. Defaults keep run records written before M5.1 readable.
+    requirement: Literal["stated", "inferred"] = "inferred"
+    requirement_ref: str | None = None
 
 
 class RejectedEntry(NorthvaineModel):

@@ -631,3 +631,34 @@ brief with Claude's five corrections (docs/COLLAB.md).
   4. **Learners are swappable**, so real partner outcomes replace simulated ones without code
      changes.
   Order: Phase 0 first (ROADMAP.md), then the learners on public history, then the simulated owner.
+
+## 2026-10-08 — M5.1 brief quality (T5.8), shaped by ChatGPT's review and the WOS field test
+
+- **D80 — Briefs say what is known, who buys, and what to do, and nothing more certain than the
+  evidence.**
+  1. **Requirement stated or inferred, decided by code.** It is `stated` only when a verified
+     quote names a content word of the client's own offer text (generic stopwords in settings).
+     The model plays no part, and no gate change or re-record was needed. It ranks first.
+  2. **Ranking order:** requirement, then window (open with at least `radar_min_days_left`
+     days, then recent, then undated, then too late, then closed), then evidence strength, then
+     direct buyer.
+  3. **Action status, from the WOS method:**
+     - *watch only* for any tender before award, because the authority is a demand source and
+       not the material buyer;
+     - *contact now* for an award or announcement with a stated requirement;
+     - *qualify first* otherwise.
+  4. **A one-screen summary.** "Accounts to approach" and "Tenders to watch" are kept apart,
+     with what, requirement, why now and caution per row, all code-composed.
+  5. **A short main list.** Full write-ups only for stated or strong entries, capped at
+     `radar_brief_main_entries` (5). The rest go in "Also found, weaker". Thin sources means
+     fewer than 3 full write-ups.
+  6. **Plain wording.** One sentence from the record's own lines; "who buys" and "next step"
+     per stream, plus an opening question that tests a hypothesis rather than claiming a need.
+     These come from settings, generic and never industry words.
+  7. **Contract values** carry "value of the whole contract, not the share for what you sell".
+  8. **The scorecard gains an "after contact" table** with the field-test loop: known already?
+     New intelligence? Contacted? Outcome?
+
+  Not done here, recorded as next: tracing award winners into named contractors' accounts
+  (D23), import and shipment data, and a cross-check against the company's own catalogue. All
+  three are in the WOS method and are new sensors or learners, not brief changes.

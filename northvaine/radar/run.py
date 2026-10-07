@@ -210,7 +210,7 @@ async def run_radar(
         )
 
     # 5. rank (code only) and assemble the run record
-    entries = rank(passed, as_of=as_of, settings=settings)
+    entries = rank(passed, as_of=as_of, settings=settings, offer=spec.offer)
     return RadarRun(
         client_id=spec.id,
         offer=spec.offer,

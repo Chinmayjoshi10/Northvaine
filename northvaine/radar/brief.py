@@ -35,7 +35,9 @@ NO_NAME = "(no company named)"
 DECISION_LINE = "A person decides and makes contact."
 
 _STRENGTH_ORDER = {"strong": 0, "medium": 1, "weak": 2}
-_TIER_OPEN, _TIER_RECENT, _TIER_UNDATED, _TIER_CLOSED = 0, 1, 2, 3
+_TIER_OPEN, _TIER_RECENT, _TIER_UNDATED, _TIER_TOO_LATE, _TIER_CLOSED = 0, 1, 2, 3, 4
+_WORD = re.compile(r"[^\W\d_]+")
+_TITLE_PREFIX = re.compile(r"^Title \[[a-z]{2,3}\]:\s*")
 
 _QUESTIONS = [
     "Who",
@@ -111,12 +113,56 @@ def _last_dated(candidate: Candidate) -> date | None:
     return max(dates) if dates else None
 
 
-def _urgency(candidate: Candidate, today: date, recent_days: int) -> tuple[int, int, str]:
+def offer_terms(offer: str, settings: Settings | None = None) -> set[str]:
+    """The content words of the client's own offer text (D80): what a quote must name for the
+    requirement to count as stated. Generic stopwords come from settings, never industry words."""
+    cfg = settings or get_settings()
+    stop = {w.casefold() for w in cfg.radar_offer_stopwords}
+    return {
+        w.casefold()
+        for w in _WORD.findall(offer)
+        if len(w) >= cfg.radar_offer_term_min_chars and w.casefold() not in stop
+    }
+
+
+def _names_term(quote: str, terms: set[str]) -> bool:
+    """A whole word, its singular or plural, or (for longer terms) part of a compound word."""
+    text = quote.casefold()
+    words = {w.casefold() for w in _WORD.findall(quote)}
+    for term in terms:
+        stem = term[:-1] if term.endswith("s") and len(term) > 4 else term
+        if term in words or stem in words or f"{stem}s" in words or f"{stem}es" in words:
+            return True
+        if len(stem) >= 5 and stem in text:
+            return True
+    return False
+
+
+def requirement_of(candidate: Candidate, terms: set[str]) -> tuple[str, str | None]:
+    """('stated', ref) when a verified quote of the candidate names an offer term, found by
+    code; ('inferred', None) otherwise. The model's opinion plays no part (D80)."""
+    if terms:
+        for claim in candidate.claims:
+            if _names_term(claim.source_quote, terms):
+                return "stated", claim.ref
+    return "inferred", None
+
+
+def _urgency(
+    candidate: Candidate, today: date, recent_days: int, min_days_left: int = 0
+) -> tuple[int, int, str]:
     """(tier, position inside the tier, reason line). Lower sorts first."""
     end = candidate.window_end
     if candidate.stream == RadarStream.TENDER and end is not None:
         how = "estimated deadline" if candidate.window_estimated else "stated deadline"
         left = (end - today).days
+        if 0 <= left < min_days_left:
+            when = "today" if left == 0 else f"in {_plural(left, 'day')}"
+            return (
+                _TIER_TOO_LATE,
+                left,
+                f"Window: tender closes {when} ({how}): likely too late to prepare a bid",
+            )
         if left >= 0:
             when = "today" if left == 0 else f"in {_plural(left, 'day')}"
             return _TIER_OPEN, left, f"Window: tender closes {when} ({how})"
@@ -151,28 +197,43 @@ def rank(
     *,
     as_of: datetime,
     settings: Settings | None = None,
+    offer: str = "",
 ) -> list[RankedEntry]:
-    """Lexicographic order by (evidence strength, window urgency or recency, direct buyer),
-    each component explained in `rank_reasons`; no numeric score (D64)."""
+    """Lexicographic order by (requirement stated before inferred, window urgency or recency,
+    evidence strength, direct buyer), each component explained in `rank_reasons`; no numeric
+    score (D64, D80). Uncertainty lowers rank."""
     cfg = settings or get_settings()
     today = as_of.date()
+    terms = offer_terms(offer, cfg)
     scored = []
     for candidate, gate, skeptic in passed:
         strength, claims, documents = _strength(candidate)
-        tier, position, urgency_line = _urgency(candidate, today, cfg.radar_recent_days)
+        tier, position, urgency_line = _urgency(
+            candidate, today, cfg.radar_recent_days, cfg.radar_min_days_left
+        )
+        requirement, requirement_ref = requirement_of(candidate, terms)
+        requirement_line = (
+            f"Requirement: stated (a verified quote names what you sell) [{requirement_ref}]"
+            if requirement == "stated"
+            else "Requirement: inferred (no verified quote names what you sell)"
+        )
         reasons = [
-            _evidence_reason(candidate, claims, documents),
+            requirement_line,
             urgency_line,
+            _evidence_reason(candidate, claims, documents),
             _buyer_reason(gate),
         ]
         key = (
-            _STRENGTH_ORDER[strength],
+            0 if requirement == "stated" else 1,
             tier,
+            _STRENGTH_ORDER[strength],
             position,
             0 if gate.direct_buyer is True else 1,
             candidate.name,
         )
-        scored.append((key, candidate, gate, skeptic, strength, reasons))
+        scored.append(
+            (key, candidate, gate, skeptic, strength, reasons, requirement, requirement_ref)
+        )
     scored.sort(key=lambda item: item[0])
     return [
         RankedEntry(
@@ -182,8 +243,12 @@ def rank(
             skeptic=skeptic,
             strength=strength,
             rank_reasons=reasons,
+            requirement=requirement,
+            requirement_ref=requirement_ref,
         )
-        for i, (_, candidate, gate, skeptic, strength, reasons) in enumerate(scored, start=1)
+        for i, (_, candidate, gate, skeptic, strength, reasons, requirement, requirement_ref) in (
+            enumerate(scored, start=1)
+        )
     ]
 
 
@@ -265,6 +330,98 @@ def _labelled(label: str, sentence: str) -> str:
     return NOT_STATED if sentence == NOT_STATED else f"{label}: {sentence}"
 
 
+def _claim_starting(candidate: Candidate, prefix: str) -> CandidateClaim | None:
+    return next((c for c in candidate.claims if c.source_quote.startswith(prefix)), None)
+
+
+def _title(candidate: Candidate) -> CandidateClaim | None:
+    return next((c for c in candidate.claims if _TITLE_PREFIX.match(c.source_quote)), None)
+
+
+def _quoted_value(claim: CandidateClaim, prefix_re: re.Pattern[str] | str) -> str:
+    text = claim.source_quote
+    if isinstance(prefix_re, str):
+        return _inline(text[len(prefix_re) :])
+    return _inline(prefix_re.sub("", text, count=1))
+
+
+def _what(candidate: Candidate, limit: int = 90) -> str:
+    """What the opportunity is about: the record's title when there is one, else the first
+    verified statement. Code-composed from verified claims only."""
+    title = _title(candidate)
+    text = _quoted_value(title, _TITLE_PREFIX) if title else ""
+    if not text and candidate.claims:
+        text = _inline(candidate.claims[0].statement)
+    if len(text) > limit:
+        text = text[: limit - 1].rstrip() + "…"
+    return text or NOT_STATED
+
+
+def _plain_happened(candidate: Candidate) -> str | None:
+    """One readable sentence for an official record, each part with its claim ref, built from
+    the record's own lines (D80). None when the candidate has no such record."""
+    title = _title(candidate)
+    published = _claim_starting(candidate, "Published: ")
+    deadline = _claim_starting(candidate, "Deadline: ")
+    if title is None and published is None:
+        return None
+    name = _name(candidate)
+    if candidate.stream == RadarStream.AWARD:
+        head = f"{name} won a contract"
+    elif candidate.stream == RadarStream.TENDER:
+        head = f"{name} is buying through a public tender"
+    else:
+        head = f"{name} published a notice"
+    parts = [head]
+    if title is not None:
+        parts.append(f": “{_quoted_value(title, _TITLE_PREFIX)}” [{title.ref}]")
+    if published is not None:
+        parts.append(f"; published {_quoted_value(published, 'Published: ')} [{published.ref}]")
+    if deadline is not None:
+        parts.append(f"; bids due {_quoted_value(deadline, 'Deadline: ')} [{deadline.ref}]")
+    return "".join(parts) + "."
+
+
+def action_status(entry: RankedEntry) -> str:
+    """contact now / qualify first / watch only (WOS field test, D80). Before an award the named
+    authority is a demand source, not the material buyer, so a tender is a watch item."""
+    if entry.candidate.stream == RadarStream.TENDER:
+        return "watch only"
+    return "contact now" if entry.requirement == "stated" else "qualify first"
+
+
+def caution(entry: RankedEntry) -> str:
+    """The most important thing not yet known, composed by code."""
+    c = entry.candidate
+    if c.stream == RadarStream.TENDER:
+        return "the authority runs the tender; the material buyer is unknown until the award"
+    if entry.requirement != "stated":
+        return "the evidence does not name what you sell"
+    if c.window_estimated:
+        return "the deadline is estimated"
+    if len({k.document_id for k in c.claims}) <= 1:
+        return "all evidence comes from one document"
+    return "no major gap flagged; check the source before contact"
+
+
+def _is_value(claim: CandidateClaim) -> bool:
+    return claim.source_quote.startswith(("Total value:", "Estimated value"))
+
+
+def _why_now(entry: RankedEntry, today: date) -> str:
+    """A code-composed reason to act now, from the window or the latest date."""
+    c = entry.candidate
+    if c.stream == RadarStream.TENDER and c.window_end is not None:
+        left = (c.window_end - today).days
+        if left < 0:
+            return f"tender closed {c.window_end.isoformat()}"
+        return f"tender closes in {_plural(left, 'day')}"
+    last = _last_dated(c)
+    if c.stream == RadarStream.AWARD:
+        return f"contract awarded {_day(last)}" if last else "contract awarded"
+    return f"announced {_day(last)}" if last else "date not stated"
+
+
 # ----------------------------------------------------------------------------- brief
 
 
@@ -290,7 +447,10 @@ def _entry_block(entry: RankedEntry) -> list[str]:
 
     # 2 What happened
     out += [heading(2), ""]
-    if c.events:
+    plain = _plain_happened(c)
+    if plain is not None:
+        out.append(plain)
+    elif c.events:
         for ev in c.events:
             refs = _refs(_valid_refs(ev.claim_refs, c))
             out.append(f"- {_inline(ev.description)} {refs}".rstrip())
@@ -321,6 +481,8 @@ def _entry_block(entry: RankedEntry) -> list[str]:
         out.append("")
         out += [f"> {line}" for line in claim.source_quote.split("\n")]
         out.append("")
+        if _is_value(claim):
+            out += ["(Value of the whole contract, not the share for what you sell.)", ""]
 
     # 6 Sources
     out += [heading(6), ""]
@@ -339,6 +501,20 @@ def _entry_block(entry: RankedEntry) -> list[str]:
 
     # 7 Why a buyer
     out += [heading(7), ""]
+    cfg = get_settings()
+    out.append(
+        f"Requirement: {entry.requirement}"
+        + (f" [{entry.requirement_ref}]" if entry.requirement_ref else "")
+        + (
+            ""
+            if entry.requirement == "stated"
+            else " (no verified quote names what you sell; treat this as a possibility)"
+        )
+        + "."
+    )
+    who_buys = cfg.radar_buyer_note_by_stream.get(c.stream.value)
+    if who_buys:
+        out.append(f"Who buys: {_inline(who_buys)}")
     direct = {True: "yes, buys directly", False: "no, reached through others"}.get(
         gate.direct_buyer, NOT_STATED
     )
@@ -371,6 +547,13 @@ def _entry_block(entry: RankedEntry) -> list[str]:
 
     # 9 Suggested action
     out += [heading(9), ""]
+    out.append(f"Status: {action_status(entry)}. Caution: {caution(entry)}.")
+    stage_action = cfg.radar_action_by_stream.get(c.stream.value)
+    if stage_action:
+        out.append(f"Next step for this stage: {_inline(stage_action)}")
+    opener = cfg.radar_opening_question_by_stream.get(c.stream.value)
+    if opener:
+        out.append(f"Opening question: {_inline(opener)}")
     out.append(
         _labelled("Suggestion (model-written)", _cited(gate.suggested_action, gate.cited_refs, c))
     )
@@ -381,19 +564,75 @@ def _entry_block(entry: RankedEntry) -> list[str]:
 
 
 def _briefed(run: RadarRun) -> tuple[list[RankedEntry], list[RankedEntry]]:
-    limit = get_settings().radar_brief_entries
+    """(full entries, weaker entries). Only a stated requirement or strong evidence earns a full
+    entry, up to `radar_brief_main_entries`; short lists beat padded ones (D80)."""
+    cap = get_settings().radar_brief_main_entries
     ordered = sorted(run.entries, key=lambda e: e.rank)
-    return ordered[:limit], ordered[limit:]
+    main = [e for e in ordered if e.requirement == "stated" or e.strength == "strong"][:cap]
+    chosen = {id(e) for e in main}
+    return main, [e for e in ordered if id(e) not in chosen]
+
+
+_THIN_BELOW = 3
+
+
+def _summary_table(entries: list[RankedEntry], today: date) -> list[str]:
+    """One table row per entry, all code-composed from verified claims and settings."""
+    out = [
+        "| # | Status | Company | What | Requirement | Why now | Caution |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for e in entries:
+        req = f"stated [{e.requirement_ref}]" if e.requirement == "stated" else "inferred"
+        out.append(
+            f"| {e.rank} | {action_status(e)} | {_cell(_name(e.candidate))} | "
+            f"{_cell(_what(e.candidate))} | {req} | {_cell(_why_now(e, today))} | "
+            f"{_cell(caution(e))} |"
+        )
+    return out
+
+
+def _summary(run: RadarRun, today: date) -> list[str]:
+    """The one screen a salesperson reads first: accounts to approach, then tenders to watch,
+    kept apart so project intelligence is never mistaken for a material buyer (D80)."""
+    cap = get_settings().radar_brief_main_entries
+    ordered = sorted(run.entries, key=lambda e: e.rank)
+    accounts = [e for e in ordered if e.candidate.stream != RadarStream.TENDER][:cap]
+    tenders = [e for e in ordered if e.candidate.stream == RadarStream.TENDER][:cap]
+    out = ["### Accounts to approach", ""]
+    out += _summary_table(accounts, today) if accounts else ["None this time."]
+    out += ["", "### Tenders to watch", ""]
+    out += _summary_table(tenders, today) if tenders else ["None this time."]
+    return out
 
 
 def render_brief(run: RadarRun) -> str:
-    """The Markdown brief: nine questions per entry, verified claims with verbatim quotes."""
-    limit = get_settings().radar_brief_entries
+    """The Markdown brief: a one-screen summary, then nine questions per full entry with
+    verified claims and verbatim quotes, then the weaker entries and the rejections."""
     shown, rest = _briefed(run)
+    today = run.as_of.date()
     kinds = ", ".join(f"{k} {v}" for k, v in sorted(run.documents_by_kind.items())) or "none"
     refused = sum(1 for u in run.upgraded if u.refused is not None)
-    out = [
-        f"# Opportunity brief: {_inline(run.client_id)}",
+    out = [f"# Opportunity brief: {_inline(run.client_id)}", "", "## Summary", ""]
+    out += _summary(run, today)
+    out += [
+        "",
+        "Requirement: *stated* means a verified quote names what you sell; *inferred* means it "
+        "is a possibility only. Status: *contact now*, *qualify first*, or *watch only* (a "
+        "tender before award: the material buyer is not known yet). Every fact below links to "
+        "its source.",
+        "",
+    ]
+    if len(shown) < _THIN_BELOW:
+        out += [
+            "## Thin sources",
+            "",
+            f"Only {len(shown)} {'entry is' if len(shown) == 1 else 'entries are'} strong enough "
+            "for a full write-up. Nothing was added to fill the space.",
+            "",
+        ]
+    out += [
+        "## Run",
         "",
         f"- Client: {_inline(run.client_id)}",
         f"- Offer: {_inline(run.offer)}",
@@ -420,20 +659,17 @@ def render_brief(run: RadarRun) -> str:
         out += ["No entry passed.", ""]
     for entry in shown:
         out += _entry_block(entry)
-    if len(run.entries) < limit:
-        out += [
-            "## Thin sources",
-            "",
-            f"Only {len(run.entries)} of a possible {limit} entries passed. Sources are thin "
-            "for this client. Nothing was added to fill the space.",
-            "",
-        ]
     if rest:
-        out += ["## Also passed", ""]
         out += [
-            f"- {entry.rank}. {_name(entry.candidate)} "
-            f"({entry.candidate.stream.value}, evidence {entry.strength})"
-            for entry in rest
+            "## Also found, weaker",
+            "",
+            "| # | Company | Stream | Requirement | Evidence | Why now |",
+            "| --- | --- | --- | --- | --- | --- |",
+        ]
+        out += [
+            f"| {e.rank} | {_cell(_name(e.candidate))} | {e.candidate.stream.value} | "
+            f"{e.requirement} | {e.strength} | {_cell(_why_now(e, today))} |"
+            for e in rest
         ]
         out.append("")
     out += ["## Rejected", ""]
@@ -492,6 +728,20 @@ def render_scorecard(run: RadarRun) -> str:
         "a salesperson in that industry act on this?",
         "",
         "Wrong rejections: ____ of ____ rejected rows checked.",
+        "",
+        "## After contact (the salesperson fills this in)",
+        "",
+        "Known already? yes or no. New intelligence? (a new date, project, signal, route or reason "
+        "to act, even on a known account). Contacted? yes or no. Outcome: none, redirect, info "
+        "request, requirement, sample, quote or meeting.",
+        "",
+        "| # | Company | Known already? | New intelligence? | Contacted? | Outcome |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for entry in sorted(run.entries, key=lambda e: e.rank):
+        if action_status(entry) != "watch only":
+            out.append(f"| {entry.rank} | {_cell(_name(entry.candidate))} |  |  |  |  |")
+    out += [
         "",
     ]
     return "\n".join(out)

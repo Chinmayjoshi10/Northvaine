@@ -237,8 +237,10 @@ def number_tokens(text: str) -> set[str]:
 
 
 def shown_entries(client: str) -> list[Any]:
-    limit = SETTINGS.radar_brief_entries
-    return sorted(replay(client).run.entries, key=lambda e: e.rank)[:limit]
+    """The entries the brief writes up in full (D80: stated or strong, capped)."""
+    from northvaine.radar.brief import _briefed
+
+    return _briefed(replay(client).run)[0]
 
 
 # --- every recorded exchange is used, and a changed document is caught --------------------------
@@ -739,15 +741,14 @@ def test_one_code_path_serves_all_three_clients_and_the_clients_differ() -> None
 @pytest.mark.parametrize("client", CLIENTS)
 def test_thin_sources_paragraph_appears_exactly_when_entries_fall_short(client: str) -> None:
     brief = brief_of(client)
-    limit = SETTINGS.radar_brief_entries
-    assert ("\n## Thin sources\n" in brief) == (len(replay(client).run.entries) < limit)
-    if len(replay(client).run.entries) < limit:
+    full = len(shown_entries(client))
+    assert ("\n## Thin sources\n" in brief) == (full < 3)  # D80: fewer than 3 full write-ups
+    if full < 3:
         assert "Nothing was added to fill the space." in brief
 
 
 def test_packaging_with_few_entries_shows_the_thin_sources_paragraph() -> None:
-    packaging = replay("packaging_supplier")
-    if len(packaging.run.entries) >= SETTINGS.radar_brief_entries:
+    if len(shown_entries("packaging_supplier")) >= 3:
         pytest.skip("the packaging recording now fills the brief; the paragraph is covered above")
     assert "## Thin sources" in brief_of("packaging_supplier")
 

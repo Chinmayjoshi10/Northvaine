@@ -87,8 +87,10 @@ def normalize_database_url(raw: str) -> NormalizedUrl:
             kept.append((key, value))
 
     if dropped:
-        logger.debug("dropped libpq-only query keys asyncpg does not accept: %s",
-                     ", ".join(sorted(set(dropped))))
+        logger.debug(
+            "dropped libpq-only query keys asyncpg does not accept: %s",
+            ", ".join(sorted(set(dropped))),
+        )
 
     connect_args: dict[str, Any] = {}
     if sslmode is not None or files:
@@ -108,9 +110,7 @@ def _new_ssl_context() -> ssl.SSLContext:
 def _ssl_setting(sslmode: str | None, files: dict[str, str]) -> str | ssl.SSLContext:
     """Turn libpq's sslmode + certificate keys into asyncpg's `ssl` argument."""
     if sslmode is not None and sslmode not in SSL_MODES:
-        raise ConfigError(
-            f"DATABASE_URL sslmode {sslmode!r} is not one of: {', '.join(SSL_MODES)}"
-        )
+        raise ConfigError(f"DATABASE_URL sslmode {sslmode!r} is not one of: {', '.join(SSL_MODES)}")
     if sslmode == "verify-full" and "sslrootcert" not in files:
         raise ConfigError(
             "DATABASE_URL has sslmode=verify-full but no sslrootcert; set sslrootcert to the "
@@ -192,7 +192,10 @@ def create_engine(url: str | None = None, *, settings: Settings | None = None) -
             prepared_statement_name_func=_unique_statement_name,
         )
         return create_async_engine(
-            normalized.url, poolclass=NullPool, connect_args=connect_args, echo=settings.db_echo,
+            normalized.url,
+            poolclass=NullPool,
+            connect_args=connect_args,
+            echo=settings.db_echo,
         )
     return create_async_engine(
         normalized.url,

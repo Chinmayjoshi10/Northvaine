@@ -138,6 +138,62 @@ class Settings(BaseSettings):
     gate_max_tokens: int = Field(default=700, ge=1)
     skeptic_max_tokens: int = Field(default=600, ge=1)
     radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
+    # M5.1 brief quality (T5.8, D80). Everything here is generic language, never industry words.
+    radar_brief_main_entries: int = Field(default=5, ge=1)
+    radar_min_days_left: int = Field(default=5, ge=0)
+    radar_offer_term_min_chars: int = Field(default=4, ge=2)
+    radar_offer_stopwords: tuple[str, ...] = (
+        "a", "an", "and", "or", "the", "of", "for", "to", "in", "into", "on", "at", "by",
+        "with", "from", "across", "over", "under", "our", "their", "its", "we", "they",
+        "selling", "sells", "sell", "seller", "sellers", "supplier", "suppliers", "supply",
+        "supplies", "maker", "makers", "manufacturer", "manufacturers", "producer",
+        "producers", "provider", "providers", "company", "companies", "business",
+        "businesses", "brand", "brands", "client", "clients", "customer", "customers",
+        "product", "products", "service", "services", "goods", "range", "ranges", "overseas",
+        "international", "global", "local", "private", "public", "based", "other", "various",
+        "including", "such", "also", "more", "most", "high", "quality", "new",
+    )  # fmt: skip
+    radar_buyer_note_by_stream: dict[str, str] = Field(
+        default_factory=lambda: {
+            "tender": (
+                "The organisation named runs this tender. The goods or materials are often "
+                "bought by the contractor that wins it, so reach likely bidders now and check "
+                "the specification."
+            ),
+            "award": (
+                "The winner named here carries out the contract and buys what it needs for it."
+            ),
+            "announcement": (
+                "The organisation named is acting on its own plans and is the likely buyer."
+            ),
+        }
+    )
+    # A first message tests a hypothesis, never claims a need (COLLAB, WOS field test, D80).
+    radar_opening_question_by_stream: dict[str, str] = Field(
+        default_factory=lambda: {
+            "award": (
+                "Congratulations on the contract. Would extra capacity or a complementary range "
+                "help you deliver it?"
+            ),
+            "announcement": (
+                "As you plan this, would another supplier option or cover for supply risk be "
+                "useful?"
+            ),
+        }
+    )
+    radar_action_by_stream: dict[str, str] = Field(
+        default_factory=lambda: {
+            "tender": (
+                "Before the deadline: find the likely bidders and offer them a quote they can "
+                "price into their bid."
+            ),
+            "award": "Introduce yourself to the winner while it plans its purchases.",
+            "announcement": (
+                "Contact the organisation, or the people designing its project, before "
+                "suppliers are chosen."
+            ),
+        }
+    )
 
     # queue
     job_lease_seconds: int = Field(default=300, ge=1)
