@@ -1,0 +1,44 @@
+name: CI
+
+# Offline parts of the gate only: no secrets, no network-dependent tests, no database.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Dummy values so settings load; nothing here is a real credential and no test uses them.
+      NEBIUS_API_KEY: dummy
+      DATABASE_URL: postgresql+asyncpg://u:p@localhost/x
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install (Python 3.12 and locked dependencies)
+        run: uv sync --frozen
+
+      - name: Invariants
+        run: uv run python scripts/check_invariants.py
+
+      - name: Lint
+        run: uv run ruff check northvaine tests scripts migrations
+
+      - name: Migrations render offline
+        run: env -u DATABASE_URL uv run alembic upgrade head --sql > /dev/null
+
+      - name: Unit tests (no live, no db)
+        run: uv run pytest -q -m "not live and not db" --ignore=tests/golden
+
+      - name: Golden set
+        run: uv run pytest -q tests/golden

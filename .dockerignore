@@ -1,0 +1,21 @@
+.git
+.github
+.claude
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+node_modules
+frontend/node_modules
+reports
+docs
+factory
+# Never ship environment files; .env.example lists names only.
+.env
+.env.*
+!.env.example
+*.log
+# Tests are not shipped, except the recordings the offline radar run reads.
+tests
+!tests/fixtures
