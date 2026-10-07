@@ -67,3 +67,8 @@ files (2).zip
 
 # Generated radar reports are shared privately, never committed (D66)
 reports/radar/
+
+# Prospect lists and other private business documents never enter the public repo.
+*.docx
+*.xlsx
+private/

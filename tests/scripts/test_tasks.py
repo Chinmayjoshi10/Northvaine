@@ -64,6 +64,7 @@ def test_task_names_in_order(tasks: ModuleType) -> None:
         "record-llm",
         "radar",
         "record-radar",
+        "eval",
     ]
 
 
@@ -105,6 +106,8 @@ def test_exact_argv_for_every_task(
         # Offline replay of a recorded radar run (T5.6); the record variant spends money.
         "radar": [[PY, "scripts/radar.py"]],
         "record-radar": [[PY, "scripts/radar.py", "--record"]],
+        # Offline metrics from filled-in scorecards (docs/EVALUATION.md).
+        "eval": [[PY, "scripts/evaluate.py"]],
     }
     assert set(expected) == set(tasks.TASKS)
     for name, argv in expected.items():

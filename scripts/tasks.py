@@ -138,6 +138,11 @@ def record_radar() -> list[list[str]]:
     return [_py("scripts/radar.py", "--record")]
 
 
+def evaluate() -> list[list[str]]:
+    """Quality and outcome metrics from filled-in scorecards (docs/EVALUATION.md)."""
+    return [_py("scripts/evaluate.py")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -154,6 +159,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "record-llm": record_llm,
     "radar": radar,
     "record-radar": record_radar,
+    "eval": evaluate,
 }
 
 HELP = {
@@ -172,10 +178,11 @@ HELP = {
     "record-llm": "record LLM fixtures for the evidence ledger - SPENDS MONEY (add -- --yes)",
     "radar": "radar brief for one client, offline from its recording (add -- --client <id>)",
     "record-radar": "record a radar run live - SPENDS MONEY (add -- --client <id> --yes)",
+    "eval": "quality and outcome metrics from filled-in scorecards (offline)",
 }
 
 # arguments after `--` go to the script
-PASSTHROUGH = {"smoke", "record-sensors", "record-llm", "radar", "record-radar"}
+PASSTHROUGH = {"smoke", "record-sensors", "record-llm", "radar", "record-radar", "eval"}
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
 
