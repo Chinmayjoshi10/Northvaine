@@ -1,0 +1,1632 @@
+[
+  {
+    "method": "GET",
+    "url": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00%3A00%3A00&updatedTo=2026-10-02T23%3A59%3A59",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59",
+      "version": "1.1",
+      "extensions": [
+        "https://standard.open-contracting.org/profiles/eu/latest/en/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_amendment_rationale_classifications_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_budget_breakdown_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_contract_completion_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_documentation_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_pagination_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_suitability_extension/master/extension.json",
+        "https://raw.githubusercontent.com/portaledcahn/ocds_Links_extension/main/extension.json",
+        "https://raw.githubusercontent.com/cabinetoffice/ocds_uk_extension/main/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_performance_failures_extension/master/extension.json"
+      ],
+      "publishedDate": "2026-10-02T23:30:45+01:00",
+      "publisher": {
+        "name": "Cabinet Office",
+        "scheme": "GB-GOR",
+        "uid": "D2",
+        "uri": "https://www.gov.uk/government/organisations/cabinet-office"
+      },
+      "license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "publicationPolicy": "https://www.gov.uk/government/publications/open-contracting",
+      "releases": [
+        {
+          "id": "093576-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T23:30:45+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-0510f8",
+          "parties": [
+            {
+              "name": "Government Commercial Agency",
+              "id": "GB-PPON-PBZB-4962-TVLR",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PBZB-4962-TVLR"
+              },
+              "address": {
+                "locality": "Liverpool",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD72"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.gov.gca.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthorityCentralGovernment",
+                    "description": "Public authority - central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "ITC GLOBAL (UK) LIMITED",
+              "id": "GB-PPON-PVTP-2844-YYJZ",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PVTP-2844-YYJZ"
+              },
+              "address": {
+                "locality": "Staines-Upon-Thames",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKJ25"
+              },
+              "roles": [
+                "removedSupplier"
+              ]
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PBZB-4962-TVLR",
+            "name": "Government Commercial Agency"
+          },
+          "tender": {
+            "id": "RM6370",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "amendments": [
+              {
+                "date": "2026-10-02T00:00:00+01:00",
+                "id": "093576-2026"
+              }
+            ],
+            "title": "Space Technology Solutions",
+            "documents": [
+              {
+                "id": "093576-2026",
+                "documentType": "awardNotice",
+                "noticeType": "UK15",
+                "description": "Dynamic market modification notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093576-2026",
+                "datePublished": "2026-10-02T23:30:45+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "3",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "8",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "21",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "25",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "40",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "41",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "42",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "43",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "44",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "45",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "46",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "47",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "51",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "52",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "53",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "54",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "57",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "60",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "62",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "66",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "74",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "75",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "80",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "81",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "82",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "83",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "84",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "85",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "86",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "87",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "88",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "92",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "95",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "97",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "98",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "99",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "102",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "103",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "104",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "107",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "109",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "111",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "114",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "115",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "116",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "120",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "121",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "122",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "123",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "124",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "125",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            },
+            {
+              "id": "126",
+              "amendments": [
+                {
+                  "id": "093576-2026"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078037",
+          "id": "093575-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T21:46:31+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Central Bedfordshire Council",
+              "id": "GB-PPON-PVNH-1137-QJBX",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PVNH-1137-QJBX"
+              },
+              "address": {
+                "locality": "Shefford",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKH25"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Jeakins Weir Ltd.",
+              "id": "GB-COH-01095682",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "01095682"
+              },
+              "address": {
+                "locality": "Corby",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKF25"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "large",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PVNH-1137-QJBX",
+            "name": "Central Bedfordshire Council"
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-078037",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "CBC-W-26323-SM Mancroft Road enabling works",
+            "description": "Enabling and initial construction works to support the future development of 18 new affordable homes. Works include site clearance, pre-construction health and safety activities and limited construction works required to commence the approved development.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Below threshold - without competition",
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "works",
+              "suppliers": [
+                {
+                  "id": "GB-COH-01095682",
+                  "name": "Jeakins Weir Ltd."
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "45100000",
+                      "description": "Site preparation work"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "relatedLots": [
+                "1"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "status": "active",
+              "period": {
+                "startDate": "2026-10-05T00:00:00+01:00",
+                "endDate": "2026-11-27T23:59:59+00:00"
+              },
+              "value": {
+                "amountGross": 77364.82,
+                "amount": 64470.68,
+                "currency": "GBP"
+              },
+              "aboveThreshold": false,
+              "dateSigned": "2026-10-01T00:00:00+01:00",
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093575-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093575-2026",
+                  "datePublished": "2026-10-02T21:46:31+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "buyerID": [],
+          "id": "093574-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T19:48:44+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-077dc7",
+          "parties": [
+            {
+              "name": "MIDLAND HEART LIMITED",
+              "id": "GB-COH-IP30069R",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "IP30069R"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PPMZ-2234-VXBJ"
+                }
+              ],
+              "address": {
+                "locality": "Birmingham",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG31"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.midlandheart.org.uk/",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "MILLER HOMES LIMITED",
+              "id": "GB-COH-SC255429",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "SC255429"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PRBT-2938-GBYZ"
+                }
+              ],
+              "address": {
+                "locality": "Edinburgh Park",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKM75"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "large",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-COH-IP30069R",
+            "name": "MIDLAND HEART LIMITED"
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-077dc7",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "New Build Development",
+            "description": "Midland Heart is seeking to enter into a contract with Miller Homes Limited to purchase land and construct 105 residential units at Wash Lane, Ravenstone.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Direct award",
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "title": "Land Purchase and Works",
+              "status": "active",
+              "date": "2026-09-22T00:00:00+01:00",
+              "value": {
+                "amountGross": 26329509,
+                "amount": 26329509,
+                "currency": "GBP"
+              },
+              "mainProcurementCategory": "works",
+              "aboveThreshold": true,
+              "suppliers": [
+                {
+                  "id": "GB-COH-SC255429",
+                  "name": "MILLER HOMES LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "45210000",
+                      "description": "Building construction work"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "contractPeriod": {
+                "startDate": "2026-10-28T00:00:00Z",
+                "endDate": "2031-09-28T23:59:59+01:00",
+                "maxExtentDate": "2032-09-28T23:59:59+01:00"
+              },
+              "hasRenewal": true,
+              "renewal": {
+                "description": "To be utilised if there are any delays to the build."
+              },
+              "relatedLots": [
+                "1"
+              ],
+              "documents": [
+                {
+                  "id": "093574-2026",
+                  "documentType": "awardNotice",
+                  "noticeType": "UK6",
+                  "description": "Contract award notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093574-2026",
+                  "datePublished": "2026-10-02T19:48:44+01:00",
+                  "format": "text/html"
+                }
+              ],
+              "milestones": [
+                {
+                  "id": "1",
+                  "type": "futureSignatureDate",
+                  "dueDate": "2026-10-28T23:59:59Z",
+                  "status": "scheduled"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-03e111",
+          "id": "093573-2026",
+          "date": "2026-10-02T19:28:57+01:00",
+          "tag": [
+            "tenderUpdate"
+          ],
+          "initiationType": "tender",
+          "tender": {
+            "id": "2021/2022",
+            "legalBasis": {
+              "id": "32014L0024",
+              "scheme": "CELEX"
+            },
+            "title": "Framework Agreement For Residential Care and Nursing Care of Older People",
+            "classification": {
+              "scheme": "CPV",
+              "id": "85000000",
+              "description": "Health and social work services"
+            },
+            "mainProcurementCategory": "services",
+            "description": "To support early adoption of National Living Wage increase and uplift in fees to address recruitment and retention issues facing care providers during the coming winter period.",
+            "amendments": [
+              {
+                "id": "4",
+                "unstructuredChanges": [
+                  {
+                    "oldValue": {
+                      "text": ""
+                    },
+                    "newValue": {
+                      "text": "Title: Framework Agreement For Residential Care and Nursing Care of Older People\nA contract/lot is awarded: yes\nV.2)\nAward of contract\nV.2.1)\nDate of conclusion of the contract\n02/10/2026\nV.2.2)\nInformation about tenders\nNumber of tenders received:  1\nThe contract has been awarded to a group of economic operators :  no\nV.2.3)\nName and address of the contractor\nOrchard Views Residential Care Home\n39 Gawber Road,\nBarnsley,\nS75 1AN\nNUTS code:  UK -  UNITED KINGDOM\nThe contractor is an SME : yes\nV.2.4)\nInformation on value of the contract/lot (excluding VAT)\nTotal value of the contract/lot:  214166.66  GBP"
+                    },
+                    "where": {
+                      "section": "Section V",
+                      "label": "Award of Contract"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "parties": [
+            {
+              "name": "Barnsley Metropolitan Borough Council",
+              "id": "GB-FTS-33275",
+              "identifier": {
+                "legalName": "Barnsley Metropolitan Borough Council",
+                "id": "N/A"
+              },
+              "address": {
+                "locality": "Barnsley, South Yorkshire",
+                "region": "UK",
+                "countryName": "United Kingdom"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.barnsley.gov.uk",
+                "buyerProfile": "https://uk.eu-supply.com/ctm/Company/CompanyInformation/Index/103835"
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-FTS-33275",
+            "name": "Barnsley Metropolitan Borough Council"
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078036",
+          "id": "093572-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T19:02:31+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "The Education Training Collective",
+              "id": "GB-UKPRN-10006341",
+              "identifier": {
+                "scheme": "GB-UKPRN",
+                "id": "10006341"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PXRX-2536-MMRP"
+                }
+              ],
+              "address": {
+                "locality": "Thornaby",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKC11"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "http://www.the-etc.ac.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-UKPRN-10006341",
+            "name": "The Education Training Collective"
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-078036",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Football Delivery Partner - Redcar and Cleveland College",
+            "description": "Football Delivery Partner for the ISE Men's Football Academy at Redcar & Cleveland College\nAs part of the continued development of ISE at Redcar & Cleveland College, ETC is seeking an ambitious and suitably experienced football delivery partner to work collaboratively with the college to establish and develop an outstanding Men's Football Academy.",
+            "status": "active",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "80000000",
+                    "description": "Education and training services"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKC1",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "value": {
+              "amountGross": 90000,
+              "amount": 75000,
+              "currency": "GBP"
+            },
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Below threshold - open competition",
+            "mainProcurementCategory": "services",
+            "aboveThreshold": false,
+            "submissionMethodDetails": "[email removed]",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "notAllowed"
+            },
+            "tenderPeriod": {
+              "endDate": "2026-10-16T12:00:00+01:00"
+            },
+            "enquiryPeriod": {
+              "endDate": "2026-10-07T23:59:59+01:00"
+            },
+            "otherRequirements": {
+              "reservedParticipation": [
+                "smeVcse"
+              ],
+              "reservedParticipationLocation": {
+                "gazetteer": {
+                  "scheme": "GB-ONS",
+                  "identifiers": [
+                    "K02000001"
+                  ]
+                },
+                "description": null
+              }
+            },
+            "lots": [
+              {
+                "id": "1",
+                "status": "active",
+                "value": {
+                  "amountGross": 90000,
+                  "amount": 75000,
+                  "currency": "GBP"
+                },
+                "suitability": {
+                  "sme": true,
+                  "vcse": true
+                },
+                "contractPeriod": {
+                  "startDate": "2026-11-01T00:00:00Z",
+                  "endDate": "2029-10-31T23:59:59Z",
+                  "maxExtentDate": "2031-10-31T23:59:59Z"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "2 x 12 months"
+                },
+                "awardCriteria": {
+                  "description": "Pricing: 10%\nQuality: 90%"
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "A-23532",
+                "documentType": "biddingDocuments",
+                "url": "https://www.find-tender.service.gov.uk/Notice/Attachment/A-23532",
+                "format": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              },
+              {
+                "id": "093572-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093572-2026",
+                "datePublished": "2026-10-02T19:02:31+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078035",
+          "buyerID": [],
+          "id": "093571-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T18:53:52+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Bath & North East Somerset Council",
+              "id": "GB-PPON-PLVH-3287-JWJV",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PLVH-3287-JWJV"
+              },
+              "address": {
+                "locality": "Bath",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK12"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "CARE CONTROL SYSTEMS LIMITED",
+              "id": "GB-COH-07909553",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "07909553"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PLGV-6544-RCJN"
+                }
+              ],
+              "address": {
+                "locality": "Tavistock",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK43"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.carecontrolsystems.co.uk",
+                "scale": "sme",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PLVH-3287-JWJV",
+            "name": "Bath & North East Somerset Council"
+          },
+          "tender": {
+            "id": "DN831683",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Care Management System",
+            "description": "Care Management System\nThe total value of this contract's initial 36 month term is £41,554.80 (ex VAT) \nThe total value of this contract's initial 36 month term is £49,865.76 (inc VAT) \nThere are no extensions available",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Below threshold - without competition",
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "goods",
+              "suppliers": [
+                {
+                  "id": "GB-COH-07909553",
+                  "name": "CARE CONTROL SYSTEMS LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "48000000",
+                      "description": "Software package and information systems"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKK12",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "relatedLots": [
+                "1"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "title": "Care Management System",
+              "status": "active",
+              "period": {
+                "startDate": "2026-10-06T00:00:00+01:00",
+                "endDate": "2029-10-05T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 49865.76,
+                "amount": 41554.8,
+                "currency": "GBP"
+              },
+              "aboveThreshold": false,
+              "dateSigned": "2026-10-02T00:00:00+01:00",
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093571-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093571-2026",
+                  "datePublished": "2026-10-02T18:53:52+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078034",
+          "buyerID": [],
+          "id": "093570-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T18:33:32+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "The Careers and Enterprise Company",
+              "id": "GB-PPON-PMZH-1399-HDYN",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PMZH-1399-HDYN"
+              },
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI43"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PMZH-1399-HDYN",
+            "name": "The Careers and Enterprise Company"
+          },
+          "tender": {
+            "id": "1169",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Support for CEC Digital Products",
+            "description": "We are seeking to procure expert technical support to maintain, develop and enhance the capabilities of our digital products and services.\nFor more information about this opportunity, please visit the eSourcing portal at: \nhttps://www.delta-esourcing.com/tenders/UK-UK-London:-Educational-software-development-services./53Y927A793\nTo respond to this opportunity, please click here: \nhttps://www.delta-esourcing.com/respond/53Y927A793",
+            "status": "active",
+            "items": [
+              {
+                "id": "Lot1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "72222300",
+                    "description": "Information technology services"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKI43",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "Lot1"
+              },
+              {
+                "id": "Lot2",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "72212190",
+                    "description": "Educational software development services"
+                  }
+                ],
+                "relatedLot": "Lot2"
+              }
+            ],
+            "value": {
+              "amountGross": 15600000.0,
+              "currency": "GBP"
+            },
+            "procurementMethod": "selective",
+            "procurementMethodDetails": "Competitive flexible procedure",
+            "procedure": {
+              "features": "This procurement will use a Competitive Flexible Procedure comprising a two-stage process with an optional third stage. Stage 1 will assess supplier capability and suitability through a PSQ and evaluated questions. Shortlisted suppliers will be invited to Stage 2 to submit detailed technical and commercial tenders. An optional Stage 3 presentation stage may be undertaken where closely ranked bids require further assessment. Award will be made to the supplier submitting the Most Advantageous Tender."
+            },
+            "mainProcurementCategory": "services",
+            "aboveThreshold": true,
+            "coveredBy": [
+              "GPA",
+              "CPTPP"
+            ],
+            "submissionMethodDetails": "https://www.delta-esourcing.com",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed",
+              "languages": [
+                "en"
+              ]
+            },
+            "expressionOfInterestDeadline": "2026-10-27T17:00:00+00:00",
+            "enquiryPeriod": {
+              "endDate": "2026-10-21T17:00:00+01:00"
+            },
+            "awardPeriod": {
+              "endDate": "2026-12-21T23:59:59+00:00"
+            },
+            "lots": [
+              {
+                "id": "Lot1",
+                "title": "Core Supplier",
+                "description": "• Provide technical development capacity to further develop our existing digital products and services throughout the contract via issued Statements of Work (SoWs).  \n• Provide development capacity for digital projects that extend existing products and services, or for the development of new products and services supporting careers leaders and the CEC’s networks, that support our users via Statements of Work (SoWs).  \n• Support the hosting and operation of our products and services and provide third-line technical support.  \n• Manage our AWS infrastructure to ensure that our data, products and services remain stable, scalable and secure in the face of current and emerging threats.  \n• Work collaboratively with the CEC to make effective and responsible use of AI tools to improve the efficiency, quality and pace of the development process.",
+                "status": "active",
+                "value": {
+                  "amountGross": 15000000.0,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "price",
+                      "name": "Criterion 1",
+                      "numbers": [
+                        {
+                          "number": 25,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Criterion 2",
+                      "numbers": [
+                        {
+                          "number": 75,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "contractPeriod": {
+                  "startDate": "2027-09-01T00:00:00+01:00",
+                  "endDate": "2030-08-31T23:59:59+01:00",
+                  "maxExtentDate": "2032-08-31T23:59:59+01:00"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "The contract will be awarded for an initial term of three (3) years commencing in September 2027. The contracting authority reserves the right to extend the contract for a further period or periods of up to twenty-four (24) months in total."
+                }
+              },
+              {
+                "id": "Lot2",
+                "title": "Learning Management System Supplier",
+                "description": "•Provide technical development capacity to further develop our existing Learning Management System and related products and services throughout the contract. \n•Provide development capacity for digital projects that significantly extend the Learning Management System and related products and services, or for the development of new products and services supporting careers leaders and the CEC’s networks. \n•Support the hosting and operation of the Learning Management System and related products and provide third-line technical support. \n•Work collaboratively with the core supplier to host, operate and develop the LMS and related products and services.",
+                "status": "active",
+                "value": {
+                  "amountGross": 600000.0,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "price",
+                      "name": "Criterion 1",
+                      "numbers": [
+                        {
+                          "number": 25,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Criterion 2",
+                      "numbers": [
+                        {
+                          "number": 75,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "contractPeriod": {
+                  "startDate": "2027-09-01T00:00:00+01:00",
+                  "endDate": "2030-08-31T23:59:59+01:00",
+                  "maxExtentDate": "2032-08-31T23:59:59+01:00"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "The contract will be awarded for an initial term of three (3) years commencing on 1 September 2027. The contracting authority reserves the right to extend the contract by up to a further twenty-four (24) months, in one or more periods."
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              },
+              {
+                "id": "093570-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093570-2026",
+                "datePublished": "2026-10-02T18:33:32+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078033",
+          "id": "093569-2026",
+          "date": "2026-10-02T18:25:45+01:00",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "description": "This is a Provider Selection Regime (PSR) intention to award notice. The awarding of this contract is subject to the Health Care Services (Provider Selection Regime) Regulations 2023. For the avoidance of doubt, the provisions of the Public Contracts Regulations 2015 do not apply to this award. The standstill period begins on the day after the publication of this notice. Representations by providers must be made to decision makers before midnight at the end of the 8th working day, 14 October 2026. <br/><br/>For avoidance of doubt, please note that Section V.2.1.1 of this Notice (Conclusion date), this date reflects the commencement of the standstill period. This contract has not yet formally been awarded; this Notice serves as an intention to award under the PSR.",
+          "initiationType": "tender",
+          "tender": {
+            "id": "C9276",
+            "legalBasis": {
+              "id": "32014L0024",
+              "scheme": "CELEX"
+            },
+            "title": "Infant Feeding Peer Support Service",
+            "status": "complete",
+            "classification": {
+              "scheme": "CPV",
+              "id": "85323000",
+              "description": "Community health services"
+            },
+            "mainProcurementCategory": "services",
+            "description": "This is an intention to award notice pursuant to The Health Care Services (Provider Selection Regime) Regulations 2023 (the 'Regulations'), in accordance with Regulation 9, under Direct Award Process C. Therefore, the notice sets out the contracting authority's intention to directly award a contract to the existing provider up to 29.5 months for its provision for a Infant Feeding Peer Support Service, subject to completion of the 8 working day standstill period.<br/><br/>This requirement has been procured in line with said Regulations, following due diligence which has included an evaluation under the requisite Basic Selection Criteria and Key Criteria.",
+            "lots": [
+              {
+                "id": "1",
+                "description": "As part of London Borough of Enfield Start for Life Programme, the service provides breastfeeding support delivered across a range of settings, including but not limited to in the family home, across Enfield’s five Family Hubs and in additional community venues. This provision promotes the increase of breastfeeding initiation and continuation rates across the London borough of Enfield, with a particular focus on reducing inequalities in outcomes. Additional information: The existing provider is satisfying the original contract and will likely satisfy the proposed contract to a sufficient standard.",
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "name": "the existing provider is satisfying the original contract and will likely satisfy the proposed contract to a sufficient standard.",
+                      "type": "cost",
+                      "description": "100"
+                    }
+                  ]
+                },
+                "hasOptions": false,
+                "status": "cancelled"
+              }
+            ],
+            "items": [
+              {
+                "id": "1",
+                "deliveryAddresses": [
+                  {
+                    "region": "UKI5"
+                  }
+                ],
+                "deliveryLocation": {
+                  "description": "Enfield"
+                },
+                "relatedLot": "1"
+              }
+            ],
+            "procurementMethod": "limited",
+            "procurementMethodDetails": "Award procedure without prior publication of a call for competition",
+            "procurementMethodRationaleClassifications": [
+              {
+                "scheme": "TED_PT_AWARD_CONTRACT_WITHOUT_CALL",
+                "id": "D_OUTSIDE_SCOPE",
+                "description": "The procurement falls outside the scope of application of the directive"
+              }
+            ],
+            "procurementMethodRationale": "The procurement falls outside the scope of application of the regulations.<br/><br/>This is a Provider Selection Regime (PSR) intention to award notice. The awarding of this contract is subject to the Health Care Services (Provider Selection Regime) Regulations 2023. For the avoidance of doubt, the provisions of the Public Contracts Regulations 2015 do not apply to this award. The standstill period begins on the day after the publication of this notice. Representations before midnight at the end of the 8th working day, i.e. 14 October 2026. This contract has not yet formally been awarded; this Notice serves as an intention to award under the PSR."
+          },
+          "awards": [
+            {
+              "id": "093569-2026-1",
+              "relatedLots": [
+                "1"
+              ],
+              "status": "active",
+              "suppliers": [
+                {
+                  "id": "GB-FTS-187293",
+                  "name": "Breast Feeding Network"
+                }
+              ]
+            }
+          ],
+          "parties": [
+            {
+              "name": "London Borough of Enfield",
+              "id": "GB-FTS-11983",
+              "identifier": {
+                "legalName": "London Borough of Enfield"
+              },
+              "address": {
+                "locality": "Enfield",
+                "region": "UK",
+                "countryName": "United Kingdom"
+              },
+              "roles": [
+                "buyer",
+                "reviewBody"
+              ],
+              "details": {
+                "url": "https://www.enfield.gov.uk",
+                "buyerProfile": "https://www.enfield.gov.uk",
+                "classifications": [
+                  {
+                    "scheme": "TED_CA_TYPE",
+                    "id": "REGIONAL_AUTHORITY",
+                    "description": "Regional or local authority"
+                  },
+                  {
+                    "scheme": "COFOG",
+                    "id": "01",
+                    "description": "General public services"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Breast Feeding Network",
+              "id": "GB-FTS-187293",
+              "identifier": {
+                "legalName": "Breast Feeding Network",
+                "id": "SC330639"
+              },
+              "address": {
+                "locality": "London",
+                "region": "UKI54",
+                "countryName": "United Kingdom"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.breastfeedingnetwork.org.uk",
+                "scale": "large"
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-FTS-11983",
+            "name": "London Borough of Enfield"
+          },
+          "contracts": [
+            {
+              "id": "093569-2026-1",
+              "awardID": "093569-2026-1",
+              "status": "active",
+              "value": {
+                "amount": 395884.0,
+                "currency": "GBP"
+              },
+              "dateSigned": "2026-10-02T00:00:00+01:00"
+            }
+          ],
+          "bids": {
+            "statistics": [
+              {
+                "id": "1",
+                "measure": "bids",
+                "relatedLot": "1",
+                "value": 1
+              }
+            ]
+          },
+          "language": "en"
+        }
+      ],
+      "links": {
+        "next": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQwMDowMDowMHx1cGRhdGVkVG89MjAyNi0xMC0wMlQyMzo1OTo1OXxuZXh0Q3Vyc29yPTc0NjA3Mw=="
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-07T22:30:21.345029Z"
+  }
+]

@@ -1,0 +1,4353 @@
+[
+  {
+    "method": "GET",
+    "url": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00%3A00%3A00&updatedTo=2026-10-02T23%3A59%3A59&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQwMDowMDowMHx1cGRhdGVkVG89MjAyNi0xMC0wMlQyMzo1OTo1OXxuZXh0Q3Vyc29yPTc0NjA3Mw%3D%3D",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59",
+      "version": "1.1",
+      "extensions": [
+        "https://standard.open-contracting.org/profiles/eu/latest/en/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_amendment_rationale_classifications_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_budget_breakdown_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_contract_completion_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_documentation_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_pagination_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_suitability_extension/master/extension.json",
+        "https://raw.githubusercontent.com/portaledcahn/ocds_Links_extension/main/extension.json",
+        "https://raw.githubusercontent.com/cabinetoffice/ocds_uk_extension/main/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_performance_failures_extension/master/extension.json"
+      ],
+      "publishedDate": "2026-10-02T18:16:05+01:00",
+      "publisher": {
+        "name": "Cabinet Office",
+        "scheme": "GB-GOR",
+        "uid": "D2",
+        "uri": "https://www.gov.uk/government/organisations/cabinet-office"
+      },
+      "license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "publicationPolicy": "https://www.gov.uk/government/publications/open-contracting",
+      "releases": [
+        {
+          "id": "093568-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T18:16:05+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-06aa82",
+          "parties": [
+            {
+              "name": "Metropolitan borough of Bury",
+              "id": "GB-PPON-PVVT-2483-WWMH",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PVVT-2483-WWMH"
+              },
+              "address": {
+                "locality": "Bury",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD37"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PVVT-2483-WWMH",
+            "name": "Metropolitan borough of Bury"
+          },
+          "tender": {
+            "id": "DN831672",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Neighbourhood Support Housing Services  LOT 3:  16 and 17 Year olds Accommodation and Support Service",
+            "description": "Neighbourhood Support Housing Services for Young People age 16 and 17 will provide: Twelve (12) units of accommodation with intensive outcome focused support for young people, aged 16 to 17 years, who are experiencing or at risk of homelessness and may have complex emotional and behavioural needs in relation to trauma and adverse childhood experiences, including care leavers and unaccompanied asylum seekers.",
+            "status": "active",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "85100000",
+                    "description": "Health services"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "85300000",
+                    "description": "Social work and related services"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "98340000",
+                    "description": "Accommodation and office services"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "value": {
+              "amountGross": 960000.0,
+              "amount": 800000.0,
+              "currency": "GBP"
+            },
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Open procedure",
+            "procedure": {
+              "isAccelerated": true,
+              "acceleratedRationale": "Light touch contract"
+            },
+            "mainProcurementCategory": "services",
+            "specialRegime": [
+              "lightTouch"
+            ],
+            "aboveThreshold": true,
+            "submissionMethodDetails": "To express an interest please go to the Proactis/The CHEST E-Portal \n(Link Below)\nhttps://procontract.due-north.com/Opportunities/Index?v=2\nAll bids are to be submitted via the RTX section of the CHEST No submissions will be accepted via message section or emails.\nPlease note access to the documents are only available until the 23rd October 2026 12:00 noon",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed",
+              "languages": [
+                "en"
+              ]
+            },
+            "tenderPeriod": {
+              "endDate": "2026-10-28T12:00:00Z"
+            },
+            "enquiryPeriod": {
+              "endDate": "2026-10-23T12:00:00+01:00"
+            },
+            "awardPeriod": {
+              "endDate": "2026-11-30T23:59:59Z"
+            },
+            "lots": [
+              {
+                "id": "1",
+                "status": "active",
+                "value": {
+                  "amountGross": 960000.0,
+                  "amount": 800000.0,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "price",
+                      "name": "mat",
+                      "description": "Please see tender documents which can be found on the CHEST/Proactis portal",
+                      "numbers": [
+                        {
+                          "number": 100,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "suitability": {
+                  "sme": true,
+                  "vcse": true
+                },
+                "contractPeriod": {
+                  "startDate": "2026-12-07T00:00:00Z",
+                  "endDate": "2030-12-06T23:59:59Z",
+                  "maxExtentDate": "2031-12-06T23:59:59Z"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "Extension dependant on review"
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              },
+              {
+                "id": "093568-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093568-2026",
+                "datePublished": "2026-10-02T18:16:05+01:00",
+                "format": "text/html"
+              }
+            ],
+            "hasRecurrence": true,
+            "recurrence": {
+              "dates": [
+                {
+                  "startDate": "2031-10-02T23:59:59+01:00"
+                }
+              ]
+            },
+            "riskDetails": "While the tender outlines an estimated number of 12 units required, it is acknowledged that this is a demand-driven service. As such, there are inherent risks associated with fluctuations in demand which may increase or decrease over time. These variations are recognised and will be managed within the parameters of the contract. The Supplier is expected to respond flexibly to evolving requirements and to engage proactively and collaboratively to ensure service continuity and value for money."
+          },
+          "language": "en"
+        },
+        {
+          "id": "093567-2026",
+          "tag": [
+            "tenderUpdate"
+          ],
+          "date": "2026-10-02T18:04:03+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-06e8d0",
+          "parties": [
+            {
+              "name": "Anglian Water Services",
+              "id": "GB-PPON-PMZW-7779-DCNZ",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PMZW-7779-DCNZ"
+              },
+              "address": {
+                "locality": "Huntingdon",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKH12"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.anglianwater.co.uk/",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "privateUtility",
+                    "description": "Private utility"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PMZW-7779-DCNZ",
+            "name": "Anglian Water Services"
+          },
+          "tender": {
+            "id": " PMZW-7779-DCNZ",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "2026 WS3272684733 Energy Invoice Validation and Data Bureau Services",
+            "description": "Overview of Requirement ; \n. Initial Data Validation\n. Load Billing Rates and Validate Tariffs \n. Budgeting \n. Annual Consumption Reporting \n. Bespoke Financial and consumption reporting \n. Periodic Reporting\n. Exception Reporting\n. Consumption Data Downloads\nFurther detail provided in the tender documents, more specifically, the specification document.",
+            "status": "active",
+            "items": [
+              {
+                "id": "LOT-0001",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "71314000",
+                    "description": "Energy and related services"
+                  }
+                ],
+                "relatedLot": "LOT-0001"
+              }
+            ],
+            "value": {
+              "amountGross": 2040000,
+              "amount": 1700000,
+              "currency": "GBP"
+            },
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Competitive flexible procedure",
+            "procedure": {
+              "features": "Anglian Water Services is undertaking a Procurement Exercise to assess Bids for energy invoice validation and data bureau services as more fully described in the tender documents.\nCurrent Timeline -\nRFI & RFP  : 21st Aug 26 - 9th Oct 26\n(both opening and closing at same time under the same event - bidders must submit a response to both sections of the event to be considered)\nAward : December 2026/January 2027 \nStages - \nStage 1a: Request For Information (RFI) & Request For Proposal (RFP)\n          1b: Supplier Risk Event \nStage  2: Contract Award "
+            },
+            "mainProcurementCategory": "services",
+            "aboveThreshold": true,
+            "submissionMethodDetails": "https://eu.mu.ariba.com/uav/project/?token=e1a1681d-872e-4e9d-b8ff-ca1e196bd5de",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed",
+              "languages": [
+                "en"
+              ]
+            },
+            "expressionOfInterestDeadline": "2026-10-09T22:00:00Z",
+            "enquiryPeriod": {
+              "endDate": "2026-10-09T22:00:00Z"
+            },
+            "awardPeriod": {
+              "endDate": "2026-12-31T23:59:59Z"
+            },
+            "lots": [
+              {
+                "id": "LOT-0001",
+                "status": "active",
+                "value": {
+                  "amountGross": 2040000,
+                  "amount": 1700000,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "quality",
+                      "name": "Qualitative",
+                      "numbers": [
+                        {
+                          "number": 70,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "price",
+                      "name": "Quantitative",
+                      "numbers": [
+                        {
+                          "number": 30,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "contractPeriod": {
+                  "startDate": "2027-07-01T00:00:00Z",
+                  "endDate": "2037-06-30T23:59:59Z"
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "L-101",
+                "documentType": "biddingDocuments",
+                "url": "https://eu.mu.ariba.com/uav/project/?token=e1a1681d-872e-4e9d-b8ff-ca1e196bd5de"
+              },
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              },
+              {
+                "id": "093567-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093567-2026",
+                "datePublished": "2026-10-02T18:04:03+01:00",
+                "format": "text/html"
+              }
+            ],
+            "amendments": [
+              {
+                "description": "Participation deadline amended from 2nd October 2026 to 9th October 2026. ",
+                "id": "093567-2026"
+              }
+            ]
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078032",
+          "buyerID": [],
+          "id": "093566-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T17:57:56+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Lincolnshire Partnership NHS Foundation Trust",
+              "id": "GB-PPON-PYGP-2439-CCHG",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PYGP-2439-CCHG"
+              },
+              "address": {
+                "locality": "Lincoln",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKF30"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.lpft.nhs.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthorityCentralGovernment",
+                    "description": "Public authority - central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "United Lincolnshire Teaching Hospitals NHS Trust",
+              "id": "GB-PPON-PTYN-5349-TLTT",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PTYN-5349-TLTT"
+              },
+              "address": {
+                "locality": "Lincoln",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKF30"
+              },
+              "roles": [
+                "procuringEntity"
+              ],
+              "roleDetails": "Procurement Agent",
+              "details": {
+                "url": "https://www.ulh.nhs.uk"
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PYGP-2439-CCHG",
+            "name": "Lincolnshire Partnership NHS Foundation Trust"
+          },
+          "tender": {
+            "id": "C475248",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Management and Administration of Mental Health and Well-being Community Fund",
+            "description": "Lincolnshire Partnership Foundation Trust requires a Service Provider to undertake the administration and management of the Mental Health and Wellbeing Community Investment Fund (MHWCIF). The provider will administer grant application and award processes, undertake due diligence and governance activities, manage and monitor funding allocated to VCFSE organisations, provide financial and performance reporting, support funded organisations with capacity building and volunteer development, and evaluate and report on outcomes achieved through community-based mental health and wellbeing projects across Lincolnshire.",
+            "status": "active",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "79000000",
+                    "description": "Business services: law, marketing, consulting, recruitment, printing and security"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "79421000",
+                    "description": "Project-management services other than for construction work"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "75112100",
+                    "description": "Administrative development project services"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKF3",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  },
+                  {
+                    "region": "UKF30",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "value": {
+              "amountGross": 496800.0,
+              "amount": 414000.0,
+              "currency": "GBP"
+            },
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Open procedure",
+            "mainProcurementCategory": "services",
+            "aboveThreshold": true,
+            "coveredBy": [
+              "GPA"
+            ],
+            "submissionMethodDetails": "Via Atamis portal https://health-family.force.com/s/Welcome",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed",
+              "languages": [
+                "en"
+              ]
+            },
+            "tenderPeriod": {
+              "endDate": "2026-11-02T12:00:00Z"
+            },
+            "enquiryPeriod": {
+              "endDate": "2026-11-01T12:00:00Z"
+            },
+            "awardPeriod": {
+              "endDate": "2026-12-10T23:59:59Z"
+            },
+            "lots": [
+              {
+                "id": "1",
+                "status": "active",
+                "value": {
+                  "amountGross": 496800.0,
+                  "amount": 414000.0,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "quality",
+                      "name": "Most Advantageous Tender",
+                      "description": "Social Value",
+                      "numbers": [
+                        {
+                          "number": 10.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Most Advantageous Tender",
+                      "description": "Quality",
+                      "numbers": [
+                        {
+                          "number": 80.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "price",
+                      "name": "Most Advantageous Tender",
+                      "description": "Price",
+                      "numbers": [
+                        {
+                          "number": 10.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "selectionCriteria": {
+                  "criteria": [
+                    {
+                      "type": "economic",
+                      "description": "As set out in the Supplier Information Questionnaire"
+                    },
+                    {
+                      "type": "technical",
+                      "description": "As set out in the Supplier Information Questionnaire"
+                    }
+                  ]
+                },
+                "suitability": {
+                  "sme": true,
+                  "vcse": true
+                },
+                "contractPeriod": {
+                  "startDate": "2027-04-01T00:00:00+01:00",
+                  "endDate": "2028-03-31T23:59:59+01:00",
+                  "maxExtentDate": "2030-03-31T23:59:59+01:00"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "Contract is for 1 year with options to extend for a further two x 1 years."
+                },
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest"
+              },
+              {
+                "id": "093566-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093566-2026",
+                "datePublished": "2026-10-02T17:57:56+01:00",
+                "format": "text/html"
+              }
+            ],
+            "hasRecurrence": true,
+            "recurrence": {
+              "dates": [
+                {
+                  "startDate": "2026-12-10T23:59:59Z"
+                }
+              ]
+            },
+            "contractTerms": {
+              "financialTerms": "NHS Terms and Conditions - PA2023 (Services)"
+            },
+            "riskDetails": "There is a risk that insufficient interest is generated from suitably capable Voluntary, Community, Faith and Social Enterprise (VCFSE) organisations, which may limit the diversity, reach and impact of funded projects and affect delivery of the intended mental health and wellbeing outcomes. This risk is being mitigated through extensive stakeholder engagement, development of the Trust's VCFSE Strategy, and requirements for the appointed provider to undertake proactive outreach, engagement and capacity-building activities to maximise participation and build sector resilience across Lincolnshire."
+          },
+          "language": "en"
+        },
+        {
+          "id": "093565-2026",
+          "tag": [
+            "tenderCancellation"
+          ],
+          "date": "2026-10-02T17:51:00+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-05955a",
+          "parties": [
+            {
+              "name": "Northern Ireland Water Limited",
+              "id": "GB-COH-NI054463",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "NI054463"
+              },
+              "address": {
+                "locality": "Belfast",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKN06"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  },
+                  {
+                    "scheme": "UK_CA_DEVOLVED_REGULATIONS",
+                    "id": "GB-NIR",
+                    "description": "Northern Irish devolved regulations apply"
+                  }
+                ]
+              }
+            }
+          ],
+          "tender": {
+            "id": "T140",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "T140 - Mechanical Installation, Repair and Maintenance",
+            "documents": [
+              {
+                "id": "093565-2026",
+                "documentType": "tenderCancellationNotice",
+                "noticeType": "UK12",
+                "description": "Procurement termination notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093565-2026",
+                "datePublished": "2026-10-02T17:51:00+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "relatedLots": [
+                "1"
+              ]
+            },
+            {
+              "id": "2",
+              "status": "active",
+              "relatedLots": [
+                "2"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "status": "cancelled",
+              "statusDetails": null,
+              "finalStatusDate": "2026-09-29T00:00:00+01:00"
+            },
+            {
+              "id": "2",
+              "awardID": "2",
+              "status": "cancelled",
+              "statusDetails": null,
+              "finalStatusDate": "2026-09-29T00:00:00+01:00"
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "id": "093564-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T17:42:02+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-077862",
+          "parties": [
+            {
+              "name": "Bolton Metropolitan Borough Council",
+              "id": "GB-PPON-PBJZ-9785-JTLD",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PBJZ-9785-JTLD"
+              },
+              "address": {
+                "locality": "Bolton",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD36"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "http://www.bolton.gov.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PBJZ-9785-JTLD",
+            "name": "Bolton Metropolitan Borough Council"
+          },
+          "tender": {
+            "id": "TC004",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Special Educational Needs and Disability Information, Advice and Support Service",
+            "description": "Bolton Council (The Authority) is prepared to receive tenders for TC004 - Special Educational Needs and Disability Information, Advice and Support Service.\nThe service will provide free, impartial, confidential, and accessible information, advice and support about matters relating to Special Educational Needs (SEN) and / or disabilities (SEND) including matters relating to education, health, and social care.\nIt is intended that the contract will run from 1 February 2027 until 31 January 2030 with the option of up to 2 x 12 month extensions.",
+            "status": "active",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "85311300",
+                    "description": "Welfare services for children and young people"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKD3",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "value": {
+              "amountGross": 530942,
+              "currency": "GBP"
+            },
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Below threshold - open competition",
+            "mainProcurementCategory": "services",
+            "specialRegime": [
+              "lightTouch"
+            ],
+            "aboveThreshold": false,
+            "submissionMethodDetails": "www.the-chest.org.uk",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed"
+            },
+            "tenderPeriod": {
+              "endDate": "2026-11-02T16:00:00Z"
+            },
+            "enquiryPeriod": {
+              "endDate": "2026-10-26T16:00:00Z"
+            },
+            "lots": [
+              {
+                "id": "1",
+                "status": "active",
+                "value": {
+                  "amountGross": 530942,
+                  "currency": "GBP"
+                },
+                "contractPeriod": {
+                  "startDate": "2027-02-01T00:00:00Z",
+                  "endDate": "2030-01-31T23:59:59Z",
+                  "maxExtentDate": "2032-01-31T23:59:59Z"
+                },
+                "hasRenewal": true,
+                "renewal": {
+                  "description": "There are options to extend for up to two (2) x twelve (12) month periods."
+                },
+                "awardCriteria": {
+                  "description": "Full details will be provided in the tender documents.\nPrice - Pass/Fail\nQuality - 80%\nSocial Value - 20%"
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "L-1",
+                "documentType": "biddingDocuments",
+                "description": "The Tender is being advertised on the Chest",
+                "url": "https://procontract.due-north.com/Advert?advertId=63a406f5-1bbc-f111-813c-005056b64545&p=e0cc5631-4690-e511-80fb-000c29c9ba21"
+              },
+              {
+                "id": "093564-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093564-2026",
+                "datePublished": "2026-10-02T17:42:02+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "language": "en"
+        },
+        {
+          "id": "093563-2026",
+          "tag": [
+            "awardUpdate",
+            "contractUpdate"
+          ],
+          "date": "2026-10-02T17:32:21+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-078031",
+          "parties": [
+            {
+              "name": "Financial Conduct Authority",
+              "id": "GB-PPON-PTYH-4442-XPRH",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PTYH-4442-XPRH"
+              },
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI41"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "http://www.fca.org.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Foundever GB Limited",
+              "id": "GB-PPON-PNBQ-2164-YDXW",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PNBQ-2164-YDXW"
+              },
+              "address": {
+                "locality": "Coventry",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG33"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "large",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PTYH-4442-XPRH",
+            "name": "Financial Conduct Authority"
+          },
+          "tender": {
+            "id": "C4354",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Contingency Supervision Hub",
+            "description": "The Supervision Hub is seeking a supplier to provide a contingency contact operation that can be scaled depending on the volume of contact received resulting from a mass call event or business continuity plan being invoked.",
+            "status": "complete",
+            "procurementMethod": "selective",
+            "procurementMethodDetails": "Below threshold - award under framework",
+            "competitive": false,
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-PPON-PNBQ-2164-YDXW",
+                  "name": "Foundever GB Limited"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "79512000",
+                      "description": "Call centre"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKI",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "relatedLots": [
+                "1"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "title": "Contingency Supervision Hub",
+              "status": "active",
+              "period": {
+                "startDate": "2026-06-26T00:00:00+01:00",
+                "endDate": "2027-06-25T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 125000.0,
+                "amount": 104166.67,
+                "currency": "GBP"
+              },
+              "aboveThreshold": false,
+              "dateSigned": "2026-06-26T00:00:00+01:00",
+              "amendments": [
+                {
+                  "description": "Updating Supplier Info",
+                  "id": "093563-2026"
+                }
+              ],
+              "documents": [
+                {
+                  "id": "093563-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093563-2026",
+                  "datePublished": "2026-10-02T17:32:21+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "relatedProcesses": [
+            {
+              "id": "framework",
+              "relationship": [
+                "framework"
+              ],
+              "scheme": "ocid",
+              "identifier": "ocds-h6vhtk-04ed73",
+              "relatedLots": [
+                "1"
+              ],
+              "uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages/ocds-h6vhtk-04ed73"
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "buyerID": [],
+          "id": "093562-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:26:53+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-050a69",
+          "parties": [
+            {
+              "name": "Coventry City Council",
+              "id": "GB-PPON-PMJC-6861-XJPP",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PMJC-6861-XJPP"
+              },
+              "address": {
+                "locality": "Coventry",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG33"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.coventry.gov.uk/",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Colden Plant Hire",
+              "id": "GB-PPON-PNJT-7724-QBWM",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PNJT-7724-QBWM"
+              },
+              "address": {
+                "locality": "Hinckley",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKF22"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.coldenplanthire.co.uk",
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "LEE PARKER PLANT LTD",
+              "id": "GB-COH-08672122",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "08672122"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PCJM-2865-NBNY"
+                }
+              ],
+              "address": {
+                "locality": "Bedworth",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG13"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "[natural person redacted 1]",
+              "id": "GB-PPON-PXCZ-9161-NYTD",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PXCZ-9161-NYTD"
+              },
+              "address": {
+                "locality": "Coventry",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG13"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "[natural person redacted 2]",
+              "id": "GB-PPON-PZZM-5133-JBHM",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PZZM-5133-JBHM"
+              },
+              "address": {
+                "locality": "Atherstone",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG13"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "SIMPLICITY CIS LIMITED",
+              "id": "GB-COH-12404365",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "12404365"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PHWP-1439-XLTD"
+                }
+              ],
+              "address": {
+                "locality": "Mitcheldean",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK13"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.keystonemonarch.co.uk",
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "JOHN HUGHES HAULAGE LIMITED",
+              "id": "GB-COH-05092857",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "05092857"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PQLT-5364-QQBT"
+                }
+              ],
+              "address": {
+                "locality": "Coventry",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG13"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.johnhugheshaulage.co.uk",
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PMJC-6861-XJPP",
+            "name": "Coventry City Council"
+          },
+          "tender": {
+            "id": "COV21676",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "COV - Hire of Plant with Operator (2026)",
+            "description": "Hire of plant with operator, used predominately for Highways related works.",
+            "status": "complete",
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Open procedure",
+            "coveredBy": [
+              "GPA",
+              "CPTPP"
+            ],
+            "techniques": {
+              "hasFrameworkAgreement": true,
+              "frameworkAgreement": {
+                "method": "withoutReopeningCompetition",
+                "type": "closed",
+                "description": "Suppliers are ranked per lot."
+              }
+            },
+            "lots": [
+              {
+                "id": "LOT-0001",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0002",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0003",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0004",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0006",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0007",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0008",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0009",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0010",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0011",
+                "status": "complete",
+                "description": null
+              },
+              {
+                "id": "LOT-0012",
+                "status": "complete",
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-PPON-PNJT-7724-QBWM",
+                  "name": "Colden Plant Hire"
+                },
+                {
+                  "id": "GB-COH-08672122",
+                  "name": "LEE PARKER PLANT LTD"
+                },
+                {
+                  "id": "GB-PPON-PXCZ-9161-NYTD",
+                  "name": "[natural person redacted 1]"
+                },
+                {
+                  "id": "GB-PPON-PZZM-5133-JBHM",
+                  "name": "[natural person redacted 2]"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0001",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0001"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0001"
+              ]
+            },
+            {
+              "id": "2",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0002",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0002"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0002"
+              ]
+            },
+            {
+              "id": "3",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0003",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0003"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0003"
+              ]
+            },
+            {
+              "id": "4",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-05092857",
+                  "name": "JOHN HUGHES HAULAGE LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0004",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45000000",
+                      "description": "Construction work"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0004"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0004"
+              ]
+            },
+            {
+              "id": "5",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                },
+                {
+                  "id": "GB-COH-08672122",
+                  "name": "LEE PARKER PLANT LTD"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0006",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "relatedLot": "LOT-0006"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0006"
+              ]
+            },
+            {
+              "id": "6",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                },
+                {
+                  "id": "GB-COH-08672122",
+                  "name": "LEE PARKER PLANT LTD"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0007",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0007"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0007"
+              ]
+            },
+            {
+              "id": "7",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                },
+                {
+                  "id": "GB-COH-08672122",
+                  "name": "LEE PARKER PLANT LTD"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0008",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0008"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0008"
+              ]
+            },
+            {
+              "id": "8",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-12404365",
+                  "name": "SIMPLICITY CIS LIMITED"
+                },
+                {
+                  "id": "GB-COH-08672122",
+                  "name": "LEE PARKER PLANT LTD"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0009",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0009"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0009"
+              ]
+            },
+            {
+              "id": "9",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-05092857",
+                  "name": "JOHN HUGHES HAULAGE LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0010",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0010"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0010"
+              ]
+            },
+            {
+              "id": "10",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-05092857",
+                  "name": "JOHN HUGHES HAULAGE LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0011",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0011"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0011"
+              ]
+            },
+            {
+              "id": "11",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-05092857",
+                  "name": "JOHN HUGHES HAULAGE LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0012",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "43200000",
+                      "description": "Earthmoving and excavating machinery, and associated parts"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "45500000",
+                      "description": "Hire of construction and civil engineering machinery and equipment with operator"
+                    },
+                    {
+                      "scheme": "CPV",
+                      "id": "60181000",
+                      "description": "Hire of trucks with driver"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKG33",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0012"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0012"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "title": "Lot 1 180-degree Excavator c/w Bucket and Lifting Forks with or without hydraulic breaker",
+              "status": "active",
+              "period": {
+                "startDate": "2026-07-22T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 5000000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-07-21T00:00:00+01:00",
+              "documents": [
+                {
+                  "id": "A-23528",
+                  "documentType": "contractSigned",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/Attachment/A-23528",
+                  "format": "application/pdf"
+                },
+                {
+                  "id": "A-23529",
+                  "documentType": "contractSigned",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/Attachment/A-23529",
+                  "format": "application/pdf"
+                },
+                {
+                  "id": "A-23530",
+                  "documentType": "contractSigned",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/Attachment/A-23530",
+                  "format": "application/pdf"
+                },
+                {
+                  "id": "A-23531",
+                  "documentType": "contractSigned",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/Attachment/A-23531",
+                  "format": "application/pdf"
+                },
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ],
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-time arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "4",
+                  "title": "Complaints",
+                  "description": "Complaints from public or workforce",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "5",
+                  "title": "Competency & Efficiency",
+                  "description": "Skill level and ability to complete tasks efficiently in line with the Specification and accredited standard.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null
+            },
+            {
+              "id": "2",
+              "awardID": "2",
+              "title": "Lot 2 Telehandler up to and including 10mtr reach",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "3",
+              "awardID": "3",
+              "title": "Lot 3 Telehandler over 10mtr reach",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "4",
+              "awardID": "4",
+              "title": "Lot 4 Low loader 80T",
+              "status": "active",
+              "period": {
+                "startDate": "2026-07-14T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-07-13T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "5",
+              "awardID": "5",
+              "title": "Lot 6 Tracked Excavator (360°) with Operator - 3t Ditching bucket, various bucket sizes",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "6",
+              "awardID": "6",
+              "title": "Lot 7 Tracked Excavator (360°) with Operator - 4t Ditching bucket, various bucket sizes",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "7",
+              "awardID": "7",
+              "title": "Lot 8 Tracked Excavator (360°) with Operator - 6t Ditching bucket, various bucket sizes",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "umber of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "8",
+              "awardID": "8",
+              "title": "Lot 9 Tracked Excavator (360°) with Operator - 8t Ditching bucket, various bucket sizes",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-15T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 180000,
+                "amount": 150000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-14T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "9",
+              "awardID": "9",
+              "title": "Lot 10 4-wheeler 18 tonne gross/10 tonne capacity with dropside",
+              "status": "active",
+              "period": {
+                "startDate": "2026-07-14T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 960000,
+                "amount": 800000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-07-13T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "10",
+              "awardID": "10",
+              "title": "Lot 11 6-wheeler 26 tonne gross/16 tonne capacity",
+              "status": "active",
+              "period": {
+                "startDate": "2026-07-14T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 840000,
+                "amount": 700000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-07-13T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "11",
+              "awardID": "11",
+              "title": "Lot 12 8-wheeler 32 tonne gross/20 tonne capacity",
+              "status": "active",
+              "period": {
+                "startDate": "2026-07-14T00:00:00+01:00",
+                "endDate": "2030-07-13T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 960000,
+                "amount": 800000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-07-13T00:00:00+01:00",
+              "agreedMetrics": [
+                {
+                  "id": "1",
+                  "title": "On-Time Arrival",
+                  "description": "Plant/Operator arriving on the date and times specified in any Order.",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "2",
+                  "title": "Reliability of Plant",
+                  "description": "Equipment and Plant functioning without breakdowns/downtime",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                },
+                {
+                  "id": "3",
+                  "title": "H&S Incidents",
+                  "description": "Number of Health & Safety incidents",
+                  "observations": [
+                    {
+                      "period": {
+                        "durationInMonths": 3
+                      },
+                      "id": "frequency"
+                    }
+                  ]
+                }
+              ],
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093562-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093562-2026",
+                  "datePublished": "2026-10-02T17:26:53+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "buyerID": [],
+          "id": "093561-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:26:39+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-078030",
+          "parties": [
+            {
+              "name": "GA TRAINS LIMITED",
+              "id": "GB-COH-12544897",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "12544897"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PNZP-3886-PVCD"
+                }
+              ],
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI41"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicUndertaking",
+                    "description": "Public undertaking"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Intergraph (UK) Limited",
+              "id": "GB-COH-01457814",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "01457814"
+              },
+              "address": {
+                "locality": "Swindon",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK14"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.intergraph.com",
+                "scale": "large",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-COH-12544897",
+            "name": "GA TRAINS LIMITED"
+          },
+          "tender": {
+            "id": "GA240050",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Provision of an Enterprise Asset Management Package",
+            "description": "GA Trains Limited (\"GATL\") has a requirement for Software as a Service (\"SaaS\") licences to support the continued supply of its Enterprise Asset Management (\"EAM\") platform, including:\n• 220 Full licences, 83 Lite licences;\n• 32 Mobile licences;\n• 4 Connector licences;\n• 1 Web Services licence;\n• 2 Report Author licences; and\n• Databridge Pro\nThe required outcome is to ensure the uninterrupted supply of licences to ensure continuity for the use of GATLs existing EAM solution.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Direct award",
+            "specialRegime": [
+              "utilities"
+            ],
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "date": "2026-10-02T00:00:00+01:00",
+              "value": {
+                "amountGross": 562074.62,
+                "amount": 468395.52,
+                "currency": "GBP"
+              },
+              "mainProcurementCategory": "services",
+              "aboveThreshold": true,
+              "suppliers": [
+                {
+                  "id": "GB-COH-01457814",
+                  "name": "Intergraph (UK) Limited"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "72260000",
+                      "description": "Software-related services"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKH1",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKH23",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKH3",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKI4",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKI5",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "contractPeriod": {
+                "startDate": "2026-10-14T00:00:00+01:00",
+                "endDate": "2027-10-30T23:59:59+01:00"
+              },
+              "relatedLots": [
+                "1"
+              ],
+              "documents": [
+                {
+                  "id": "093561-2026",
+                  "documentType": "awardNotice",
+                  "noticeType": "UK6",
+                  "description": "Contract award notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093561-2026",
+                  "datePublished": "2026-10-02T17:26:39+01:00",
+                  "format": "text/html"
+                }
+              ],
+              "milestones": [
+                {
+                  "id": "1",
+                  "type": "futureSignatureDate",
+                  "dueDate": "2026-10-14T23:59:59+01:00",
+                  "status": "scheduled"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        }
+      ],
+      "links": {
+        "next": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQwMDowMDowMHx1cGRhdGVkVG89MjAyNi0xMC0wMlQyMzo1OTo1OXxuZXh0Q3Vyc29yPTc0NjA2NQ=="
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-07T22:30:22.454670Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00%3A00%3A00&updatedTo=2026-10-02T23%3A59%3A59&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQwMDowMDowMHx1cGRhdGVkVG89MjAyNi0xMC0wMlQyMzo1OTo1OXxuZXh0Q3Vyc29yPTc0NjA2NQ%3D%3D",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59",
+      "version": "1.1",
+      "extensions": [
+        "https://standard.open-contracting.org/profiles/eu/latest/en/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_amendment_rationale_classifications_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_budget_breakdown_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_contract_completion_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_documentation_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_pagination_extension/master/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_suitability_extension/master/extension.json",
+        "https://raw.githubusercontent.com/portaledcahn/ocds_Links_extension/main/extension.json",
+        "https://raw.githubusercontent.com/cabinetoffice/ocds_uk_extension/main/extension.json",
+        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_performance_failures_extension/master/extension.json"
+      ],
+      "publishedDate": "2026-10-02T17:25:04+01:00",
+      "publisher": {
+        "name": "Cabinet Office",
+        "scheme": "GB-GOR",
+        "uid": "D2",
+        "uri": "https://www.gov.uk/government/organisations/cabinet-office"
+      },
+      "license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "publicationPolicy": "https://www.gov.uk/government/publications/open-contracting",
+      "releases": [
+        {
+          "ocid": "ocds-h6vhtk-078031",
+          "id": "093560-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:25:04+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Financial Conduct Authority",
+              "id": "GB-PPON-PTYH-4442-XPRH",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PTYH-4442-XPRH"
+              },
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI41"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "http://www.fca.org.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Foundever GB Limited",
+              "id": "GB-PPON-PNBQ-2164-YDXW",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PNBQ-2164-YDXW"
+              },
+              "address": {
+                "locality": "Coventry",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKG33"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "large",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PTYH-4442-XPRH",
+            "name": "Financial Conduct Authority"
+          },
+          "tender": {
+            "id": "C4354",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Contingency Supervision Hub",
+            "description": "The Supervision Hub is seeking a supplier to provide a contingency contact operation that can be scaled depending on the volume of contact received resulting from a mass call event or business continuity plan being invoked.",
+            "status": "complete",
+            "procurementMethod": "selective",
+            "procurementMethodDetails": "Below threshold - award under framework",
+            "competitive": false,
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-PPON-PNBQ-2164-YDXW",
+                  "name": "Foundever GB Limited"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "79512000",
+                      "description": "Call centre"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKI",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "relatedLots": [
+                "1"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "title": "Contingency Supervision Hub",
+              "status": "active",
+              "period": {
+                "startDate": "2026-06-26T00:00:00+01:00",
+                "endDate": "2027-06-25T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 125000.0,
+                "amount": 104166.67,
+                "currency": "GBP"
+              },
+              "aboveThreshold": false,
+              "dateSigned": "2026-06-26T00:00:00+01:00",
+              "documents": [
+                {
+                  "id": "093560-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093560-2026",
+                  "datePublished": "2026-10-02T17:25:04+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "relatedProcesses": [
+            {
+              "id": "framework",
+              "relationship": [
+                "framework"
+              ],
+              "scheme": "ocid",
+              "identifier": "ocds-h6vhtk-04ed73",
+              "relatedLots": [
+                "1"
+              ],
+              "uri": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages/ocds-h6vhtk-04ed73"
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-078030",
+          "buyerID": [],
+          "id": "093559-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:17:44+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "GA TRAINS LIMITED",
+              "id": "GB-COH-12544897",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "12544897"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PNZP-3886-PVCD"
+                }
+              ],
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI41"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicUndertaking",
+                    "description": "Public undertaking"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "INTERGRAPH (UK) LIMITED",
+              "id": "GB-COH-01457814",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "01457814"
+              },
+              "address": {
+                "locality": "Swindon",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK14"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://www.intergraph.com",
+                "scale": "large",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-COH-12544897",
+            "name": "GA TRAINS LIMITED"
+          },
+          "tender": {
+            "id": "GA240050",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Provision of an Enterprise Asset Management Package",
+            "description": "GA Trains Limited (\"GATL\") has a requirement for Software as a Service (\"SaaS\") licences to support the continued supply of its Enterprise Asset Management (\"EAM\") platform, including:\n•\t220 Full licences, 83 Lite licences;\n•\t32 Mobile licences;\n•\t4 Connector licences;\n•\t1 Web Services licence; \n•\t2 Report Author licences; and \n•\tDatabridge Pro\nThe required outcome is to ensure the uninterrupted supply of licences to ensure continuity for the use of GATLs existing EAM solution.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Direct award",
+            "procurementMethodRationale": "GATLs existing Octave Attune EAM solution is supplied by Intergraph (UK) Limited. Its integration, web-service and data-movement capabilities support controlled exchange of relevant information with connected corporate, operational, reporting and engineering systems, including third-parties: leasing companies, manufacturers and maintainers. Loss of access would result in extreme disruption to the operation of passenger services.\nReplacement by an alternative supplier would require the redevelopment and revalidation of multiple interfaces and integrations across stations, rolling stock, and operational control environments. This would involve significant cost, resource requirements, technical risk, and potential disruption to critical passenger information services.",
+            "procurementMethodRationaleClassifications": [
+              {
+                "id": "singleSuppliersTechnicalReasons"
+              },
+              {
+                "id": "additionalRepeatExtensionPartialReplacement"
+              }
+            ],
+            "specialRegime": [
+              "utilities"
+            ],
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "pending",
+              "value": {
+                "amountGross": 562074.62,
+                "amount": 468395.52,
+                "currency": "GBP"
+              },
+              "mainProcurementCategory": "services",
+              "aboveThreshold": true,
+              "suppliers": [
+                {
+                  "id": "GB-COH-01457814",
+                  "name": "INTERGRAPH (UK) LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "72260000",
+                      "description": "Software-related services"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKH1",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKH23",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKH3",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKI4",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    },
+                    {
+                      "region": "UKI5",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "contractPeriod": {
+                "startDate": "2026-10-02T00:00:00+01:00",
+                "endDate": "2027-10-30T23:59:59+01:00"
+              },
+              "relatedLots": [
+                "1"
+              ],
+              "documents": [
+                {
+                  "id": "093559-2026",
+                  "documentType": "awardNotice",
+                  "noticeType": "UK5",
+                  "description": "Transparency notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093559-2026",
+                  "datePublished": "2026-10-02T17:17:44+01:00",
+                  "format": "text/html"
+                }
+              ],
+              "milestones": [
+                {
+                  "id": "1",
+                  "type": "futureSignatureDate",
+                  "dueDate": "2026-10-02T23:59:59+01:00",
+                  "status": "scheduled"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "id": "093558-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:16:18+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-0687e7",
+          "parties": [
+            {
+              "name": "Hull City Council",
+              "id": "GB-PPON-PRNP-1874-YZZR",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PRNP-1874-YZZR"
+              },
+              "address": {
+                "locality": "Hull",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKE11"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://www.hull.gov.uk/",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Geo Houlton & Sons Limited",
+              "id": "GB-PPON-PTVZ-5661-TRQL",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PTVZ-5661-TRQL"
+              },
+              "address": {
+                "locality": "Hull",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKE11"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "HOBSON AND PORTER LIMITED",
+              "id": "GB-PPON-PPXX-8611-HGHJ",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PPXX-8611-HGHJ"
+              },
+              "address": {
+                "locality": "Hull",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKE11"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            },
+            {
+              "name": "ZENITH DEVELOPMENTS GROUP LTD",
+              "id": "GB-PPON-PDXM-2533-VZQM",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PDXM-2533-VZQM"
+              },
+              "address": {
+                "locality": "Cottingham",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKE12"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PRNP-1874-YZZR",
+            "name": "Hull City Council"
+          },
+          "tender": {
+            "id": "RE-001",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Frontage Improvements Framework",
+            "description": "The proposed scope of works across the framework consists of improvements to the front elevation, gardens, boundary treatments and communal footpaths in court terraces to properties within the identified streets throughout the City of Hull. This includes the renewal of the below elements: • Rainwater goods including fascia’s, gutters and fall pipes to the front elevation of all properties • Façade repairs • Boundary Wall, Pin Kerb & Railing works • Repair/replacement of pedestrian/vehicular gates • New boundary treatment works • Decoration works • In-curtilage surface works • Communal footpath replacement to garden terraces",
+            "status": "complete",
+            "procurementMethod": "open",
+            "procurementMethodDetails": "Open procedure",
+            "techniques": {
+              "hasFrameworkAgreement": true,
+              "frameworkAgreement": {
+                "method": "withAndWithoutReopeningCompetition",
+                "type": "closed",
+                "description": "As per information provided within tender documents"
+              }
+            },
+            "lots": [
+              {
+                "id": "LOT-0000",
+                "status": "complete",
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "works",
+              "suppliers": [
+                {
+                  "id": "GB-PPON-PDXM-2533-VZQM",
+                  "name": "ZENITH DEVELOPMENTS GROUP LTD"
+                },
+                {
+                  "id": "GB-PPON-PTVZ-5661-TRQL",
+                  "name": "Geo Houlton & Sons Limited"
+                },
+                {
+                  "id": "GB-PPON-PPXX-8611-HGHJ",
+                  "name": "HOBSON AND PORTER LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0000",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "45000000",
+                      "description": "Construction work"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKE11",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0000"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0000"
+              ]
+            },
+            {
+              "id": "2",
+              "status": "active",
+              "mainProcurementCategory": "works",
+              "additionalProcurementCategories": [
+                "goods"
+              ],
+              "suppliers": [
+                {
+                  "id": "GB-PPON-PTVZ-5661-TRQL",
+                  "name": "Geo Houlton & Sons Limited"
+                }
+              ],
+              "items": [
+                {
+                  "id": "LOT-0000",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "45000000",
+                      "description": "Construction work"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UKE11",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "LOT-0000"
+                }
+              ],
+              "relatedLots": [
+                "LOT-0000"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "title": "Frontage Improvements Framework",
+              "status": "active",
+              "period": {
+                "startDate": "2026-10-12T00:00:00Z",
+                "endDate": "2030-10-11T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 24000000,
+                "amount": 20000000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-10-01T00:00:00Z",
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093558-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093558-2026",
+                  "datePublished": "2026-10-02T17:16:18+01:00",
+                  "format": "text/html"
+                }
+              ]
+            },
+            {
+              "id": "2",
+              "awardID": "2",
+              "title": "De Grey Street Frontage Improvement Scheme",
+              "status": "active",
+              "period": {
+                "startDate": "2026-10-12T00:00:00Z",
+                "endDate": "2027-05-14T23:59:59+01:00"
+              },
+              "value": {
+                "amountGross": 2151739,
+                "amount": 1793116,
+                "currency": "GBP"
+              },
+              "aboveThreshold": false,
+              "dateSigned": "2026-10-01T00:00:00Z",
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093558-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093558-2026",
+                  "datePublished": "2026-10-02T17:16:18+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "buyerID": [],
+          "id": "093557-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:15:10+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-06e510",
+          "parties": [
+            {
+              "name": "Information Commissioner's Office",
+              "id": "GB-PPON-PMHV-2549-HZYJ",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PMHV-2549-HZYJ"
+              },
+              "address": {
+                "locality": "Wilmslow",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD62"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "JANDNET LIMITED",
+              "id": "GB-COH-04265056",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "04265056"
+              },
+              "additionalIdentifiers": [
+                {
+                  "scheme": "GB-PPON",
+                  "id": "PWJT-9878-VLQW"
+                }
+              ],
+              "address": {
+                "locality": "Ipswich",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKH14"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "url": "http://jandnet.co.uk",
+                "scale": "sme",
+                "vcse": false,
+                "publicServiceMissionOrganization": false,
+                "shelteredWorkshop": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PMHV-2549-HZYJ",
+            "name": "Information Commissioner's Office"
+          },
+          "tender": {
+            "id": "2026ICO00507",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "eIDAS Technical Adviser",
+            "description": "Contingent labour provision of a technical subject matter expert relating to eIDAS, for up to 100 days per annum.\nThe consultant will:\n• support the Commissioner to maintain the ICO's technical capabilities in the area of electronic identification and trust services; and\n• serve as the ICO's technical subject matter expert for associated standards relating to electronic signatures, qualified digital certificates, electronic seals, timestamps and other authentication mechanisms.\nThree year initial contract term, with options to extend for two further years, resulting in a maximum term of five years.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Direct award",
+            "procurementMethodRationale": "The technical expertise required to fulfil our needs is exceptionally niche, combining understanding of the eIDAS regulatory framework and the underlying cyber security technologies. Previous procurements and repeated recruitment attempts have been unsuccessful or have resulted in only one capable supplier identified.",
+            "coveredBy": [
+              "GPA"
+            ],
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              }
+            ],
+            "procurementMethodRationaleClassifications": [
+              {
+                "id": "singleSuppliersTechnicalReasons"
+              }
+            ]
+          },
+          "awards": [
+            {
+              "id": "1",
+              "status": "active",
+              "mainProcurementCategory": "services",
+              "suppliers": [
+                {
+                  "id": "GB-COH-04265056",
+                  "name": "JANDNET LIMITED"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "72220000",
+                      "description": "Systems and technical consultancy services"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UK",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "relatedLots": [
+                "1"
+              ]
+            }
+          ],
+          "contracts": [
+            {
+              "id": "1",
+              "awardID": "1",
+              "status": "active",
+              "period": {
+                "startDate": "2026-09-04T00:00:00+01:00",
+                "endDate": "2029-08-31T23:59:59+01:00",
+                "maxExtentDate": "2031-08-31T23:59:59+01:00"
+              },
+              "hasRenewal": true,
+              "renewal": {
+                "description": "Two optional 12-month extension periods, at the discretion of the Contracting Authority"
+              },
+              "value": {
+                "amountGross": 540000,
+                "amount": 450000,
+                "currency": "GBP"
+              },
+              "aboveThreshold": true,
+              "dateSigned": "2026-09-04T00:00:00+01:00",
+              "noAgreedMetricsRationale": "Not required or suitable for contract type",
+              "statusDetails": null,
+              "documents": [
+                {
+                  "id": "093557-2026",
+                  "documentType": "contractNotice",
+                  "noticeType": "UK7",
+                  "description": "Contract details notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093557-2026",
+                  "datePublished": "2026-10-02T17:15:10+01:00",
+                  "format": "text/html"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "id": "093556-2026",
+          "tag": [
+            "planningUpdate"
+          ],
+          "date": "2026-10-02T17:11:45+01:00",
+          "initiationType": "tender",
+          "ocid": "ocds-h6vhtk-077b0c",
+          "parties": [
+            {
+              "name": "Liverpool City Council",
+              "id": "GB-PPON-PRVY-7813-WLPG",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PRVY-7813-WLPG"
+              },
+              "address": {
+                "locality": "Liverpool",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD72"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PRVY-7813-WLPG",
+            "name": "Liverpool City Council"
+          },
+          "planning": {
+            "milestones": [
+              {
+                "id": "engagement",
+                "type": "engagement",
+                "description": "Liverpool City Council are looking for a supplier to provide flexible staffing provision to accommodate the opening and closing of football sites and associated changing facilities. The service will be required for weekend and midweek football fixtures, for the duration of the 2026-29 grassroots football season. Link to PME on pro contract can be found here https://procontract.due-north.com/Advert?advertId=681bc7f6-7abe-f111-813c-005056b64545",
+                "dueDate": "2026-10-10T23:59:59+01:00",
+                "status": "scheduled"
+              }
+            ],
+            "documents": [
+              {
+                "id": "093556-2026",
+                "documentType": "marketEngagementNotice",
+                "noticeType": "UK2",
+                "description": "Preliminary market engagement notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093556-2026",
+                "datePublished": "2026-10-02T17:11:45+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-077b0c",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "2026-2029 Season Weekend Football Attendant Staffing",
+            "description": "Liverpool City Council are looking for a supplier to provide flexible staffing provision to accommodate the opening and closing of football sites including associated changing facilities.\nThe service will be required for weekend and midweek football fixtures.",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "92610000",
+                    "description": "Sports facilities operation services"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "92622000",
+                    "description": "Sports-event organisation services"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKD72",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "mainProcurementCategory": "services",
+            "lots": [
+              {
+                "id": "1",
+                "suitability": {
+                  "sme": true,
+                  "vcse": true
+                },
+                "contractPeriod": {
+                  "startDate": "2026-12-21T00:00:00Z",
+                  "endDate": "2029-09-16T23:59:59+01:00",
+                  "maxExtentDate": "2030-09-16T23:59:59+01:00"
+                },
+                "hasRenewal": true,
+                "status": "planning"
+              }
+            ],
+            "amendments": [
+              {
+                "description": "Link to Pro contract PME now on engagement section",
+                "id": "093556-2026"
+              }
+            ],
+            "status": "planning"
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-07802f",
+          "id": "093555-2026",
+          "tag": [
+            "planning"
+          ],
+          "date": "2026-10-02T17:10:32+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Wythenshawe Community Housing Group (WCHG)",
+              "id": "GB-PPON-PHPP-3148-QWPQ",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PHPP-3148-QWPQ"
+              },
+              "address": {
+                "locality": "Manchester",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKD33"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "https://procontract.due-north.com/Advert?advertId=69385a3d-7abe-f111-813c-005056b64545",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PHPP-3148-QWPQ",
+            "name": "Wythenshawe Community Housing Group (WCHG)"
+          },
+          "planning": {
+            "milestones": [
+              {
+                "id": "engagement",
+                "type": "engagement",
+                "description": "Wythenshawe Community Housing Group is undertaking Preliminary Market Engagement for the future provision of cleaning services across three proposed lots:\n- Residential Cleaning;\n- Commercial Cleaning, including office spaces; and\n- Fleet and Empty Homes Cleaning.\nThe requirements include communal and specialist cleaning, window and roof cleaning, internal office cleaning, fleet cleaning, and empty homes cleaning and clearance. WCHG is seeking supplier feedback on the proposed scope, lot structure, delivery approach and indicative pricing.\nDeadline for submissions is 16/10/2026 by 12:00 (noon)",
+                "dueDate": "2026-10-16T23:59:59+01:00",
+                "status": "scheduled"
+              }
+            ],
+            "documents": [
+              {
+                "id": "093555-2026",
+                "documentType": "marketEngagementNotice",
+                "noticeType": "UK2",
+                "description": "Preliminary market engagement notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093555-2026",
+                "datePublished": "2026-10-02T17:10:32+01:00",
+                "format": "text/html"
+              }
+            ]
+          },
+          "tender": {
+            "id": "814",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Preliminary Market Engagement for Residential, Commercial, Voids and Fleet Cleaning",
+            "description": "Wythenshawe Community Housing Group is undertaking Preliminary Market Engagement for the future provision of cleaning services across three proposed lots:\n- Residential Cleaning;\n- Commercial Cleaning, including office spaces; and\n- Fleet and Empty Homes Cleaning.\nThe requirements include communal and specialist cleaning, window and roof cleaning, internal office cleaning, fleet cleaning, and empty homes cleaning and clearance. WCHG is seeking supplier feedback on the proposed scope, lot structure, delivery approach and indicative pricing.",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "90910000",
+                    "description": "Cleaning services"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "mainProcurementCategory": "services",
+            "lots": [
+              {
+                "id": "1",
+                "contractPeriod": {
+                  "startDate": "2027-02-01T00:00:00+00:00",
+                  "endDate": "2030-01-31T23:59:59+00:00",
+                  "maxExtentDate": "2032-01-31T23:59:59+00:00"
+                },
+                "hasRenewal": true,
+                "status": "planning"
+              }
+            ],
+            "status": "planning"
+          },
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-07802e",
+          "buyerID": [],
+          "id": "093554-2026",
+          "tag": [
+            "award",
+            "contract"
+          ],
+          "date": "2026-10-02T17:07:51+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Cabinet Office",
+              "id": "GB-PPON-PRVX-1591-PJVV",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PRVX-1591-PJVV"
+              },
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI32"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthorityCentralGovernment",
+                    "description": "Public authority - central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Shared Services Connected Limited",
+              "id": "GB-COH-08460577",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "08460577"
+              },
+              "address": {
+                "locality": "London",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKI31"
+              },
+              "roles": [
+                "supplier"
+              ],
+              "details": {
+                "scale": "large",
+                "vcse": false
+              }
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PRVX-1591-PJVV",
+            "name": "Cabinet Office"
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-07802e",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Transparency Notice for extension to Cabinet Office Call Off from Independent Shared Service Centre 2 (ISSC2 Framework)",
+            "description": "This notice signals the intention of the Cabinet Office to make a direct award to Shared Services Connected Limited (SSCL) to extend the Call-Off Contract held under the ISSC2 Framework for up to an additional 18 months.\nThe extension is required to secure the continued provision of business-critical back-office operations, including human resources, finance and accounts, payroll and procurement to maintain operational continuity while transitioning services to replacement service providers under the Matrix programme.\nThe direct award is justified under Schedule 5 of the Procurement Act 2023 due to technical constraints and the absence of competition for technical reasons, as an interim supplier would cause severe technical incompatibility, service disruption, and substantial duplication of costs.",
+            "status": "complete",
+            "procurementMethod": "direct",
+            "procurementMethodDetails": "Direct award",
+            "procurementMethodRationale": "Single supplier - technical reasons:\nThe back-office operations rely on the legacy Single Operating Platform (SOP). The highly complex architecture and proprietary systems managed by SSCL mean no alternative supplier can step in for an interim period without causing severe operational disruption to payroll, HR, and financial administration.\nAdditional or repeat goods, services or works - extension or partial replacement:\nThis extension provides additional continuity of identical services following the original 2013 competitive procurement, where switching to an interim supplier before the Matrix go-live would cause disproportionate technical difficulty and substantial duplication of costs.",
+            "procurementMethodRationaleClassifications": [
+              {
+                "id": "singleSuppliersTechnicalReasons"
+              },
+              {
+                "id": "additionalRepeatExtensionPartialReplacement"
+              }
+            ],
+            "lots": [
+              {
+                "id": "1",
+                "status": "complete",
+                "description": null
+              }
+            ],
+            "documents": [
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              }
+            ],
+            "riskDetails": "Risk of additional technical or operational delays in the full implementation, cutover, or go-live of the replacement Matrix solution beyond the target 18-month transition window, necessitating an additional short-term extension or phased tapering to ensure uninterrupted operational continuity.\nRisk of unexpected complex exit dependencies, data migration bottlenecks, or technical interface failures arising between the legacy Single Operating Platform (SOP) architecture and replacement systems during parallel running, cutover, or decommissioning phases.\nRisk of unexpected operational or cyber-security incidents affecting critical shared services (including civil service payroll, financial processing, and grant administration) during transition, requiring emergency adjustments to resource capacity, technical support levels, or the transition timetable."
+          },
+          "awards": [
+            {
+              "id": "1",
+              "title": "Transparency Notice for extension to Cabinet Office Call Off from Independent Shared Service Centre 2 (ISSC2 Framework) Cabinet Office",
+              "status": "pending",
+              "value": {
+                "amountGross": 27501600,
+                "amount": 22918000,
+                "currency": "GBP"
+              },
+              "mainProcurementCategory": "services",
+              "aboveThreshold": true,
+              "suppliers": [
+                {
+                  "id": "GB-COH-08460577",
+                  "name": "Shared Services Connected Limited"
+                }
+              ],
+              "items": [
+                {
+                  "id": "1",
+                  "additionalClassifications": [
+                    {
+                      "scheme": "CPV",
+                      "id": "79400000",
+                      "description": "Business and management consultancy and related services"
+                    }
+                  ],
+                  "deliveryAddresses": [
+                    {
+                      "region": "UK",
+                      "country": "GB",
+                      "countryName": "United Kingdom"
+                    }
+                  ],
+                  "relatedLot": "1"
+                }
+              ],
+              "contractPeriod": {
+                "startDate": "2027-05-01T00:00:00+01:00",
+                "endDate": "2028-10-31T23:59:59Z"
+              },
+              "relatedLots": [
+                "1"
+              ],
+              "documents": [
+                {
+                  "id": "093554-2026",
+                  "documentType": "awardNotice",
+                  "noticeType": "UK5",
+                  "description": "Transparency notice on Find a Tender",
+                  "url": "https://www.find-tender.service.gov.uk/Notice/093554-2026",
+                  "datePublished": "2026-10-02T17:07:51+01:00",
+                  "format": "text/html"
+                }
+              ],
+              "milestones": [
+                {
+                  "id": "1",
+                  "type": "futureSignatureDate",
+                  "dueDate": "2026-11-01T23:59:59Z",
+                  "status": "scheduled"
+                }
+              ]
+            }
+          ],
+          "language": "en"
+        },
+        {
+          "ocid": "ocds-h6vhtk-07802d",
+          "id": "093553-2026",
+          "tag": [
+            "tender"
+          ],
+          "date": "2026-10-02T17:06:25+01:00",
+          "initiationType": "tender",
+          "parties": [
+            {
+              "name": "Stroud District Council",
+              "id": "GB-PPON-PRHW-3326-HVMG",
+              "identifier": {
+                "scheme": "GB-PPON",
+                "id": "PRHW-3326-HVMG"
+              },
+              "address": {
+                "locality": "Stroud",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK13"
+              },
+              "roles": [
+                "buyer"
+              ],
+              "details": {
+                "url": "http://www.stroud.gov.uk",
+                "classifications": [
+                  {
+                    "scheme": "UK_CA_TYPE",
+                    "id": "publicAuthoritySubCentralGovernment",
+                    "description": "Public authority - sub-central government"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Gleeds Cost Management Limited",
+              "id": "GB-COH-06472932",
+              "identifier": {
+                "scheme": "GB-COH",
+                "id": "06472932"
+              },
+              "address": {
+                "locality": "Bristol",
+                "country": "GB",
+                "countryName": "United Kingdom",
+                "region": "UKK11"
+              },
+              "roles": [
+                "procuringEntity"
+              ],
+              "roleDetails": "Preparation of Procurement Documents"
+            }
+          ],
+          "buyer": {
+            "id": "GB-PPON-PRHW-3326-HVMG",
+            "name": "Stroud District Council"
+          },
+          "planning": {
+            "noEngagementNoticeRationale": "EOI was published July 26 for information only,  system error notice not published."
+          },
+          "tender": {
+            "id": "ocds-h6vhtk-07802d",
+            "legalBasis": {
+              "id": "2023/54",
+              "scheme": "UKPGA",
+              "uri": "https://www.legislation.gov.uk/ukpga/2023/54/contents"
+            },
+            "title": "Procurement for a Developer for Brimscombe Port, Stroud, Gloucestershire.",
+            "description": ":Stroud District Council wishes to procure a developer partner to deliver its Brimscombe Port development. Brimscombe Port was at one time the largest inland port in the Country dating back to the 1780’s. Following the decline in canals the Port became redundant. The canal was in-filled after the Second World War and the site developed as an industrial estate during the 1960/70’s. Today the industrial estate has been demolished, ready for redevelopment , the Listed Port Mill and salt warehouse add to the site's spectacular setting\nSDC is leading on the delivery of the redevelopment of Brimscombe Port in conjunction with Stroud Valleys Canal Company (SVCC) and Homes England (HE), to reinstate the canal and provide a mixed use residential led development on a ten-acre site. Please see Procurement documents for further details.",
+            "status": "active",
+            "items": [
+              {
+                "id": "1",
+                "additionalClassifications": [
+                  {
+                    "scheme": "CPV",
+                    "id": "45000000",
+                    "description": "Construction work"
+                  },
+                  {
+                    "scheme": "CPV",
+                    "id": "71000000",
+                    "description": "Architectural, construction, engineering and inspection services"
+                  }
+                ],
+                "deliveryAddresses": [
+                  {
+                    "region": "UKK13",
+                    "country": "GB",
+                    "countryName": "United Kingdom"
+                  }
+                ],
+                "relatedLot": "1"
+              }
+            ],
+            "value": {
+              "amountGross": 60000000.0,
+              "amount": 50000000.0,
+              "currency": "GBP"
+            },
+            "procurementMethod": "selective",
+            "procurementMethodDetails": "Competitive flexible procedure",
+            "procedure": {
+              "features": "Invitation to participate in Dialogue, please see PSQ for detailed breakdown"
+            },
+            "mainProcurementCategory": "works",
+            "aboveThreshold": true,
+            "coveredBy": [
+              "GPA"
+            ],
+            "submissionMethodDetails": "www.supplyingthesouthwest.org.uk. Please use the procurement portal messaging system for all communications and clarifications.",
+            "submissionTerms": {
+              "electronicSubmissionPolicy": "allowed",
+              "languages": [
+                "en"
+              ]
+            },
+            "expressionOfInterestDeadline": "2026-11-06T12:00:00+00:00",
+            "enquiryPeriod": {
+              "endDate": "2026-10-23T16:00:00+01:00"
+            },
+            "awardPeriod": {
+              "endDate": "2027-05-27T23:59:59+01:00"
+            },
+            "lots": [
+              {
+                "id": "1",
+                "status": "active",
+                "value": {
+                  "amountGross": 60000000.0,
+                  "amount": 50000000.0,
+                  "currency": "GBP"
+                },
+                "awardCriteria": {
+                  "criteria": [
+                    {
+                      "type": "quality",
+                      "name": "Sustainability Strategy",
+                      "description": "Compliance with the Councils output specification, and their  innovative solutions for sustainability",
+                      "numbers": [
+                        {
+                          "number": 9.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Social Value ",
+                      "description": "Social value commitments",
+                      "numbers": [
+                        {
+                          "number": 10.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Development Outcomes",
+                      "description": "Quality of the outcomes to be delivered",
+                      "numbers": [
+                        {
+                          "number": 35.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Delivery Methodology",
+                      "description": "Delivery Programme",
+                      "numbers": [
+                        {
+                          "number": 5.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "cost",
+                      "name": "Deliverability and Risk",
+                      "description": "Commercial proposals and risk",
+                      "numbers": [
+                        {
+                          "number": 27.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "quality",
+                      "name": "Strategic Partner Structure Offer",
+                      "description": "Strategic partnership arrangement",
+                      "numbers": [
+                        {
+                          "number": 6.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "cost",
+                      "name": "Development Cost and Viability",
+                      "description": "Development Cost and Viability",
+                      "numbers": [
+                        {
+                          "number": 8.0,
+                          "weight": "percentageExact"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "secondStage": {
+                  "maximumCandidates": 6
+                },
+                "selectionCriteria": {
+                  "criteria": [
+                    {
+                      "type": "economic",
+                      "description": "Minimum company turnover - please see PSQ for full details"
+                    },
+                    {
+                      "type": "technical",
+                      "description": "There are technical conditions of participation - please see the PSQ for details."
+                    },
+                    {
+                      "description": "Please see PSQ for details ",
+                      "forReduction": true
+                    }
+                  ]
+                },
+                "contractPeriod": {
+                  "startDate": "2027-07-01T00:00:00+01:00",
+                  "endDate": "2032-07-31T23:59:59+01:00"
+                }
+              }
+            ],
+            "documents": [
+              {
+                "id": "future",
+                "documentType": "biddingDocuments",
+                "accessDetails": "All documents are free and accessible via www.supplyingthesouthwest.org.uk"
+              },
+              {
+                "id": "conflictOfInterest",
+                "documentType": "conflictOfInterest",
+                "description": "Not published"
+              },
+              {
+                "id": "093553-2026",
+                "documentType": "tenderNotice",
+                "noticeType": "UK4",
+                "description": "Tender notice on Find a Tender",
+                "url": "https://www.find-tender.service.gov.uk/Notice/093553-2026",
+                "datePublished": "2026-10-02T17:06:25+01:00",
+                "format": "text/html"
+              }
+            ],
+            "contractTerms": {
+              "financialTerms": "Standard payment terms"
+            },
+            "riskDetails": "Please see procurement documents"
+          },
+          "language": "en"
+        }
+      ],
+      "links": {
+        "next": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=8&updatedFrom=2026-10-02T00:00:00&updatedTo=2026-10-02T23:59:59&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQwMDowMDowMHx1cGRhdGVkVG89MjAyNi0xMC0wMlQyMzo1OTo1OXxuZXh0Q3Vyc29yPTc0NjA1Nw=="
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-07T22:30:23.763683Z"
+  }
+]
