@@ -93,13 +93,27 @@ def test_signatures_match_the_plan() -> None:
     assert params(gate.numbers_grounded) == ["text", "quotes"]
     assert params(gate.gate_candidate) == ["candidate", "spec", "run", "session", "settings"]
     assert params(court.skeptic) == ["candidate", "gate", "spec", "run", "session", "settings"]
-    assert params(brief.rank) == ["passed", "as_of", "settings", "offer"]  # offer: D80
+    assert params(brief.rank) == [
+        "passed",
+        "as_of",
+        "settings",
+        "offer",
+        "terms",
+        "related_terms",
+    ]  # fmt: skip  (D80, D82, D84)
     assert params(brief.render_brief) == ["run"]
     assert params(brief.render_scorecard) == ["run"]
     assert params(brief.write_reports) == ["run", "out_dir"]
     assert params(run.seeded_concepts) == []
     assert params(run.run_radar) == [
-        "spec", "as_of", "http", "fetcher", "concepts", "run", "settings", "session",
+        "spec",
+        "as_of",
+        "http",
+        "fetcher",
+        "concepts",
+        "run",
+        "settings",
+        "session",
     ]  # fmt: skip  (session added by D69: a live run logs every call in llm_calls)
 
 

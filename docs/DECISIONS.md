@@ -662,3 +662,49 @@ brief with Claude's five corrections (docs/COLLAB.md).
   Not done here, recorded as next: tracing award winners into named contractors' accounts
   (D23), import and shipment data, and a cross-check against the company's own catalogue. All
   three are in the WOS method and are new sensors or learners, not brief changes.
+- **D81 — Likely bidders: for each open tender, who won similar awards in that country
+  recently.** This answers "who buys the material before the award" (D23, the WOS method, step 3)
+  and is the first connect-the-dots feature (ROADMAP vision).
+  - **The search:** one TED award search per distinct (tender codes, country), over the last
+    `radar_bidder_lookback_days` (365), capped by `radar_bidder_max_queries` (8).
+  - **The winners:** parsed through the structured evidence path, so they are code-verified with
+    no model call and no cost. Withheld natural persons are excluded.
+  - **Ranking:** winners are counted and ranked by wins and recency; the top
+    `radar_bidder_max` (5) are kept.
+  - **In the brief:** tender entries list them with their latest award notice, and the summary
+    caution names the top two.
+  - **Failures:** a failed search is a note. The settings are stored with each recording, so
+    replay equals live.
+- **D82 — The independent review of M5.1: the requirement is checked against what the client
+  sells, as data; dates and labels say only what a claim supports.**
+  1. **What the client sells is data.** `ClientSpec.offer_terms` lists it in any language and
+     matches word starts. Without it, only the product part of the offer is used (before
+     "for/into/selling..."), with whole words and generic nouns stopped. "Packaging for
+     cosmetics brands" no longer makes cosmetics a stated need.
+  2. **Only stating claims count:** the record's title, or a quote that names the candidate.
+     Buyer and Winner lines, and the withheld-person placeholder, never count.
+  3. **Dates come only from claim-backed event dates,** never the fetch time. Future dates read
+     "planned for".
+  4. **Strength counts independent documents.** Full write-ups go to approachable accounts first.
+     "Thin" means fewer than 3 approachable accounts.
+  5. **"Contact now" requires** a stated requirement, no skeptic points against, a direct buyer
+     and evidence that is not weak.
+  6. **Honest labels:**
+     - "award published" unless a decision date is stated;
+     - the deadline marked estimated or "likely too late";
+     - contract value captioned as the whole notice across all lots and winners, in the stated
+       currency.
+  7. **All untrusted text is Markdown-escaped,** and links are printed only when they are http(s).
+  8. **The scorecard parser** splits on unescaped pipes only, and "x" and "-" are no longer
+     yes/no marks.
+- **D83 — UK Find a Tender (`fts`) is a registered, structured, enumerable source.** It renders
+  the same lines as TED, so the evidence path is shared. Contact details are never read. Award
+  dates are publication dates, because FTS has signing dates but no decision dates.
+- **D84 — Requirement has three levels: stated, related, inferred.** A real case: the Corte
+  notice says "paving" and "masonry and pavements", not natural stone. Matching only the general
+  word overstated the fit. Each client now lists specific `offer_terms` (exactly what it sells)
+  and `related_terms` (products near it).
+  - **Stated:** a stating quote names a specific term.
+  - **Related:** a quote names only a related term. It ranks below stated, is never "contact
+    now", and the caution says to ask about the specification.
+  - **Inferred:** neither is named.

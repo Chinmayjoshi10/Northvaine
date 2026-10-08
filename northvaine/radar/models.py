@@ -70,6 +70,12 @@ class ClientSpec(NorthvaineModel):
     offer: str
     markets: list[Iso2]
     sensors: dict[str, list[SensorQuery]]
+    # What the client sells, as words a source would use, in any language (D82). Data, set at
+    # onboarding. Empty means the terms are derived from `offer` (weaker: English only).
+    offer_terms: list[str] = Field(default_factory=list)
+    # Words for related products: a quote naming one is "related", a possibility that needs a
+    # specification check, never "stated" (D84).
+    related_terms: list[str] = Field(default_factory=list)
 
 
 def load_client_spec(client_id: str, clients_dir: Path | None = None) -> ClientSpec:
@@ -158,6 +164,18 @@ class SkepticFinding(NorthvaineModel):
         return self
 
 
+class LikelyBidder(NorthvaineModel):
+    """A company that won similar awards in the same country recently (D81). Every field comes
+    from an official award record, verified by code; nothing is inferred by a model."""
+
+    name: str
+    country: str | None
+    wins: int = Field(ge=1)
+    last_won: date | None
+    source_url: str
+    quote: str
+
+
 class RankedEntry(NorthvaineModel):
     rank: int = Field(ge=1)
     candidate: Candidate
@@ -167,8 +185,9 @@ class RankedEntry(NorthvaineModel):
     rank_reasons: list[str]
     # M5.1 (D80): "stated" when a verified quote names a term of the client's offer, found by
     # code; "inferred" otherwise. Defaults keep run records written before M5.1 readable.
-    requirement: Literal["stated", "inferred"] = "inferred"
+    requirement: Literal["stated", "related", "inferred"] = "inferred"
     requirement_ref: str | None = None
+    likely_bidders: list[LikelyBidder] = Field(default_factory=list)  # tenders only (D81)
 
 
 class RejectedEntry(NorthvaineModel):

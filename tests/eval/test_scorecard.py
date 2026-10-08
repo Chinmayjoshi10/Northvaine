@@ -95,3 +95,27 @@ def test_eval_script_writes_a_report(tmp_path: Path) -> None:
     assert module.main([], root=tmp_path) == 0
     written = list((tmp_path / "reports" / "eval").glob("*/eval.md"))
     assert written and "| demo | 4 | 100% | 75% |" in written[0].read_text(encoding="utf-8")
+
+
+def test_a_rendered_scorecard_round_trips_even_with_a_pipe_in_a_name() -> None:
+    from northvaine.radar.brief import render_scorecard
+    from northvaine.radar.models import RadarStream
+    from tests.radar.test_brief import make_run
+
+    run = make_run(n_passed=1, stream=RadarStream.AWARD)
+    entry = run.entries[0]
+    piped = entry.model_copy(
+        update={"candidate": entry.candidate.model_copy(update={"name": "A | B GmbH"})}
+    )
+    text = render_scorecard(run.model_copy(update={"entries": [piped]}))
+    filled = "\n".join(
+        line.replace("|  |  |  |  |  |", "| yes | yes | yes | yes |  |", 1)
+        if line.startswith("| 1 |") and "award" in line
+        else line.replace("|  |  |  |  |", "| no | yes | yes | meeting |", 1)
+        if line.startswith("| 1 |")
+        else line
+        for line in text.splitlines()
+    )
+    card = parse_scorecard(filled)
+    assert card.ratings[0].all_four and card.ratings[0].company.endswith("GmbH")
+    assert card.outcomes[0].contacted is True and card.outcomes[0].outcome == "meeting"

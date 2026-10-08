@@ -111,7 +111,12 @@ class Settings(BaseSettings):
         "inbound_question",
     )
     evidence_source_rules: dict[str, str] = Field(
-        default_factory=lambda: {"ted": "structured", "website": "full_text", "tavily": "raw_only"}
+        default_factory=lambda: {
+            "ted": "structured",
+            "fts": "structured",
+            "website": "full_text",
+            "tavily": "raw_only",
+        }
     )
 
     # radar (M5, D57-D66). Paths, caps, windows and the legal-form list are data, not literals.
@@ -128,7 +133,7 @@ class Settings(BaseSettings):
     radar_stream_by_event: dict[str, str] = Field(
         default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
     )
-    radar_enumerable_sources: tuple[str, ...] = ("ted",)
+    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts")
     radar_legal_forms: tuple[str, ...] = (
         "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
         "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
@@ -140,6 +145,12 @@ class Settings(BaseSettings):
     radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
     # M5.1 brief quality (T5.8, D80). Everything here is generic language, never industry words.
     radar_brief_main_entries: int = Field(default=5, ge=1)
+    # Likely bidders for open tenders (D81): who won similar awards in the same country.
+    radar_bidder_lookback_days: int = Field(default=365, ge=30)
+    radar_bidder_max: int = Field(default=5, ge=1)
+    radar_bidder_max_queries: int = Field(default=8, ge=0)
+    radar_bidder_max_codes: int = Field(default=6, ge=1)
+    radar_bidder_max_results: int = Field(default=50, ge=1)
     radar_min_days_left: int = Field(default=5, ge=0)
     radar_offer_term_min_chars: int = Field(default=4, ge=2)
     radar_offer_stopwords: tuple[str, ...] = (

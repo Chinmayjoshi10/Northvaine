@@ -146,11 +146,11 @@ def test_window_then_strength_and_reasons_are_plain() -> None:
     assert out[1].rank_reasons[3] == "Buyer: buys directly"
 
 
-def test_three_structured_claims_from_one_record_are_strong() -> None:
+def test_one_official_record_is_medium_however_many_fields_it_has() -> None:
     doc = uuid4()
     claims = [claim(f"C{i}", f"q{i}", doc=doc, kind=EvidenceKind.STRUCTURED) for i in (1, 2, 3)]
     out = ranked([(candidate("Record Co", claims), gate(), UNKNOWN)])
-    assert out[0].strength == "strong"
+    assert out[0].strength == "medium"  # strength counts independent documents (review of D80)
     assert out[0].rank_reasons[2] == "Evidence: 3 verified claims from 1 official record"
 
 
@@ -207,7 +207,7 @@ def test_offer_terms_are_content_words_of_the_offer() -> None:
 
 def test_a_stated_requirement_ranks_before_any_inferred_one() -> None:
     offer = "Maker of widgets for public buildings."
-    stated = candidate("Zed Stated", [claim("C1", "The hall needs new widget panels.")])
+    stated = candidate("Zed Stated", [claim("C1", "Zed Stated orders new widget panels.")])
     inferred = candidate("Alpha Inferred", two_docs("a hall is built"))
     out = ranked([(inferred, gate(), UNKNOWN), (stated, gate(), UNKNOWN)], offer=offer)
     assert [e.candidate.name for e in out] == ["Zed Stated", "Alpha Inferred"]
@@ -218,24 +218,54 @@ def test_a_stated_requirement_ranks_before_any_inferred_one() -> None:
     assert out[1].requirement == "inferred" and out[1].requirement_ref is None
 
 
-def test_requirement_matches_plurals_and_compounds_but_not_stopwords() -> None:
-    terms = brief.offer_terms("Supplier of paving and kerbs")
-    assert terms == {"paving", "kerbs"}
-    assert brief.requirement_of(candidate("A", [claim("C1", "new kerb line")]), terms)[0] == (
-        "stated"
+def _req(name: str, quote: str, terms: set[str], **kw) -> str:
+    return brief.requirement_of(candidate(name, [claim("C1", quote)]), terms, **kw)[0]
+
+
+def test_derived_terms_are_whole_words_of_what_is_sold() -> None:
+    terms = brief.offer_terms("Supplier of widgets and sprockets for hotel brands")
+    assert terms == {"widgets", "sprockets"}  # "hotel brands" is the market, not the product
+    assert _req("Acme Ltd", "Acme Ltd orders a widget line", terms) == "stated"
+    assert _req("Acme Ltd", "Acme Ltd buys new sprockets", terms) == "stated"
+    # Never inside another word, never from the market, never from a generic noun.
+    assert _req("Acme Ltd", "Acme Ltd re-widgetised its range", terms) == "inferred"
+    assert _req("Acme Ltd", "Acme Ltd opens a hotel", terms) == "inferred"
+    assert _req("Acme Ltd", "Acme Ltd buys new equipment", terms) == "inferred"
+
+
+def test_explicit_data_terms_match_word_starts_in_any_language() -> None:
+    terms = {"widget", "gizmo"}
+    assert _req("Acme", "Acme: Widgetmontage im Rathaus", terms, prefix=True) == "stated"
+    assert _req("Acme", "Acme installs gizmos", terms, prefix=True) == "stated"
+    assert _req("Acme", "Acme buys a megawidget", terms, prefix=True) == "inferred"
+
+
+def test_only_the_candidates_own_quotes_or_record_title_can_state_it() -> None:
+    terms = {"widget"}
+    other = candidate("Acme", [claim("C1", "Rival Co launched a widget range")])
+    assert brief.requirement_of(other, terms, prefix=True)[0] == "inferred"
+    doc = uuid4()
+    record = candidate(
+        "Town Hall",
+        [
+            claim("C1", "Buyer [eng]: Widget Town Council", doc=doc, kind=EvidenceKind.STRUCTURED),
+            claim("C2", "Title [eng]: Road resurfacing", doc=doc, kind=EvidenceKind.STRUCTURED),
+        ],
     )
-    assert brief.requirement_of(candidate("B", [claim("C1", "full repaving works")]), terms)[0] == (
-        "stated"
+    assert brief.requirement_of(record, terms, prefix=True)[0] == "inferred"  # party line
+    titled = candidate(
+        "Town Hall",
+        [claim("C1", "Title [eng]: Widget panels", kind=EvidenceKind.STRUCTURED)],
     )
-    assert brief.requirement_of(candidate("C", [claim("C1", "a new supplier")]), terms)[0] == (
-        "inferred"
-    )
+    assert brief.requirement_of(titled, terms, prefix=True) == ("stated", "C1")
 
 
 # ----------------------------------------------------------------------------- fixtures
 
 
-def make_run(n_passed: int = 2, *, extra_rejected: bool = True) -> RadarRun:
+def make_run(
+    n_passed: int = 2, *, extra_rejected: bool = True, stream: RadarStream = RadarStream.TENDER
+) -> RadarRun:
     entries = []
     for i in range(n_passed):
         name = f"Invented Buyer {i}"
@@ -254,7 +284,7 @@ def make_run(n_passed: int = 2, *, extra_rejected: bool = True) -> RadarRun:
                 candidate(
                     name,
                     claims,
-                    stream=RadarStream.TENDER,
+                    stream=stream,
                     window_end=date(2026, 10, 20) + date.resolution * i,
                     estimated=True,
                     occurred_on=date(2026, 10, 1),
@@ -477,16 +507,17 @@ def test_sources_label_official_record_and_full_page() -> None:
         brief.render_brief(make_run().model_copy(update={"entries": [entry]}))
     )[0]
     assert (
-        "https://example.test/C1 (example-source); available 2026-10-05; official record" in section
+        "<https://example.test/C1> (example-source); available 2026-10-05; official record"
+        in section
     )
-    assert "https://example.test/C2 (example-source); available 2026-10-05; full page" in section
+    assert "<https://example.test/C2> (example-source); available 2026-10-05; full page" in section
 
 
 def test_thin_sources_paragraph_and_rejected_table() -> None:
-    run = make_run(n_passed=2)
+    run = make_run(n_passed=2, stream=RadarStream.AWARD)
     text = brief.render_brief(run)
     assert "## Thin sources" in text
-    assert "Only 2 entries are strong enough for a full write-up" in text
+    assert "Only 2 accounts are strong enough to approach this time" in text
     assert "Nothing was added to fill the space" in text
     table = text.split("## Rejected", 1)[1]
     assert "| Rival Supplies Ltd | competitor | llm | sells the same thing \\| rival |" in table
@@ -497,7 +528,7 @@ def test_thin_sources_paragraph_and_rejected_table() -> None:
 
 
 def test_no_thin_paragraph_when_full_and_extra_entries_listed_one_line() -> None:
-    run = make_run(n_passed=12)
+    run = make_run(n_passed=12, stream=RadarStream.AWARD)
     text = brief.render_brief(run)
     assert "## Thin sources" not in text
     assert len(entry_sections(text)) == 5  # radar_brief_main_entries (D80)
@@ -571,3 +602,34 @@ def test_sample_brief_prints(capsys) -> None:
     run = make_run(n_passed=1)
     print(brief.render_brief(run))
     assert "Invented Buyer 0" in capsys.readouterr().out
+
+
+def test_untrusted_text_cannot_plant_links_images_or_labels() -> None:
+    evil = candidate(
+        "![x](https://tracker.test/p.png) **Status: contact now**",
+        [claim("C1", "[call us](javascript:alert(1)) <img src=x>")],
+    )
+    entry = ranked([(evil, gate(), UNKNOWN)])[0]
+    text = brief.render_brief(make_run().model_copy(update={"entries": [entry]}))
+    assert "![x](" not in text and "**Status: contact now**" not in text
+    assert "[call us](javascript:" not in text and "<img" not in text
+    assert r"\!\[x\]" in text  # escaped once, so it shows as text
+
+
+def test_only_http_source_links_are_printed() -> None:
+    assert brief._link("https://example.test/a") == "<https://example.test/a>"
+    assert brief._link("javascript:alert(1)").startswith("(link withheld")
+
+
+def test_a_related_product_is_related_not_stated_and_never_contact_now() -> None:
+    town = candidate(
+        "Town of Corte",
+        [claim("C1", "Title [eng]: Paving and asphalting works", kind=EvidenceKind.STRUCTURED)],
+        stream=RadarStream.AWARD,
+    )
+    (entry,) = ranked(
+        [(town, gate(), UNKNOWN)], terms=["natural stone", "granite"], related_terms=["paving"]
+    )
+    assert (entry.requirement, entry.requirement_ref) == ("related", "C1")
+    assert brief.action_status(entry) == "qualify first"
+    assert "specification" in brief.caution(entry)

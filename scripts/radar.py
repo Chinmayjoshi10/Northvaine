@@ -87,6 +87,11 @@ SHAPING_SETTINGS = (
     "skeptic_max_tokens",
     "radar_tender_lookback_days",  # the query focus (D71) is part of what was sent
     "radar_enumerable_max_results",
+    "radar_bidder_lookback_days",  # likely-bidder searches (D81) are part of what was sent
+    "radar_bidder_max",
+    "radar_bidder_max_queries",
+    "radar_bidder_max_codes",
+    "radar_bidder_max_results",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.
 GATE_TOKENS = (2000, 300)
