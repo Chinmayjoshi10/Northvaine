@@ -457,7 +457,8 @@ def action_status(entry: RankedEntry) -> str:
     if entry.candidate.stream == RadarStream.TENDER:
         return "watch only"
     doubts = (
-        entry.requirement != "stated"
+        entry.steered
+        or entry.requirement != "stated"
         or bool(entry.skeptic.against)
         or entry.gate.direct_buyer is False
         or entry.strength == "weak"
@@ -468,6 +469,8 @@ def action_status(entry: RankedEntry) -> str:
 def caution(entry: RankedEntry) -> str:
     """The most important thing not yet known, composed by code."""
     c = entry.candidate
+    if entry.steered:
+        return "a source page contained text aimed at AI systems (removed); check it by hand"
     if c.stream == RadarStream.TENDER:
         estimated = "; deadline estimated" if c.window_estimated else ""
         if entry.likely_bidders:

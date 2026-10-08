@@ -220,6 +220,16 @@ async def run_radar(
         related_terms=spec.related_terms,
     )
 
+    # A page that tried to steer the system marks every entry it supports (D85).
+    if found.steered_urls:
+        steered = set(found.steered_urls)
+        entries = [
+            e.model_copy(update={"steered": True})
+            if any(c.url in steered for c in e.candidate.claims)
+            else e
+            for e in entries
+        ]
+
     # 6. likely bidders for open tenders: who won similar awards there recently (D81, code only)
     entries, bidder_notes = await likely_bidders(
         entries, as_of=as_of, http=http, concepts=concepts, run=run, settings=settings

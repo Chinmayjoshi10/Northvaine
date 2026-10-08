@@ -188,6 +188,8 @@ class RankedEntry(NorthvaineModel):
     requirement: Literal["stated", "related", "inferred"] = "inferred"
     requirement_ref: str | None = None
     likely_bidders: list[LikelyBidder] = Field(default_factory=list)  # tenders only (D81)
+    # A source page of this entry tried to steer the system; that text was removed (D85).
+    steered: bool = False
 
 
 class RejectedEntry(NorthvaineModel):
@@ -210,6 +212,7 @@ class DiscoverResult(NorthvaineModel):
     leads: int
     upgraded: list[UpgradedPage]
     notes: list[str]
+    steered_urls: list[str] = Field(default_factory=list)  # pages with steering text removed
 
 
 class RadarRun(NorthvaineModel):
