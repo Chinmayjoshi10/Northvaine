@@ -115,6 +115,7 @@ class Settings(BaseSettings):
             "ted": "structured",
             "fts": "structured",
             "worldbank": "structured",
+            "usaspending": "structured",
             "website": "full_text",
             "tavily": "raw_only",
         }
@@ -134,7 +135,7 @@ class Settings(BaseSettings):
     radar_stream_by_event: dict[str, str] = Field(
         default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
     )
-    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts", "worldbank")
+    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts", "worldbank", "usaspending")
     radar_legal_forms: tuple[str, ...] = (
         "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
         "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
@@ -321,6 +322,34 @@ class Settings(BaseSettings):
             "viet nam": "VN",
         }
     )
+    # USAspending contract awards (D90). Keyless public API; all of it is data, not code.
+    usaspending_api_url: str = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+    usaspending_min_interval_seconds: float = Field(default=1.0, ge=0)
+    usaspending_max_pages: int = Field(default=10, ge=1)
+    # Federal award type codes for contracts (definitive, delivery orders, purchase orders...).
+    usaspending_award_type_codes: tuple[str, ...] = ("A", "B", "C", "D")
+    # An award is counted as knowable this many days after its last modification, so a replay
+    # never sees a later amendment (D36).
+    usaspending_availability_lag_days: int = Field(default=3, ge=1)
+    usaspending_default_window_days: int = Field(default=45, ge=1)  # when a query has no start
+    usaspending_title_max_chars: int = Field(default=300, ge=20)
+    # Recipient names carrying these markers are natural persons or redacted: withheld (D76, D90).
+    # Added to ted_natural_person_markers; matched as whole words, case-insensitive.
+    usaspending_natural_person_markers: tuple[str, ...] = (
+        "REDACTED DUE TO PII",
+        "SOLE PROPRIETOR",
+        "SOLE PROPRIETORSHIP",
+        "INDIVIDUAL",
+        "D/B/A",
+        "DBA",
+    )
+    # Recipient values that name no one company: no winner line is rendered for them.
+    usaspending_unnamed_recipient_markers: tuple[str, ...] = (
+        "MULTIPLE RECIPIENTS",
+        "MISCELLANEOUS FOREIGN AWARDEES",
+    )
+    # "SURNAME, GIVEN" or "GIVEN M SURNAME" with no legal form (radar_legal_forms) is a person.
+    usaspending_withhold_person_shaped_names: bool = True
 
     @field_validator("evidence_source_rules")
     @classmethod

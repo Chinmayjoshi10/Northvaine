@@ -824,3 +824,19 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Source quirks handled:** some text fields are UTF-8 read as cp1252 and are repaired;
     country names differ from ISO (`worldbank_country_aliases`); regions give no country; an
     award's "decision date" may be years older than the notice (flagged `extreme_lag`).
+- **D90 — US federal contract awards come from USAspending (`sensors/usaspending.py`).**
+  Keyless `POST /api/v2/search/spending_by_award/`, awards only, enumerable, official tier,
+  `evidence_source_rules["usaspending"] = "structured"`, in `radar_enumerable_sources`.
+  - **Same evidence path:** records render the TED/FTS line format (Title, Buyer, Winner, value
+    in USD, decision date, public award page URL). `structured.py` gained two generic code lines,
+    `NAICS:` and `PSC:` (slots `naics_codes`, `psc_codes`), so the existing path works otherwise
+    unchanged. Buyer is the sub-agency first, then the agency.
+  - **Dates:** `Published` is the record's last-modified date (plus a 3-day lag for
+    `available_at`), so a later amendment never leaks into a replay. The decision date is the
+    base obligation date. The window uses `new_awards_only`.
+  - **Privacy (D76):** recipients that are natural persons are withheld, by markers held in
+    settings, redaction text, and a conservative person-shaped name check. Addresses, contacts,
+    UEI and DUNS are never requested. Limit: the API gives no recipient type in search results,
+    so a sole trader trading under a business-style name is not detected.
+  - **Not done:** `likely_bidders` still queries TED only. US use needs a country-to-sensor
+    setting and `naics:` codes on US tenders, which arrive with the SAM.gov sensor.

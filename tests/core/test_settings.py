@@ -201,6 +201,7 @@ def test_ledger_defaults() -> None:
         "ted": "structured",
         "fts": "structured",
         "worldbank": "structured",
+        "usaspending": "structured",
         "website": "full_text",
         "tavily": "raw_only",
     }
