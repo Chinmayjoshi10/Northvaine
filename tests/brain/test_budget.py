@@ -212,7 +212,9 @@ async def test_a_successful_call_records_one_row(money: Caps) -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("reason", ["transport failure", "timeout", "invalid JSON"])
-async def test_every_failed_attempt_records_a_row_with_zero_cost(money: Caps, reason: str) -> None:
+async def test_every_failed_attempt_records_a_row_with_zero_cost(
+    money: Caps, reason: str
+) -> None:
     """D4: retries are paid for, so they must be visible. A failure never records a guess."""
     session = FakeSession()
     run = RunContext()

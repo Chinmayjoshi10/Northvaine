@@ -51,7 +51,9 @@ def downgrade_0003(clean_settings: None) -> str:
 def test_every_embedding_column_is_sized_to_the_confirmed_dimension(
     section_0003: str, table: str
 ) -> None:
-    expected = f"ALTER TABLE {table} ALTER COLUMN embedding TYPE vector({EMBED_DIM_EXPECTED})"
+    expected = (
+        f"ALTER TABLE {table} ALTER COLUMN embedding TYPE vector({EMBED_DIM_EXPECTED})"
+    )
     assert expected in section_0003, table
 
 
@@ -83,7 +85,8 @@ def test_llm_calls_gains_the_budget_columns(section_0003: str, column: str, type
 def test_llm_calls_gains_provider_with_a_default(section_0003: str) -> None:
     """D15: provenance cannot be reconstructed for rows already written."""
     assert (
-        "ALTER TABLE llm_calls ADD COLUMN provider text NOT NULL DEFAULT 'nebius'" in section_0003
+        "ALTER TABLE llm_calls ADD COLUMN provider text NOT NULL DEFAULT 'nebius'"
+        in section_0003
     )
 
 

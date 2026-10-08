@@ -195,12 +195,8 @@ def test_libpq_only_keys_are_dropped_with_debug_log(
 
 @pytest.mark.parametrize(
     "query",
-    [
-        "ssl=require",
-        "ssl=true&application_name=nv",
-        "prepared_statement_cache_size=0",
-        "server_settings=x&command_timeout=5",
-    ],
+    ["ssl=require", "ssl=true&application_name=nv", "prepared_statement_cache_size=0",
+     "server_settings=x&command_timeout=5"],
 )
 def test_other_keys_pass_through(query: str) -> None:
     result = db.normalize_database_url(url(query=query))
@@ -220,15 +216,11 @@ def test_ssl_and_sslmode_together_raise() -> None:
     ("raw", "expected"),
     [
         (url(), f"postgresql://app_user:***@{HOST}:5432/northvaine"),
-        (
-            url(query="sslmode=require"),
-            f"postgresql://app_user:***@{HOST}:5432/northvaine?sslmode=require",
-        ),
+        (url(query="sslmode=require"), f"postgresql://app_user:***@{HOST}:5432/northvaine"
+         "?sslmode=require"),
         (f"postgresql://app_user@{HOST}/db", f"postgresql://app_user@{HOST}/db"),
-        (
-            f"postgresql://{HOST}/db?user=u&password={PW}",
-            f"postgresql://{HOST}/db?user=u&password=%2A%2A%2A",
-        ),
+        (f"postgresql://{HOST}/db?user=u&password={PW}",
+         f"postgresql://{HOST}/db?user=u&password=%2A%2A%2A"),
     ],
 )
 def test_redact_url(raw: str, expected: str) -> None:
@@ -245,9 +237,8 @@ def test_import_creates_no_engine() -> None:
         "assert d._engine is None; assert 'sqlalchemy.ext.asyncio' not in sys.modules"
     )
     env = {k: v for k, v in os.environ.items() if k.upper() != "DATABASE_URL"}
-    result = subprocess.run(
-        [sys.executable, "-c", code], capture_output=True, text=True, env=env, check=False
-    )
+    result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
+                            env=env, check=False)
     assert result.returncode == 0, result.stderr
 
 
@@ -510,12 +501,8 @@ def test_module_entry_point_calls_main(tmp_path: Path) -> None:
     env = {k: v for k, v in os.environ.items() if k.upper() != "DATABASE_URL"}
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
     result = subprocess.run(
-        [sys.executable, "-m", "northvaine.core.db"],
-        cwd=tmp_path,
-        capture_output=True,
-        text=True,
-        env=env,
-        check=False,
+        [sys.executable, "-m", "northvaine.core.db"], cwd=tmp_path, capture_output=True,
+        text=True, env=env, check=False,
     )
     assert result.returncode == 1
     assert "DATABASE_URL is not set" in result.stderr

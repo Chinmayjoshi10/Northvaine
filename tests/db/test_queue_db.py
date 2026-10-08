@@ -86,7 +86,9 @@ async def test_retry_with_backoff_then_terminal_failure(
     assert r["error"] == "first"
     async with maker() as s:
         wait = (
-            await s.execute(text("SELECT run_after - now() FROM jobs WHERE id = :i"), {"i": job_id})
+            await s.execute(
+                text("SELECT run_after - now() FROM jobs WHERE id = :i"), {"i": job_id}
+            )
         ).scalar_one()
         assert timedelta(seconds=20) < wait <= timedelta(seconds=30)
         assert await queue.claim(s, "w") is None  # not ready yet

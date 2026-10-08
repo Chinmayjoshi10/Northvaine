@@ -75,13 +75,7 @@ def test_step_commands(gate: ModuleType, tmp_path: Path) -> None:
     assert plan["lint"] == [PY, "-m", "ruff", "check", *LINT_PATHS]
     assert plan["migrations render"] == RENDER
     assert plan["unit tests"] == [
-        PY,
-        "-m",
-        "pytest",
-        "-q",
-        "-m",
-        "not live and not db",
-        "--ignore=tests/golden",
+        PY, "-m", "pytest", "-q", "-m", "not live and not db", "--ignore=tests/golden",
     ]
     assert plan["golden set"] == [PY, "-m", "pytest", "-q", "tests/golden"]
 
@@ -102,9 +96,7 @@ def test_real_repo_plan_includes_render() -> None:
 
 
 def test_failing_render_fails_the_gate(
-    gate: ModuleType,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
+    gate: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     _full_repo(tmp_path)
@@ -121,9 +113,7 @@ def test_failing_render_fails_the_gate(
 
 
 def test_all_green_passes(
-    gate: ModuleType,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
+    gate: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     _full_repo(tmp_path)
@@ -133,9 +123,7 @@ def test_all_green_passes(
 
 
 def test_render_runs_without_database_url_and_discards_stdout(
-    gate: ModuleType,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
+    gate: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("DATABASE_URL", "postgresql://user:pw@db.invalid/x")
     monkeypatch.setenv("NV_GATE_MARKER", "kept")
@@ -159,9 +147,7 @@ def test_render_runs_without_database_url_and_discards_stdout(
 
 
 def test_other_steps_inherit_env_and_stdout(
-    gate: ModuleType,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
+    gate: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls: list[dict[str, object]] = []
 

@@ -43,19 +43,13 @@ QUEUE_CONTRACT: dict[str, list[tuple[str, inspect._ParameterKind, object]]] = {
     "heartbeat": [("session", POS, NO), ("job_id", POS, NO), ("worker_id", POS, NO)],
     "complete": [("session", POS, NO), ("job_id", POS, NO), ("worker_id", POS, NO)],
     "fail": [
-        ("session", POS, NO),
-        ("job_id", POS, NO),
-        ("worker_id", POS, NO),
-        ("error", POS, NO),
+        ("session", POS, NO), ("job_id", POS, NO), ("worker_id", POS, NO), ("error", POS, NO),
     ],
     "requeue_stale": [("session", POS, NO), ("lease_seconds", POS, None)],
     "backoff_delay": [("attempts", POS, NO), ("base_seconds", KW, None), ("max_seconds", KW, None)],
     "run_worker": [
-        ("handlers", POS, NO),
-        ("worker_id", POS, NO),
-        ("once", KW, False),
-        ("poll_seconds", KW, 1.0),
-        ("sessionmaker", KW, None),
+        ("handlers", POS, NO), ("worker_id", POS, NO), ("once", KW, False),
+        ("poll_seconds", KW, 1.0), ("sessionmaker", KW, None),
     ],
 }
 
@@ -79,11 +73,7 @@ def test_core_imports_without_database_url(tmp_path: Path) -> None:
     env = {k: v for k, v in os.environ.items() if k.upper() not in hidden}
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
     result = subprocess.run(
-        [sys.executable, "-c", code],
-        cwd=tmp_path,
-        capture_output=True,
-        text=True,
-        env=env,
+        [sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True, env=env,
         check=False,
     )
     assert result.returncode == 0, result.stderr
@@ -111,24 +101,11 @@ def test_async_kinds() -> None:
     for name in ("get_db", "dispose_engine", "check_database"):
         func = getattr(db, name)
         assert inspect.iscoroutinefunction(func) or inspect.isasyncgenfunction(func), name
-    for name in (
-        "enqueue",
-        "claim",
-        "heartbeat",
-        "complete",
-        "fail",
-        "requeue_stale",
-        "run_worker",
-    ):
+    for name in ("enqueue", "claim", "heartbeat", "complete", "fail", "requeue_stale",
+                 "run_worker"):
         assert inspect.iscoroutinefunction(getattr(queue, name)), name
-    for name in (
-        "normalize_database_url",
-        "redact_url",
-        "create_engine",
-        "get_engine",
-        "get_sessionmaker",
-        "main",
-    ):
+    for name in ("normalize_database_url", "redact_url", "create_engine", "get_engine",
+                 "get_sessionmaker", "main"):
         assert not inspect.iscoroutinefunction(getattr(db, name)), name
     assert not inspect.iscoroutinefunction(queue.backoff_delay)
 
@@ -142,10 +119,7 @@ def fields(cls: type) -> list[str]:
 def test_dataclass_fields() -> None:
     assert fields(db.NormalizedUrl) == ["url", "connect_args"]
     assert fields(db.DatabaseStatus) == [
-        "server_version",
-        "server_version_num",
-        "has_vector",
-        "has_pgcrypto",
+        "server_version", "server_version_num", "has_vector", "has_pgcrypto",
     ]
     assert fields(queue.StaleResult) == ["requeued", "failed"]
 
@@ -159,18 +133,9 @@ async def test_dispose_engine_is_noop_without_engine() -> None:
 # --- core models ---------------------------------------------------------------------------
 
 SPEC_EVENT_TYPES = {
-    "facility_opened",
-    "contract_awarded",
-    "tender_published",
-    "hiring_surge",
-    "leadership_change",
-    "product_launch",
-    "market_entry",
-    "trade_measure",
-    "website_change",
-    "reorder_due",
-    "quote_stale",
-    "inbound_question",
+    "facility_opened", "contract_awarded", "tender_published", "hiring_surge",
+    "leadership_change", "product_launch", "market_entry", "trade_measure", "website_change",
+    "reorder_due", "quote_stale", "inbound_question",
 }
 
 
@@ -205,19 +170,8 @@ def test_new_job_defaults_and_extra_fields() -> None:
 
 def test_job_fields() -> None:
     assert list(Job.model_fields) == [
-        "id",
-        "kind",
-        "payload",
-        "status",
-        "attempts",
-        "max_attempts",
-        "run_after",
-        "locked_at",
-        "locked_by",
-        "error",
-        "workspace_id",
-        "created_at",
-        "finished_at",
+        "id", "kind", "payload", "status", "attempts", "max_attempts", "run_after",
+        "locked_at", "locked_by", "error", "workspace_id", "created_at", "finished_at",
     ]
 
 
