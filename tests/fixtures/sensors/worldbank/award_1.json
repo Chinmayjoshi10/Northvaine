@@ -1,0 +1,244 @@
+[
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=0&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "0",
+      "page": "1",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00473621",
+          "noticedate": "07-Oct-2026",
+          "project_id": "P164920"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:57.507742Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=6&os=0&fl=id%2Cnotice_type%2Cnoticedate%2Cnotice_lang_name%2Csubmission_deadline_date%2Cproject_ctry_name%2Cproject_id%2Cproject_name%2Cbid_reference_no%2Cbid_description%2Cprocurement_group%2Cprocurement_method_code%2Cprocurement_method_name%2Ccontact_organization%2Ccontact_ctry_name%2Cnotice_text&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 6,
+      "os": "0",
+      "page": "1",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00473621",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Tanzania",
+          "project_id": "P164920",
+          "project_name": "Tanzania Roads to Inclusion and Socioeconomic Opportunities (RISE) Project",
+          "bid_reference_no": "TZ-TANROADS-463824-CS-CDS",
+          "bid_description": "Consultancy Services to Review and Update of the Laboratory Testing Manual – 2000 (LTM) and the Field-Testing Manual – 2003 (FTM)",
+          "procurement_group": "CS",
+          "procurement_method_code": "CDS",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P164920-Tanzania Roads to Inclusion and Socioeconomic Opportunities (RISE) Project<br/><b>Loan/Credit/TF Info:</b>IDA-68670<br/><b>Bid/Contract Reference No:</b>TZ-TANROADS-463824-CS-CDS<br/><b>Procurement Method:</b>CDS-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Consultancy Services to Review and Update of the Laboratory Testing Manual  2000 (LTM) and the Field-Testing Manual  2003 (FTM)</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/08/20<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>12 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>UNIVERSITY OF PRETORIA (933057)</b><br/>Country: South Africa<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>TZS 1302445953.00<br/><p></p><b>Signed Contract Price</b><br/>TZS 1302445953.00</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Tanzania Shillings (Tanzania Shillings)</div><div class='col-xs-4'>1302445953.00</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00473700",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Ethiopia",
+          "project_id": "P167794",
+          "project_name": "One WASH—Consolidated Water Supply, Sanitation, and Hygiene Account Project (One WASH—CWA)",
+          "bid_reference_no": "ET-OROMIA WERDB-335037-CW-RFQ",
+          "bid_description": "Civil work construction of #67 Springs on Spot (SoS) in four (4) lots in Begi Woreda, Boji Chokorsa Woreda, Leta Sibu, and Yubdo Woreda of West Wollega Zone by Woreda Water and Energy Offices",
+          "procurement_group": "CW",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P167794-One WASHConsolidated Water Supply, Sanitation, and Hygiene Account Project (One WASHCWA)<br/><b>Loan/Credit/TF Info:</b>IDA-64450<br/><b>Bid/Contract Reference No:</b>ET-OROMIA WERDB-335037-CW-RFQ<br/><b>Procurement Method:</b>RFQ-Request for Quotations<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Civil work construction of #4 Springs on Spot (SoS) in f Leta Sibu, Woreda of West Wollega Zone</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2022/02/22<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>60 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>[natural person redacted 1] (1133078)</b><br/>Country: Ethiopia<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>ETB 64000.00<br/><br/>Evaluated Bid Price<br/>ETB 64000.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>ETB 64000.00</div><br/></div></div><div class='row'><div class='col-sm-12'><u><b>Rejected Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>DINKA ABARRA WWGC (1132985)</b><br/>Country: Ethiopia<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>ETB<br/><br/>Evaluated Bid Price<br/>ETB<br/><br/>Reason for Rejection<br/>Non Responsive<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>ALELTU GC PLC (1132992)</b><br/>Country: Ethiopia<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>ETB<br/><br/>Evaluated Bid Price<br/>ETB<br/><br/>Reason for Rejection<br/>Non Responsive<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>[natural person redacted 2] (1133538)</b><br/>Country: Ethiopia<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>ETB<br/><br/>Evaluated Bid Price<br/>ETB<br/><br/>Reason for Rejection<br/>Non Responsive<br/></div></br></div><br/></div></div>"
+        },
+        {
+          "id": "OP00473716",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Sri Lanka",
+          "project_id": "P511605",
+          "project_name": "Sri Lanka Regional Empowerment through Vibrant, Inclusive, and Viable Economies",
+          "bid_reference_no": "LK-UDA-PMU-533423-CS-QCBS",
+          "bid_description": "Hiring Consulting Firm for Baseline Survey for Results Framework",
+          "procurement_group": "CS",
+          "procurement_method_code": "QCBS",
+          "procurement_method_name": "Quality And Cost-Based Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P511605-Sri Lanka Regional Empowerment through Vibrant, Inclusive, and Viable Economies<br/><b>Loan/Credit/TF Info:</b>IDA-79850<br/><b>Bid/Contract Reference No:</b>LK-UDA-PMU-533423-CS-QCBS<br/><b>Procurement Method:</b>QCBS-Quality And Cost-Based Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Consultancy Services for the Baseline Survey and Analytical Support for Project Results Framework Indicators</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/09/25<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>15 Week(s)<br/></div><div class='col-sm-4'><b>Minimum Qualifying Score</b><br/><br/>75</div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>TEAMS (PVT) LTD (1079478)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><b>Scores</b><table width='100%'><tbody><tr><td colspan='2' width='50%'>Technical:</td><td width='30%'>77.62</td></tr><tr><td width='10%'></td><td>Consultant Specific Experience:</td><td>8.86</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td colspan='2'>Financial:</td><td>100</td></tr><tr><td colspan='2'>Combined:</td><td>84.33</td></tr><tr><td colspan='2'>Rank:</td><td>1</td></tr></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>LKR 9812500.00<br/><p></p><b>Signed Contract Price</b><br/>LKR 9812500.00</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Sri Lanka Rupees (Sri Lanka Rupees)</div><div class='col-xs-4'>9812500.00</div></div></div><div class='spacing'></div><div class='spacing'></div></div><div class='row'><div class='col-sm-12'><u><b>Evaluated Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>INFOTECHS IDEAS (PVT) LTD (1105069)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>LKR 19931551.56<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>INTERNATIONAL INSTITUTE FOR DEVELOPMENT TRANSFORMATION (PVT) LTD (1133099)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>LKR 17946500.00<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>SKILLS INTERNATIONAL PVT LTD (1115847)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>LKR 9958270.00<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div></div><div class='row'><div class='col-sm-12'><u><b>Rejected Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>SURVEY RESEARCH LANKA (PVT) LTD (1133059)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/><p></p><b>Reason for Rejection</b><br/>Failure to meet minimum technical score</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>INSTITUTE FOR PARTICIPATORY INTERACTION DEVELOPMENT (IPID) (1133056)</b><br/>Country: Sri Lanka<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/><p></p><b>Reason for Rejection</b><br/>Does not meet Eligibility Requirements</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00473719",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "project_ctry_name": "Congo, Democratic Republic of",
+          "project_id": "P161877",
+          "project_name": "DRC Transport and Connectivity Support Project",
+          "bid_reference_no": "ZR-CI-460952-GO-RFQ",
+          "bid_description": "MOP - Acquisition des véhicules  4x4 pour la Cellule Infrastructures",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P161877-DRC Transport and Connectivity Support Project<br/><b>Loan/Credit/TF Info:</b>IDA-71610; IDA-E0850<br/><b>Bid/Contract Reference No:</b>ZR-CI-460952-GO-RFQ<br/><b>Procurement Method:</b>RFQ-Demande de prix<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Fourniture de quatre (4) vhicules pour le fonctionnement de la Cellule Infrastructures dans le cadre du Projet PACT</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2025/09/15<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>60 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>CFAO MOBILITY (1133539)</b><br/>Country: Congo, Rpublique dmocratique du<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>USD 186000.00<br/><br/>Evaluated Bid Price<br/>USD 186000.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>USD 186000.00</div><br/></div></div><div class='row'><div class='col-sm-12'><u><b>Rejected Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>PRODIMPEX SA (1133543)</b><br/>Country: Congo, Rpublique dmocratique du<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>USD 235900.00<br/><br/>Evaluated Bid Price<br/>USD 235900.00<br/><br/>Reason for Rejection<br/>Does not meet Eligibility Requirements<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>CONGO MOTORS (1133545)</b><br/>Country: Congo, Rpublique dmocratique du<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>USD 252000.00<br/><br/>Evaluated Bid Price<br/>USD 252000.00<br/><br/>Reason for Rejection<br/>Does not meet Eligibility Requirements<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>OLA MOTORS (1133540)</b><br/>Country: Congo, Rpublique dmocratique du<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>USD 202000.00<br/><br/>Evaluated Bid Price<br/>USD 202000.00<br/><br/>Reason for Rejection<br/>Does not meet Eligibility Requirements<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>SOKIN SARL (1133541)</b><br/>Country: Congo, Rpublique dmocratique du<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>USD 260000.00<br/><br/>Evaluated Bid Price<br/>USD 260000.00<br/><br/>Reason for Rejection<br/>Does not meet Eligibility Requirements<br/></div></br></div><br/></div></div>"
+        },
+        {
+          "id": "OP00473738",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Turkiye",
+          "project_id": "P180849",
+          "project_name": "Türkiye Earthquake Recovery and Reconstruction Project",
+          "bid_reference_no": "TERRP-AF/CS-TA-02",
+          "bid_description": "Technical Assistance for Determining The National Building Life Cycle Assessment (LCA)",
+          "procurement_group": "CS",
+          "procurement_method_code": "QCBS",
+          "procurement_method_name": "Quality And Cost-Based Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P180849-Trkiye Earthquake Recovery and Reconstruction Project<br/><b>Loan/Credit/TF Info:</b>COFN-C2590; IBRD-98020<br/><b>Bid/Contract Reference No:</b>TERRP-AF/CS-TA-02<br/><b>Procurement Method:</b>QCBS-Quality And Cost-Based Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>TERRP-AF/CS-TA-02 TECHNICAL ASSISTANCE FOR DETERMINING THE NATIONAL BUILDING LIFE CYCLE ASSESSMENT (LCA)</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/10/06<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>12 Month(s)<br/></div><div class='col-sm-4'><b>Minimum Qualifying Score</b><br/><br/>75</div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>HACETTEPE TEKNOKENT TEKNOLOJI TRANSFERI AR-GE DANIMANLIK ENERJI SALIK EVRE LETIIM SANAYI VE TICARET A.. (936040)</b><br/>Country: Turkiye<br/>Registry ID: 1<br/></div></div><br/><div class='col-sm-12'><b>Beneficial Ownership Details</b><br/>Form Date: 28-SEP-26<br/><div class='table-responsive'><table class='table table-info fixedLayout'><thead><tr><th width='25%'><b>Name</b></th><th width='15%'><b>Nationality</b></th><th width='15%'><b>Residence Country</b></th><th width='45%'><b>Conditions Met</b></th></tr></thead><tbody><tr><td>[beneficial owner redacted]</td></tr></tbody></table></div></div><br/><div class='col-sm-6'><b>Scores</b><table width='100%'><tbody><tr><td colspan='2' width='50%'>Technical:</td><td width='30%'>86.30</td></tr><tr><td width='10%'></td><td>Consultant Specific Experience:</td><td>18</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td colspan='2'>Financial:</td><td>100</td></tr><tr><td colspan='2'>Combined:</td><td>100</td></tr><tr><td colspan='2'>Rank:</td><td>1</td></tr></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>TRY 13767832.80<br/><p></p><b>Signed Contract Price</b><br/>USD 295200.00</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>United States Dollars (United States Dollars)</div><div class='col-xs-4'>295200.00</div></div></div><div class='spacing'></div><div class='spacing'></div></div><div class='row'><div class='col-sm-12'><u><b>Evaluated Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>HEAT GMBH (629056)</b><br/>Country: Germany<br/></div></div><br/><div class='row col-sm-12'><div class='col-sm-6'><b>EKODENGE MHENDSLK (459000)</b><br/>Country: Turkiye<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>TRY 41644888.79<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>ARUP MHENDISLIK VE MAVIRLIK LTD. TI. (666322)</b><br/>Country: Turkiye<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>TRY 35229410.95<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>EPTISA SERVICIOS DE INGENIERIA S.L., (821436)</b><br/>Country: Spain<br/></div></div><br/><div class='row col-sm-12'><div class='col-sm-6'><b>EPTISA MHENDISLIK VE MAVIRLIK HIZ. BIL. N. TIC. LTD. TI. (557341)</b><br/>Country: Turkiye<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>TRY 26855933.94<br/></div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00473774",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Central African Republic",
+          "project_id": "P174620",
+          "project_name": "CAR- Public Sector Digital Governance Project",
+          "bid_reference_no": "140",
+          "bid_description": "Assistance Technique – Cartographie et état des lieux des centres et des archives physiques liés à l’écosystème de l’état civil et l’identification",
+          "procurement_group": "CS",
+          "procurement_method_code": "CDS",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P174620-CAR- Public Sector Digital Governance Project<br/><b>Loan/Credit/TF Info:</b>IDA-D9950<br/><b>Bid/Contract Reference No:</b>140<br/><b>Procurement Method:</b>CDS-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>SERVICE DE CONSULTANT POUR UNE ASSISTANCE TECHNIQUERELATIF A LA REALISATION DE LA CARTOGRAPHIE ET ETAT DES LIEUX DESCENTRES ET DES ARCHIVES PHYSIQUES LIES A L'ECOSYSTEME DE L'ETATCIVIL ET L'IDENTIF</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/10/01<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>180 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>CIVIPOL (1023436)</b><br/>Country: France<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>EUR 313024.00<br/><p></p><b>Signed Contract Price</b><br/>EUR 313024.00</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Euro (Euro)</div><div class='col-xs-4'>313024.00</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:58.348661Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=6&os=6&fl=id%2Cnotice_type%2Cnoticedate%2Cnotice_lang_name%2Csubmission_deadline_date%2Cproject_ctry_name%2Cproject_id%2Cproject_name%2Cbid_reference_no%2Cbid_description%2Cprocurement_group%2Cprocurement_method_code%2Cprocurement_method_name%2Ccontact_organization%2Ccontact_ctry_name%2Cnotice_text&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 6,
+      "os": "6",
+      "page": "2",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00473775",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "project_ctry_name": "Western and Central Africa",
+          "project_id": "P173197",
+          "project_name": "Regional Sahel Pastoralism Support Project II",
+          "bid_reference_no": "13/F/PRAPS II/2026",
+          "bid_description": "Edition de  brochures de charte pastorale (production  de 500 brochures de charte pastorale)",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P173197-Regional Sahel Pastoralism Support Project II<br/><b>Loan/Credit/TF Info:</b>IDA-D7960<br/><b>Bid/Contract Reference No:</b>13/F/PRAPS II/2026<br/><b>Procurement Method:</b>RFQ-Demande de prix<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Edition de brochures de charte pastorale (production de 500 brochures de charte pastorale)</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/08/17<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>15 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>BUREAU LE CONSEILLER (1133697)</b><br/>Country: Mauritanie<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>MRU 270000.00<br/><br/>Evaluated Bid Price<br/>MRU 270000.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>MRU 270000.00</div><br/></div></div>"
+        },
+        {
+          "id": "OP00473809",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "project_ctry_name": "Western and Central Africa",
+          "project_id": "P169594",
+          "project_name": "West Africa Unique Identification for Regional Integration and Inclusion - Phase 2",
+          "bid_reference_no": "NE-WURI - NIGER-550253-GO-DIR",
+          "bid_description": "Acquisition d'accessoires pour les kits d'enregistrement (Logitech Webcam)",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P169594-West Africa Unique Identification for Regional Integration and Inclusion - Phase 2<br/><b>Loan/Credit/TF Info:</b>IDA-66120<br/><b>Bid/Contract Reference No:</b>NE-WURI - NIGER-550253-GO-DIR<br/><b>Procurement Method:</b>RFQ-Demande de prix<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Acquisition daccessoires pour les kits denregistrement (Webcam Logitech)</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/07/16<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>14 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>SIME SARL (675528)</b><br/>Country: Niger<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XOF 29750000<br/><br/>Evaluated Bid Price<br/>XOF 29750000</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>XOF 29750000</div><br/></div></div><div class='row'><div class='col-sm-12'><u><b>Rejected Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>CTI (COMPAGNIE DES TRAVAUX ET D 'INGNIERIE) (1133774)</b><br/>Country: Niger<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XOF<br/><br/>Evaluated Bid Price<br/>XOF<br/><br/>Reason for Rejection<br/>Non Responsive<br/></div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>BCI- INFORMATIQUE (851903)</b><br/>Country: Niger<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XOF<br/><br/>Evaluated Bid Price<br/>XOF<br/><br/>Reason for Rejection<br/>Non Responsive<br/></div></br></div><br/></div></div>"
+        },
+        {
+          "id": "OP00473821",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "project_ctry_name": "Western and Central Africa",
+          "project_id": "P180085",
+          "project_name": "Harmonizing and Improving Statistics in West and Central Africa - Series of Projects Two (HISWACA -",
+          "bid_reference_no": "TD-INSEED-461359-GO-RFQ",
+          "bid_description": "Acquisition des subsistances (Pause café) pour les agents chargés de la cartographie au sein de l'INSEED",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P180085-Harmonizing and Improving Statistics in West and Central Africa - Series of Projects Two (HISWACA - SOP 2)<br/><b>Loan/Credit/TF Info:</b>IDA-E2210<br/><b>Bid/Contract Reference No:</b>TD-INSEED-461359-GO-RFQ<br/><b>Procurement Method:</b>RFQ-Demande de prix<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Acquisition des subsistances pour les agents chargs de la cartographie de lINSEED</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2024/12/02<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>30 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>ETS AL AMAL GROUP (1133801)</b><br/>Country: Tchad<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XAF 23215000<br/><br/>Evaluated Bid Price<br/>XAF 23215000</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>XAF 23215000</div><br/></div></div><div class='row'><div class='col-sm-12'><u><b>Evaluated Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>SOCIETE ALDJABOR (983986)</b><br/>Country: Tchad<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XAF 24395000<br/><br/>Evaluated Bid Price<br/>XAF 24395000</div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>ETS SAHEL (1066852)</b><br/>Country: Tchad<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XAF 23865000<br/><br/>Evaluated Bid Price<br/>XAF 23865000</div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>ETS ALNAHDA (1133802)</b><br/>Country: Tchad<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>XAF 24250000<br/><br/>Evaluated Bid Price<br/>XAF 24250000</div></br></div><br/></div></div>"
+        },
+        {
+          "id": "OP00473694",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Bosnia and Herzegovina",
+          "project_id": "P180409",
+          "project_name": "Geospatial Infrastructure and Valuation Enhancement Project (GIVE)",
+          "bid_reference_no": "BA-FGA-542097-NC-DS-CALL-OFF-A.4.1.1-4-2",
+          "bid_description": "Harmonization data on cadastre",
+          "procurement_group": "NC",
+          "procurement_method_code": "DIR",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P180409-Geospatial Infrastructure and Valuation Enhancement Project (GIVE)<br/><b>Loan/Credit/TF Info:</b>IBRD-96760<br/><b>Bid/Contract Reference No:</b>BA-FGA-542097-NC-DS-CALL-OFF-A.4.1.1-4-2<br/><b>Procurement Method:</b>DIR-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Cadastral scanning and indexing for digital archives (all phases)</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/10/05<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>180 Day(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>GEOMETRIKA D.O.O. GRUDE (590568)</b><br/>Country: Bosnia and Herzegovina<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>BAM 73567.86<br/><br/>Evaluated Bid Price<br/>BAM 73567.86</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>BAM 73567.86</div><br/></div></div>"
+        },
+        {
+          "id": "OP00473709",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "project_ctry_name": "Western and Central Africa",
+          "project_id": "P179078",
+          "project_name": "Health Security Program in Western and Central Africa",
+          "bid_reference_no": "GN-UGPS (GUINEA)-566438-CS-INDV",
+          "bid_description": "Recrutement d’un Expert Sénior en Passation des Marchés pour appuyer l'UGP dans l'exécution des activités de passation des marchés de Travaux pour une période de 6 mois",
+          "procurement_group": "CS",
+          "procurement_method_code": "CDS",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P179078-Health Security Program in Western and Central Africa<br/><b>Loan/Credit/TF Info:</b>IDA-74520<br/><b>Bid/Contract Reference No:</b>GN-UGPS (GUINEA)-566438-CS-INDV<br/><b>Procurement Method:</b>CDS-Slection de consultants par entente directe<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Contrat dExpert Senior en Passation de Marchs pour appuyer lUnit de Gestion du Projet de Gestion des Projets du Ministre de la Sant et de lHygine Publique</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/09/29<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>6 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>[natural person redacted 3] (1126780)</b><br/>Country: Sngal<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>USD 88414.00<br/><p></p><b>Signed Contract Price</b><br/>USD 88414.00</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Dollar des tats-Unis (Dollar des tats-Unis)</div><div class='col-xs-4'>88414.00</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00473726",
+          "notice_type": "Contract Award",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Rwanda",
+          "project_id": "P168551",
+          "project_name": "Rwanda Quality Basic Education for Human Capital Development Project",
+          "bid_reference_no": "RW-MINEDUC-336990-CS-QCBS",
+          "bid_description": "Tender to conduct Feasibility Studies for Construction of Retaining Walls- Huye District",
+          "procurement_group": "CS",
+          "procurement_method_code": "CQS",
+          "procurement_method_name": "Consultant Qualification  Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P168551-Rwanda Quality Basic Education for Human Capital Development Project<br/><b>Loan/Credit/TF Info:</b>IDA-71580<br/><b>Bid/Contract Reference No:</b>RW-MINEDUC-336990-CS-QCBS<br/><b>Procurement Method:</b>CQS-Consultant Qualification Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>CONSULTANCY SERVICES FOR FEASIBILITY AND TECHNICAL STUDY FORCONSTRUCTION OF RETAINING WALLS ON IDENTIFIED SITES</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2024/01/11<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>15 Month(s)<br/></div><div class='col-sm-4'><b>Minimum Qualifying Score</b><br/><br/>85</div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>RECTOS (757972)</b><br/>Country: Rwanda<br/>Registry ID: 102487234<br/></div></div><br/><div class='col-sm-6'><b>Scores</b><table width='100%'><tbody><tr><td colspan='2' width='50%'>Technical:</td><td width='30%'>90.00</td></tr><tr><td width='10%'></td><td>Consultant Specific Experience:</td><td>5</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td colspan='2'>Financial:</td><td>1</td></tr><tr><td colspan='2'>Combined:</td><td>90</td></tr><tr><td colspan='2'>Rank:</td><td>1</td></tr></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>RWF 8000000<br/><p></p><b>Signed Contract Price</b><br/>RWF 8000000</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Rwanda Francs (Rwanda Francs)</div><div class='col-xs-4'>8000000</div></div></div><div class='spacing'></div><div class='spacing'></div></div><div class='row'><div class='col-sm-12'><u><b>Rejected Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>NYANGANWA CONSTRUCTION COMPANY LTD (1125268)</b><br/>Country: Rwanda<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>RWF 7000000<br/><p></p><b>Reason for Rejection</b><br/>Failure to meet minimum technical score</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:58.687882Z"
+  }
+]

@@ -33,7 +33,7 @@ def test_defaults(s: Settings) -> None:
         "tender_published": "tender",
         "contract_awarded": "award",
     }
-    assert s.radar_enumerable_sources == ("ted", "fts")
+    assert s.radar_enumerable_sources == ("ted", "fts", "worldbank", "usaspending")
     assert s.gate_max_tokens == 700
     assert s.skeptic_max_tokens == 600
     assert s.radar_run_budget_usd == Decimal("1.00")

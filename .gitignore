@@ -72,3 +72,4 @@ reports/
 *.docx
 *.xlsx
 private/
+checkpoints/

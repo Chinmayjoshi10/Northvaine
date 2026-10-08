@@ -1,0 +1,420 @@
+[
+  {
+    "method": "POST",
+    "url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+    "request_json": {
+      "filters": {
+        "award_type_codes": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "time_period": [
+          {
+            "start_date": "2026-09-20",
+            "end_date": "2026-09-30",
+            "date_type": "new_awards_only"
+          }
+        ],
+        "naics_codes": [
+          "237310"
+        ]
+      },
+      "fields": [
+        "Award ID",
+        "Recipient Name",
+        "Award Amount",
+        "Awarding Agency",
+        "Awarding Sub Agency",
+        "Description",
+        "Start Date",
+        "End Date",
+        "Base Obligation Date",
+        "Last Modified Date",
+        "NAICS",
+        "PSC",
+        "Contract Award Type",
+        "Place of Performance Country Code",
+        "Place of Performance State Code",
+        "generated_internal_id"
+      ],
+      "limit": 6,
+      "page": 1,
+      "sort": "Base Obligation Date",
+      "order": "desc",
+      "spending_level": "awards"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "spending_level": "awards",
+      "limit": 6,
+      "results": [
+        {
+          "Award ID": "70FBR226P00000026",
+          "Recipient Name": "XENTURIS LLC",
+          "Award Amount": 623750.0,
+          "Awarding Agency": "Department of Homeland Security",
+          "Awarding Sub Agency": "Federal Emergency Management Agency",
+          "Description": "THE PURPOSE OF THIS REQUIREMENT IS TO IMPROVE THE ROADWAY SYSTEM AT THE FEMA ST. THOMAS INITIAL OPERATING FACILITY (STT IOF), ALSO KNOWN AS THE MOSQUITO POINT COMPLEX (MPC), LOCATED IN ST. THOMAS, U.S. VIRGIN ISLANDS. THE WORK INCLUDES SITE ASSESSMEN",
+          "Start Date": "2026-09-30",
+          "End Date": "2026-12-29",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 19:57:59",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Y1PZ",
+            "description": "CONSTRUCTION OF OTHER NON-BUILDING FACILITIES"
+          },
+          "Contract Award Type": "PURCHASE ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "VI",
+          "generated_internal_id": "CONT_AWD_70FBR226P00000026_7022_-NONE-_-NONE-"
+        },
+        {
+          "Award ID": "127EAY26F0008",
+          "Recipient Name": "APEX CONTRACTING & CONSULTING INC",
+          "Award Amount": 1018170.53,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "ANF FY26 ROAD MAINTENANCE CONTRACT",
+          "Start Date": "2026-10-01",
+          "End Date": "2027-06-15",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 16:59:19",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Z1LB",
+            "description": "MAINTENANCE OF HIGHWAYS/ROADS/STREETS/BRIDGES/RAILWAYS"
+          },
+          "Contract Award Type": "BPA CALL",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "CA",
+          "generated_internal_id": "CONT_AWD_127EAY26F0008_12C2_12363N23A4216_12C2"
+        },
+        {
+          "Award ID": "127EAX26P0035",
+          "Recipient Name": "PERKINS CINDERS, INC",
+          "Award Amount": 439727.31,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "0301 Q4 CON FRECOVERY NFSR 24 STABILIZATION AND PRES NEW OUT",
+          "Start Date": "2026-10-09",
+          "End Date": "2027-10-08",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 15:40:31",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Z2LB",
+            "description": "REPAIR OR ALTERATION OF HIGHWAYS/ROADS/STREETS/BRIDGES/RAILWAYS"
+          },
+          "Contract Award Type": "PURCHASE ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "AZ",
+          "generated_internal_id": "CONT_AWD_127EAX26P0035_12C2_-NONE-_-NONE-"
+        },
+        {
+          "Award ID": "127EAX26F0009",
+          "Recipient Name": "LAM INDUSTRIES, LLC",
+          "Award Amount": 69900.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "0304 Q2 CON ENG FSR 516 AND 618 GUARDRAIL NEW OUT",
+          "Start Date": "2026-09-30",
+          "End Date": "2027-02-01",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 09:46:13",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Y1LB",
+            "description": "CONSTRUCTION OF HIGHWAYS, ROADS, STREETS, BRIDGES, AND RAILWAYS"
+          },
+          "Contract Award Type": "BPA CALL",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "AZ",
+          "generated_internal_id": "CONT_AWD_127EAX26F0009_12C2_12363N23A4545_12C2"
+        },
+        {
+          "Award ID": "12445226P0004",
+          "Recipient Name": "DAVID INDUSTRIAL SERVICES, LLC",
+          "Award Amount": 4665000.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "TS ZETA MULTIPLE TRAIL BRIDGES REPLACEMENT PROJECT PHASE 2",
+          "Start Date": "2026-10-12",
+          "End Date": "2027-10-11",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 18:32:23",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Z1LB",
+            "description": "MAINTENANCE OF HIGHWAYS/ROADS/STREETS/BRIDGES/RAILWAYS"
+          },
+          "Contract Award Type": "PURCHASE ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "GA",
+          "generated_internal_id": "CONT_AWD_12445226P0004_12C2_-NONE-_-NONE-"
+        },
+        {
+          "Award ID": "12445126F0053",
+          "Recipient Name": "MULLENIX TRUCKING, INC.",
+          "Award Amount": 293874.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "1158639 ROAD 147-2.7 AND 4.7 RPT FY26-016803",
+          "Start Date": "2026-09-25",
+          "End Date": "2027-02-10",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 10:28:13",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Z2LB",
+            "description": "REPAIR OR ALTERATION OF HIGHWAYS/ROADS/STREETS/BRIDGES/RAILWAYS"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "AR",
+          "generated_internal_id": "CONT_AWD_12445126F0053_12C2_12445123D0035_12C2"
+        }
+      ],
+      "page_metadata": {
+        "page": 1,
+        "hasNext": true,
+        "last_record_unique_id": 363127196,
+        "last_record_sort_value": "1790726400000"
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:00:31.098187Z"
+  },
+  {
+    "method": "POST",
+    "url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+    "request_json": {
+      "filters": {
+        "award_type_codes": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "time_period": [
+          {
+            "start_date": "2026-09-20",
+            "end_date": "2026-09-30",
+            "date_type": "new_awards_only"
+          }
+        ],
+        "naics_codes": [
+          "237310"
+        ]
+      },
+      "fields": [
+        "Award ID",
+        "Recipient Name",
+        "Award Amount",
+        "Awarding Agency",
+        "Awarding Sub Agency",
+        "Description",
+        "Start Date",
+        "End Date",
+        "Base Obligation Date",
+        "Last Modified Date",
+        "NAICS",
+        "PSC",
+        "Contract Award Type",
+        "Place of Performance Country Code",
+        "Place of Performance State Code",
+        "generated_internal_id"
+      ],
+      "limit": 6,
+      "page": 2,
+      "sort": "Base Obligation Date",
+      "order": "desc",
+      "spending_level": "awards"
+    },
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "spending_level": "awards",
+      "limit": 6,
+      "results": [
+        {
+          "Award ID": "1240LU26F0102",
+          "Recipient Name": "COOK & SONS CONSTRUCTION, LLC",
+          "Award Amount": 427308.33,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "CULVERT REPLACEMENTS FOR FOREST ROAD 250.",
+          "Start Date": "2026-10-01",
+          "End Date": "2028-10-31",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 13:42:38",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Y1LB",
+            "description": "CONSTRUCTION OF HIGHWAYS, ROADS, STREETS, BRIDGES, AND RAILWAYS"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "ID",
+          "generated_internal_id": "CONT_AWD_1240LU26F0102_12C2_1240LU25D0006_12C2"
+        },
+        {
+          "Award ID": "1240LT26F0069",
+          "Recipient Name": "CUTTING EDGE CONTRACTORS INC",
+          "Award Amount": 1465767.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "MARY JANE AND TRAIL CANYON TRAILHEADS PARKING IMPROVEMENTS",
+          "Start Date": "2026-09-28",
+          "End Date": "2027-03-28",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 16:32:24",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Y1LB",
+            "description": "CONSTRUCTION OF HIGHWAYS, ROADS, STREETS, BRIDGES, AND RAILWAYS"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "NV",
+          "generated_internal_id": "CONT_AWD_1240LT26F0069_12C2_1240LT25D0007_12C2"
+        },
+        {
+          "Award ID": "1240LR26F0043",
+          "Recipient Name": "SCHLEGEL ENTERPRISES, INC.",
+          "Award Amount": 98333.5,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "REGION 1 ROAD MAINTENANCE AND FOREST MAINTENANCE/SUPPORT. ROAD BLADING AND BRUSHING ON THE REXFORD/FORTINE RANGER DISTRICTS.",
+          "Start Date": "2026-09-30",
+          "End Date": "2027-09-29",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 15:30:41",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "F018",
+            "description": "NATURAL RESOURCES/CONSERVATION- OTHER FOREST/RANGE IMPROVEMENTS (NON-CONSTRUCTION)"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "MT",
+          "generated_internal_id": "CONT_AWD_1240LR26F0043_12C2_1240LQ25D0038_12C2"
+        },
+        {
+          "Award ID": "1240LP26F0064",
+          "Recipient Name": "EPIC CONSTRUCTION & ENVIRONMENTAL INC.",
+          "Award Amount": 176900.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "PSICC FOREST WIDE PASSENGER VEHICLE ROAD MAINTENANCE",
+          "Start Date": "2026-09-30",
+          "End Date": "2027-09-29",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 11:24:43",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "F018",
+            "description": "NATURAL RESOURCES/CONSERVATION- OTHER FOREST/RANGE IMPROVEMENTS (NON-CONSTRUCTION)"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "CO",
+          "generated_internal_id": "CONT_AWD_1240LP26F0064_12C2_1240LQ25D0008_12C2"
+        },
+        {
+          "Award ID": "1240BD26F0052",
+          "Recipient Name": "STONE RIDGE CONSTRUCTION, INC",
+          "Award Amount": 181614.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "PURPOSE OF THE REQUISITION IS TO CONTRACT MAINTENANCE ON NFS ROADS IN THE COEUR D'ALENE RIVER RANGER DISTRICT. ROAD MAINTENANCE INCLUDES BRUSHING, BLOW DOWN CLEARING, GRADING AND FILL REPAIR",
+          "Start Date": "2026-09-30",
+          "End Date": "2027-09-29",
+          "Base Obligation Date": "2026-09-30",
+          "Last Modified Date": "2026-09-30 12:58:33",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "F018",
+            "description": "NATURAL RESOURCES/CONSERVATION- OTHER FOREST/RANGE IMPROVEMENTS (NON-CONSTRUCTION)"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "ID",
+          "generated_internal_id": "CONT_AWD_1240BD26F0052_12C2_1240LQ25D0041_12C2"
+        },
+        {
+          "Award ID": "12445226F0035",
+          "Recipient Name": "MCCALLS GRADING & CONSTRUCTION INC",
+          "Award Amount": 4536521.0,
+          "Awarding Agency": "Department of Agriculture",
+          "Awarding Sub Agency": "Forest Service",
+          "Description": "REPAIRS TO NFSR 99, TABLE ROCK RECREATION SITE, AND BROWN MTN. OVERLOOK ON THE GRANDFATHER RANGER DISTRICT OF THE PISGAH NATIONAL FOREST",
+          "Start Date": "2026-10-15",
+          "End Date": "2027-11-05",
+          "Base Obligation Date": "2026-09-29",
+          "Last Modified Date": "2026-10-06 13:06:14",
+          "NAICS": {
+            "code": "237310",
+            "description": "HIGHWAY, STREET, AND BRIDGE CONSTRUCTION"
+          },
+          "PSC": {
+            "code": "Y1LB",
+            "description": "CONSTRUCTION OF HIGHWAYS, ROADS, STREETS, BRIDGES, AND RAILWAYS"
+          },
+          "Contract Award Type": "DELIVERY ORDER",
+          "Place of Performance Country Code": "USA",
+          "Place of Performance State Code": "NC",
+          "generated_internal_id": "CONT_AWD_12445226F0035_12C2_12445224D0049_12C2"
+        }
+      ],
+      "page_metadata": {
+        "page": 2,
+        "hasNext": true,
+        "last_record_unique_id": 363214721,
+        "last_record_sort_value": "1790640000000"
+      }
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:00:32.705095Z"
+  }
+]

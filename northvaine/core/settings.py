@@ -114,6 +114,8 @@ class Settings(BaseSettings):
         default_factory=lambda: {
             "ted": "structured",
             "fts": "structured",
+            "worldbank": "structured",
+            "usaspending": "structured",
             "website": "full_text",
             "tavily": "raw_only",
         }
@@ -133,7 +135,7 @@ class Settings(BaseSettings):
     radar_stream_by_event: dict[str, str] = Field(
         default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
     )
-    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts")
+    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts", "worldbank", "usaspending")
     radar_legal_forms: tuple[str, ...] = (
         "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
         "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
@@ -242,6 +244,112 @@ class Settings(BaseSettings):
     job_max_attempts: int = Field(default=5, ge=1)
     job_backoff_base_seconds: float = 30.0
     job_backoff_max_seconds: float = 3600.0
+
+    # ---- World Bank sensor (D91): all data, no industry words ----------------------------
+    # Procurement notices API (keyless; CC BY 4.0, attribute the World Bank). Which notice
+    # types are read, and the event each one is, is data: edit the map, not the code.
+    worldbank_api_url: str = "https://search.worldbank.org/api/v2/procnotices"
+    worldbank_notice_url: str = (
+        "https://projects.worldbank.org/en/projects-operations/procurement-detail/{notice_id}"
+    )
+    worldbank_min_interval_seconds: float = Field(default=1.0, ge=0)
+    worldbank_page_size: int = Field(default=200, ge=1, le=1000)
+    worldbank_max_pages: int = Field(default=50, ge=1)
+    worldbank_notice_types: dict[str, str] = Field(
+        default_factory=lambda: {
+            "Invitation for Bids": "tender_published",
+            "Request for Expression of Interest": "tender_published",
+            "Contract Award": "contract_awarded",
+        }
+    )
+    # Notices bought by procurement method codes listed here are dropped: the contract is a
+    # single named person, so there is no organisation to approach and the winner is private.
+    worldbank_skip_method_codes: tuple[str, ...] = ("INDV",)
+    # Direct selection of a consultant often names one person. The winner of an award bought
+    # by one of these methods is withheld whatever the name looks like (D76, D91).
+    worldbank_withhold_winner_method_codes: tuple[str, ...] = ("CDS",)
+    # Names carrying these words are natural persons and are withheld (D76, D91). They are
+    # added to `ted_natural_person_markers`, which keeps applying.
+    worldbank_natural_person_markers: tuple[str, ...] = (
+        "Mr.",
+        "Mrs.",
+        "Ms.",
+        "sole proprietor",
+        "sole proprietorship",
+        "sole trader",
+        "individual consultant",
+        "consultant individuel",
+        "consultor individual",
+        "personne physique",
+        "persona natural",
+    )
+    worldbank_language_codes: dict[str, str] = Field(
+        default_factory=lambda: {
+            "English": "en",
+            "French": "fr",
+            "Spanish; Castilian": "es",
+            "Spanish": "es",
+            "Portuguese": "pt",
+            "Russian": "ru",
+            "Arabic": "ar",
+            "Chinese": "zh",
+        }
+    )
+    # World Bank country names that differ from the ISO short names, lower case -> ISO 3166-1
+    # alpha-2. Regions such as "Western Africa" are deliberately absent: they have no country.
+    worldbank_country_aliases: dict[str, str] = Field(
+        default_factory=lambda: {
+            "lao people's democratic republic": "LA",
+            "congo, democratic republic of": "CD",
+            "congo, republic of": "CG",
+            "egypt, arab republic of": "EG",
+            "gambia, the": "GM",
+            "bahamas, the": "BS",
+            "micronesia, federated states of": "FM",
+            "kyrgyz republic": "KG",
+            "slovak republic": "SK",
+            "west bank and gaza": "PS",
+            "st. lucia": "LC",
+            "st. kitts and nevis": "KN",
+            "st. vincent and the grenadines": "VC",
+            "somalia, federal republic of": "SO",
+            "iran, islamic republic of": "IR",
+            "venezuela, rb": "VE",
+            "yemen, republic of": "YE",
+            "korea, republic of": "KR",
+            "russian federation": "RU",
+            "syrian arab republic": "SY",
+            "viet nam": "VN",
+        }
+    )
+    # USAspending contract awards (D90). Keyless public API; all of it is data, not code.
+    usaspending_api_url: str = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+    usaspending_min_interval_seconds: float = Field(default=1.0, ge=0)
+    usaspending_max_pages: int = Field(default=10, ge=1)
+    # Federal award type codes for contracts (definitive, delivery orders, purchase orders...).
+    usaspending_award_type_codes: tuple[str, ...] = ("A", "B", "C", "D")
+    # An award is counted as knowable this many days after its last modification, so a replay
+    # never sees a later amendment (D36).
+    usaspending_availability_lag_days: int = Field(default=3, ge=1)
+    usaspending_default_window_days: int = Field(default=45, ge=1)  # when a query has no start
+    usaspending_title_max_chars: int = Field(default=300, ge=20)
+    # Recipient names carrying these markers are natural persons or redacted: withheld (D76, D90).
+    # Added to ted_natural_person_markers; matched as whole words, case-insensitive.
+    usaspending_natural_person_markers: tuple[str, ...] = (
+        "REDACTED DUE TO PII",
+        "SOLE PROPRIETOR",
+        "SOLE PROPRIETORSHIP",
+        "INDIVIDUAL",
+        "D/B/A",
+        "DBA",
+    )
+    # Recipient values that name no one company: no winner line is rendered for them.
+    usaspending_unnamed_recipient_markers: tuple[str, ...] = (
+        "MULTIPLE RECIPIENTS",
+        "MISCELLANEOUS FOREIGN AWARDEES",
+    )
+    # "SURNAME, GIVEN" or "GIVEN M SURNAME" with no legal form (radar_legal_forms) is a person.
+    usaspending_withhold_person_shaped_names: bool = True
 
     @field_validator("evidence_source_rules")
     @classmethod

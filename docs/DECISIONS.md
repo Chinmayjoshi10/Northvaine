@@ -784,3 +784,75 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - duplicates.
 
   The result is a proposal for a person to approve. It never edits a client spec.
+- **D91 — World Bank procurement notices sensor (`sensors/worldbank.py`, source `worldbank`).**
+  Open calls and contract awards for World Bank financed projects in 100+ countries, as
+  OFFICIAL documents in the TED and FTS line format, so `radar/structured.py` reads them
+  unchanged. Registered in `SENSOR_NAMES`, `radar_enumerable_sources` and
+  `evidence_source_rules` (`structured`). All settings sit in one `worldbank_*` block.
+  - **Endpoint (confirmed by live keyless probes, 2026-10-09; no official parameter page
+    exists):** `GET https://search.worldbank.org/api/v2/procnotices?format=json&rows=&os=&fl=
+    &notice_type=&qterm=`. Newest first. `rows` is capped at 1000 and `os` at 100000. There is
+    **no date filter** (date parameters are ignored or rejected), so the window is applied here:
+    a stream stops at the first page older than `published_from`, and a window far in the past is
+    found by bisection on `os` with one-row probes. Error bodies come back as HTTP 400, or 200
+    with an `error` key; both raise a body-free `SensorError`.
+  - **Licence:** the dataset "World Bank Procurement Notices" (World Bank Data Catalog 0037795)
+    is Creative Commons Attribution 4.0, classification Public. Commercial reuse is allowed with
+    attribution to the World Bank. The API gives no rate limit; we pace at 1 request a second.
+  - **Notice types read** (`worldbank_notice_types`, data): Invitation for Bids and Request for
+    Expression of Interest are `tender_published`; Contract Award is `contract_awarded`. General
+    Procurement Notices (early plans, no deadline or buyer) are not read.
+  - **Structured vs text:** title, dates, deadline, project, method, group, reference and the
+    implementing agency (`contact_organization`, the buyer) are fields. Winner, winner country,
+    signed price and award date exist only inside the HTML `notice_text` of awards. They are
+    read from the "Awarded ..." section by fixed patterns and written as rendered lines. The
+    rule stays `structured` because every quoted line is deterministic code output, but those
+    four lines are only as good as the pattern: a notice that does not match gets no winner (a
+    note says so), never a guess. An award notice names no buyer, so none is stated.
+  - **Privacy:** `fl=` never asks for `contact_*` fields. The text of open calls is not
+    requested at all (contact names sit unlabelled inside it). Award text is read only in its
+    "Awarded" section: bidder addresses, evaluated and rejected bidders and beneficial-owner
+    tables are never read. Individual-consultant contracts (`INDV`) are dropped. Winners of
+    direct-selection consultancies (`CDS`) are always withheld, since they are often one
+    person. Other names pass through `withhold_natural_persons` (D76) with
+    `worldbank_natural_person_markers` added. **Limit:** a sole trader named like a company
+    ("X & FRIENDS SME", a bare personal name under a goods method) cannot be detected.
+  - **Not built:** the Projects API (`/api/v3/projects`, CC BY 4.0, borrower, implementing
+    agency, amount, board approval date, abstract). Projects are the earliest signal, but no
+    existing event type fits "project approved", and one source name cannot be `structured` for
+    notices and `full_text` for abstracts. Follow-up: a new event type plus a second sensor name.
+  - **Source quirks handled:** some text fields are UTF-8 read as cp1252 and are repaired;
+    country names differ from ISO (`worldbank_country_aliases`); regions give no country; an
+    award's "decision date" may be years older than the notice (flagged `extreme_lag`).
+- **D90 — US federal contract awards come from USAspending (`sensors/usaspending.py`).**
+  Keyless `POST /api/v2/search/spending_by_award/`, awards only, enumerable, official tier,
+  `evidence_source_rules["usaspending"] = "structured"`, in `radar_enumerable_sources`.
+  - **Same evidence path:** records render the TED/FTS line format (Title, Buyer, Winner, value
+    in USD, decision date, public award page URL). `structured.py` gained two generic code lines,
+    `NAICS:` and `PSC:` (slots `naics_codes`, `psc_codes`), so the existing path works otherwise
+    unchanged. Buyer is the sub-agency first, then the agency.
+  - **Dates:** `Published` is the record's last-modified date (plus a 3-day lag for
+    `available_at`), so a later amendment never leaks into a replay. The decision date is the
+    base obligation date. The window uses `new_awards_only`.
+  - **Privacy (D76):** recipients that are natural persons are withheld, by markers held in
+    settings, redaction text, and a conservative person-shaped name check. Addresses, contacts,
+    UEI and DUNS are never requested. Limit: the API gives no recipient type in search results,
+    so a sole trader trading under a business-style name is not detected.
+  - **Not done:** `likely_bidders` still queries TED only. US use needs a country-to-sensor
+    setting and `naics:` codes on US tenders, which arrive with the SAM.gov sensor.
+- **D92 — Small classifier experiment: not a gate pre-filter now (research only, no product change).**
+  Question: can a small trained classifier imitate or pre-filter the Nemotron gate?
+  - **Data:** the three recorded runs give only 98 LLM-decided gate rows: 89 passed, 9
+    `not_a_buyer`, and no competitor, reseller or publisher rows. 41 more were rejected by code
+    (all `unidentified`) and are not labels.
+  - **Result:** TF-IDF and embedding + logistic regression did not beat "always passed" (90.8%
+    agreement). At a threshold keeping 95% of passed rows they skip about 4 to 6% of gate calls;
+    at 99% kept, 0%. A gate call costs under a tenth of a cent, so the saving is negligible.
+  - **Recommendation:** no pre-filter now. Reconsider after about 500 real gate decisions that
+    include the other verdicts (50 or more per rejection class), with a spot-check of skipped
+    candidates. The better use is an owner-rating classifier in the learning loop (after about
+    100 ratings per workspace).
+  - **"JEV":** most likely Jev by TypeSafe AI, a proprietary hosted classifier API (new signups
+    paused 22 Sep 2026, no open weights, licence unknown). Not run and not adopted.
+  - **Left behind:** `scripts/experiments/gate_classifier.py`, an `experiments` dependency group
+    (never in runtime deps) and `docs/research/classifier_experiment.md`.

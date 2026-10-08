@@ -1,0 +1,519 @@
+[
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=0&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "0",
+      "page": "1",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00473621",
+          "noticedate": "07-Oct-2026",
+          "project_id": "P164920"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:59.121990Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=50000&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "50000",
+      "page": "50001",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00364447",
+          "noticedate": "18-Jun-2025",
+          "project_id": "P145196"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:59.764990Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=25000&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "25000",
+      "page": "25001",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00419695",
+          "noticedate": "07-Jan-2026",
+          "project_id": "P160865"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:00.378284Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=12500&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "12500",
+      "page": "12501",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00446826",
+          "noticedate": "23-May-2026",
+          "project_id": "P173240"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:00.920685Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=18750&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "18750",
+      "page": "18751",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00433326",
+          "noticedate": "17-Mar-2026",
+          "project_id": "P180163"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:02.233658Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=21875&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "21875",
+      "page": "21876",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00426170",
+          "noticedate": "11-Feb-2026",
+          "project_id": "P172479"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:02.838383Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20312&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20312",
+      "page": "20313",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429590",
+          "noticedate": "27-Feb-2026",
+          "project_id": "P169161"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:03.276330Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=19531&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "19531",
+      "page": "19532",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00431736",
+          "noticedate": "10-Mar-2026",
+          "project_id": "P173197"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:03.859406Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=19921&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "19921",
+      "page": "19922",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00430559",
+          "noticedate": "05-Mar-2026",
+          "project_id": "P164336"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:04.487603Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20116&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20116",
+      "page": "20117",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00430023",
+          "noticedate": "03-Mar-2026",
+          "project_id": "P166013"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:05.045217Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20214&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20214",
+      "page": "20215",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429807",
+          "noticedate": "02-Mar-2026",
+          "project_id": "P165129"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:05.677677Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20165&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20165",
+      "page": "20166",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429897",
+          "noticedate": "02-Mar-2026",
+          "project_id": "P173197"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:06.287928Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20140&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20140",
+      "page": "20141",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00430160",
+          "noticedate": "03-Mar-2026",
+          "project_id": "P175977"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:06.847658Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20152&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20152",
+      "page": "20153",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429954",
+          "noticedate": "02-Mar-2026",
+          "project_id": "P171613"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:07.517846Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20146&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20146",
+      "page": "20147",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00430162",
+          "noticedate": "03-Mar-2026",
+          "project_id": "P175977"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:08.074258Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20149&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20149",
+      "page": "20150",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429859",
+          "noticedate": "02-Mar-2026",
+          "project_id": "P172350"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:08.824258Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=20147&fl=id%2Cnoticedate&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "20147",
+      "page": "20148",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429752",
+          "noticedate": "02-Mar-2026",
+          "project_id": "P162302"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:09.334955Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=6&os=20147&fl=id%2Cnotice_type%2Cnoticedate%2Cnotice_lang_name%2Csubmission_deadline_date%2Cproject_ctry_name%2Cproject_id%2Cproject_name%2Cbid_reference_no%2Cbid_description%2Cprocurement_group%2Cprocurement_method_code%2Cprocurement_method_name%2Ccontact_organization%2Ccontact_ctry_name%2Cnotice_text&notice_type=Contract+Award",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 6,
+      "os": "20147",
+      "page": "3358",
+      "total": "311268",
+      "procnotices": [
+        {
+          "id": "OP00429752",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Pakistan",
+          "project_id": "P162302",
+          "project_name": "Khyber Pakhtunkhwa Revenue Mobilization and Public Resource Management",
+          "bid_reference_no": "PK-FD-KP-527747-GO-RFQ",
+          "bid_description": "Procurement Of Global Navigation Satalite System (GNSS) Equipmen",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P162302-Khyber Pakhtunkhwa Revenue Mobilization and Public Resource Management<br/><b>Loan/Credit/TF Info:</b>IDA-64210<br/><b>Bid/Contract Reference No:</b>PK-FD-KP-527747-GO-RFQ<br/><b>Procurement Method:</b>RFQ-Request for Quotations<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Procurement Of Global Navigation Satallite System (GNSS) Equipment</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/02/17<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>1 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>CHAUDHARY BROTHERS & CO. (1064046)</b><br/>Country: Pakistan<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>PKR 11955000.00<br/><br/>Evaluated Bid Price<br/>PKR 11955000.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>PKR 11955000.00</div><br/></div></div>"
+        },
+        {
+          "id": "OP00429755",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Indonesia",
+          "project_id": "P173249",
+          "project_name": "Indonesia Disaster Risk Finance & Insurance",
+          "bid_reference_no": "ID-IEF-522238-CS-CDS",
+          "bid_description": "Procurement Specialist 2",
+          "procurement_group": "CS",
+          "procurement_method_code": "CDS",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P173249-Indonesia Disaster Risk Finance & Insurance<br/><b>Loan/Credit/TF Info:</b>TF-B4675<br/><b>Bid/Contract Reference No:</b>ID-IEF-522238-CS-CDS<br/><b>Procurement Method:</b>CDS-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Procurement Specialist 2</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2025/10/03<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>6 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>[natural person redacted 4] (972629)</b><br/>Country: Indonesia<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>IDR 63600000<br/><p></p><b>Signed Contract Price</b><br/>IDR 63600000</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Indonesian Rupiah (Indonesian Rupiah)</div><div class='col-xs-4'>63600000</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00429859",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Mozambique",
+          "project_id": "P172350",
+          "project_name": "Digital Governance and Economy Project",
+          "bid_reference_no": "MZ-MJACER-519109-NC-DIR",
+          "bid_description": "Call Center Services for DNRM",
+          "procurement_group": "NC",
+          "procurement_method_code": "DIR",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P172350-Digital Governance and Economy Project<br/><b>Loan/Credit/TF Info:</b>IDA-D9060<br/><b>Bid/Contract Reference No:</b>MZ-MJACER-519109-NC-DIR<br/><b>Procurement Method:</b>DIR-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Servicos de Call Centre</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2026/01/12<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>12 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>MOVITEL SA (1049919)</b><br/>Country: Mozambique<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Bid Price at Opening<br/>MZN 70453106.00<br/><br/>Evaluated Bid Price<br/>MZN 70453106.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>MZN 70453106.00</div><br/></div></div>"
+        },
+        {
+          "id": "OP00429935",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Djibouti",
+          "project_id": "P170014",
+          "project_name": "Djibouti Empowering Communities for Better Nutrition",
+          "bid_reference_no": "COMP3/C8/2024",
+          "bid_description": "Recrutement d'un spécialiste en Suivi evaluation",
+          "procurement_group": "CS",
+          "procurement_method_code": "CDS",
+          "procurement_method_name": "Direct Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P170014-Djibouti Empowering Communities for Better Nutrition<br/><b>Loan/Credit/TF Info:</b>TF-B8148<br/><b>Bid/Contract Reference No:</b>COMP3/C8/2024<br/><b>Procurement Method:</b>CDS-Direct Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Recrutement d'un consultant en Suivi evaluation</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2025/10/01<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>12 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>[natural person redacted 5] (1064408)</b><br/>Country: Djibouti<br/></div></div><br/><div class='col-sm-6'><table width='100%'><tbody></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>DJF 4732860<br/><p></p><b>Signed Contract Price</b><br/>DJF 4732860</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>Djibouti Francs (Djibouti Francs)</div><div class='col-xs-4'>4732860</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        },
+        {
+          "id": "OP00429946",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Lebanon",
+          "project_id": "P163476",
+          "project_name": "Lebanon Health Resilience Project",
+          "bid_reference_no": "LB-MOPH-493859-GO-RFB",
+          "bid_description": "Procurement and Installation of Medical Equipment",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P163476-Lebanon Health Resilience Project<br/><b>Loan/Credit/TF Info:</b>IBRD-87710; TF-A5424<br/><b>Bid/Contract Reference No:</b>LB-MOPH-493859-GO-RFB<br/><b>Procurement Method:</b>RFB-Request for Bids<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>Procurement of Laparoscopy</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2025/10/15<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>3 Month(s)<br/></div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>JUDEX MEDICALS (1002649)</b><br/>Country: Lebanon<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Evaluation Scores<br/><br/><br/>Bid Price at Opening<br/>USD<br/><br/>Evaluated Bid Price<br/>USD 2407355.00</div></br></div><div class='col-sm-5'></div><div class='col-sm-7'>Signed Contract price<br/>USD 1472000.00</div><br/></div><div class='col-sm-12'><b>Beneficial Ownership Details</b></div><br/><div class='col-sm-12'><b>JUDEX MEDICALS (1002649)</b><br/>Form Date: 05-NOV-25<br/><div class='table-responsive'><table class='table table-info fixedLayout'><thead><tr><th width='25%'><b>Name</b></th><th width='15%'><b>Nationality</b></th><th width='15%'><b>Residence Country</b></th><th width='45%'><b>Conditions Met</b></th></tr></thead><tbody><tr><td>[beneficial owner redacted]</td></tr></tbody></table></div></div><br/></div><div class='row'><div class='col-sm-12'><u><b>Evaluated Bidder(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>INTERMEDIC (1031307)</b><br/>Country: Lebanon<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Evaluation Scores<br/><br/><br/>Bid Price at Opening<br/>USD<br/><br/>Evaluated Bid Price<br/>USD 2354050.00</div></br></div><br/></div><div class='row col-sm-12'><div class='col-sm-5'><div class='row col-sm-12'><b>SAMIR HANI & CO (1002664)</b><br/>Country: Lebanon<br/></br></div></div><div class='col-sm-7'><div class='row col-sm-12'>Evaluation Scores<br/><br/><br/>Bid Price at Opening<br/>USD<br/><br/>Evaluated Bid Price<br/>USD 2615036.00</div></br></div><br/></div></div>"
+        },
+        {
+          "id": "OP00429954",
+          "notice_type": "Contract Award",
+          "noticedate": "02-Mar-2026",
+          "notice_lang_name": "English",
+          "project_ctry_name": "Cote d'Ivoire",
+          "project_id": "P171613",
+          "project_name": "Cote d'Ivoire Agri-Food Sector Development Project",
+          "bid_reference_no": "CI-PDC2V-444049-CS-CQS",
+          "bid_description": "Sélection d'un cabinet pour réaliser l'étude d'impact environnemental et social (EIES) des travaux de réhabilitation de la station d'alevinage d'Abengourou",
+          "procurement_group": "CS",
+          "procurement_method_code": "CQS",
+          "procurement_method_name": "Consultant Qualification  Selection",
+          "notice_text": "<div class='row col-sm-12'><h4>Contract Award</h4><p><b>Project:</b>P171613-Cote d'Ivoire Agri-Food Sector Development Project<br/><b>Loan/Credit/TF Info:</b>IDA-69090<br/><b>Bid/Contract Reference No:</b>CI-PDC2V-444049-CS-CQS<br/><b>Procurement Method:</b>CQS-Consultant Qualification Selection<br/><b>Scope of Contract:</b><span class='desc-word-wrap'>REALISATION DE L’ETUDE D’IMPACT ENVIRONNEMENTAL ET SOCIAL (EIES) DU SOUS-PROJET DE REHABILITATION DE LA STATION D’ALEVINAGE D’ASSOUMOUKRO （ABENGOUROU）</span><br/><b>Notice Version No:</b>0</p><br/></div><div class='row'><div class='col-sm-4'><b>Date Notification of Award Issued</b><br/>(YYYY/MM/DD)<br/>2024/09/27<br/></div><div class='col-sm-4'><b>Duration of Contract</b><br/><br/>45 Day(s)<br/></div><div class='col-sm-4'><b>Minimum Qualifying Score</b><br/><br/>50</div></div><div class='spacing'></div><div class='spacing'></div><div class='row'><div class='col-sm-12'><u><b>Awarded Firm(s):</b></u></div><div class='spacing'></div><div class='spacing'></div><div class='row col-sm-12'><div class='row col-sm-12'><div class='col-sm-6'><b>GROUPE EFORT (1063976)</b><br/>Country: Cote d'Ivoire<br/></div></div><br/><div class='col-sm-12'><b>Beneficial Ownership Details</b><br/>Form Date: 20-SEP-24<br/><div class='table-responsive'><table class='table table-info fixedLayout'><thead><tr><th width='25%'><b>Name</b></th><th width='15%'><b>Nationality</b></th><th width='15%'><b>Residence Country</b></th><th width='45%'><b>Conditions Met</b></th></tr></thead><tbody><tr><td>[beneficial owner redacted]</td></tr></tbody></table></div></div><br/><div class='row col-sm-12'><div class='col-sm-6'><b>ENVIS INGENIERIE (881302)</b><br/>Country: Cote d'Ivoire<br/></div></div><br/><div class='col-sm-12'><b>Beneficial Ownership Details</b><br/>Form Date: 04-MAR-24<br/><div class='table-responsive'><table class='table table-info fixedLayout'><thead><tr><th width='25%'><b>Name</b></th><th width='15%'><b>Nationality</b></th><th width='15%'><b>Residence Country</b></th><th width='45%'><b>Conditions Met</b></th></tr></thead><tbody><tr><td>[beneficial owner redacted]</td></tr></tbody></table></div></div><br/><div class='col-sm-6'><b>Scores</b><table width='100%'><tbody><tr><td colspan='2' width='50%'>Technical:</td><td width='30%'>94.00</td></tr><tr><td width='10%'></td><td>Consultant Specific Experience:</td><td>16</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td>[beneficial owner redacted]</td></tr><tr><td colspan='2'>Financial:</td><td>100</td></tr><tr><td colspan='2'>Combined:</td><td>94</td></tr><tr><td colspan='2'>Rank:</td><td>1</td></tr></tbody></table></div><div class='col-sm-6'><p></p><b>Final Evaluation Price</b><br/>XOF 49350000<br/><p></p><b>Signed Contract Price</b><br/>XOF 49350000</div><div class='row col-sm-12'><div class='col-xs-12'><b>Price:</b><br/></div></div><div class='row col-sm-12'><div class='col-xs-4'>Currency:</div><div class='col-xs-4'>Amount:</div></div><div class='row col-sm-12'><div class='col-xs-4'>C.F.A. Francs BCEAO (C.F.A. Francs BCEAO)</div><div class='col-xs-4'>49350000</div></div></div><div class='spacing'></div><div class='spacing'></div></div>"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:08:09.921014Z"
+  }
+]
