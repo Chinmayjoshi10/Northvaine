@@ -108,51 +108,61 @@ async def _workspace(session: Any, name: str) -> UUID:
 async def _documents(
     session: Any, docs: Sequence[EvidenceDocument]
 ) -> tuple[dict[UUID, UUID], int]:
-    """Insert each document once; returns run id -> stored id, and how many were new."""
-    insert = _text(
-        "INSERT INTO documents (id, source_id, url, content_hash, title, text, available_at, "
-        "group_key, meta) VALUES (:id, :source_id, :url, :hash, :title, :text, :available_at, "
-        ":group_key, CAST(:meta AS jsonb)) ON CONFLICT DO NOTHING RETURNING id"
-    )
-    lookup = _text("SELECT id FROM documents WHERE url = :url AND content_hash = :hash")
-    sources: dict[str, UUID] = {}
-    ids: dict[UUID, UUID] = {}
-    inserted = 0
+    """Insert each document once, in one batch; returns run id -> stored id, and how many were
+    new. A page already stored under the same (url, content hash) keeps its row."""
+    unique: dict[UUID, tuple[EvidenceDocument, str]] = {}
     for doc in docs:
         if doc.workspace_id is not None:
             raise ValueError("private documents are parked: persist_run saves public documents")
-        if doc.id in ids:
-            continue
+        unique.setdefault(doc.id, (doc, content_hash(doc.text)))
+    if not unique:
+        return {}, 0
+    sources: dict[str, UUID] = {}
+    for doc, _ in unique.values():
         if doc.source_name not in sources:
             sources[doc.source_name] = await ensure_source(
                 session, doc.source_name, _tier(doc.source_name)
             )
-        digest = content_hash(doc.text)
-        row = (
-            await session.execute(
-                insert,
-                {
-                    "id": doc.id,
-                    "source_id": sources[doc.source_name],
-                    "url": doc.url,
-                    "hash": digest,
-                    "title": doc.title,
-                    "text": doc.text,
-                    "available_at": doc.available_at,
-                    "group_key": doc.group_key,
-                    "meta": _json({**doc.meta, "source": doc.source_name}),
-                },
-            )
-        ).first()
-        if row is not None:
-            inserted += 1
-            ids[doc.id] = row[0]
-            continue
-        stored = (await session.execute(lookup, {"url": doc.url, "hash": digest})).first()
+    pairs = sorted({(doc.url, digest) for doc, digest in unique.values()})
+    lookup = _text(
+        "SELECT d.id, d.url, d.content_hash FROM documents d "
+        "JOIN unnest(CAST(:urls AS text[]), CAST(:hashes AS text[])) AS p(url, hash) "
+        "ON d.url = p.url AND d.content_hash = p.hash"
+    )
+    params = {"urls": [u for u, _ in pairs], "hashes": [h for _, h in pairs]}
+    before = {(r.url, r.content_hash): r.id for r in (await session.execute(lookup, params))}
+    rows = [
+        {
+            "id": doc.id,
+            "source_id": sources[doc.source_name],
+            "url": doc.url,
+            "hash": digest,
+            "title": doc.title,
+            "text": doc.text,
+            "available_at": doc.available_at,
+            "group_key": doc.group_key,
+            "meta": _json({**doc.meta, "source": doc.source_name}),
+        }
+        for doc, digest in unique.values()
+        if (doc.url, digest) not in before
+    ]
+    if rows:
+        await session.execute(
+            _text(
+                "INSERT INTO documents (id, source_id, url, content_hash, title, text, "
+                "available_at, group_key, meta) VALUES (:id, :source_id, :url, :hash, :title, "
+                ":text, :available_at, :group_key, CAST(:meta AS jsonb)) ON CONFLICT DO NOTHING"
+            ),
+            rows,
+        )
+    after = {(r.url, r.content_hash): r.id for r in (await session.execute(lookup, params))}
+    ids: dict[UUID, UUID] = {}
+    for doc_id, (doc, digest) in unique.items():
+        stored = after.get((doc.url, digest))
         if stored is None:  # the id was taken by a different page: keep that row's meaning
-            raise ValueError(f"document id {doc.id} already names another page")
-        ids[doc.id] = stored[0]
-    return ids, inserted
+            raise ValueError(f"document id {doc_id} already names another page")
+        ids[doc_id] = stored
+    return ids, len(after) - len(before)
 
 
 _MATCH_SCHEME = "name_country"  # the normalised name and country key (D58, D88)

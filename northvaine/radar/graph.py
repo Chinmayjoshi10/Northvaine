@@ -239,11 +239,11 @@ async def save_links(
         "valid_from = LEAST(links.valid_from, EXCLUDED.valid_from), "
         "available_at = LEAST(links.available_at, EXCLUDED.available_at)"
     )
+    rows = []
     for link in links:
         src = (link.src_kind, link.src_id)
         dst = (link.dst_kind, link.dst_id)
-        await session.execute(
-            insert,
+        rows.append(
             {
                 "workspace_id": workspace_id,
                 "src_kind": link.src_kind.value,
@@ -260,8 +260,9 @@ async def save_links(
                 "fingerprint": link_fingerprint(
                     src, dst, link.relation, link.derivation, workspace_id
                 ),
-            },
+            }
         )
+    await session.execute(insert, rows)  # one batched statement
     return len({(link.src_id, link.dst_id, link.relation, link.derivation) for link in links})
 
 

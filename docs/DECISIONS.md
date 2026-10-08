@@ -731,3 +731,56 @@ brief with Claude's five corrections (docs/COLLAB.md).
     decision rows keep no reason text.
   - **Not saved yet:** events, because the radar's seeded concepts are not `event_concepts`
     rows. This is what feedback, outcomes and the learning loop attach to.
+- **D87 — Every lead records which search found it, and events are saved.** Discover maps each
+  document to the queries that found it (`found_by`, "sensor:index"). A run's decisions store
+  its sources, those refs, and stable `query_keys`. A query key is the sensor plus a hash of its
+  text; a code-only query uses its fixed parameters, never its dates. Events are saved with their
+  seeded concept mapped by label to the stored row, and linked to their company. Without this, a
+  rating could not credit the search that paid. Saving is batched: one statement per table
+  instead of a round trip per row.
+- **D88 — Graph v0: the web lives in Postgres, every line backed by verified claims.**
+  - **Migration 0006:** `company_identifiers` (scheme, value), where companies are found by the
+    `name_country` key first; and `links`. A link has two ends among company, event and
+    procedure ('<source>:<the source's own id>'), a relation, a derivation (stated, related or
+    inferred), non-empty verified `claim_ids` (checked by code), a confidence for inferred links
+    only, two times (`valid_from`, `available_at`), and an idempotent fingerprint, with more
+    evidence merged into the same line.
+  - **A run writes:**
+    - stated company -[buyer|winner]-> procedure, from official records;
+    - inferred procedure -[likely_bidder]-> company, with the verified winner lines as proof,
+      and confidence = wins / (wins + 1), capped at 0.9 and stated in `details`.
+  - **No model ever proposes a line;** graph frameworks (GraphRAG and similar) were rejected for
+    that reason (docs/research/graph_connect_the_dots.md).
+  - **Reading:** `neighbourhood()` returns nodes and edges, each edge with its quotes and URLs,
+    and can hide lines not yet knowable at `as_of`.
+- **D89 — Learning loop v0, and labels say who gave them.**
+  - **Migration 0006:** `feedback.source`, `feedback.weight` and `outcomes.source`
+    (owner, simulated or judge).
+  - **Maths (`radar/learning.py`):** weighted Beta posteriors for query, source and country
+    yields. A query shrinks to its source, and a source to the pooled rate. `wrong_facts` moves
+    source reliability only; `later` moves nothing.
+  - **Strategy versions (`radar/strategy.py`):** each version writes `beliefs` and
+    `strategy_versions` rows, with a trust region per version. Rollback is loading an earlier
+    version. A query is paused, never deleted, when it is very probably below its source with
+    enough labels.
+  - **Behaviour:**
+    - a strategy with enough labels chooses each run's searches by Thompson sampling, with an
+      exploration floor; propensities are logged;
+    - the learned yield breaks ranking ties only;
+    - one brief slot is a uniform random pick from below the cut (`radar_exploration_slots`,
+      propensity 1/m), shown as "exploration pick", and never counted as approachable.
+  - **Simulation:** owner labels and simulated labels never mix. The SIMULATED owner study
+    (`eval/simulate.py`, `tasks.py learn-sim`, owners as data in tests/fixtures/owners) compares
+    learning with a random choice on the same budget and with all searches. On the stone
+    recording, learning beat random for owners whose taste is learnable. On cold-chain there was
+    no difference, because the pool is uniform. Starting numbers are guesses, to be re-set from
+    real labels.
+- **D93 — Local-language searches are proposed, never applied.** `radar/expand.py` makes one
+  fast-tier call (`query_expand.v1`; the seller's existing words and searches are fenced as
+  untrusted) for searches and "what we sell" words in the target languages. Code drops:
+  - targets not asked for;
+  - web addresses and odd lengths;
+  - text aimed at AI systems (D85);
+  - duplicates.
+
+  The result is a proposal for a person to approve. It never edits a client spec.
