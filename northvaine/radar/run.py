@@ -28,6 +28,7 @@ from northvaine.core.models import (
     LedgerResult,
 )
 from northvaine.core.settings import Settings, get_settings
+from northvaine.radar.bidders import likely_bidders
 from northvaine.radar.brief import rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
@@ -210,7 +211,30 @@ async def run_radar(
         )
 
     # 5. rank (code only) and assemble the run record
-    entries = rank(passed, as_of=as_of, settings=settings, offer=spec.offer)
+    entries = rank(
+        passed,
+        as_of=as_of,
+        settings=settings,
+        offer=spec.offer,
+        terms=spec.offer_terms,
+        related_terms=spec.related_terms,
+    )
+
+    # A page that tried to steer the system marks every entry it supports (D85).
+    if found.steered_urls:
+        steered = set(found.steered_urls)
+        entries = [
+            e.model_copy(update={"steered": True})
+            if any(c.url in steered for c in e.candidate.claims)
+            else e
+            for e in entries
+        ]
+
+    # 6. likely bidders for open tenders: who won similar awards there recently (D81, code only)
+    entries, bidder_notes = await likely_bidders(
+        entries, as_of=as_of, http=http, concepts=concepts, run=run, settings=settings
+    )
+    notes.extend(bidder_notes)
     return RadarRun(
         client_id=spec.id,
         offer=spec.offer,

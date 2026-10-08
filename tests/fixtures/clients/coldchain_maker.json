@@ -1,18 +1,152 @@
 {
   "id": "coldchain_maker",
   "offer": "EU maker of refrigeration and cold-room equipment selling across the EU.",
-  "markets": ["DE", "FR", "IT", "ES"],
+  "markets": [
+    "DE",
+    "FR",
+    "IT",
+    "ES"
+  ],
   "sensors": {
     "ted": [
-      {"kinds": ["tender_published"], "codes": ["cpv:42500000", "cpv:42510000"], "countries": ["DE", "FR", "IT", "ES"], "published_from": "2026-02-01", "published_to": "2026-05-31", "max_results": 10},
-      {"kinds": ["contract_awarded"], "codes": ["cpv:42500000", "cpv:42510000"], "countries": ["DE", "FR", "IT", "ES"], "published_from": "2026-06-01", "published_to": "2026-09-15", "max_results": 10},
-      {"kinds": ["tender_published"], "codes": ["cpv:45331000", "cpv:45331200"], "countries": ["DE", "FR", "IT", "ES"], "published_from": "2026-02-01", "published_to": "2026-05-31", "max_results": 10},
-      {"kinds": ["contract_awarded"], "codes": ["cpv:45331000", "cpv:45331200"], "countries": ["DE", "FR", "IT", "ES"], "published_from": "2026-06-01", "published_to": "2026-09-15", "max_results": 10}
+      {
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:42500000",
+          "cpv:42510000"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "published_from": "2026-02-01",
+        "published_to": "2026-05-31",
+        "max_results": 10
+      },
+      {
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:42500000",
+          "cpv:42510000"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "published_from": "2026-06-01",
+        "published_to": "2026-09-15",
+        "max_results": 10
+      },
+      {
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:45331000",
+          "cpv:45331200"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "published_from": "2026-02-01",
+        "published_to": "2026-05-31",
+        "max_results": 10
+      },
+      {
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:45331000",
+          "cpv:45331200"
+        ],
+        "countries": [
+          "DE",
+          "FR",
+          "IT",
+          "ES"
+        ],
+        "published_from": "2026-06-01",
+        "published_to": "2026-09-15",
+        "max_results": 10
+      }
     ],
     "tavily": [
-      {"text": "new distribution centre with temperature-controlled storage announced", "languages": ["en"], "countries": ["DE"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5},
-      {"text": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant", "languages": ["de"], "countries": ["DE"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5},
-      {"text": "nouvel entrepot frigorifique construction annonce", "languages": ["fr"], "countries": ["FR"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5}
+      {
+        "text": "new distribution centre with temperature-controlled storage announced",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "DE"
+        ],
+        "published_from": "2026-07-01",
+        "published_to": "2026-10-01",
+        "max_results": 5
+      },
+      {
+        "text": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant",
+        "languages": [
+          "de"
+        ],
+        "countries": [
+          "DE"
+        ],
+        "published_from": "2026-07-01",
+        "published_to": "2026-10-01",
+        "max_results": 5
+      },
+      {
+        "text": "nouvel entrepot frigorifique construction annonce",
+        "languages": [
+          "fr"
+        ],
+        "countries": [
+          "FR"
+        ],
+        "published_from": "2026-07-01",
+        "published_to": "2026-10-01",
+        "max_results": 5
+      }
     ]
-  }
+  },
+  "offer_terms": [
+    "chambre froide",
+    "chiller",
+    "cold room",
+    "cold storage",
+    "cold store",
+    "congélateur",
+    "freezer",
+    "frigorifique",
+    "froid",
+    "kälte",
+    "kühl",
+    "refrigerated",
+    "refrigeration",
+    "réfrigération",
+    "surgélateur",
+    "tiefkühl"
+  ],
+  "related_terms": [
+    "air conditioning",
+    "air-conditioning",
+    "climatisation",
+    "cooling",
+    "hvac",
+    "klima",
+    "lüftung",
+    "ventilation"
+  ]
 }

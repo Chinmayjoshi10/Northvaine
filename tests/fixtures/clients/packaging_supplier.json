@@ -1,12 +1,58 @@
 {
   "id": "packaging_supplier",
   "offer": "Packaging (bottles, jars, tubes, cartons) for cosmetics and skincare brands.",
-  "markets": ["GB", "FR"],
+  "markets": [
+    "GB",
+    "FR"
+  ],
   "sensors": {
     "ted": [],
     "tavily": [
-      {"text": "cosmetics brand announces new skincare range launch", "languages": ["en"], "countries": ["GB"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5},
-      {"text": "marque de cosmetiques lance une nouvelle gamme de soins", "languages": ["fr"], "countries": ["FR"], "published_from": "2026-07-01", "published_to": "2026-10-01", "max_results": 5}
+      {
+        "text": "cosmetics brand announces new skincare range launch",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-07-01",
+        "published_to": "2026-10-01",
+        "max_results": 5
+      },
+      {
+        "text": "marque de cosmetiques lance une nouvelle gamme de soins",
+        "languages": [
+          "fr"
+        ],
+        "countries": [
+          "FR"
+        ],
+        "published_from": "2026-07-01",
+        "published_to": "2026-10-01",
+        "max_results": 5
+      }
     ]
-  }
+  },
+  "offer_terms": [
+    "bottle",
+    "carton",
+    "conditionnement",
+    "emballage",
+    "flacon",
+    "flasche",
+    "jar",
+    "packaging",
+    "tiegel",
+    "tube",
+    "verpackung"
+  ],
+  "related_terms": [
+    "dispenser",
+    "pot",
+    "pump",
+    "recharge",
+    "refill",
+    "tubing"
+  ]
 }

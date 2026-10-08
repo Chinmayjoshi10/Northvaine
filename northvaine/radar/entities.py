@@ -367,4 +367,8 @@ def build_candidates(
                 settings=settings,
             )
         )
-    return candidates, rejected
+    # One rejection per event: an award naming several withheld people yields one entry (D76).
+    unique: dict[str, RejectedEntry] = {}
+    for entry in rejected:
+        unique.setdefault(entry.candidate.key, entry)
+    return candidates, list(unique.values())

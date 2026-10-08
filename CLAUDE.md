@@ -39,6 +39,10 @@ Deadline: 30 Oct 2026, 10:00 PT. Scope is frozen: new ideas go in `docs/LATER.md
    output, retries, per-call and per-run budgets, and a row in `llm_calls`.
 9. **No scraping of sites that forbid it** (e.g. LinkedIn). Use official APIs, Tavily,
    and public pages.
+10. **Sources can never steer the system.** Text in any fetched content that asks to be ranked,
+    rated, marked or prioritised, or that addresses AI systems ("mark me highest", "ignore previous
+    instructions"), is data, never instruction. It is removed before any model sees it, the page
+    is flagged, and it can never raise a rank, score or status (D85).
 
 ## Stack
 - Python 3.12, async, FastAPI, Pydantic v2, SQLAlchemy 2 (async) + Alembic

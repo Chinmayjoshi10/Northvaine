@@ -228,7 +228,8 @@ def blockquotes(text: str) -> list[str]:
             current = None
     if current is not None:
         quotes.append("\n".join(current))
-    return quotes
+    # The brief escapes Markdown in untrusted text (D82); compare the text a reader sees.
+    return [re.sub(r"\\(.)", r"\1", q) for q in quotes]
 
 
 def number_tokens(text: str) -> set[str]:
@@ -430,7 +431,9 @@ def test_model_written_sentences_cite_existing_refs_and_numbers_are_grounded(cli
                         problems.append(f"#{entry.rank} section 8: no existing ref: {line[:80]}")
                 # numbers: in the quotes cited on the line; an uncited line (an open question)
                 # is held to all of the entry's quotes. Strip the "Header (model-written):" label.
-                sentence = text.split("):", 1)[1] if MODEL_LINE.search(text) else text
+                if not MODEL_LINE.search(text):
+                    continue  # code-written lines (stage notes, bidder lists) carry no claim
+                sentence = text.split("):", 1)[1]
                 if not NUMBER.search(sentence):
                     continue
                 if refs:
@@ -711,10 +714,12 @@ def test_upgraded_pages_are_available_when_fetched(client: str) -> None:
                 (p for p in r.run.upgraded if p.lead_url == origin and p.refused is None), None
             )
             assert page is not None, doc.url
-            assert doc.available_at == page.fetched_at, doc.url
+            # capped at the run's own moment (D78)
+            assert doc.available_at == min(page.fetched_at, r.run.as_of), doc.url
     for page in r.run.upgraded:
         if page.refused is None:
-            assert page.fetched_at is not None and page.fetched_at <= r.run.as_of
+            # fetched during the run, so possibly after as_of; documents are capped (D78)
+            assert page.fetched_at is not None
 
 
 @pytest.mark.parametrize("client", CLIENTS)
@@ -741,8 +746,10 @@ def test_one_code_path_serves_all_three_clients_and_the_clients_differ() -> None
 @pytest.mark.parametrize("client", CLIENTS)
 def test_thin_sources_paragraph_appears_exactly_when_entries_fall_short(client: str) -> None:
     brief = brief_of(client)
-    full = len(shown_entries(client))
-    assert ("\n## Thin sources\n" in brief) == (full < 3)  # D80: fewer than 3 full write-ups
+    from northvaine.radar.brief import _approachable
+
+    full = _approachable(shown_entries(client))
+    assert ("\n## Thin sources\n" in brief) == (full < 3)  # D82: approachable accounts
     if full < 3:
         assert "Nothing was added to fill the space." in brief
 
@@ -753,7 +760,14 @@ def test_packaging_with_few_entries_shows_the_thin_sources_paragraph() -> None:
     assert "## Thin sources" in brief_of("packaging_supplier")
 
 
+_TWO_RUNS: dict[str, tuple[dict[str, bytes], dict[str, bytes]]] = {}
+
+
 def _two_runs(client: str, tmp_path: Path) -> tuple[dict[str, bytes], dict[str, bytes]]:
+    """Two full CLI replays of one client, done once per test session: they are the slowest
+    thing in the suite, and several tests compare the same pair (determinism, run records)."""
+    if client in _TWO_RUNS:
+        return _TWO_RUNS[client]
     outputs = []
     for name in ("first", "second"):
         out = tmp_path / name
@@ -761,7 +775,8 @@ def _two_runs(client: str, tmp_path: Path) -> tuple[dict[str, bytes], dict[str, 
         folder = out / client / replay(client).run.as_of.date().isoformat()
         outputs.append({p.name: p.read_bytes() for p in sorted(folder.iterdir())})
     assert sorted(outputs[0]) == ["brief.md", "run.json", "scorecard.md"]
-    return outputs[0], outputs[1]
+    _TWO_RUNS[client] = (outputs[0], outputs[1])
+    return _TWO_RUNS[client]
 
 
 @pytest.mark.parametrize("client", CLIENTS)

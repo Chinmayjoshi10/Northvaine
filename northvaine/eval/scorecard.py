@@ -13,8 +13,8 @@ from dataclasses import dataclass, field
 
 __all__ = ["ContactOutcome", "EntryRating", "Metrics", "Scorecard", "metrics", "parse_scorecard"]
 
-_YES = {"yes", "y", "true", "1", "✓", "✔", "x"}
-_NO = {"no", "n", "false", "0", "✗", "✘", "-"}
+_YES = {"yes", "y", "true", "1", "✓", "✔"}
+_NO = {"no", "n", "false", "0", "✗", "✘"}
 _POSITIVE_OUTCOMES = {"requirement", "sample", "quote", "meeting", "won", "order"}
 _RESPONSE_OUTCOMES = _POSITIVE_OUTCOMES | {"redirect", "info request", "info", "reply"}
 _ROW = re.compile(r"^\|\s*(\d+)\s*\|")
@@ -31,8 +31,15 @@ def _flag(cell: str) -> bool | None:
     return None
 
 
+_UNESCAPED_PIPE = re.compile(r"(?<!\\)\|")
+
+
 def _cells(line: str) -> list[str]:
-    return [c.strip() for c in line.strip().strip("|").split("|")]
+    """Split a table row on unescaped pipes only (names may carry an escaped pipe)."""
+    body = line.strip()
+    body = body[1:] if body.startswith("|") else body
+    body = body[:-1] if body.endswith("|") and not body.endswith("\\|") else body
+    return [c.strip() for c in _UNESCAPED_PIPE.split(body)]
 
 
 @dataclass
@@ -161,7 +168,12 @@ def metrics(card: Scorecard, *, min_all_four: int = 2) -> Metrics:
         else None
     )
     filled = [
-        o for o in card.outcomes if o.contacted is not None or o.known is not None or o.outcome
+        o
+        for o in card.outcomes
+        if o.contacted is not None
+        or o.known is not None
+        or o.new_intelligence is not None
+        or o.outcome
     ]
     contacted = [o for o in filled if o.contacted]
     known = [o.known for o in filled if o.known is not None]

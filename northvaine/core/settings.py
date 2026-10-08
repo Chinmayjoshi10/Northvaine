@@ -111,7 +111,12 @@ class Settings(BaseSettings):
         "inbound_question",
     )
     evidence_source_rules: dict[str, str] = Field(
-        default_factory=lambda: {"ted": "structured", "website": "full_text", "tavily": "raw_only"}
+        default_factory=lambda: {
+            "ted": "structured",
+            "fts": "structured",
+            "website": "full_text",
+            "tavily": "raw_only",
+        }
     )
 
     # radar (M5, D57-D66). Paths, caps, windows and the legal-form list are data, not literals.
@@ -128,7 +133,7 @@ class Settings(BaseSettings):
     radar_stream_by_event: dict[str, str] = Field(
         default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
     )
-    radar_enumerable_sources: tuple[str, ...] = ("ted",)
+    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts")
     radar_legal_forms: tuple[str, ...] = (
         "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
         "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
@@ -140,6 +145,32 @@ class Settings(BaseSettings):
     radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
     # M5.1 brief quality (T5.8, D80). Everything here is generic language, never industry words.
     radar_brief_main_entries: int = Field(default=5, ge=1)
+    # Sources can never steer the system (CLAUDE.md #10, D85): sentences in fetched text that
+    # address AI systems or ask to be ranked, rated or marked are removed before any model sees
+    # them. Generic language patterns (regular expressions, case-insensitive), never industry
+    # words.
+    radar_steering_patterns: tuple[str, ...] = (
+        r"\bignore\b[^.!?\n]{0,30}\b(?:instructions?|prompts?|rules?)\b",
+        r"\b(?:system|developer)\s+(?:prompt|message|instructions?)\b",
+        r"\b(?:as|you are)\s+an?\s+(?:ai|artificial intelligence|language model|llm|assistant|"
+        r"chatbot|bot)\b",
+        r"\bnote\s+(?:to|for)\s+(?:ai|ais|llms?|language models?|assistants?|crawlers?|bots?)\b",
+        r"\b(?:ai|ais|llms?|chatgpt|claude|gpt|gemini|nemotron|assistants?|crawlers?|bots?|"
+        r"agents?)\b[^.!?\n]{0,40}\b(?:must|should|shall|need to|are instructed to|"
+        r"are required to)\b",
+        r"\b(?:rank|rate|score|mark|list|flag|tag|classify|label|put)\s+(?:us|me|this\s+"
+        r"(?:company|page|site|supplier|business|firm)|our\s+(?:company|firm|business))\b"
+        r"[^.!?\n]{0,40}\b(?:highest|first|top|best|#?\s?1|number\s+one|priority|hot|"
+        r"qualified|buyer|lead)\b",
+        r"\b(?:give|assign|award)\s+(?:us|me|this\s+(?:company|page|supplier))\s+(?:the\s+)?"
+        r"(?:highest|top|best|maximum|max)\s+(?:rank|rating|score|priority)\b",
+    )
+    # Likely bidders for open tenders (D81): who won similar awards in the same country.
+    radar_bidder_lookback_days: int = Field(default=365, ge=30)
+    radar_bidder_max: int = Field(default=5, ge=1)
+    radar_bidder_max_queries: int = Field(default=8, ge=0)
+    radar_bidder_max_codes: int = Field(default=6, ge=1)
+    radar_bidder_max_results: int = Field(default=50, ge=1)
     radar_min_days_left: int = Field(default=5, ge=0)
     radar_offer_term_min_chars: int = Field(default=4, ge=2)
     radar_offer_stopwords: tuple[str, ...] = (

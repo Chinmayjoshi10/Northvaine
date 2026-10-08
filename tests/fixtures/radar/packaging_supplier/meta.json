@@ -1,7 +1,7 @@
 {
   "client": "packaging_supplier",
-  "as_of": "2026-10-04T21:55:28Z",
-  "recorded_at": "2026-10-04T21:57:51+00:00",
+  "as_of": "2026-10-07T22:46:12Z",
+  "recorded_at": "2026-10-07T22:51:42+00:00",
   "queries": {
     "ted": [],
     "tavily": [
@@ -16,8 +16,8 @@
           "en"
         ],
         "text": "cosmetics brand announces new skincare range launch",
-        "published_from": "2026-07-04",
-        "published_to": "2026-10-04",
+        "published_from": "2026-07-07",
+        "published_to": "2026-10-07",
         "max_results": 5
       },
       {
@@ -31,8 +31,8 @@
           "fr"
         ],
         "text": "marque de cosmetiques lance une nouvelle gamme de soins",
-        "published_from": "2026-07-04",
-        "published_to": "2026-10-04",
+        "published_from": "2026-07-07",
+        "published_to": "2026-10-07",
         "max_results": 5
       }
     ]
