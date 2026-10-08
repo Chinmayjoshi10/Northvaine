@@ -145,6 +145,26 @@ class Settings(BaseSettings):
     radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
     # M5.1 brief quality (T5.8, D80). Everything here is generic language, never industry words.
     radar_brief_main_entries: int = Field(default=5, ge=1)
+    # Sources can never steer the system (CLAUDE.md #10, D85): sentences in fetched text that
+    # address AI systems or ask to be ranked, rated or marked are removed before any model sees
+    # them. Generic language patterns (regular expressions, case-insensitive), never industry
+    # words.
+    radar_steering_patterns: tuple[str, ...] = (
+        r"\bignore\b[^.!?\n]{0,30}\b(?:instructions?|prompts?|rules?)\b",
+        r"\b(?:system|developer)\s+(?:prompt|message|instructions?)\b",
+        r"\b(?:as|you are)\s+an?\s+(?:ai|artificial intelligence|language model|llm|assistant|"
+        r"chatbot|bot)\b",
+        r"\bnote\s+(?:to|for)\s+(?:ai|ais|llms?|language models?|assistants?|crawlers?|bots?)\b",
+        r"\b(?:ai|ais|llms?|chatgpt|claude|gpt|gemini|nemotron|assistants?|crawlers?|bots?|"
+        r"agents?)\b[^.!?\n]{0,40}\b(?:must|should|shall|need to|are instructed to|"
+        r"are required to)\b",
+        r"\b(?:rank|rate|score|mark|list|flag|tag|classify|label|put)\s+(?:us|me|this\s+"
+        r"(?:company|page|site|supplier|business|firm)|our\s+(?:company|firm|business))\b"
+        r"[^.!?\n]{0,40}\b(?:highest|first|top|best|#?\s?1|number\s+one|priority|hot|"
+        r"qualified|buyer|lead)\b",
+        r"\b(?:give|assign|award)\s+(?:us|me|this\s+(?:company|page|supplier))\s+(?:the\s+)?"
+        r"(?:highest|top|best|maximum|max)\s+(?:rank|rating|score|priority)\b",
+    )
     # Likely bidders for open tenders (D81): who won similar awards in the same country.
     radar_bidder_lookback_days: int = Field(default=365, ge=30)
     radar_bidder_max: int = Field(default=5, ge=1)

@@ -113,6 +113,28 @@ def prepare_queries(
     return focus_queries(shift_queries(queries, as_of), settings)
 
 
+STEERING_PLACEHOLDER = "[text aimed at AI systems removed]"
+_SENTENCE = re.compile(r"[^.!?\n]+[.!?]*\s*|\n")
+
+
+def neutralise_steering(text: str, settings: Settings | None = None) -> tuple[str, int]:
+    """Remove every sentence that addresses AI systems or asks to be ranked, rated or marked
+    (CLAUDE.md #10, D85). Returns the cleaned text and how many sentences were removed.
+    Idempotent, so a replay rebuilds exactly what the live run used."""
+    cfg = settings or get_settings()
+    patterns = [re.compile(p, re.IGNORECASE) for p in cfg.radar_steering_patterns]
+    removed = 0
+    out: list[str] = []
+    for part in _SENTENCE.findall(text):
+        if STEERING_PLACEHOLDER in part or not any(p.search(part) for p in patterns):
+            out.append(part)
+            continue
+        removed += 1
+        trailing = part[len(part.rstrip()) :]
+        out.append(STEERING_PLACEHOLDER + (trailing or " "))
+    return "".join(out), removed
+
+
 def strip_contacts(text: str) -> str:
     """Remove email addresses and phone numbers from fetched text (D59). Idempotent."""
     text = _EMAIL_RE.sub(CONTACT_PLACEHOLDER, text)
@@ -274,6 +296,21 @@ async def discover(
     seen_ids: set[UUID] = set()
     documents: list[EvidenceDocument] = []
     leads: list[EvidenceDocument] = []
+    steered: list[str] = []
+
+    def unsteer(doc: EvidenceDocument) -> EvidenceDocument:
+        if not doc.text:
+            return doc
+        clean, removed = neutralise_steering(doc.text, settings)
+        if not removed:
+            return doc
+        steered.append(doc.url)
+        notes.append(
+            f"text aimed at AI systems removed from {doc.url} ({removed} sentence(s)); "
+            "it never affects ranking (D85)"
+        )
+        return doc.model_copy(update={"text": clean})
+
     for sdoc in collected:
         if sdoc.content_hash in seen_hashes or sdoc.url in seen_urls:
             continue
@@ -285,7 +322,7 @@ async def discover(
             # Search-result text is third-party page text: strip contacts before any model sees
             # it, as for fetched pages (D59). Structured records are rendered by code and their
             # quote check is a whole-line match, so they are left untouched.
-            doc = doc.model_copy(update={"text": strip_contacts(doc.text)})
+            doc = unsteer(doc.model_copy(update={"text": strip_contacts(doc.text)}))
         if kind is EvidenceKind.LEAD:
             leads.append(doc)
         else:
@@ -304,5 +341,11 @@ async def discover(
         if doc is None or doc.id in seen_ids:
             continue
         seen_ids.add(doc.id)
-        documents.append(doc)
-    return DiscoverResult(documents=documents, leads=len(leads), upgraded=upgraded, notes=notes)
+        documents.append(unsteer(doc))
+    return DiscoverResult(
+        documents=documents,
+        leads=len(leads),
+        upgraded=upgraded,
+        notes=notes,
+        steered_urls=sorted(set(steered)),
+    )

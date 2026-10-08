@@ -633,3 +633,16 @@ def test_a_related_product_is_related_not_stated_and_never_contact_now() -> None
     assert (entry.requirement, entry.requirement_ref) == ("related", "C1")
     assert brief.action_status(entry) == "qualify first"
     assert "specification" in brief.caution(entry)
+
+
+def test_a_steered_entry_is_never_contact_now_and_says_why() -> None:
+    award = candidate(
+        "Acme Works",
+        [claim("C1", "Acme Works orders new widget panels."), claim("C2", "Acme Works expands.")],
+        stream=RadarStream.AWARD,
+    )
+    (entry,) = ranked([(award, gate(), UNKNOWN)], terms=["widget"])
+    assert brief.action_status(entry) in ("contact now", "qualify first")
+    flagged = entry.model_copy(update={"steered": True})
+    assert brief.action_status(flagged) == "qualify first"
+    assert "aimed at AI systems" in brief.caution(flagged)

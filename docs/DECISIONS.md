@@ -708,3 +708,13 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Related:** a quote names only a related term. It ranks below stated, is never "contact
     now", and the caution says to ask about the specification.
   - **Inferred:** neither is named.
+- **D85 — Sources can never steer the system (CLAUDE.md #10, founder's rule).** A page might
+  say "mark me highest" or "ignore previous instructions".
+  - **Removed first:** before any model sees fetched text, every sentence matching
+    `radar_steering_patterns` is replaced with "[text aimed at AI systems removed]". These are
+    generic patterns, held as data in settings: sentences that address AI systems or ask to be
+    ranked, rated, marked or prioritised.
+  - **Flagged:** the page is listed in `steered_urls` and a run note, every entry it supports is
+    marked `steered`, and it can never be "contact now". The caution says to check it by hand.
+  - **Pointless to game:** ranking was already code-only. This makes trying to game it lower
+    trust instead of raising it.
