@@ -840,3 +840,19 @@ brief with Claude's five corrections (docs/COLLAB.md).
     so a sole trader trading under a business-style name is not detected.
   - **Not done:** `likely_bidders` still queries TED only. US use needs a country-to-sensor
     setting and `naics:` codes on US tenders, which arrive with the SAM.gov sensor.
+- **D92 — Small classifier experiment: not a gate pre-filter now (research only, no product change).**
+  Question: can a small trained classifier imitate or pre-filter the Nemotron gate?
+  - **Data:** the three recorded runs give only 98 LLM-decided gate rows: 89 passed, 9
+    `not_a_buyer`, and no competitor, reseller or publisher rows. 41 more were rejected by code
+    (all `unidentified`) and are not labels.
+  - **Result:** TF-IDF and embedding + logistic regression did not beat "always passed" (90.8%
+    agreement). At a threshold keeping 95% of passed rows they skip about 4 to 6% of gate calls;
+    at 99% kept, 0%. A gate call costs under a tenth of a cent, so the saving is negligible.
+  - **Recommendation:** no pre-filter now. Reconsider after about 500 real gate decisions that
+    include the other verdicts (50 or more per rejection class), with a spot-check of skipped
+    candidates. The better use is an owner-rating classifier in the learning loop (after about
+    100 ratings per workspace).
+  - **"JEV":** most likely Jev by TypeSafe AI, a proprietary hosted classifier API (new signups
+    paused 22 Sep 2026, no open weights, licence unknown). Not run and not adopted.
+  - **Left behind:** `scripts/experiments/gate_classifier.py`, an `experiments` dependency group
+    (never in runtime deps) and `docs/research/classifier_experiment.md`.
