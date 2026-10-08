@@ -75,9 +75,19 @@ def make_job(job_id: int, kind: str) -> Job:
 
     now = datetime.now(UTC)
     return Job(
-        id=job_id, kind=kind, payload={}, status=JobStatus.RUNNING, attempts=1, max_attempts=3,
-        run_after=now, locked_at=now, locked_by="w", error=None, workspace_id=None,
-        created_at=now, finished_at=None,
+        id=job_id,
+        kind=kind,
+        payload={},
+        status=JobStatus.RUNNING,
+        attempts=1,
+        max_attempts=3,
+        run_after=now,
+        locked_at=now,
+        locked_by="w",
+        error=None,
+        workspace_id=None,
+        created_at=now,
+        finished_at=None,
     )
 
 

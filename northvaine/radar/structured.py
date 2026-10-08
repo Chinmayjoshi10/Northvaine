@@ -18,6 +18,8 @@ from northvaine.sensors.dates import parse_date
 __all__ = ["structured_evidence"]
 
 SCHEMA_VER = 1
+# Classification schemes beyond CPV (US awards: NAICS, PSC): meta key -> rendered line prefix.
+EXTRA_CODE_LINES = (("naics_codes", "NAICS: "), ("psc_codes", "PSC: "))
 EXTRACTED_BY = "code"
 TENDER = "tender_published"
 AWARD = "contract_awarded"
@@ -118,6 +120,9 @@ def structured_evidence(
     buyer_line = _find_line(lines, "Buyer [", "; ".join(buyers)) if buyers else None
     buyer_country_line = _find_line(lines, "Buyer country: ") if buyer_countries else None
     cpv_line = _find_line(lines, "CPV: ") if meta.get("cpv_codes") else None
+    extra_code_lines = [
+        _find_line(lines, prefix) for key, prefix in EXTRA_CODE_LINES if meta.get(key)
+    ]
     value_line = _find_line(lines, "Total value: ") if meta.get("value") else None
     estimate_lines = [line for line in lines if line.startswith("Estimated value (lot): ")]
     deadline_lines = [line for line in lines if line.startswith("Deadline: ")]
@@ -128,6 +133,7 @@ def structured_evidence(
     buyer_claim = build.add(buyer_line, buyer)
     buyer_country_claim = build.add(buyer_country_line)
     cpv_claim = build.add(cpv_line)
+    extra_code_claims = [build.add(line) for line in extra_code_lines]
     value_claim = build.add(value_line)
     estimate_claims = [build.add(line) for line in estimate_lines]
     deadline_claims = [build.add(line) for line in deadline_lines]
@@ -139,6 +145,9 @@ def structured_evidence(
     slots: dict[str, Any] = {}
     if cpv_codes := _strings(meta.get("cpv_codes")):
         slots["cpv_codes"] = ", ".join(cpv_codes)
+    for key, _prefix in EXTRA_CODE_LINES:
+        if codes := _strings(meta.get(key)):
+            slots[key] = ", ".join(codes)
     if buyers:
         slots["buyer_names"] = "; ".join(buyers)
     if buyer_countries:
@@ -163,6 +172,7 @@ def structured_evidence(
             buyer_claim,
             buyer_country_claim,
             cpv_claim,
+            *extra_code_claims,
             value_claim,
             *estimate_claims,
             *deadline_claims,
@@ -205,6 +215,7 @@ def structured_evidence(
                 published,
                 buyer_claim,
                 cpv_claim,
+                *extra_code_claims,
                 value_claim,
             )
             if winner_claim is None:

@@ -57,3 +57,12 @@ Recorded with `tasks.py record-sensors`; 3 of 8 Tavily responses were refused by
   so the result shape is unchanged;
 - truncated any `raw_content` over 1,500 characters, marked ` [truncated]` (third-party page text);
 - replaced two journalist bylines with `[journalist redacted]`.
+
+## USAspending (D90)
+
+`usaspending/awards_1.json` is two live pages of a keyless `spending_by_award` search (NAICS
+237310, awards signed 20-30 Sep 2026), recorded 2026-10-09 from the request that
+`usaspending.build_request` builds. Only the fields in `USASPENDING_FIELDS` were requested, so
+no address or contact is present. `internal_id`, `awarding_agency_id`, `agency_slug` and the API
+`messages` were removed. Reviewed by eye: all twelve recipients are companies. US federal data
+is public.
