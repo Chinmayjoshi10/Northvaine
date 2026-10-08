@@ -26,6 +26,12 @@ dev = [
     "pytest-asyncio>=1.4,<2",
     "ruff>=0.8",
 ]
+# Experiment-only (scripts/experiments/); never imported by northvaine/. `uv sync --group experiments`.
+experiments = [
+    "scikit-learn>=1.5",
+    "sentence-transformers>=3",
+    "setfit>=1.1",
+]
 
 [build-system]
 requires = ["setuptools>=75"]
@@ -56,6 +62,8 @@ line-length = 100
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
+# sklearn-style X/C names in the experiment script.
+"scripts/experiments/*.py" = ["N803", "N814", "RUF012"]
 # brain/errors.py's taxonomy is a frozen M2 contract (factory/board/M2/PLAN.md) that does not
 # suffix every exception with "Error" (LlmTimeout, PricingUnknown, BudgetExceeded...).
 "northvaine/brain/errors.py" = ["N818"]
