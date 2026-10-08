@@ -50,6 +50,21 @@ For a tender (watch only), show the likely bidders as the accounts to approach a
 - A fit claim is stored separately (`fit` events, no date) and shown in its own section,
   "Company fit (not a purchase)".
 
+### 5b. Company-fit method (decided 9 Oct, code-first)
+
+1. One search for the company's official site. Accept a result only when its registrable domain
+   contains a distinctive token of the company's normalised name (code check). Otherwise:
+   "no official site found", and no fit.
+2. Through the run's PageFetcher (recorded for replay; robots respected, D59), read the home
+   page plus up to K product, service or project pages (the website sensor's page hints).
+3. Code finds the sentences on the company's own pages that contain one of the client's
+   `offer_terms` (stated fit) or `related_terms` (related fit). Each sentence is a quote, so it
+   is checked like any other claim. No model call is needed.
+4. The fit is shown in its own section, "Company fit (not a purchase)". An awarded contractor
+   with a project requirement and a stated fit can be "contact now"; everything else is
+   unchanged.
+5. This needs a re-record, bundled with adding the TED `contract-nature` field.
+
 ## 6. Outcome data contract
 
 - `feedback` gains reason codes as a closed set.
