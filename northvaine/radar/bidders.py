@@ -63,6 +63,7 @@ async def _winners(
     concepts: list[EventConceptRow],
     run: RunContext,
     settings: Settings,
+    evidence_out: list[Any] | None = None,
 ) -> list[LikelyBidder]:
     sensor = get_sensor("ted", client=http, settings=settings)
     result = await sensor.search(query)
@@ -70,6 +71,8 @@ async def _winners(
     for sdoc in result.documents:
         doc = evidence_document_from_sensor(sdoc)
         ledger = await build_evidence(doc, concepts, [], run=run, settings=settings)
+        if evidence_out is not None:
+            evidence_out.append((doc, ledger))  # the wins become saved claims and links (D88)
         verified = {c.fingerprint: c for c in ledger.checks if c.verified}
         for event in ledger.events:
             subject = event.subject
@@ -122,6 +125,7 @@ async def likely_bidders(
     concepts: list[EventConceptRow],
     run: RunContext,
     settings: Settings | None = None,
+    evidence_out: list[Any] | None = None,
 ) -> tuple[list[RankedEntry], list[str]]:
     """Each tender entry with its likely bidders; notes for queries skipped or failed.
 
@@ -145,7 +149,12 @@ async def likely_bidders(
                 continue
             try:
                 cache[key] = await _winners(
-                    query, http=http, concepts=concepts, run=run, settings=cfg
+                    query,
+                    http=http,
+                    concepts=concepts,
+                    run=run,
+                    settings=cfg,
+                    evidence_out=evidence_out,
                 )
             except SensorError as exc:
                 notes.append(f"likely bidders not found for {entry.candidate.name}: {exc}")

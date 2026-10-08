@@ -276,6 +276,9 @@ async def discover(
     settings = settings or get_settings()
     notes: list[str] = []
     collected: list[SensorDocument] = []
+    # Which query found each snapshot, as "sensor:index" (1-based), so learning can credit
+    # the searches that pay (D87). Keyed by content hash: duplicates add their query too.
+    refs_by_hash: dict[str, list[str]] = {}
     for sensor_name, sensor_queries in queries.items():
         try:
             sensor = get_sensor(sensor_name, client=http, settings=settings)
@@ -289,6 +292,11 @@ async def discover(
                 notes.append(f"sensor {sensor_name} query {i + 1}: {type(exc).__name__}: {exc}")
                 continue
             collected.extend(result.documents)
+            for sdoc in result.documents:
+                refs = refs_by_hash.setdefault(sdoc.content_hash, [])
+                ref = f"{sensor_name}:{i + 1}"
+                if ref not in refs:
+                    refs.append(ref)
             notes.extend(f"sensor {sensor_name} query {i + 1}: {n}" for n in result.notes)
 
     seen_hashes: set[str] = set()
@@ -297,6 +305,8 @@ async def discover(
     documents: list[EvidenceDocument] = []
     leads: list[EvidenceDocument] = []
     steered: list[str] = []
+    found_by: dict[str, list[str]] = {}
+    refs_by_url: dict[str, list[str]] = {}
 
     def unsteer(doc: EvidenceDocument) -> EvidenceDocument:
         if not doc.text:
@@ -312,6 +322,10 @@ async def discover(
         return doc.model_copy(update={"text": clean})
 
     for sdoc in collected:
+        refs_by_url.setdefault(sdoc.url, [])
+        for ref in refs_by_hash.get(sdoc.content_hash, []):
+            if ref not in refs_by_url[sdoc.url]:
+                refs_by_url[sdoc.url].append(ref)
         if sdoc.content_hash in seen_hashes or sdoc.url in seen_urls:
             continue
         seen_hashes.add(sdoc.content_hash)
@@ -323,6 +337,7 @@ async def discover(
             # it, as for fetched pages (D59). Structured records are rendered by code and their
             # quote check is a whole-line match, so they are left untouched.
             doc = unsteer(doc.model_copy(update={"text": strip_contacts(doc.text)}))
+        found_by[str(doc.id)] = refs_by_url[sdoc.url]
         if kind is EvidenceKind.LEAD:
             leads.append(doc)
         else:
@@ -341,6 +356,7 @@ async def discover(
         if doc is None or doc.id in seen_ids:
             continue
         seen_ids.add(doc.id)
+        found_by[str(doc.id)] = list(refs_by_url.get(lead.url, []))
         documents.append(unsteer(doc))
     return DiscoverResult(
         documents=documents,
@@ -348,4 +364,5 @@ async def discover(
         upgraded=upgraded,
         notes=notes,
         steered_urls=sorted(set(steered)),
+        found_by={k: v for k, v in found_by.items() if k in {str(d.id) for d in documents}},
     )

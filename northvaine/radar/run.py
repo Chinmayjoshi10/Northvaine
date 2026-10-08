@@ -8,6 +8,8 @@ module knows about a client or an industry: everything comes from the `ClientSpe
 from __future__ import annotations
 
 import importlib.util
+import math
+import random
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -29,11 +31,12 @@ from northvaine.core.models import (
 )
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.bidders import likely_bidders
-from northvaine.radar.brief import rank
+from northvaine.radar.brief import main_selection, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.entities import build_candidates
 from northvaine.radar.gate import gate_candidate
+from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
 from northvaine.radar.models import (
     Candidate,
@@ -101,6 +104,7 @@ async def run_radar(
     settings: Settings | None = None,
     session: Any = None,
     evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
+    strategy: Any = None,  # radar.strategy.Strategy; Any keeps the database layer out
 ) -> RadarRun:
     """Run the whole radar pipeline for one client and return the run record (D61).
     `evidence_out`, when given, receives every document read with its ledger result, so the
@@ -115,6 +119,14 @@ async def run_radar(
 
     # 1. discover (sensors with queries shifted to the run date, then lead upgrade)
     queries = prepare_queries(spec.sensors, as_of.date(), settings)
+    rng = random.Random(f"{spec.id}|{as_of.isoformat()}")  # seeded: a run is reproducible
+    query_propensity: dict[str, float] = {}
+    if strategy is not None and strategy.labels >= settings.learning_min_labels:
+        queries, query_propensity = _strategy_queries(queries, strategy, rng, settings)
+        notes.append(
+            f"strategy v{strategy.version} chose the searches "
+            f"({sum(len(q) for q in queries.values())} run; D89)"
+        )
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
     notes.extend(found.notes)
     # A page fetched during this run is available at the run's moment, never later: sensors
@@ -235,9 +247,30 @@ async def run_radar(
             for e in entries
         ]
 
+    # One brief slot goes to a uniformly random lead from below the cut (D89).
+    if settings.radar_exploration_slots > 0 and entries:
+        _, below = main_selection(
+            entries, settings.radar_brief_main_entries - settings.radar_exploration_slots
+        )
+        pick = exploration_pick(len(below), rng)
+        if pick is not None:
+            chosen, propensity = below[pick[0]], pick[1]
+            entries = [
+                e.model_copy(update={"exploration": True, "propensity": propensity})
+                if e is chosen
+                else e
+                for e in entries
+            ]
+
     # 6. likely bidders for open tenders: who won similar awards there recently (D81, code only)
     entries, bidder_notes = await likely_bidders(
-        entries, as_of=as_of, http=http, concepts=concepts, run=run, settings=settings
+        entries,
+        as_of=as_of,
+        http=http,
+        concepts=concepts,
+        run=run,
+        settings=settings,
+        evidence_out=evidence_out,
     )
     notes.extend(bidder_notes)
     return RadarRun(
@@ -253,4 +286,37 @@ async def run_radar(
         llm_calls=llm_calls,
         cost_usd=Decimal(run.spent),
         notes=notes,
+        found_by={
+            str(doc.id): found.found_by[str(doc.id)]
+            for doc, _ in results
+            if str(doc.id) in found.found_by
+        },
+        query_propensity=query_propensity,
     )
+
+
+def _strategy_queries(
+    queries: dict[str, list[Any]], strategy: Any, rng: random.Random, settings: Settings
+) -> tuple[dict[str, list[Any]], dict[str, float]]:
+    """Per sensor, a Thompson choice of the searches to run (D89): learned beliefs where a
+    search has labels, its source's (or the pooled) belief otherwise; every search keeps the
+    exploration floor. Returns the chosen searches and each one's selection probability."""
+    post = strategy.posteriors()
+    chosen: dict[str, list[Any]] = {}
+    propensity: dict[str, float] = {}
+    for sensor, listed in queries.items():
+        by_ref = query_keys_by_ref({sensor: listed})
+        keyed = {by_ref[f"{sensor}:{i}"]: q for i, q in enumerate(listed, start=1)}
+        fallback = post.yields.get("source", {}).get(sensor, post.pooled)
+        beliefs: dict[str, Beta] = {k: post.yields.get("query", {}).get(k, fallback) for k in keyed}
+        for paused in strategy.paused:  # paused searches only run on the exploration floor
+            if paused in beliefs:
+                beliefs[paused] = Beta(1.0, 99.0)
+        keep = max(1, math.ceil(settings.learning_query_keep_share * len(keyed)))
+        picked, shares = choose_queries(
+            beliefs, keep, floor=settings.learning_explore_floor, rng=rng
+        )
+        chosen[sensor] = [q for k, q in keyed.items() if k in picked]
+        for index, k in enumerate(k for k in keyed if k in picked):
+            propensity[f"{sensor}:{index + 1}"] = shares[k]
+    return chosen, propensity

@@ -307,6 +307,51 @@ class CompanyRow(NorthvaineModel):
     updated_at: datetime
 
 
+class NodeKind(StrEnum):
+    """What a graph link joins (D88)."""
+
+    COMPANY = "company"
+    EVENT = "event"
+    PROCEDURE = "procedure"  # one buying process, as '<source>:<the source's own id>'
+
+
+class LinkDerivation(StrEnum):
+    """How a link is known (D84, D88)."""
+
+    STATED = "stated"
+    RELATED = "related"
+    INFERRED = "inferred"
+
+
+class CompanyIdentifierRow(NorthvaineModel):
+    company_id: UUID
+    scheme: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    value: str
+    claim_id: UUID | None
+    created_at: datetime
+
+
+class LinkRow(NorthvaineModel):
+    """One line of the web (D88): two nodes, a relation, and the verified claims behind it."""
+
+    id: UUID
+    workspace_id: UUID | None
+    src_kind: NodeKind
+    src_id: str
+    dst_kind: NodeKind
+    dst_id: str
+    relation: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    derivation: LinkDerivation
+    claim_ids: list[UUID] = Field(min_length=1)
+    confidence: float | None = Field(default=None, gt=0, le=1)
+    valid_from: date | None
+    valid_to: date | None
+    available_at: datetime | None
+    recorded_at: datetime
+    details: Json
+    fingerprint: str
+
+
 class SourceRow(NorthvaineModel):
     id: UUID
     name: str
@@ -512,6 +557,14 @@ class QuoteRequestRow(NorthvaineModel):
     answered_at: datetime | None
 
 
+class LabelSource(StrEnum):
+    """Who gave a label (D89). A simulated label never updates a real workspace."""
+
+    OWNER = "owner"
+    SIMULATED = "simulated"
+    JUDGE = "judge"
+
+
 class FeedbackRow(NorthvaineModel):
     id: UUID
     case_id: UUID | None
@@ -519,6 +572,8 @@ class FeedbackRow(NorthvaineModel):
     rating: FeedbackRating
     reason: str | None
     created_at: datetime
+    source: LabelSource = LabelSource.OWNER
+    weight: float = 1.0
 
 
 class OutcomeRow(NorthvaineModel):
@@ -527,6 +582,7 @@ class OutcomeRow(NorthvaineModel):
     value: Decimal | None
     currency: str | None = Field(pattern=r"^[A-Z]{3}$")  # ISO 4217
     recorded_at: datetime
+    source: LabelSource = LabelSource.OWNER
 
 
 class StrategyVersionRow(NorthvaineModel):

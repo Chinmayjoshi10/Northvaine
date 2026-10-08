@@ -142,9 +142,20 @@ class Settings(BaseSettings):
     )  # fmt: skip
     gate_max_tokens: int = Field(default=700, ge=1)
     skeptic_max_tokens: int = Field(default=600, ge=1)
+    query_expand_max_tokens: int = Field(default=1500, ge=1)  # D93
     radar_run_budget_usd: Decimal = Field(default=Decimal("1.00"), gt=0)
     # M5.1 brief quality (T5.8, D80). Everything here is generic language, never industry words.
     radar_brief_main_entries: int = Field(default=5, ge=1)
+    # Learning loop v0 (D89). The numbers are starting guesses, re-set from real labels
+    # (docs/research/learning_loop_design.md 4.2-4.7).
+    radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
+    learning_prior_strength: float = Field(default=10.0, gt=0)  # pseudo-count of the prior
+    learning_trust_region: float = Field(default=0.25, gt=0, le=1)  # max move per version
+    learning_explore_floor: float = Field(default=0.1, ge=0, le=1)  # chance for any query
+    learning_query_keep_share: float = Field(default=0.7, gt=0, le=1)  # queries chosen per run
+    learning_min_labels: float = Field(default=5.0, ge=0)  # before a strategy changes a run
+    learning_pause_min_labels: float = Field(default=8.0, ge=1)
+    learning_pause_threshold: float = Field(default=0.9, gt=0, lt=1)
     # Sources can never steer the system (CLAUDE.md #10, D85): sentences in fetched text that
     # address AI systems or ask to be ranked, rated or marked are removed before any model sees
     # them. Generic language patterns (regular expressions, case-insensitive), never industry

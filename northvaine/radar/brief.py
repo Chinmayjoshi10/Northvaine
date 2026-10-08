@@ -16,6 +16,7 @@ from pathlib import Path
 from northvaine.core.models import EvidenceKind
 from northvaine.core.settings import Settings, get_settings
 from northvaine.core.standards import iso2_to_name
+from northvaine.radar.learning import Posteriors, learned_score
 from northvaine.radar.models import (
     Candidate,
     CandidateClaim,
@@ -234,10 +235,12 @@ def rank(
     offer: str = "",
     terms: list[str] | None = None,
     related_terms: list[str] | None = None,
+    learned: Posteriors | None = None,
 ) -> list[RankedEntry]:
     """Lexicographic order by (requirement stated before inferred, window urgency or recency,
     evidence strength, direct buyer), each component explained in `rank_reasons`; no numeric
-    score (D64, D80). Uncertainty lowers rank."""
+    score (D64, D80). Uncertainty lowers rank. A learned strategy (D89) only breaks the
+    remaining ties, by the learned good-rate of the lead's sources and country."""
     cfg = settings or get_settings()
     today = as_of.date()
     # Explicit "what we sell" terms from the client spec (data, any language) match as word
@@ -269,12 +272,19 @@ def rank(
             _evidence_reason(candidate, claims, documents),
             _buyer_reason(gate),
         ]
+        score = learned_score(learned, [c.source_name for c in candidate.claims], candidate.country)
+        if learned is not None:
+            reasons.append(
+                f"Learned: leads from these sources and this country were rated good "
+                f"{score:.0%} of the time (breaks ties only)"
+            )
         key = (
             {"stated": 0, "related": 1, "inferred": 2}[requirement],
             tier,
             _STRENGTH_ORDER[strength],
             position,
             0 if gate.direct_buyer is True else 1,
+            -round(score, 6),
             candidate.name,
         )
         scored.append(
@@ -672,25 +682,37 @@ def _entry_block(entry: RankedEntry) -> list[str]:
     return out
 
 
-def _briefed(run: RadarRun) -> tuple[list[RankedEntry], list[RankedEntry]]:
-    """(full entries, weaker entries). A full write-up needs a stated requirement or at least
-    medium evidence. Accounts a person can approach come before tenders to watch, so the
-    salesperson's first pages are about buyers (review of D80); short lists beat padded ones."""
-    cap = get_settings().radar_brief_main_entries
-    ordered = sorted(run.entries, key=lambda e: e.rank)
+def main_selection(
+    entries: list[RankedEntry], cap: int
+) -> tuple[list[RankedEntry], list[RankedEntry]]:
+    """(the `cap` entries that earn a full write-up, the rest). A full write-up needs a stated
+    or related requirement or at least medium evidence. Accounts a person can approach come
+    before tenders to watch (review of D80); short lists beat padded ones."""
+    ordered = sorted(entries, key=lambda e: e.rank)
 
     def eligible(e: RankedEntry) -> bool:
         return e.requirement in ("stated", "related") or e.strength in ("strong", "medium")
 
     accounts = [e for e in ordered if eligible(e) and e.candidate.stream != RadarStream.TENDER]
     tenders = [e for e in ordered if eligible(e) and e.candidate.stream == RadarStream.TENDER]
-    main = (accounts + tenders)[:cap]
+    main = (accounts + tenders)[: max(cap, 0)]
     chosen = {id(e) for e in main}
     return main, [e for e in ordered if id(e) not in chosen]
 
 
+def _briefed(run: RadarRun) -> tuple[list[RankedEntry], list[RankedEntry]]:
+    """(full entries, weaker entries): the main selection, plus the exploration pick (D89),
+    which takes one of the slots."""
+    cap = get_settings().radar_brief_main_entries
+    picked = [e for e in run.entries if e.exploration]
+    others = [e for e in run.entries if not e.exploration]
+    main, rest = main_selection(others, cap - len(picked))
+    return main + picked, rest
+
+
 def _approachable(entries: list[RankedEntry]) -> int:
-    return sum(1 for e in entries if action_status(e) != "watch only")
+    """Entries a person can approach; the random exploration pick never counts (D89)."""
+    return sum(1 for e in entries if action_status(e) != "watch only" and not e.exploration)
 
 
 _THIN_BELOW = 3
@@ -704,8 +726,9 @@ def _summary_table(entries: list[RankedEntry], today: date) -> list[str]:
     ]
     for e in entries:
         req = f"{e.requirement} [{e.requirement_ref}]" if e.requirement_ref else e.requirement
+        status = action_status(e) + (" (exploration pick)" if e.exploration else "")
         out.append(
-            f"| {e.rank} | {action_status(e)} | {_name(e.candidate)} | "
+            f"| {e.rank} | {status} | {_name(e.candidate)} | "
             f"{_what(e.candidate)} | {req} | {_cell(_why_now(e, today))} | "
             f"{_cell(caution(e))} |"
         )
@@ -719,6 +742,11 @@ def _summary(run: RadarRun, today: date) -> list[str]:
     ordered = sorted(run.entries, key=lambda e: e.rank)
     accounts = [e for e in ordered if e.candidate.stream != RadarStream.TENDER][:cap]
     tenders = [e for e in ordered if e.candidate.stream == RadarStream.TENDER][:cap]
+    for e in ordered:  # the exploration pick always shows, in its own table (D89)
+        if e.exploration:
+            table = tenders if e.candidate.stream == RadarStream.TENDER else accounts
+            if e not in table:
+                table.append(e)
     out = ["### Accounts to approach", ""]
     out += _summary_table(accounts, today) if accounts else ["None this time."]
     out += ["", "### Tenders to watch", ""]
