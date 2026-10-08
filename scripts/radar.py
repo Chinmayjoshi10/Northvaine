@@ -187,7 +187,9 @@ def write_recording(folder: Path, recording: Recording) -> list[Path]:
 # --- replay -------------------------------------------------------------------------------
 
 
-async def run_replay(spec: ClientSpec, recording: Recording) -> RadarRun:
+async def run_replay(
+    spec: ClientSpec, recording: Recording, *, evidence_out: list[Any] | None = None
+) -> RadarRun:
     """The whole pipeline on recorded HTTP, pages and model replies; no `.env`, no network."""
     as_of = recording.meta.as_of
     with replay_environment(recording.llm):
@@ -211,7 +213,25 @@ async def run_replay(spec: ClientSpec, recording: Recording) -> RadarRun:
                     concepts=seeded_concepts(),
                     run=RunContext(),
                     settings=settings,
+                    evidence_out=evidence_out,
                 )
+
+
+async def save_run(run: RadarRun, evidence: list[Any], session_factory: Any = None) -> None:
+    """Save a finished run into the database (D86); prints what was stored."""
+    from northvaine.radar.persist import persist_run
+
+    if session_factory is None:
+        from northvaine.core.db import session_scope
+
+        session_factory = session_scope
+    async with session_factory() as session:
+        saved = await persist_run(session, run, evidence)
+    print(
+        f"saved: {saved.documents_inserted} new document(s), {saved.claims} claim(s), "
+        f"{saved.companies} compan(ies), {len(saved.cases)} case(s), "
+        f"{saved.decisions} decision(s)"
+    )
 
 
 # --- recording ----------------------------------------------------------------------------
@@ -365,8 +385,10 @@ async def run_record(
     client_factory: ClientFactory | None = None,
     fetcher_factory: FetcherFactory | None = None,
     session_factory: Any = None,
+    save: bool = False,
 ) -> tuple[RadarRun, Recording]:
     """The live run, with every HTTP exchange and model exchange recorded (not yet redacted)."""
+    evidence: list[Any] = []
     http_recorder = RecordingTransport(inner_transport or httpx.AsyncHTTPTransport())
     llm_recorder = RecordingClient((client_factory or llm.get_client)())
     fetcher = (fetcher_factory or (lambda s: LivePageFetcher(settings=s)))(settings)
@@ -390,7 +412,13 @@ async def run_record(
                 run=RunContext(),
                 settings=settings,
                 session=session,
+                evidence_out=evidence,
             )
+        if save:
+            from northvaine.radar.persist import persist_run
+
+            saved = await persist_run(session, run, evidence)
+            print(f"saved: {len(saved.cases)} case(s), {saved.decisions} decision(s)")
     meta = RadarMeta(
         client=spec.id,
         as_of=as_of,
@@ -454,6 +482,9 @@ def build_parser() -> argparse.ArgumentParser:
     mode.add_argument("--record", action="store_true", help="live run that records (SPENDS MONEY)")
     parser.add_argument("--yes", action="store_true", help="with --record: actually call the APIs")
     parser.add_argument("--as-of", help="with --record: run date YYYY-MM-DD (default: now, UTC)")
+    parser.add_argument(
+        "--save", action="store_true", help="also save the run into the database (DATABASE_URL)"
+    )
     parser.add_argument("--fixtures-dir", help="recordings folder (default: settings)")
     parser.add_argument("--clients-dir", help="client specs folder (default: settings)")
     return parser
@@ -493,7 +524,13 @@ def main(
             raise Refused(str(error)) from error
         folder = fixtures / args.client
         if not args.record:
-            report(asyncio.run(run_replay(spec, load_replay(folder, args.client))), out_dir)
+            evidence: list[Any] = []
+            run = asyncio.run(
+                run_replay(spec, load_replay(folder, args.client), evidence_out=evidence)
+            )
+            report(run, out_dir)
+            if args.save:
+                asyncio.run(save_run(run, evidence, session_factory))
             return 0
         as_of = _as_of(args.as_of)
         if not args.yes:
@@ -510,6 +547,7 @@ def main(
                 client_factory=client_factory,
                 fetcher_factory=fetcher_factory,
                 session_factory=session_factory,
+                save=args.save,
             )
         )
         clean = redact_recording(recording, base)

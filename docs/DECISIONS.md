@@ -718,3 +718,16 @@ brief with Claude's five corrections (docs/COLLAB.md).
     marked `steered`, and it can never be "contact now". The caution says to check it by hand.
   - **Pointless to game:** ranking was already code-only. This makes trying to game it lower
     trust instead of raising it.
+- **D86 — A finished run can be saved into the canonical schema (`radar/persist.py`).**
+  `run_radar(evidence_out=...)` hands out every document read with its ledger result, and
+  `persist_run` saves them. `radar.py --save` uses it in replay or record mode.
+  - **What is saved:** documents, all claim checks, companies (keyed by
+    `attributes.radar_key`), one open case per company and window (stage `briefed`),
+    `case_evidence` (for, and against where the skeptic cites a claim), open questions, and a
+    `decisions` row (kind `brief`, propensity 1) for every gated candidate.
+  - **Later runs update, never duplicate:** they update the open case's verdict and append to
+    its trace. They never move a case backwards past `briefed`.
+  - **Privacy:** unidentified subjects and natural persons get no company row, and their
+    decision rows keep no reason text.
+  - **Not saved yet:** events, because the radar's seeded concepts are not `event_concepts`
+    rows. This is what feedback, outcomes and the learning loop attach to.

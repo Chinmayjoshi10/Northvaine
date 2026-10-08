@@ -114,7 +114,8 @@ def test_signatures_match_the_plan() -> None:
         "run",
         "settings",
         "session",
-    ]  # fmt: skip  (session added by D69: a live run logs every call in llm_calls)
+        "evidence_out",
+    ]  # fmt: skip  (session: D69, a live run logs every call; evidence_out: D86, saving a run)
 
 
 def test_keyword_only_parameters() -> None:

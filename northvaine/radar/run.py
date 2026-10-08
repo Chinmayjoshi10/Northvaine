@@ -100,8 +100,11 @@ async def run_radar(
     run: RunContext,
     settings: Settings | None = None,
     session: Any = None,
+    evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
 ) -> RadarRun:
-    """Run the whole radar pipeline for one client and return the run record (D61)."""
+    """Run the whole radar pipeline for one client and return the run record (D61).
+    `evidence_out`, when given, receives every document read with its ledger result, so the
+    caller can save the run (`radar.persist`, D86)."""
     settings = settings or get_settings()
     cap = settings.radar_run_budget_usd
     notes: list[str] = []
@@ -153,6 +156,8 @@ async def run_radar(
         kinds[kind] = kinds.get(kind, 0) + 1
 
     # 3. candidates (code only); unidentified subjects are rejected here
+    if evidence_out is not None:
+        evidence_out.extend(results)
     candidates, rejected = build_candidates(results, settings=settings)
     rejected = list(rejected)
 
