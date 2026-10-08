@@ -19,7 +19,11 @@ __all__ = ["structured_evidence"]
 
 SCHEMA_VER = 1
 # Classification schemes beyond CPV (US awards: NAICS, PSC): meta key -> rendered line prefix.
-EXTRA_CODE_LINES = (("naics_codes", "NAICS: "), ("psc_codes", "PSC: "))
+EXTRA_CODE_LINES = (
+    ("naics_codes", "NAICS: "),
+    ("psc_codes", "PSC: "),
+    ("contract_nature", "Contract nature: "),  # D94
+)
 EXTRACTED_BY = "code"
 TENDER = "tender_published"
 AWARD = "contract_awarded"

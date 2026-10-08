@@ -151,6 +151,21 @@ class Settings(BaseSettings):
     # Learning loop v0 (D89). The numbers are starting guesses, re-set from real labels
     # (docs/research/learning_loop_design.md 4.2-4.7).
     radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
+    # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
+    # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).
+    radar_contract_nature_aliases: dict[str, str] = Field(
+        default_factory=lambda: {
+            "supplies": "supplies", "goods": "supplies", "works": "works",
+            "services": "services", "go": "supplies", "cw": "works", "cs": "services",
+            "nc": "services",
+        }
+    )  # fmt: skip
+    radar_contract_nature_by_cpv_division: tuple[tuple[int, int, str], ...] = (
+        (3, 44, "supplies"),
+        (45, 45, "works"),
+        (48, 48, "supplies"),
+        (50, 98, "services"),
+    )
     learning_prior_strength: float = Field(default=10.0, gt=0)  # pseudo-count of the prior
     learning_trust_region: float = Field(default=0.25, gt=0, le=1)  # max move per version
     learning_explore_floor: float = Field(default=0.1, ge=0, le=1)  # chance for any query

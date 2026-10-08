@@ -341,6 +341,7 @@ def _render(x: dict[str, Any]) -> str:
         lines.append(f"Procurement method: {x['method_name']}{code}")
     if x["group"]:
         lines.append(f"Procurement group: {x['group']}")
+        lines.append(f"Contract nature: {x['group']}")  # the source's code, read via settings (D94)
     if x["winners"]:
         lines.append(f"Winner [{lang}]: {'; '.join(w['name'] for w in x['winners'])}")
         countries = _unique([w["country"] for w in x["winners"] if w["country"]])
@@ -397,6 +398,7 @@ def parse_notice(
         "buyer_countries": [x["buyer_country"]] if x["buyer_country"] else [],
         "winners": x["winners"],
         "cpv_codes": [],  # the source carries no CPV codes
+        "contract_nature": [x["group"]] if x["group"] else [],
         "deadlines": [x["deadline"]] if x["deadline"] else [],
         "winner_decision_dates": [x["decision"]] if x["decision"] else [],
         "estimated_values": [],

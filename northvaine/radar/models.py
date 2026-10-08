@@ -194,6 +194,12 @@ class RankedEntry(NorthvaineModel):
     # labels about what the cut throws away stay unbiased; `propensity` is its chance.
     exploration: bool = False
     propensity: float = Field(default=1.0, gt=0, le=1)
+    # D94: who the account is and how strong its buying evidence is (radar/account.py). None in
+    # run records written before D94; the brief then falls back to `requirement`.
+    contract_nature: str | None = None
+    nature_derived: bool = False
+    account_role: str | None = None
+    evidence_level: str | None = None
 
 
 class RejectedEntry(NorthvaineModel):
