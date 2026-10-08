@@ -200,6 +200,7 @@ def test_ledger_defaults() -> None:
     assert s.evidence_source_rules == {
         "ted": "structured",
         "fts": "structured",
+        "worldbank": "structured",
         "website": "full_text",
         "tavily": "raw_only",
     }
