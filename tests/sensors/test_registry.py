@@ -16,7 +16,7 @@ SETTINGS = Settings(_env_file=None)
 
 
 def test_sensor_names_are_fixed() -> None:
-    assert SENSOR_NAMES == ("ted", "tavily", "website", "fts")
+    assert SENSOR_NAMES == ("ted", "tavily", "website", "fts", "worldbank")
 
 
 @pytest.mark.parametrize("name", SENSOR_NAMES)

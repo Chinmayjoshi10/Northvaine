@@ -323,7 +323,7 @@ def test_website_signatures() -> None:
 def test_registry_signatures() -> None:
     from northvaine.sensors import registry
 
-    assert registry.SENSOR_NAMES == ("ted", "tavily", "website", "fts")
+    assert registry.SENSOR_NAMES == ("ted", "tavily", "website", "fts", "worldbank")
     assert params(registry.get_sensor) == ["name", "client", "settings"]
 
 

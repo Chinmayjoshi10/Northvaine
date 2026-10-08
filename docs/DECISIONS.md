@@ -784,3 +784,43 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - duplicates.
 
   The result is a proposal for a person to approve. It never edits a client spec.
+- **D91 — World Bank procurement notices sensor (`sensors/worldbank.py`, source `worldbank`).**
+  Open calls and contract awards for World Bank financed projects in 100+ countries, as
+  OFFICIAL documents in the TED and FTS line format, so `radar/structured.py` reads them
+  unchanged. Registered in `SENSOR_NAMES`, `radar_enumerable_sources` and
+  `evidence_source_rules` (`structured`). All settings sit in one `worldbank_*` block.
+  - **Endpoint (confirmed by live keyless probes, 2026-10-09; no official parameter page
+    exists):** `GET https://search.worldbank.org/api/v2/procnotices?format=json&rows=&os=&fl=
+    &notice_type=&qterm=`. Newest first. `rows` is capped at 1000 and `os` at 100000. There is
+    **no date filter** (date parameters are ignored or rejected), so the window is applied here:
+    a stream stops at the first page older than `published_from`, and a window far in the past is
+    found by bisection on `os` with one-row probes. Error bodies come back as HTTP 400, or 200
+    with an `error` key; both raise a body-free `SensorError`.
+  - **Licence:** the dataset "World Bank Procurement Notices" (World Bank Data Catalog 0037795)
+    is Creative Commons Attribution 4.0, classification Public. Commercial reuse is allowed with
+    attribution to the World Bank. The API gives no rate limit; we pace at 1 request a second.
+  - **Notice types read** (`worldbank_notice_types`, data): Invitation for Bids and Request for
+    Expression of Interest are `tender_published`; Contract Award is `contract_awarded`. General
+    Procurement Notices (early plans, no deadline or buyer) are not read.
+  - **Structured vs text:** title, dates, deadline, project, method, group, reference and the
+    implementing agency (`contact_organization`, the buyer) are fields. Winner, winner country,
+    signed price and award date exist only inside the HTML `notice_text` of awards. They are
+    read from the "Awarded ..." section by fixed patterns and written as rendered lines. The
+    rule stays `structured` because every quoted line is deterministic code output, but those
+    four lines are only as good as the pattern: a notice that does not match gets no winner (a
+    note says so), never a guess. An award notice names no buyer, so none is stated.
+  - **Privacy:** `fl=` never asks for `contact_*` fields. The text of open calls is not
+    requested at all (contact names sit unlabelled inside it). Award text is read only in its
+    "Awarded" section: bidder addresses, evaluated and rejected bidders and beneficial-owner
+    tables are never read. Individual-consultant contracts (`INDV`) are dropped. Winners of
+    direct-selection consultancies (`CDS`) are always withheld, since they are often one
+    person. Other names pass through `withhold_natural_persons` (D76) with
+    `worldbank_natural_person_markers` added. **Limit:** a sole trader named like a company
+    ("X & FRIENDS SME", a bare personal name under a goods method) cannot be detected.
+  - **Not built:** the Projects API (`/api/v3/projects`, CC BY 4.0, borrower, implementing
+    agency, amount, board approval date, abstract). Projects are the earliest signal, but no
+    existing event type fits "project approved", and one source name cannot be `structured` for
+    notices and `full_text` for abstracts. Follow-up: a new event type plus a second sensor name.
+  - **Source quirks handled:** some text fields are UTF-8 read as cp1252 and are repaired;
+    country names differ from ISO (`worldbank_country_aliases`); regions give no country; an
+    award's "decision date" may be years older than the notice (flagged `extreme_lag`).

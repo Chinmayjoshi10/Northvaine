@@ -1,0 +1,268 @@
+[
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=1&os=0&fl=id%2Cnoticedate&notice_type=Invitation+for+Bids",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 1,
+      "os": "0",
+      "page": "1",
+      "total": "45801",
+      "procnotices": [
+        {
+          "id": "OP00473485",
+          "noticedate": "07-Oct-2026",
+          "project_id": "P505158"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:56.079284Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=6&os=0&fl=id%2Cnotice_type%2Cnoticedate%2Cnotice_lang_name%2Csubmission_deadline_date%2Cproject_ctry_name%2Cproject_id%2Cproject_name%2Cbid_reference_no%2Cbid_description%2Cprocurement_group%2Cprocurement_method_code%2Cprocurement_method_name%2Ccontact_organization%2Ccontact_ctry_name&notice_type=Invitation+for+Bids",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 6,
+      "os": "0",
+      "page": "1",
+      "total": "45801",
+      "procnotices": [
+        {
+          "id": "OP00473485",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "submission_deadline_date": "2026-11-20T00:00:00Z",
+          "project_ctry_name": "Angola",
+          "project_id": "P505158",
+          "project_name": "Angola Youth Employment Opportunities Project",
+          "bid_reference_no": "012./C-012/COMP.3/BENS/INEFOP-2026",
+          "bid_description": "Aquisição de Viaturas para a Equipa de Implementação do Projecto AYEOP / JOVEM+",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Angola",
+          "contact_organization": "National Institute of Employment and Professional Training"
+        },
+        {
+          "id": "OP00473534",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "Spanish; Castilian",
+          "submission_deadline_date": "2026-11-24T00:00:00Z",
+          "project_ctry_name": "Dominican Republic",
+          "project_id": "P180163",
+          "project_name": "Dominican Republic Emergency Response and Resilience Project",
+          "bid_reference_no": "DO-MEPYD-470655-NC-RFB",
+          "bid_description": "Servicio de  monumentación, nivelación y computación para la Modernización de la Red Nacional de  Nivelación de alta precisión.",
+          "procurement_group": "NC",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Dominican Republic",
+          "contact_organization": "Ministerio de la Presidencia"
+        },
+        {
+          "id": "OP00473666",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-11-07T00:00:00Z",
+          "project_ctry_name": "Central African Republic",
+          "project_id": "P174620",
+          "project_name": "CAR- Public Sector Digital Governance Project",
+          "bid_reference_no": "145",
+          "bid_description": "Acquisition d'un système automatisé d'enrôlement des Fonctionnaires et Agent de l'Etat (FAE)",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Central African Republic",
+          "contact_organization": "AGIR"
+        },
+        {
+          "id": "OP00473742",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "submission_deadline_date": "2026-10-21T00:00:00Z",
+          "project_ctry_name": "Ukraine",
+          "project_id": "P171050",
+          "project_name": "Ukraine Improving Higher Education for Results Project",
+          "bid_reference_no": "MOES-UIHERP-C2-MERGERS-83",
+          "bid_description": "Procurement of Network Equipment",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "contact_ctry_name": "Ukraine",
+          "contact_organization": "Ministry of Education and Science of Ukraine"
+        },
+        {
+          "id": "OP00473324",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-10-07T00:00:00Z",
+          "project_ctry_name": "Madagascar",
+          "project_id": "P174684",
+          "project_name": "Economic Transformation for Inclusive Growth Project",
+          "bid_reference_no": "F-051-PIC3-AGRI",
+          "bid_description": "Fourniture et livraison de 45 motoculteurs",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Madagascar",
+          "contact_organization": "Economic Transformation for Inclusive Growth"
+        },
+        {
+          "id": "OP00472518",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-10-07T00:00:00Z",
+          "project_ctry_name": "Cote d'Ivoire",
+          "project_id": "P180059",
+          "project_name": "RESULTS ACCELERATION PROGRAM FOR INCLUSIVE DIGITALIZATION IN CÔTE D'IVOIRE - PHASE 1",
+          "bid_reference_no": "CI-PADCI-568102-NC-RFQ",
+          "bid_description": "Sélection d'un prestataire pour l'acquisition et la mise en place de la plateforme technologique y compris la base de connaissances",
+          "procurement_group": "NC",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "contact_ctry_name": "Cote d'Ivoire",
+          "contact_organization": "Ministry of Digital Transition and Technological Innovation"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:56.484437Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://search.worldbank.org/api/v2/procnotices?format=json&rows=6&os=6&fl=id%2Cnotice_type%2Cnoticedate%2Cnotice_lang_name%2Csubmission_deadline_date%2Cproject_ctry_name%2Cproject_id%2Cproject_name%2Cbid_reference_no%2Cbid_description%2Cprocurement_group%2Cprocurement_method_code%2Cprocurement_method_name%2Ccontact_organization%2Ccontact_ctry_name&notice_type=Invitation+for+Bids",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "body_json": {
+      "rows": 6,
+      "os": "6",
+      "page": "2",
+      "total": "45801",
+      "procnotices": [
+        {
+          "id": "OP00473690",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "submission_deadline_date": "2026-10-07T00:00:00Z",
+          "project_ctry_name": "South Sudan",
+          "project_id": "P178654",
+          "project_name": "Building Skills for Human Capital Development in South Sudan",
+          "bid_reference_no": "SS-MOGEI-571921-CW-RFB",
+          "bid_description": "Renovation works of Wau Teacher Training Institute",
+          "procurement_group": "CW",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "South Sudan",
+          "contact_organization": "Ministry of General Education and Instruction"
+        },
+        {
+          "id": "OP00473725",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-11-11T00:00:00Z",
+          "project_ctry_name": "Madagascar",
+          "project_id": "P174684",
+          "project_name": "Economic Transformation for Inclusive Growth Project",
+          "bid_reference_no": "T-043-PIC3-AGRI",
+          "bid_description": "Travaux de construction d'un centre Agropole à Ilafitsinanana, Fokontany Ambinanibe, Commune Urbaine Tolagnaro, District de Tolagnaro, Région ANOSY",
+          "procurement_group": "CW",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Madagascar",
+          "contact_organization": "Economic Transformation for Inclusive Growth"
+        },
+        {
+          "id": "OP00473367",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-11-24T00:00:00Z",
+          "project_ctry_name": "Madagascar",
+          "project_id": "P174477",
+          "project_name": "Madagascar National Water Project",
+          "bid_reference_no": "WJIR-AOI-039-F-26",
+          "bid_description": "Fourniture de divers équipements pour les branchements promotionnels",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Madagascar",
+          "contact_organization": "UGP PAAEP JIRAMA"
+        },
+        {
+          "id": "OP00473713",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "submission_deadline_date": "2026-10-27T00:00:00Z",
+          "project_ctry_name": "Pakistan",
+          "project_id": "P167596",
+          "project_name": "Sindh Water and Agriculture Transformation Project (SWAT)",
+          "bid_reference_no": "PK-SIDA-572728-CW-RFB",
+          "bid_description": "Canal Modernization and Rehabilitation Works of Khorwah Distry under component-2 of SWAT",
+          "procurement_group": "CW",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Pakistan",
+          "contact_organization": "Sindh Irrigation and Drainage Authority"
+        },
+        {
+          "id": "OP00461352",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "English",
+          "submission_deadline_date": "2026-08-28T00:00:00Z",
+          "project_ctry_name": "Jamaica",
+          "project_id": "P178582",
+          "project_name": "JAMAICA: SOCIAL PROTECTION FOR INCREASED RESILIENCE AND OPPORTUNITY (SPIRO)",
+          "bid_reference_no": "JM-MLSS-388977-NC-RFQ",
+          "bid_description": "20 Additional social workers for improved delivery systems",
+          "procurement_group": "NC",
+          "procurement_method_code": "RFQ",
+          "procurement_method_name": "Request for Quotations",
+          "contact_ctry_name": "Jamaica",
+          "contact_organization": "Ministry of Labour and Social Security"
+        },
+        {
+          "id": "OP00472218",
+          "notice_type": "Invitation for Bids",
+          "noticedate": "07-Oct-2026",
+          "notice_lang_name": "French",
+          "submission_deadline_date": "2026-11-02T00:00:00Z",
+          "project_ctry_name": "Burundi",
+          "project_id": "P169315",
+          "project_name": "Burundi Integrated Community Development Project",
+          "bid_reference_no": "BI-TURIKUMWE PIU-394339-GO-RFB",
+          "bid_description": "Equipements pour salle polyvalente au Lycée communal CUMBA/Muyinga et pour la salle polyvalente pour les jeunes au chef-lieu de la commune Gashoho et pour la salle polyvalente de la commune Butihinda",
+          "procurement_group": "GO",
+          "procurement_method_code": "RFB",
+          "procurement_method_name": "Request for Bids",
+          "contact_ctry_name": "Burundi",
+          "contact_organization": "Ministry of the Interior, Community Development and Public Security"
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-08T20:07:57.097710Z"
+  }
+]
