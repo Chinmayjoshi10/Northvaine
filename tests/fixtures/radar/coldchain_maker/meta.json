@@ -1,7 +1,7 @@
 {
   "client": "coldchain_maker",
-  "as_of": "2026-10-07T22:40:05Z",
-  "recorded_at": "2026-10-07T22:46:06+00:00",
+  "as_of": "2026-10-08T18:16:42Z",
+  "recorded_at": "2026-10-08T18:22:03+00:00",
   "queries": {
     "ted": [
       {
@@ -21,8 +21,8 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-08-23",
-        "published_to": "2026-10-07",
+        "published_from": "2026-08-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -42,8 +42,8 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-06-23",
-        "published_to": "2026-10-07",
+        "published_from": "2026-06-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -63,8 +63,8 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-08-23",
-        "published_to": "2026-10-07",
+        "published_from": "2026-08-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -84,8 +84,8 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-06-23",
-        "published_to": "2026-10-07",
+        "published_from": "2026-06-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       }
     ],
@@ -101,8 +101,8 @@
           "en"
         ],
         "text": "new distribution centre with temperature-controlled storage announced",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       },
       {
@@ -116,8 +116,8 @@
           "de"
         ],
         "text": "neues Logistikzentrum mit Kuehllager Eroeffnung geplant",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       },
       {
@@ -131,8 +131,8 @@
           "fr"
         ],
         "text": "nouvel entrepot frigorifique construction annonce",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       }
     ]

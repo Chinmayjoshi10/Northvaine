@@ -718,7 +718,8 @@ def test_upgraded_pages_are_available_when_fetched(client: str) -> None:
             assert doc.available_at == min(page.fetched_at, r.run.as_of), doc.url
     for page in r.run.upgraded:
         if page.refused is None:
-            assert page.fetched_at is not None and page.fetched_at <= r.run.as_of
+            # fetched during the run, so possibly after as_of; documents are capped (D78)
+            assert page.fetched_at is not None
 
 
 @pytest.mark.parametrize("client", CLIENTS)
@@ -759,7 +760,14 @@ def test_packaging_with_few_entries_shows_the_thin_sources_paragraph() -> None:
     assert "## Thin sources" in brief_of("packaging_supplier")
 
 
+_TWO_RUNS: dict[str, tuple[dict[str, bytes], dict[str, bytes]]] = {}
+
+
 def _two_runs(client: str, tmp_path: Path) -> tuple[dict[str, bytes], dict[str, bytes]]:
+    """Two full CLI replays of one client, done once per test session: they are the slowest
+    thing in the suite, and several tests compare the same pair (determinism, run records)."""
+    if client in _TWO_RUNS:
+        return _TWO_RUNS[client]
     outputs = []
     for name in ("first", "second"):
         out = tmp_path / name
@@ -767,7 +775,8 @@ def _two_runs(client: str, tmp_path: Path) -> tuple[dict[str, bytes], dict[str, 
         folder = out / client / replay(client).run.as_of.date().isoformat()
         outputs.append({p.name: p.read_bytes() for p in sorted(folder.iterdir())})
     assert sorted(outputs[0]) == ["brief.md", "run.json", "scorecard.md"]
-    return outputs[0], outputs[1]
+    _TWO_RUNS[client] = (outputs[0], outputs[1])
+    return _TWO_RUNS[client]
 
 
 @pytest.mark.parametrize("client", CLIENTS)
