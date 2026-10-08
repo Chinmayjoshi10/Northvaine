@@ -163,9 +163,9 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "record-sensors": record_sensors,
     "record-llm": record_llm,
     "radar": radar,
-    "learn-sim": learn_sim,
     "record-radar": record_radar,
     "eval": evaluate,
+    "learn-sim": learn_sim,
 }
 
 HELP = {

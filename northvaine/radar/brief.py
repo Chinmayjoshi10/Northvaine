@@ -667,6 +667,11 @@ def _entry_block(entry: RankedEntry) -> list[str]:
     # 9 Suggested action
     out += [heading(9), ""]
     out.append(f"Status: {action_status(entry)}. Caution: {caution(entry)}.")
+    if entry.exploration:
+        out.append(
+            "Exploration pick: chosen at random from the leads below the cut, so the system "
+            "learns what the cut misses. Rate it like any other lead (D89)."
+        )
     stage_action = cfg.radar_action_by_stream.get(c.stream.value)
     if stage_action:
         out.append(f"Next step for this stage: {_inline(stage_action)}")
