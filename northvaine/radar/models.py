@@ -176,6 +176,17 @@ class LikelyBidder(NorthvaineModel):
     quote: str
 
 
+class FitEvidence(NorthvaineModel):
+    """A sentence on the company's own site naming what the client sells (D96): a fit, not a
+    purchase."""
+
+    url: str
+    quote: str
+    term: str
+    level: Literal["stated", "related"]
+    fingerprint: str
+
+
 class RankedEntry(NorthvaineModel):
     rank: int = Field(ge=1)
     candidate: Candidate
@@ -200,6 +211,10 @@ class RankedEntry(NorthvaineModel):
     nature_derived: bool = False
     account_role: str | None = None
     evidence_level: str | None = None
+    # D96: the company's own site, and the sentences on it naming what the client sells.
+    company_site: str | None = None
+    company_fit: list[FitEvidence] = Field(default_factory=list)
+    fit_level: Literal["stated", "related"] | None = None
 
 
 class RejectedEntry(NorthvaineModel):

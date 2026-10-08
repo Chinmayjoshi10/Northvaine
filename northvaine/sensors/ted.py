@@ -51,6 +51,7 @@ TED_SAFE_FIELDS: tuple[str, ...] = (
     "winner-name",
     "winner-country",
     "classification-cpv",
+    "contract-nature",  # D94: supplies, works or services (confirmed live 9 Oct 2026)
     "notice-title",
     "estimated-value-lot",
     "total-value",

@@ -139,6 +139,11 @@ def _term_pattern(term: str, prefix: bool) -> re.Pattern[str]:
     return re.compile(r"(?<![^\W\d_])" + body + tail, re.IGNORECASE)
 
 
+def names_term(quote: str, terms: set[str], prefix: bool = False) -> bool:
+    """Whether `quote` names one of `terms` (the same rule as the requirement check)."""
+    return _names_term(quote, terms, prefix)
+
+
 def _names_term(quote: str, terms: set[str], prefix: bool = False) -> bool:
     text = quote.casefold()
     for term in terms:
@@ -505,8 +510,15 @@ def action_status(entry: RankedEntry) -> str:
     so its tender is a watch item. A supplies tender whose verified record names what the client
     sells is a direct purchase: "bid now". "Contact now" needs explicit-purchase evidence and no
     doubt the brief itself shows (review of D80, CEO acceptance criteria)."""
-    explicit = entry.evidence_level == "explicit_purchase" or (
-        entry.evidence_level is None and entry.requirement == "stated"
+    explicit = (
+        entry.evidence_level == "explicit_purchase"
+        or (entry.evidence_level is None and entry.requirement == "stated")
+        # an awarded contractor whose own site names what the client sells (D96)
+        or (
+            entry.account_role == "awarded_contractor"
+            and entry.evidence_level == "project_requirement"
+            and entry.fit_level == "stated"
+        )
     )
     if entry.candidate.stream == RadarStream.TENDER:
         clean = explicit and not entry.steered and not entry.skeptic.against
@@ -577,8 +589,10 @@ def caution(entry: RankedEntry) -> str:
         return "it won a supplies contract for this kind of product: a competitor or a channel"
     if entry.skeptic.against:
         return "the brief lists evidence against; read section 8"
-    if entry.account_role == "awarded_contractor":
+    if entry.account_role == "awarded_contractor" and entry.fit_level != "stated":
         return "won the contract; confirm it buys what you sell for this work" + nature_note
+    if entry.account_role == "awarded_contractor":
+        return "won the contract and its own site names what you sell; ask what it needs here"
     if entry.requirement == "related":
         return "names a related product, not exactly yours: ask about the specification"
     if entry.requirement != "stated":
@@ -723,6 +737,17 @@ def _entry_block(entry: RankedEntry) -> list[str]:
     chain = _chain(entry)
     if chain:
         out.append(f"Chain: {chain}")
+    if entry.company_site:
+        out.append(
+            f"Company fit (not a purchase): its own site {_safe(entry.company_site)} "
+            + (
+                f"names {'what you sell' if entry.fit_level == 'stated' else 'related products'}:"
+                if entry.company_fit
+                else "does not name what you sell on the pages read."
+            )
+        )
+        for fit in entry.company_fit:  # verified by code on the stored page (D96)
+            out.append(f'- "{_safe(fit.quote)}" ({_link(fit.url)})')
     who_buys = cfg.radar_buyer_note_by_stream.get(c.stream.value)
     if who_buys:
         out.append(f"Who buys: {_inline(who_buys)}")

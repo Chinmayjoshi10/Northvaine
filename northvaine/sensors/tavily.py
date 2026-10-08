@@ -66,6 +66,8 @@ def build_search_request(
         body["start_date"] = query.published_from.isoformat()
     if query.published_to is not None:
         body["end_date"] = query.published_to.isoformat()
+    if query.domains:
+        body["include_domains"] = list(query.domains)
     if len(query.countries) == 1:
         body["country"] = iso2_to_name(query.countries[0])
     elif len(query.countries) > 1:
