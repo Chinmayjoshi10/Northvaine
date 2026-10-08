@@ -98,6 +98,41 @@ The order matters. Items lower down are cut first if time runs short.
    each owner.
 7. A graph server (e.g. Neo4j) only as a read copy, and only if Postgres becomes slow.
 
+## Classifiers beyond the hackathon (founder, 9 Oct)
+
+Scope set by the founder: **classifiers sort pages and sources only.** Buyer decisions,
+rejections and ranking stay with the LLM and code, and every shown fact still needs a verified
+quote. A classifier mistake costs at most one extra page read or one noisy page skipped.
+
+- **Where it sits:** search → **page classifier** → extraction (LLM) → claims → gate → brief.
+- **What it labels for each page or source:**
+  - relevance: a real project, purchase or organisation, or noise (ads, SEO, directories, job
+    boards, unrelated news);
+  - document type: tender, award, press release, news, company page, planning record, filing;
+  - source type: government, the company's own site, news, aggregator (feeds source trust);
+  - event type, when there is one.
+- **Why here:** extraction is the per-page LLM cost. At world scale, tens of thousands of pages a
+  day, skipping noise before extraction is the main saving.
+- **Free labels from day one:** every extracted page either produced verified claims (useful) or
+  produced nothing (noise). The pipeline labels its own training data, with no customer ratings
+  needed.
+- **Candidates, chosen by a bake-off on those labels:**
+  - Jev (TypeSafe AI, hosted, cheap; closed, sign-ups paused);
+  - GLiClass (open, runs locally, no training);
+  - a small model of our own (SetFit or a fine-tuned encoder);
+  - the LLM itself as the reference.
+
+  Measured on recall of useful pages at a safe threshold, extraction calls saved, cost,
+  multilingual quality and calibration.
+- **Next experiment:** the same as D92, but on pages. Use the recorded web pages, labelled by
+  whether extraction verified any claim. It also needs more recorded pages, because today's runs
+  read mostly structured records.
+- **Conditions for a hosted model such as Jev:**
+  - readable licence and data terms;
+  - open sign-up;
+  - page text allowed to leave our stack;
+  - a fallback model ready.
+
 ## Not doing, and why
 
 - **Customs shipping records (ImportYeti, Panjiva):** not official, and they can contain private

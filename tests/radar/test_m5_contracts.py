@@ -100,7 +100,8 @@ def test_signatures_match_the_plan() -> None:
         "offer",
         "terms",
         "related_terms",
-    ]  # fmt: skip  (D80, D82, D84)
+        "learned",
+    ]  # fmt: skip  (D80, D82, D84; learned: D89)
     assert params(brief.render_brief) == ["run"]
     assert params(brief.render_scorecard) == ["run"]
     assert params(brief.write_reports) == ["run", "out_dir"]
@@ -115,6 +116,7 @@ def test_signatures_match_the_plan() -> None:
         "settings",
         "session",
         "evidence_out",
+        "strategy",
     ]  # fmt: skip  (session: D69, a live run logs every call; evidence_out: D86, saving a run)
 
 

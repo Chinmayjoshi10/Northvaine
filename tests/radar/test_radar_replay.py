@@ -378,7 +378,8 @@ def test_every_brief_blockquote_is_a_verified_quote_and_every_citation_resolves(
     brief = brief_of(client)
     shown = shown_entries(client)
     blocks = entry_blocks(brief)
-    assert sorted(blocks) == [e.rank for e in shown]
+    # the exploration pick is written up last, after the ranked entries (D89)
+    assert sorted(blocks) == sorted(e.rank for e in shown)
     all_quotes = {c.source_quote for cand in _all_candidates(r) for c in cand.claims}
     assert set(blockquotes(brief)) <= all_quotes, (
         "a blockquote in the brief is not a verified quote"

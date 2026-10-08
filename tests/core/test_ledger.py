@@ -84,7 +84,9 @@ async def test_save_claims_params_and_mapping() -> None:
     c = check()
     out = await ledger.save_claims(session, [c])  # type: ignore[arg-type]
     assert out == {"f1": cid}
-    sql, params = session.calls[0]
+    sql, batch = session.calls[0]
+    assert isinstance(batch, list) and len(batch) == 1  # one batched statement
+    params = batch[0]
     assert "ON CONFLICT (fingerprint) DO NOTHING" in sql
     assert params["status"] == "verified" and params["verified"] is True
     assert params["quote_offset"] == 3 and params["verified_by"] == "code"
@@ -95,7 +97,7 @@ async def test_save_claims_params_and_mapping() -> None:
 async def test_save_claims_rejected_is_stored_unverified() -> None:
     session = FakeSession()
     await ledger.save_claims(session, [check(ClaimStatus.QUOTE_NOT_FOUND)])  # type: ignore[arg-type]
-    params = session.calls[0][1]
+    params = session.calls[0][1][0]
     assert params["verified"] is False and params["quote_offset"] is None
 
 
@@ -126,7 +128,9 @@ async def test_save_events_inserts_with_subject_in_slots() -> None:
     session = FakeSession(FakeResult([(cid,)]), FakeResult(), FakeResult([("e1", eid)]))
     out = await ledger.save_events(session, [event([cid])])  # type: ignore[arg-type]
     assert out == {"e1": eid}
-    sql, params = session.calls[1]
+    sql, batch = session.calls[1]
+    assert isinstance(batch, list) and len(batch) == 1  # one batched statement
+    params = batch[0]
     assert "ON CONFLICT (fingerprint) DO NOTHING" in sql
     assert params["embedding"] == "[0.5,1.0]"
     assert params["claim_ids"] == [str(cid)]

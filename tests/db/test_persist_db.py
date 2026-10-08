@@ -80,6 +80,21 @@ async def test_a_run_is_saved_once_and_a_second_save_updates_it(
         assert await scalar(s, "SELECT count(*) FROM case_evidence") == sum(
             len({c.fingerprint for c in e.candidate.claims}) for e in run.entries
         )
+        # events are saved once, on stored concepts, and linked to their company (D87)
+        assert first.events > 0 and second.events == first.events
+        assert await scalar(s, "SELECT count(*) FROM events") == first.events
+        assert await scalar(s, "SELECT count(*) FROM events WHERE concept_id IS NULL") == 0
+        assert await scalar(s, "SELECT count(*) FROM events WHERE company_id IS NOT NULL") > 0
+        # every briefed decision says which sources and queries found its evidence (D87)
+        assert (
+            await scalar(
+                s,
+                "SELECT count(*) FROM decisions WHERE choice->>'briefed' = 'true' AND "
+                "(jsonb_array_length(features->'queries') = 0 "
+                "OR jsonb_array_length(features->'sources') = 0)",
+            )
+            == 0
+        )
         questions = sum(len(set(e.skeptic.open_questions)) for e in run.entries)
         assert await scalar(s, "SELECT count(*) FROM case_open_questions") == questions
 
@@ -98,7 +113,11 @@ async def test_no_company_row_for_an_unidentified_subject(
         await s.commit()
     async with maker() as s:
         keys = set(
-            (await s.execute(text("SELECT attributes->>'radar_key' FROM companies"))).scalars()
+            (
+                await s.execute(
+                    text("SELECT value FROM company_identifiers WHERE scheme = 'name_country'")
+                )
+            ).scalars()
         )
         reasons = list(
             (
@@ -129,3 +148,77 @@ async def test_a_case_moved_past_briefed_is_never_moved_back(
         assert await scalar(s, "SELECT stage FROM cases WHERE id = :id", id=case_id) == (
             "contacted"
         )
+
+
+# --- graph v0 (D88) --------------------------------------------------------------------------
+
+TENDERS = "coldchain_maker"  # open tenders with likely bidders
+
+
+@pytest.fixture(scope="module")
+def tender_run() -> tuple[Any, list[Any]]:
+    evidence: list[Any] = []
+    run = asyncio.run(radar.run_replay(spec_of(TENDERS), load(TENDERS), evidence_out=evidence))
+    return run, evidence
+
+
+async def test_links_join_companies_to_procedures_with_verified_proof(
+    maker: async_sessionmaker[AsyncSession], tender_run: tuple[Any, list[Any]]
+) -> None:
+    from northvaine.core.models import NodeKind
+    from northvaine.radar.graph import neighbourhood
+
+    run, evidence = tender_run
+    async with maker() as s:
+        first = await persist_run(s, run, evidence)
+        await s.commit()
+    async with maker() as s:
+        second = await persist_run(s, run, evidence)
+        await s.commit()
+    assert first.links > 0
+    async with maker() as s:
+        total = await scalar(s, "SELECT count(*) FROM links")
+        assert total == await scalar(s, "SELECT count(DISTINCT fingerprint) FROM links")
+        assert second.links == first.links  # the same lines, not new ones
+        # every cited claim is verified (CLAUDE.md #2)
+        assert (
+            await scalar(
+                s,
+                "SELECT count(*) FROM links l, unnest(l.claim_ids) c "
+                "WHERE c NOT IN (SELECT id FROM verified_claims)",
+            )
+            == 0
+        )
+        assert await scalar(s, "SELECT count(*) FROM links WHERE relation = 'buyer'") > 0
+        # every company node has exactly one name_country identifier
+        assert await scalar(s, "SELECT count(*) FROM companies") == await scalar(
+            s, "SELECT count(*) FROM company_identifiers WHERE scheme = 'name_country'"
+        )
+        # natural persons never become nodes (D76)
+        assert await scalar(s, "SELECT count(*) FROM companies WHERE name LIKE '[%'") == 0
+
+        bidders = sum(len(e.likely_bidders) for e in run.entries)
+        inferred = await scalar(s, "SELECT count(*) FROM links WHERE relation = 'likely_bidder'")
+        if bidders:
+            assert inferred > 0
+            assert (
+                await scalar(
+                    s,
+                    "SELECT count(*) FROM links WHERE derivation = 'inferred' "
+                    "AND (confidence IS NULL OR details->>'basis' IS NULL)",
+                )
+                == 0
+            )
+
+        proc = (
+            await s.execute(
+                text(
+                    "SELECT dst_id FROM links WHERE dst_kind = 'procedure' ORDER BY dst_id LIMIT 1"
+                )
+            )
+        ).scalar_one()
+        view = await neighbourhood(s, NodeKind.PROCEDURE, proc, depth=2)
+    assert view.edges
+    assert all(edge.evidence for edge in view.edges)
+    assert {n.id for n in view.nodes} >= {proc}
+    assert all(n.label for n in view.nodes)

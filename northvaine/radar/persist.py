@@ -5,21 +5,25 @@ outcomes and learning can point at it:
 
 - documents the run read (public; the id is the run's deterministic id when it is free)
 - claims: every check of every document, verified or not, idempotent on fingerprint
-- companies: one row per candidate key (`attributes.radar_key`); never for an unidentified
-  subject or a natural person
+- companies: one row per match key, found through `company_identifiers` (scheme
+  `name_country`, D88); never for an unidentified subject or a natural person
+- links: the web of who did what in which buying process (`radar/graph.py`, D88)
 - cases: one open case per company and window, stage `briefed`; a later run updates the
   verdict and appends to the trace, it never opens a duplicate or moves a case backwards
 - case_evidence: the candidate's claims `for`, the skeptic's cited claims `against`
 - case_open_questions: the skeptic's open questions, once each
-- decisions: one `brief` row per gated candidate, briefed or rejected (propensity 1: the
-  ranking is deterministic code)
+- events: every event the ledger grounded, with its concept mapped from the radar's seeded
+  ids to the database's rows by label (D87), and linked to its company once known
+- decisions: one `brief` row per gated candidate, briefed or rejected, with the sources and
+  the queries ("sensor:index") that found its evidence (D87). Propensity 1: the ranking is
+  deterministic code.
 
-Events are not saved yet: the radar's seeded concepts are not rows of `event_concepts`.
 The caller owns the transaction (`session_scope` commits).
 """
 
 from __future__ import annotations
 
+import contextlib
 import json
 from collections.abc import Sequence
 from typing import Any
@@ -29,9 +33,18 @@ from pydantic import Field
 from pydantic_core import to_jsonable_python
 
 from northvaine.core.documents import ensure_source
-from northvaine.core.ledger import save_claims
-from northvaine.core.models import EvidenceDocument, LedgerResult, NorthvaineModel, SourceTier
+from northvaine.core.ledger import ensure_concept, load_concepts, save_claims, save_events
+from northvaine.core.models import (
+    EvidenceDocument,
+    LedgerResult,
+    NewEvent,
+    NorthvaineModel,
+    SourceTier,
+)
+from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.brief import action_status, caution
+from northvaine.radar.graph import bidder_links, save_links, stated_links
+from northvaine.radar.learning import query_keys_by_ref
 from northvaine.radar.models import (
     Candidate,
     RadarRun,
@@ -52,7 +65,9 @@ class PersistResult(NorthvaineModel):
     workspace_id: UUID
     documents_inserted: int
     claims: int
+    events: int
     companies: int
+    links: int
     cases: dict[str, UUID] = Field(default_factory=dict)  # candidate key -> case id
     decisions: int
 
@@ -93,77 +108,108 @@ async def _workspace(session: Any, name: str) -> UUID:
 async def _documents(
     session: Any, docs: Sequence[EvidenceDocument]
 ) -> tuple[dict[UUID, UUID], int]:
-    """Insert each document once; returns run id -> stored id, and how many were new."""
-    insert = _text(
-        "INSERT INTO documents (id, source_id, url, content_hash, title, text, available_at, "
-        "group_key, meta) VALUES (:id, :source_id, :url, :hash, :title, :text, :available_at, "
-        ":group_key, CAST(:meta AS jsonb)) ON CONFLICT DO NOTHING RETURNING id"
-    )
-    lookup = _text("SELECT id FROM documents WHERE url = :url AND content_hash = :hash")
-    sources: dict[str, UUID] = {}
-    ids: dict[UUID, UUID] = {}
-    inserted = 0
+    """Insert each document once, in one batch; returns run id -> stored id, and how many were
+    new. A page already stored under the same (url, content hash) keeps its row."""
+    unique: dict[UUID, tuple[EvidenceDocument, str]] = {}
     for doc in docs:
         if doc.workspace_id is not None:
             raise ValueError("private documents are parked: persist_run saves public documents")
-        if doc.id in ids:
-            continue
+        unique.setdefault(doc.id, (doc, content_hash(doc.text)))
+    if not unique:
+        return {}, 0
+    sources: dict[str, UUID] = {}
+    for doc, _ in unique.values():
         if doc.source_name not in sources:
             sources[doc.source_name] = await ensure_source(
                 session, doc.source_name, _tier(doc.source_name)
             )
-        digest = content_hash(doc.text)
-        row = (
-            await session.execute(
-                insert,
-                {
-                    "id": doc.id,
-                    "source_id": sources[doc.source_name],
-                    "url": doc.url,
-                    "hash": digest,
-                    "title": doc.title,
-                    "text": doc.text,
-                    "available_at": doc.available_at,
-                    "group_key": doc.group_key,
-                    "meta": _json({**doc.meta, "source": doc.source_name}),
-                },
-            )
-        ).first()
-        if row is not None:
-            inserted += 1
-            ids[doc.id] = row[0]
-            continue
-        stored = (await session.execute(lookup, {"url": doc.url, "hash": digest})).first()
+    pairs = sorted({(doc.url, digest) for doc, digest in unique.values()})
+    lookup = _text(
+        "SELECT d.id, d.url, d.content_hash FROM documents d "
+        "JOIN unnest(CAST(:urls AS text[]), CAST(:hashes AS text[])) AS p(url, hash) "
+        "ON d.url = p.url AND d.content_hash = p.hash"
+    )
+    params = {"urls": [u for u, _ in pairs], "hashes": [h for _, h in pairs]}
+    before = {(r.url, r.content_hash): r.id for r in (await session.execute(lookup, params))}
+    rows = [
+        {
+            "id": doc.id,
+            "source_id": sources[doc.source_name],
+            "url": doc.url,
+            "hash": digest,
+            "title": doc.title,
+            "text": doc.text,
+            "available_at": doc.available_at,
+            "group_key": doc.group_key,
+            "meta": _json({**doc.meta, "source": doc.source_name}),
+        }
+        for doc, digest in unique.values()
+        if (doc.url, digest) not in before
+    ]
+    if rows:
+        await session.execute(
+            _text(
+                "INSERT INTO documents (id, source_id, url, content_hash, title, text, "
+                "available_at, group_key, meta) VALUES (:id, :source_id, :url, :hash, :title, "
+                ":text, :available_at, :group_key, CAST(:meta AS jsonb)) ON CONFLICT DO NOTHING"
+            ),
+            rows,
+        )
+    after = {(r.url, r.content_hash): r.id for r in (await session.execute(lookup, params))}
+    ids: dict[UUID, UUID] = {}
+    for doc_id, (doc, digest) in unique.items():
+        stored = after.get((doc.url, digest))
         if stored is None:  # the id was taken by a different page: keep that row's meaning
-            raise ValueError(f"document id {doc.id} already names another page")
-        ids[doc.id] = stored[0]
-    return ids, inserted
+            raise ValueError(f"document id {doc_id} already names another page")
+        ids[doc_id] = stored
+    return ids, len(after) - len(before)
 
 
-async def _company(session: Any, candidate: Candidate) -> UUID:
+_MATCH_SCHEME = "name_country"  # the normalised name and country key (D58, D88)
+
+
+async def _company_by_key(
+    session: Any, key: str, name: str, country: str | None, aliases: Sequence[str] = ()
+) -> UUID:
+    """The company holding identifier (`name_country`, key), created with it if new."""
     found = await session.execute(
-        _text(
-            "UPDATE companies SET name = :name, aliases = :aliases, updated_at = now() "
-            "WHERE attributes->>'radar_key' = :key RETURNING id"
-        ),
-        {"key": candidate.key, "name": candidate.name, "aliases": candidate.aliases},
+        _text("SELECT company_id FROM company_identifiers WHERE scheme = :scheme AND value = :key"),
+        {"scheme": _MATCH_SCHEME, "key": key},
     )
     existing = found.scalar_one_or_none()
     if existing is not None:
+        if aliases:
+            await session.execute(
+                _text(
+                    "UPDATE companies SET aliases = (SELECT array_agg(DISTINCT a ORDER BY a) "
+                    "FROM unnest(aliases || CAST(:aliases AS text[])) AS a), updated_at = now() "
+                    "WHERE id = :id"
+                ),
+                {"id": existing, "aliases": list(aliases)},
+            )
         return existing
     created = await session.execute(
         _text(
-            "INSERT INTO companies (name, aliases, country, attributes) "
-            "VALUES (:name, :aliases, :country, CAST(:attributes AS jsonb)) RETURNING id"
+            "INSERT INTO companies (name, aliases, country) VALUES (:name, :aliases, :country) "
+            "RETURNING id"
         ),
-        {
-            "name": candidate.name,
-            "aliases": candidate.aliases,
-            "country": candidate.country,
-            "attributes": _json({"radar_key": candidate.key}),
-        },
+        {"name": name, "aliases": list(aliases), "country": country},
     )
-    return created.scalar_one()
+    company_id = created.scalar_one()
+    await session.execute(
+        _text(
+            "INSERT INTO company_identifiers (company_id, scheme, value) "
+            "VALUES (:company_id, :scheme, :key)"
+        ),
+        {"company_id": company_id, "scheme": _MATCH_SCHEME, "key": key},
+    )
+    return company_id
+
+
+async def _company(session: Any, candidate: Candidate) -> UUID:
+    return await _company_by_key(
+        session, candidate.key, candidate.name, candidate.country, candidate.aliases
+    )
 
 
 def _verdict(entry: RankedEntry, run: RadarRun) -> dict[str, Any]:
@@ -254,6 +300,89 @@ async def _evidence(
         )
 
 
+async def _events(
+    session: Any,
+    evidence: Sequence[tuple[EvidenceDocument, LedgerResult]],
+    doc_ids: dict[UUID, UUID],
+    claim_ids: dict[str, UUID],
+) -> dict[str, UUID]:
+    """Save every grounded event; returns fingerprint -> id. The radar runs on seeded concepts
+    whose ids are not database rows, so each is mapped by label to the stored level-0 row, and
+    a new finer concept is created under that row."""
+    pending = [event for _, result in evidence for event in result.events]
+    if not pending:
+        return {}
+    stored = {c.label: c.id for c in await load_concepts(session) if c.level == 0}
+    seeded = {}
+    for event in pending:
+        concept = event.concept
+        if concept.level == 0 and concept.concept_id is not None:
+            seeded[concept.concept_id] = concept.label
+    new_events: list[NewEvent] = []
+    for event in pending:
+        concept = event.concept
+        if concept.level == 0:
+            concept_id = stored.get(concept.label)
+        else:
+            parent_label = seeded.get(concept.parent_id) if concept.parent_id else None
+            parent = stored.get(parent_label or event.event_type)
+            concept_id = (
+                await ensure_concept(session, concept.model_copy(update={"parent_id": parent}))
+                if parent is not None
+                else stored.get(event.event_type)
+            )
+        details = dict(event.details)
+        if "document_id" in details:
+            with contextlib.suppress(KeyError, ValueError):
+                details["document_id"] = str(doc_ids[UUID(str(details["document_id"]))])
+        new_events.append(
+            NewEvent(
+                event_type=event.event_type,
+                claim_ids=[claim_ids[fp] for fp in event.claim_fingerprints],
+                occurred_on=event.occurred_on,
+                available_at=event.available_at,
+                subject=event.subject,
+                description=event.description,
+                embedding=event.embedding,
+                concept_id=concept_id,
+                cluster_id=event.cluster_id,
+                slots=event.slots,
+                details=details,
+                fingerprint=event.fingerprint,
+            )
+        )
+    return await save_events(session, new_events)
+
+
+async def _link_events(session: Any, candidate: Candidate, company_id: UUID) -> None:
+    fingerprints = sorted({e.fingerprint for e in candidate.events})
+    if fingerprints:
+        await session.execute(
+            _text(
+                "UPDATE events SET company_id = :company_id WHERE company_id IS NULL "
+                "AND fingerprint = ANY(CAST(:fps AS text[]))"
+            ),
+            {"company_id": company_id, "fps": fingerprints},
+        )
+
+
+def _provenance(candidate: Candidate, run: RadarRun) -> dict[str, Any]:
+    """The sources and the queries ("sensor:index") behind a candidate's evidence (D87)."""
+    queries = sorted(
+        {ref for c in candidate.claims for ref in run.found_by.get(str(c.document_id), [])}
+    )
+    by_ref = query_keys_by_ref(run.queries)
+    keys = {by_ref[ref] for ref in queries if ref in by_ref}
+    return {
+        "sources": sorted({c.source_name for c in candidate.claims}),
+        "queries": queries,
+        "query_propensity": {
+            q: run.query_propensity[q] for q in queries if q in run.query_propensity
+        },
+        "query_keys": sorted(keys),  # stable across runs and clients (D89)
+    }
+
+
 def _features(candidate: Candidate) -> dict[str, Any]:
     return {
         "stream": candidate.stream.value,
@@ -274,12 +403,13 @@ async def _decision(
     company_id: UUID | None,
     features: dict[str, Any],
     choice: dict[str, Any],
+    propensity: float = 1.0,
 ) -> None:
     await session.execute(
         _text(
             "INSERT INTO decisions (workspace_id, kind, case_id, company_id, features, choice, "
             "propensity) VALUES (:workspace_id, 'brief', :case_id, :company_id, "
-            "CAST(:features AS jsonb), CAST(:choice AS jsonb), 1)"
+            "CAST(:features AS jsonb), CAST(:choice AS jsonb), :propensity)"
         ),
         {
             "workspace_id": workspace_id,
@@ -287,6 +417,7 @@ async def _decision(
             "company_id": company_id,
             "features": _json(features),
             "choice": _json(choice),
+            "propensity": propensity,
         },
     )
 
@@ -297,8 +428,10 @@ async def persist_run(
     evidence: Sequence[tuple[EvidenceDocument, LedgerResult]],
     *,
     workspace_name: str | None = None,
+    settings: Settings | None = None,
 ) -> PersistResult:
     """Save `run` and the evidence it read (from `run_radar(evidence_out=...)`)."""
+    settings = settings or get_settings()
     workspace_id = await _workspace(session, workspace_name or run.client_id)
     doc_ids, inserted = await _documents(session, [doc for doc, _ in evidence])
 
@@ -308,6 +441,7 @@ async def persist_run(
         for check in result.checks
     ]
     claim_ids = await save_claims(session, checks)
+    event_ids = await _events(session, evidence, doc_ids, claim_ids)
 
     companies: dict[str, UUID] = {}
     cases: dict[str, UUID] = {}
@@ -316,6 +450,7 @@ async def persist_run(
         c = entry.candidate
         if c.key not in companies:
             companies[c.key] = await _company(session, c)
+        await _link_events(session, c, companies[c.key])
         case_id = await _case(session, workspace_id, companies[c.key], entry, run)
         cases[c.key] = case_id
         await _evidence(session, case_id, entry, claim_ids)
@@ -324,22 +459,46 @@ async def persist_run(
             workspace_id,
             case_id=case_id,
             company_id=companies[c.key],
-            features={**_features(c), "as_of": run.as_of, "strength": entry.strength},
+            features={
+                **_features(c),
+                **_provenance(c, run),
+                "as_of": run.as_of,
+                "strength": entry.strength,
+            },
             choice={
                 "briefed": True,
                 "rank": entry.rank,
                 "status": action_status(entry),
                 "requirement": entry.requirement,
+                "exploration": entry.exploration,
             },
+            propensity=entry.propensity,
         )
         decisions += 1
     for rejected in run.rejected:
         decisions += await _rejection(session, workspace_id, rejected, run, companies)
+
+    # The web (D88): who did what in which buying process. Never a node for a natural person
+    # or for a subject the gate found is not an organisation.
+    hidden = {r.candidate.key for r in run.rejected if r.gate.rejected_as in _NO_COMPANY}
+
+    async def company_for(key: str, name: str, country: str | None) -> UUID:
+        if key not in companies:
+            companies[key] = await _company_by_key(session, key, name, country)
+        return companies[key]
+
+    pending = await stated_links(
+        evidence, company_for=company_for, hidden_keys=hidden, settings=settings
+    )
+    pending += await bidder_links(run, evidence, company_for=company_for, settings=settings)
+    links = await save_links(session, pending, claim_ids)
     return PersistResult(
         workspace_id=workspace_id,
         documents_inserted=inserted,
         claims=len(claim_ids),
+        events=len(event_ids),
         companies=len(companies),
+        links=links,
         cases=cases,
         decisions=decisions,
     )
@@ -358,12 +517,13 @@ async def _rejection(
         if c.key not in companies:
             companies[c.key] = await _company(session, c)
         company_id = companies[c.key]
+        await _link_events(session, c, company_id)
     await _decision(
         session,
         workspace_id,
         case_id=None,
         company_id=company_id,
-        features={**_features(c), "as_of": run.as_of},
+        features={**_features(c), **_provenance(c, run), "as_of": run.as_of},
         choice={
             "briefed": False,
             "rejected_as": gate.rejected_as.value if gate.rejected_as else None,

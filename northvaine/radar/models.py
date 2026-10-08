@@ -190,6 +190,10 @@ class RankedEntry(NorthvaineModel):
     likely_bidders: list[LikelyBidder] = Field(default_factory=list)  # tenders only (D81)
     # A source page of this entry tried to steer the system; that text was removed (D85).
     steered: bool = False
+    # Learning v0 (D89): one brief slot is a uniformly random pick from below the cut, so
+    # labels about what the cut throws away stay unbiased; `propensity` is its chance.
+    exploration: bool = False
+    propensity: float = Field(default=1.0, gt=0, le=1)
 
 
 class RejectedEntry(NorthvaineModel):
@@ -213,6 +217,8 @@ class DiscoverResult(NorthvaineModel):
     upgraded: list[UpgradedPage]
     notes: list[str]
     steered_urls: list[str] = Field(default_factory=list)  # pages with steering text removed
+    # document id -> the queries that found it, as "sensor:index" (1-based, D87)
+    found_by: dict[str, list[str]] = Field(default_factory=dict)
 
 
 class RadarRun(NorthvaineModel):
@@ -228,3 +234,9 @@ class RadarRun(NorthvaineModel):
     llm_calls: int
     cost_usd: Decimal
     notes: list[str]
+    # document id -> the queries that found it, as "sensor:index" (1-based, D87); read
+    # documents only. Empty in run records written before D87.
+    found_by: dict[str, list[str]] = Field(default_factory=dict)
+    # query ref ("sensor:index" in `queries`) -> the chance a learned strategy chose it (D89);
+    # empty when no strategy chose the searches (every search ran, propensity 1).
+    query_propensity: dict[str, float] = Field(default_factory=dict)

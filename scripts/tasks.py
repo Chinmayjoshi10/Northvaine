@@ -128,6 +128,11 @@ def record_llm() -> list[list[str]]:
     return [_py("scripts/record_llm_fixtures.py")]
 
 
+def learn_sim() -> list[list[str]]:
+    """SIMULATED learning study on a recording (add -- --client <id>); offline, free (D89)."""
+    return [_py("scripts/simulate_learning.py")]
+
+
 def radar() -> list[list[str]]:
     """One radar run for a client, offline from its recording (add -- --client <id>)."""
     return [_py("scripts/radar.py")]
@@ -160,6 +165,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "radar": radar,
     "record-radar": record_radar,
     "eval": evaluate,
+    "learn-sim": learn_sim,
 }
 
 HELP = {
@@ -177,12 +183,15 @@ HELP = {
     "record-sensors": "record redacted TED/Tavily fixtures from live APIs (add -- --yes)",
     "record-llm": "record LLM fixtures for the evidence ledger - SPENDS MONEY (add -- --yes)",
     "radar": "radar brief for one client, offline from its recording (add -- --client <id>)",
+    "learn-sim": "SIMULATED learning study on a recording, offline (add -- --client <id>)",
     "record-radar": "record a radar run live - SPENDS MONEY (add -- --client <id> --yes)",
     "eval": "quality and outcome metrics from filled-in scorecards (offline)",
 }
 
 # arguments after `--` go to the script
-PASSTHROUGH = {"smoke", "record-sensors", "record-llm", "radar", "record-radar", "eval"}
+PASSTHROUGH = {
+    "smoke", "record-sensors", "record-llm", "radar", "record-radar", "eval", "learn-sim",
+}  # fmt: skip
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all
 

@@ -97,9 +97,10 @@ async def save_claims(session: Any, checks: list[ClaimCheck]) -> dict[str, UUID]
         ":verified_by, :extracted_by, :status, CAST(:meta AS jsonb), :fingerprint) "
         "ON CONFLICT (fingerprint) DO NOTHING"
     )
-    for check in checks:
-        await session.execute(
-            insert,
+    # One batched statement: a round trip per claim made saving a run take minutes.
+    await session.execute(
+        insert,
+        [
             {
                 "document_id": check.document_id,
                 "statement": check.draft.statement,
@@ -111,8 +112,10 @@ async def save_claims(session: Any, checks: list[ClaimCheck]) -> dict[str, UUID]
                 "status": check.status.value,
                 "meta": _json(_claim_meta(check)),
                 "fingerprint": check.fingerprint,
-            },
-        )
+            }
+            for check in checks
+        ],
+    )
     fingerprints = sorted({c.fingerprint for c in checks})
     result = await session.execute(
         _text("SELECT fingerprint, id FROM claims WHERE fingerprint = ANY(CAST(:fps AS text[]))"),
@@ -231,12 +234,12 @@ async def save_events(session: Any, events: list[NewEvent]) -> dict[str, UUID]:
         ":description, CAST(:embedding AS vector), :fingerprint) "
         "ON CONFLICT (fingerprint) DO NOTHING"
     )
+    rows = []
     for event in events:
         slots = dict(event.slots)
         if event.subject is not None and "subject" not in slots:
             slots["subject"] = to_jsonable_python(event.subject)
-        await session.execute(
-            insert,
+        rows.append(
             {
                 "event_type": event.event_type,
                 "occurred_on": event.occurred_on,
@@ -249,8 +252,9 @@ async def save_events(session: Any, events: list[NewEvent]) -> dict[str, UUID]:
                 "description": event.description,
                 "embedding": _vector_literal(event.embedding),
                 "fingerprint": event.fingerprint,
-            },
+            }
         )
+    await session.execute(insert, rows)  # one batched statement
     fingerprints = sorted({e.fingerprint for e in events})
     result = await session.execute(
         _text("SELECT fingerprint, id FROM events WHERE fingerprint = ANY(CAST(:fps AS text[]))"),
