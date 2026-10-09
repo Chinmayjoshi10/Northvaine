@@ -805,3 +805,23 @@ def test_replay_never_reaches_the_network(tmp_path: Path) -> None:
 
     with mock.patch.object(httpx, "AsyncHTTPTransport", NoNetwork):
         assert radar.main(["--client", client, "--out", str(tmp_path)]) == 0
+
+
+@pytest.mark.parametrize("client", CLIENTS)
+def test_every_line_of_the_run_graph_cites_a_verified_claim_of_its_document(client: str) -> None:
+    from northvaine.radar.graph import run_graph
+
+    r = replay(client)
+    # the claims are proven against their documents above; the graph must add no quote of its own
+    claimed = {
+        (str(c.document_id), c.source_quote) for e in r.run.entries for c in e.candidate.claims
+    }
+    g = run_graph(r.run, SETTINGS)
+    refs = {f"{n.kind}:{n.id}" for n in g.nodes}
+    assert g.edges
+    for edge in g.edges:
+        assert edge.src in refs and edge.dst in refs
+        assert edge.evidence and all(q.quote.strip() and q.url for q in edge.evidence)
+        if edge.derivation == "stated":  # company -> event:<document id>
+            doc_id = edge.dst.removeprefix("event:")
+            assert all((doc_id, q.quote) in claimed for q in edge.evidence)

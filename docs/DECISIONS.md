@@ -911,3 +911,18 @@ brief with Claude's five corrections (docs/COLLAB.md).
     notices before writing.
   - **Known weak spots:** sites are found, but stated fit is still rare; page selection needs
     work. Prefix matching of offer terms is loose ("tube" matches "tubing").
+- **D97 — The run graph: the web of one saved run, served with no database.**
+  `radar/graph.run_graph` and `GET /api/clients/{client}/runs/{day}/graph`.
+  - **Why:** the demo API reads run records on disk (no database), and the frontend hero is the
+    web itself. D88's `links` table stays the store for saved runs; this is the same picture
+    built from a run record alone.
+  - **Nodes:** companies, and one event node per source document (a run record keeps no
+    procedure ids, so the document stands in for the buying process). Two companies quoted from
+    the same document meet at the same event.
+  - **Lines:** stated company -[its role]-> event, carrying that document's verified quotes; and
+    inferred event -[likely_bidder]-> company, carrying the bidder's own verified award quote,
+    with D88's confidence (wins / (wins + 1), capped at 0.9, now `bidder_confidence`).
+  - **Never:** a line without a quote and URL, a quote that is not a claim of that document, or
+    a node for a natural person (D76).
+  - **Not yet:** company-fit lines (D96). No recorded run has a stated fit yet, and there is no
+    node kind for the client's offer.

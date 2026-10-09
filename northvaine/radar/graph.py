@@ -144,6 +144,11 @@ async def stated_links(
     return list(grouped.values())
 
 
+def bidder_confidence(wins: int) -> float:
+    """wins / (wins + 1), capped at 0.9 (D88)."""
+    return round(min(0.9, wins / (wins + 1)), 2)
+
+
 async def bidder_links(
     run: RadarRun,
     evidence: Sequence[tuple[EvidenceDocument, LedgerResult]],
@@ -181,7 +186,7 @@ async def bidder_links(
             if not proof:
                 continue  # no verified win in this run's evidence: no line (rule #2)
             company = str(await company_for(key, bidder.name, bidder.country))
-            confidence = round(min(0.9, bidder.wins / (bidder.wins + 1)), 2)
+            confidence = bidder_confidence(bidder.wins)
             for proc in procs:
                 links.append(
                     PendingLink(
@@ -419,3 +424,95 @@ async def _labels(session: Any, refs: set[tuple[str, str]]) -> list[GraphNode]:
         )
         for k, i in sorted(refs)
     ]
+
+
+# --- the web of one saved run (no database) -----------------------------------------------
+
+
+def run_graph(run: RadarRun, settings: Settings | None = None) -> GraphView:
+    """The web of one run, from its run record alone (the demo API reads no database).
+
+    Same lines as a saved run writes (D88), with the source document standing in for the
+    buying process, since a run record keeps no procedure ids:
+    - stated company -[its role]-> event, one event node per source document, with the quotes;
+    - inferred event -[likely_bidder]-> company, with the bidder's own verified award quote.
+    Natural persons are withheld (D76) and never become nodes.
+    """
+    cfg = settings or Settings(_env_file=None)
+    nodes: dict[str, GraphNode] = {}
+    edges: dict[tuple[str, str, str], GraphEdge] = {}
+
+    def add_edge(
+        src: str,
+        dst: str,
+        relation: str,
+        derivation: LinkDerivation,
+        evidence: list[GraphEvidence],
+        **kw: Any,
+    ) -> None:
+        edge = edges.setdefault(
+            (src, dst, relation),
+            GraphEdge(
+                src=src, dst=dst, relation=relation, derivation=derivation, evidence=[], **kw
+            ),
+        )
+        for item in evidence:
+            if item not in edge.evidence:
+                edge.evidence.append(item)
+
+    for entry in run.entries:
+        c = entry.candidate
+        if c.name.startswith(_WITHHELD):
+            continue
+        company = node_ref(NodeKind.COMPANY, c.key)
+        nodes.setdefault(
+            company, GraphNode(kind=NodeKind.COMPANY, id=c.key, label=c.name, country=c.country)
+        )
+        refs = {claim.ref: claim for claim in c.claims}
+        described: dict[UUID, tuple[str, date | None]] = {}
+        for event in c.events:
+            for ref in event.claim_refs:
+                if ref in refs:
+                    described.setdefault(
+                        refs[ref].document_id, (event.description, event.occurred_on)
+                    )
+        role = next((r for r in c.roles if r != "unknown"), "mentioned_in")
+        tenders: list[str] = []
+        for doc_id in sorted({claim.document_id for claim in c.claims}, key=str):
+            quotes = [claim for claim in c.claims if claim.document_id == doc_id]
+            label, occurred = described.get(doc_id, (quotes[0].statement, None))
+            event = node_ref(NodeKind.EVENT, str(doc_id))
+            nodes.setdefault(event, GraphNode(kind=NodeKind.EVENT, id=str(doc_id), label=label))
+            tenders.append(event)
+            add_edge(
+                company,
+                event,
+                role,
+                LinkDerivation.STATED,
+                confidence=None,
+                valid_from=occurred,
+                evidence=[GraphEvidence(quote=q.source_quote, url=q.url) for q in quotes],
+            )
+        for bidder in entry.likely_bidders:
+            if bidder.name.startswith(_WITHHELD):
+                continue
+            key = company_key(bidder.name, bidder.country, cfg)
+            ref = node_ref(NodeKind.COMPANY, key)
+            nodes.setdefault(
+                ref,
+                GraphNode(kind=NodeKind.COMPANY, id=key, label=bidder.name, country=bidder.country),
+            )
+            for event in tenders:
+                add_edge(
+                    event,
+                    ref,
+                    "likely_bidder",
+                    LinkDerivation.INFERRED,
+                    confidence=bidder_confidence(bidder.wins),
+                    valid_from=run.as_of.date(),
+                    evidence=[GraphEvidence(quote=bidder.quote, url=bidder.source_url)],
+                )
+    return GraphView(
+        nodes=sorted(nodes.values(), key=lambda n: (n.kind.value, n.id)),
+        edges=sorted(edges.values(), key=lambda e: (e.src, e.dst, e.relation)),
+    )

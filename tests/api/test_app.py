@@ -114,6 +114,26 @@ async def test_missing_things_are_404(client: AsyncClient) -> None:
     assert (await client.get("/api/clients/..%2Fx/runs/latest")).status_code == 404
 
 
+async def test_graph_has_companies_events_and_cited_lines(client: AsyncClient) -> None:
+    g = (await client.get("/api/clients/acme/runs/2026-10-05/graph")).json()
+    nodes = {f"{n['kind']}:{n['id']}": n for n in g["nodes"]}
+    assert g["edges"] and all(e["src"] in nodes and e["dst"] in nodes for e in g["edges"])
+    assert all(
+        e["evidence"] and all(q["quote"] and q["url"] for q in e["evidence"]) for e in g["edges"]
+    )
+    stated = [e for e in g["edges"] if e["derivation"] == "stated"]
+    assert stated and all(nodes[e["src"]]["kind"] == "company" for e in stated)
+    assert all(e["confidence"] is None for e in stated)
+    (bid,) = {e["dst"] for e in g["edges"] if e["relation"] == "likely_bidder"}
+    assert nodes[bid]["label"] == f"Bidder {SCRIPT}"  # untrusted text stays JSON data
+    assert all(
+        e["derivation"] == "inferred" and e["confidence"] == 0.67
+        for e in g["edges"]
+        if e["relation"] == "likely_bidder"
+    )
+    assert (await client.get("/api/clients/nobody/runs/latest/graph")).status_code == 404
+
+
 async def test_untrusted_text_is_returned_as_json_data(client: AsyncClient) -> None:
     resp = await client.get("/api/clients/acme/runs/2026-10-05/entries/3")
     assert resp.headers["content-type"].startswith("application/json")

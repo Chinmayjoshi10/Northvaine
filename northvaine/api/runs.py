@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from northvaine.api import store, views
 from northvaine.api.feedback import Base
 from northvaine.core.settings import Settings
+from northvaine.radar.graph import GraphView, run_graph
+from northvaine.radar.models import LikelyBidder
 
 router = APIRouter(prefix="/api", tags=["runs"])
 
@@ -59,3 +61,19 @@ def get_entry(client: str, day: str, rank: int, base: Base) -> views.Dossier:
             bidders = raw["entries"][index].get("likely_bidders") or []
             return views.dossier(entry, bidders, Settings(_env_file=None))
     raise HTTPException(status_code=404, detail="entry not found")
+
+
+@router.get("/clients/{client}/runs/{day}/graph")
+def get_graph(client: str, day: str, base: Base) -> GraphView:
+    """The web of one run: companies, events and the lines between them, each with its quotes."""
+    run, raw = store.load_run(base, client, store.resolve_day(base, client, day))
+    entries = []
+    for entry, raw_entry in zip(run.entries, raw["entries"], strict=True):
+        bidders = []
+        for item in raw_entry.get("likely_bidders") or []:
+            try:
+                bidders.append(LikelyBidder.model_validate(item))
+            except ValidationError:
+                continue  # written by an older build without the verified quote: no line
+        entries.append(entry.model_copy(update={"likely_bidders": bidders}))
+    return run_graph(run.model_copy(update={"entries": entries}), Settings(_env_file=None))
