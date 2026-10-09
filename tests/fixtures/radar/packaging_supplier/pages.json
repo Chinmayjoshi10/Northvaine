@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "lead_url": "https://www.sephora.com/ca/fr/product/rosemary-mask-P520606",
+    "final_url": "https://www.sephora.com/ca/fr/product/rosemary-mask-P520606",
+    "status": 403,
+    "fetched_at": "2026-10-09T20:22:57.457502Z",
+    "title": null,
+    "text": null,
+    "refused": "http_403"
+  }
+]

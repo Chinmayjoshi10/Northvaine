@@ -19,6 +19,7 @@
         "winner-name",
         "winner-country",
         "classification-cpv",
+        "contract-nature",
         "notice-title",
         "estimated-value-lot",
         "total-value"
@@ -53,6 +54,10 @@
             "42512300"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "deu": [
@@ -114,6 +119,10 @@
             "45331000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "supplies",
+            "supplies"
+          ],
           "publication-date": "2026-06-02+02:00",
           "buyer-name": {
             "spa": [
@@ -181,6 +190,10 @@
             "45315100"
           ],
           "notice-subtype": "30",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-02+02:00",
           "buyer-name": {
             "deu": [
@@ -472,6 +485,20 @@
             "50000000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "services",
+            "supplies",
+            "supplies",
+            "services",
+            "works",
+            "services",
+            "supplies",
+            "supplies",
+            "services",
+            "supplies",
+            "works",
+            "supplies"
+          ],
           "publication-date": "2026-06-02+02:00",
           "buyer-name": {
             "spa": [
@@ -708,6 +735,10 @@
             "42512300"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-02+02:00",
           "buyer-name": {
             "deu": [
@@ -761,6 +792,10 @@
             "42500000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "supplies",
+            "supplies"
+          ],
           "publication-date": "2026-06-03+02:00",
           "buyer-name": {
             "fra": [
@@ -824,6 +859,10 @@
             "45331000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-03+02:00",
           "buyer-name": {
             "deu": [
@@ -867,6 +906,10 @@
           "notice-identifier": "e6761f0c-ee04-4ee2-9f82-cc61b28bfdcc",
           "notice-type": "can-standard",
           "publication-number": "382038-2026",
+          "procedure-identifier": "043da12a-712d-458c-8ebe-e0d9643aa3a4",
+          "buyer-country": [
+            "DEU"
+          ],
           "classification-cpv": [
             "45210000",
             "42511110",
@@ -887,17 +930,18 @@
             "45232460"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-03+02:00",
           "buyer-name": {
             "deu": [
               "Stadt Dormagen - Zentrale Submissionsstelle"
             ]
           },
-          "procedure-identifier": "043da12a-712d-458c-8ebe-e0d9643aa3a4",
           "notice-version": 1,
-          "buyer-country": [
-            "DEU"
-          ],
           "notice-title": {
             "hun": "Németország – Magasépítési munka – GS Stürzelberg Los 1 OGS Altbau und Anbau Heizungstechnik, Los 2 OGS Altbau und Anbau Sanitärtechnik",
             "lav": "Vācija – Ēku celtniecības darbi – GS Stürzelberg Los 1 OGS Altbau und Anbau Heizungstechnik, Los 2 OGS Altbau und Anbau Sanitärtechnik",
@@ -950,6 +994,10 @@
             "44411000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "supplies",
+            "supplies"
+          ],
           "publication-date": "2026-06-04+02:00",
           "buyer-name": {
             "deu": [
@@ -1019,6 +1067,10 @@
             "51510000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "supplies",
+            "supplies"
+          ],
           "publication-date": "2026-06-04+02:00",
           "buyer-name": {
             "spa": [
@@ -1067,6 +1119,6 @@
       "timedOut": false
     },
     "body_text": null,
-    "recorded_at": "2026-10-03T19:44:40.248980Z"
+    "recorded_at": "2026-10-09T00:21:47.411600Z"
   }
 ]

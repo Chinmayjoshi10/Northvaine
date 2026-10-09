@@ -167,6 +167,7 @@ def test_a_tender_renders_ted_style_lines() -> None:
         "Buyer [eng]: The Education Training Collective",
         "Buyer country: GB",
         "CPV: 80000000",
+        "Contract nature: services",
         "Deadline: 2026-10-16T12:00:00+01:00",
         "Estimated value (lot): 75000.00 GBP",
     ]

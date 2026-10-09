@@ -37,7 +37,8 @@ class FeedbackIn(NorthvaineModel):
     new: bool | None = None
     actionable: bool | None = None
     failure_chip: FailureChip | None = None
-    # After contact.
+    # After contact. `accepted_for_contact` is the salesperson's disposition (D95).
+    accepted_for_contact: bool | None = None
     known_already: bool | None = None
     new_intelligence: bool | None = None
     contacted: bool | None = None

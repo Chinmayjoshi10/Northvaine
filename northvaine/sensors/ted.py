@@ -51,6 +51,7 @@ TED_SAFE_FIELDS: tuple[str, ...] = (
     "winner-name",
     "winner-country",
     "classification-cpv",
+    "contract-nature",  # D94: supplies, works or services (confirmed live 9 Oct 2026)
     "notice-title",
     "estimated-value-lot",
     "total-value",
@@ -225,6 +226,8 @@ def render_notice_text(record: dict[str, Any]) -> str:
         lines.append(f"Winner country: {', '.join(countries)}")
     if cpv := _unique_strings(record.get("classification-cpv")):
         lines.append(f"CPV: {', '.join(cpv)}")
+    if nature := _unique_strings(record.get("contract-nature")):
+        lines.append(f"Contract nature: {', '.join(nature)}")  # D94
     for deadline in _unique_strings(record.get("deadline-receipt-request")):
         lines.append(f"Deadline: {deadline}")
     for decision in _unique_strings(record.get("winner-decision-date")):
@@ -331,6 +334,7 @@ def parse_notice(
         "buyer_countries": _unique_strings(record.get("buyer-country")),
         "winners": _winners(record, preferred),
         "cpv_codes": _unique_strings(record.get("classification-cpv")),
+        "contract_nature": _unique_strings(record.get("contract-nature")),
         "deadlines": [d.isoformat() for d in dict.fromkeys(d for d in deadlines if d)],
         "winner_decision_dates": [d.isoformat() for d in dict.fromkeys(d for d in decisions if d)],
         "estimated_values": _unique_strings(record.get("estimated-value-lot")),

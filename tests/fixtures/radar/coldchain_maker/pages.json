@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "lead_url": "https://www.civilservicejobs.service.gov.uk/csr/jobs.cgi?vxsys=4&vxvac=474751",
+    "final_url": "https://www.civilservicejobs.service.gov.uk/csr/jobs.cgi?vxsys=4&vxvac=474751",
+    "status": 200,
+    "fetched_at": "2026-10-09T00:13:30.878200Z",
+    "title": "Quick Check NeededGOV.UK",
+    "text": "Skip to main content Civil Service Jobs Quick check needed We just need to confirm you're a real person. Please check the box below and then click Continue. Continue We use a small session cookie to keep our site running smoothly. This cookie doesn’t track any personal details or what you do online. By clicking \"Continue\" you agree to its use. Thanks for your patience. Version 1.1.6",
+    "refused": null
+  }
+]

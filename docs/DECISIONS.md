@@ -856,3 +856,58 @@ brief with Claude's five corrections (docs/COLLAB.md).
     paused 22 Sep 2026, no open weights, licence unknown). Not run and not adopted.
   - **Left behind:** `scripts/experiments/gate_classifier.py`, an `experiments` dependency group
     (never in runtime deps) and `docs/research/classifier_experiment.md`.
+- **D94 — Who the account is, and how strong its buying evidence is (CEO priorities, 9 Oct).**
+  `radar/account.py`, code only.
+  - **Contract nature:** supplies, works or services, as the source states it. TED reads
+    `contract-nature` (confirmed live 9 Oct); FTS reads OCDS `mainProcurementCategory`; the
+    World Bank reads its procurement group code. It is a quotable "Contract nature:" line, so
+    it becomes a verified claim. Otherwise it is derived from the CPV division (a mapping in
+    settings) and labelled derived.
+  - **Account role:**
+    - a supplies-tender authority is a direct purchaser;
+    - a works or services authority is a demand source and never the material buyer;
+    - a works or services award winner is the awarded contractor, the account to approach;
+    - a supplies award winner is a supplier (a competitor or a channel);
+    - anything else is unresolved.
+  - **Evidence level:** explicit purchase, project requirement, company fit (website check,
+    next), generic mention, or no evidence. The level is the first ranking key.
+  - **Status:** "contact now" needs an explicit purchase plus the existing no-doubt rules. A
+    supplies tender with an explicit purchase is "bid now"; every other tender is
+    "watch only".
+  - **Brief:** the summary's column is now "Evidence". Each write-up shows the account role,
+    the nature and the level. An awarded contractor gets a cited chain: authority → project →
+    awarded to this company.
+- **D95 — The outcome data contract: owner answers become labels without parsing Markdown.**
+  - **Capture:** the web app stores each answer as a structured record, now with
+    `accepted_for_contact` (the salesperson's disposition) next to the closed-set failure
+    reason and the after-contact fields.
+  - **Mapping (`radar/labels.py`, `rating_of`):** a wrong fact means `wrong_facts`; a positive
+    outcome or acceptance means `good`; any other failure reason, or not relevant or not
+    actionable, means `not_relevant`; anything else is no label, because unknown is not
+    negative.
+  - **Import (`scripts/import_feedback.py`):** writes `feedback` rows on the saved cases,
+    idempotent on case and received time.
+- **D96 — Company fit from the company's own website (CEO priority 2, 9 Oct).** `radar/fit.py`,
+  code only, no model call.
+  - **What it answers:** does a shortlisted account (an awarded contractor, or an unresolved
+    announcement) handle what the client sells, in its own words? A fit is not a purchase, so it
+    is shown separately and never replaces dated demand evidence.
+  - **Method:** one Tavily search for the company name. A result counts as the official site only
+    when its registrable domain contains a distinctive token of the normalised name (code check).
+    Then one search restricted to that domain for the client's `offer_terms`. The first pages are
+    fetched through the run's PageFetcher (robots respected, replayable).
+  - **Quotes:** code finds sentences naming an `offer_terms` word (stated fit) or a
+    `related_terms` word (related fit). Each is a verbatim quote at an offset in the stored page
+    text, so it is a verified claim by construction. A sentence must read as prose (6+ words, at
+    most half capitalised), so menus and link lists never count.
+  - **Effect:** a stated fit lifts the evidence level from generic mention or no evidence to
+    "company fit". It never lifts it above project requirement or explicit purchase.
+  - **Caps (settings):** `radar_fit_max_accounts` 5, `radar_fit_pages` 2, `radar_fit_quotes` 3.
+    They are recorded shaping settings, so a replay uses the recorded values.
+  - **Only a company's own claims count:** a claim whose subject is another organisation on the
+    same page no longer counts toward an account (`entities._own_claims`).
+  - **Recording:** the radar recorder now saves every page fetched (fit pages included), not
+    only upgraded leads. The sensor-fixture recorder withholds natural-person names in TED
+    notices before writing.
+  - **Known weak spots:** sites are found, but stated fit is still rare; page selection needs
+    work. Prefix matching of offer terms is loose ("tube" matches "tubing").

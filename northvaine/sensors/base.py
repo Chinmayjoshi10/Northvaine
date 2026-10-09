@@ -248,6 +248,8 @@ class SensorQuery(NorthvaineModel):
     countries: list[str] = Field(default_factory=list)  # ISO 3166-1 alpha-2
     languages: list[str] = Field(default_factory=list)  # ISO 639-1
     text: str | None = None
+    # Restrict a web search to these registrable domains (D96); sensors without it ignore it.
+    domains: list[str] = Field(default_factory=list)
     published_from: date | None = None
     published_to: date | None = None
     max_results: int = Field(default=50, ge=1)

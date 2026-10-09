@@ -35,6 +35,7 @@ from northvaine.radar.brief import main_selection, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.entities import build_candidates
+from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
@@ -273,6 +274,18 @@ async def run_radar(
         evidence_out=evidence_out,
     )
     notes.extend(bidder_notes)
+
+    # 7. company fit from the account's own website (D96, code only)
+    entries, fit_notes = await company_fit(
+        entries,
+        spec,
+        http=http,
+        fetcher=fetcher,
+        as_of=as_of,
+        settings=settings,
+        evidence_out=evidence_out,
+    )
+    notes.extend(fit_notes)
     return RadarRun(
         client_id=spec.id,
         offer=spec.offer,

@@ -283,6 +283,7 @@ def test_tender_lines_follow_the_ted_and_fts_format() -> None:
         "Project country: Kenya",
         "Procurement method: Request for Bids (RFB)",
         "Procurement group: GO",
+        "Contract nature: GO",
         "Deadline: 2026-11-20",
     ]
     assert doc.source == "worldbank"

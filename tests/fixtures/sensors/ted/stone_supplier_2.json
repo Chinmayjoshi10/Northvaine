@@ -19,6 +19,7 @@
         "winner-name",
         "winner-country",
         "classification-cpv",
+        "contract-nature",
         "notice-title",
         "estimated-value-lot",
         "total-value"
@@ -217,6 +218,10 @@
             "90715200"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-10+02:00",
           "buyer-name": {
             "deu": [
@@ -386,6 +391,10 @@
             "90721100"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-17+02:00",
           "buyer-name": {
             "deu": [
@@ -434,6 +443,6 @@
       "timedOut": false
     },
     "body_text": null,
-    "recorded_at": "2026-10-03T19:44:47.718392Z"
+    "recorded_at": "2026-10-09T00:21:54.916733Z"
   }
 ]

@@ -272,6 +272,10 @@ def _extract(release: dict[str, Any], settings: Settings) -> dict[str, Any]:
         "buyer_country": buyer_country,
         "winners": winners,
         "cpv": _classifications(release),
+        # D94: the release's own category (goods/works/services), as the source states it
+        "nature": _unique([str(tender.get("mainProcurementCategory"))])
+        if tender.get("mainProcurementCategory")
+        else [],
         "raw_deadlines": raw_deadlines,
         "raw_signed": raw_signed,
         "estimates": estimates,
@@ -307,6 +311,8 @@ def _render(x: dict[str, Any]) -> str:
             lines.append(f"Winner country: {', '.join(winner_countries)}")
     if x["cpv"]:
         lines.append(f"CPV: {', '.join(x['cpv'])}")
+    if x["nature"]:
+        lines.append(f"Contract nature: {', '.join(x['nature'])}")
     lines.extend(f"Deadline: {d}" for d in x["raw_deadlines"])
     # TED's "Winner decision date" is the award decision. FTS only carries the contract signing
     # date, which is a different event, so it gets its own label and structured.py ignores it.
@@ -357,6 +363,7 @@ def parse_release(
         "buyer_countries": [x["buyer_country"]] if x["buyer_country"] else [],
         "winners": x["winners"],
         "cpv_codes": x["cpv"],
+        "contract_nature": x["nature"],
         "deadlines": [d.isoformat() for d in dict.fromkeys(d for d in deadlines if d)],
         "winner_decision_dates": [],  # FTS has signing dates only; see contract_signed_dates
         "contract_signed_dates": [d.isoformat() for d in dict.fromkeys(d for d in signed if d)],

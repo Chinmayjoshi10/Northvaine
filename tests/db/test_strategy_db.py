@@ -87,3 +87,33 @@ async def test_learning_uses_only_the_labels_it_is_allowed_and_versions_them(
             {"w": saved.workspace_id, "v": sim.version},
         )
         assert changes.scalar_one()
+
+
+async def test_owner_feedback_records_become_labels_once(
+    maker: async_sessionmaker[AsyncSession], run_and_evidence: tuple[Any, list[Any]]
+) -> None:
+    from northvaine.radar.labels import cases_for_run, import_feedback
+
+    run, evidence = run_and_evidence
+    ranks = [e.rank for e in run.entries]
+    records = [
+        {"rank": ranks[0], "relevant": True, "actionable": True,
+         "received_at": "2026-10-09T10:00:00+00:00"},
+        {"rank": ranks[1], "failure_chip": "not a buyer",
+         "received_at": "2026-10-09T10:01:00+00:00"},
+        {"rank": ranks[2], "known_already": True,  # teaches nothing yet
+         "received_at": "2026-10-09T10:02:00+00:00"},
+        {"rank": 9999, "relevant": True, "actionable": True,  # no such entry
+         "received_at": "2026-10-09T10:03:00+00:00"},
+    ]  # fmt: skip
+    async with maker() as s:
+        saved = await persist_run(s, run, evidence)
+        cases = await cases_for_run(s, saved.workspace_id, run)
+        assert set(cases) == set(ranks)
+        assert cases[ranks[0]] == saved.cases[run.entries[0].candidate.key]
+        assert await import_feedback(s, records, cases) == 2
+        assert await import_feedback(s, records, cases) == 0  # idempotent
+        await s.commit()
+        owner = await learn(s, saved.workspace_id)
+        await s.commit()
+    assert owner.labels == 2
