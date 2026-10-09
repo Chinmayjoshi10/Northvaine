@@ -19,6 +19,7 @@
         "winner-name",
         "winner-country",
         "classification-cpv",
+        "contract-nature",
         "notice-title",
         "estimated-value-lot",
         "total-value"
@@ -57,6 +58,13 @@
             "45442100"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "fra": [
@@ -126,6 +134,10 @@
             "45212212"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "deu": [
@@ -221,6 +233,22 @@
             "45331000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "fra": [
@@ -304,6 +332,10 @@
             "45331210"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "deu": [
@@ -398,6 +430,22 @@
             "45261220"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "fra": [
@@ -470,6 +518,10 @@
             "42512300"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "deu": [
@@ -530,6 +582,10 @@
             "45324000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "deu": [
@@ -636,6 +692,26 @@
             "90911200"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "fra": [
@@ -652,7 +728,7 @@
               "MENUISERIE ESCALIER COMBLE",
               "ENTREPRISE LECOMTE",
               "COULEURS DECO",
-              "[natural person redacted 3]",
+              "ETS JEAN CLAUDE VACHER",
               "GAUGRY D.P",
               "SARL PROCESS SOL",
               "ALGECO",
@@ -769,6 +845,30 @@
             "45111213"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-01+02:00",
           "buyer-name": {
             "fra": [
@@ -846,6 +946,10 @@
             "45331000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "supplies",
+            "supplies"
+          ],
           "publication-date": "2026-06-02+02:00",
           "buyer-name": {
             "spa": [
@@ -894,6 +998,6 @@
       "timedOut": false
     },
     "body_text": null,
-    "recorded_at": "2026-10-03T19:44:43.952155Z"
+    "recorded_at": "2026-10-09T00:21:51.232500Z"
   }
 ]

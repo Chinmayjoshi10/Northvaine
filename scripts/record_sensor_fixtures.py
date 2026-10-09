@@ -122,6 +122,23 @@ def _scrub(value: Any, secrets: tuple[str, ...]) -> Any:
     return value
 
 
+def withhold_ted_persons(
+    ex: RecordedExchange, settings: Settings | None = None
+) -> RecordedExchange:
+    """Natural-person names in TED notices are withheld with the sensor's own function before a
+    fixture is written, as the radar recorder does (D76): no personal name enters the repo."""
+    from northvaine.sensors.ted import withhold_natural_persons
+
+    body = ex.body_json
+    if not isinstance(body, dict) or not isinstance(body.get("notices"), list):
+        return ex
+    cfg = settings or get_settings()
+    notices = [
+        withhold_natural_persons(n, cfg) if isinstance(n, dict) else n for n in body["notices"]
+    ]
+    return ex.model_copy(update={"body_json": {**body, "notices": notices}})
+
+
 def redact_exchange(
     ex: RecordedExchange, *, secrets: tuple[str, ...] | list[str]
 ) -> RecordedExchange:
@@ -260,7 +277,11 @@ def _finish(
     max_items: int,
 ) -> int:
     clean = [
-        redact_exchange(trim_exchange(ex, call.sensor, max_items), secrets=secrets)
+        withhold_ted_persons(
+            redact_exchange(trim_exchange(ex, call.sensor, max_items), secrets=secrets)
+        )
+        if call.sensor == "ted"
+        else redact_exchange(trim_exchange(ex, call.sensor, max_items), secrets=secrets)
         for ex in recorder.exchanges[before:]
     ]
     target = out_dir / call.sensor / f"{call.client}_{call.n}.json"

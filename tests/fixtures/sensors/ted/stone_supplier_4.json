@@ -19,6 +19,7 @@
         "winner-name",
         "winner-country",
         "classification-cpv",
+        "contract-nature",
         "notice-title",
         "estimated-value-lot",
         "total-value"
@@ -217,6 +218,10 @@
             "90715200"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-10+02:00",
           "buyer-name": {
             "deu": [
@@ -280,6 +285,10 @@
             "45233252"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-10+02:00",
           "buyer-name": {
             "fra": [
@@ -342,6 +351,10 @@
             "37410000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-11+02:00",
           "buyer-name": {
             "fra": [
@@ -399,6 +412,10 @@
             "45233260"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-11+02:00",
           "buyer-name": {
             "deu": [
@@ -408,7 +425,7 @@
           "notice-version": 1,
           "winner-name": {
             "deu": [
-              "[natural person redacted 2]"
+              "[natural person, name withheld 871d518b]"
             ]
           },
           "notice-title": {
@@ -462,6 +479,10 @@
             "63712700"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-15+02:00",
           "buyer-name": {
             "deu": [
@@ -527,6 +548,11 @@
             "45233260"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-16+02:00",
           "buyer-name": {
             "deu": [
@@ -596,6 +622,10 @@
             "45247110"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-16+02:00",
           "buyer-name": {
             "deu": [
@@ -659,6 +689,10 @@
             "71421000"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-24+02:00",
           "buyer-name": {
             "deu": [
@@ -668,7 +702,7 @@
           "notice-version": 1,
           "winner-name": {
             "deu": [
-              "[natural person redacted 1]"
+              "[natural person, name withheld 08baeacb]"
             ]
           },
           "notice-title": {
@@ -728,6 +762,11 @@
             "45233330"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-25+02:00",
           "buyer-name": {
             "fra": [
@@ -805,6 +844,10 @@
             "77314100"
           ],
           "notice-subtype": "29",
+          "contract-nature": [
+            "works",
+            "works"
+          ],
           "publication-date": "2026-06-30+02:00",
           "buyer-name": {
             "deu": [
@@ -850,6 +893,6 @@
       "timedOut": false
     },
     "body_text": null,
-    "recorded_at": "2026-10-03T19:44:51.501547Z"
+    "recorded_at": "2026-10-09T00:21:58.552622Z"
   }
 ]
