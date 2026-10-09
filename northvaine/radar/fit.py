@@ -76,6 +76,16 @@ def domain_matches(name: str, url: str, settings: Settings | None = None) -> boo
     return bool(label) and any(t in label for t in tokens)
 
 
+def _reads_like_prose(sentence: str) -> bool:
+    """At least 6 words, and at most half of them capitalised (a menu or a list of page links
+    is mostly capitalised words)."""
+    words = [w for w in sentence.split() if any(ch.isalpha() for ch in w)]
+    if len(words) < 6:
+        return False
+    capitalised = sum(1 for w in words if w[0].isupper())
+    return capitalised <= len(words) / 2
+
+
 def fit_sentences(
     text: str, terms: set[str], related: set[str], *, limit: int
 ) -> list[tuple[str, str, Literal["stated", "related"]]]:
@@ -83,6 +93,8 @@ def fit_sentences(
     found: list[tuple[str, str, Literal["stated", "related"]]] = []
     for match in _SENTENCE.finditer(text):
         sentence = match.group(0).strip()
+        if not _reads_like_prose(sentence):
+            continue  # menus and lists of links are not statements about the company
         for level, pool in (("stated", terms), ("related", related)):
             hit = next((t for t in sorted(pool) if names_term(sentence, {t}, prefix=True)), None)
             if hit is not None:

@@ -573,7 +573,7 @@ def caution(entry: RankedEntry) -> str:
     if entry.steered:
         return "a source page contained text aimed at AI systems (removed); check it by hand"
     nature_note = " (contract nature derived from its codes)" if entry.nature_derived else ""
-    if c.stream == RadarStream.TENDER and entry.account_role == "direct_purchaser":
+    if c.stream == RadarStream.TENDER and action_status(entry) == "bid now":
         estimated = "; deadline estimated" if c.window_estimated else ""
         return f"a supplies tender: the authority buys directly; bid before the deadline{estimated}"
     if c.stream == RadarStream.TENDER:

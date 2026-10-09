@@ -313,6 +313,33 @@ def _make_candidate(
     )
 
 
+def _name_part(name: str, settings: Settings) -> str:
+    return company_key(name, None, settings).partition(":")[2]
+
+
+def _own_claims(
+    claims: list[tuple[ClaimCheck, EvidenceDocument]],
+    subject: SubjectMention,
+    settings: Settings,
+) -> list[tuple[ClaimCheck, EvidenceDocument]]:
+    """Only the claims about this company. A model-extracted claim whose own subject names a
+    different company is never evidence for this one, even when the model grouped it under
+    this company's event (a roundup article names many brands). Code-rendered official records
+    keep their context lines: the buyer line of an award belongs to the winner's record."""
+    own = _name_part(subject.name, settings)
+    kept = []
+    for check, doc in claims:
+        other = check.draft.subject
+        if (
+            check.draft.extracted_by != "code"
+            and other is not None
+            and _name_part(other.name, settings) != own
+        ):
+            continue
+        kept.append((check, doc))
+    return kept
+
+
 def build_candidates(
     results: list[tuple[EvidenceDocument, LedgerResult]], *, settings: Settings | None = None
 ) -> tuple[list[Candidate], list[RejectedEntry]]:
@@ -335,7 +362,9 @@ def build_candidates(
                 why = f"subject {event.subject.name!r} {problem}"
                 rejected.append(_unidentified(event, doc, stream, claims, why, settings))
                 continue
-            mentions.append(_Mention(event.subject, event, stream, claims))
+            mentions.append(
+                _Mention(event.subject, event, stream, _own_claims(claims, event.subject, settings))
+            )
 
     groups: dict[str, list[_Mention]] = {}
     for m in mentions:

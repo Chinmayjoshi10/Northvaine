@@ -85,7 +85,7 @@ def test_an_award_winner_is_an_account_unless_it_supplies_the_goods() -> None:
         ("stated", "demand_source", True, "project_requirement"),
         ("stated", "awarded_contractor", True, "project_requirement"),
         ("stated", "supplier", True, "generic_mention"),
-        ("stated", "unresolved", True, "explicit_purchase"),
+        ("stated", "unresolved", True, "project_requirement"),  # a word match is not a purchase
         ("stated", "unresolved", None, "generic_mention"),
         ("related", "unresolved", True, "generic_mention"),
         ("inferred", "direct_purchaser", True, "no_evidence"),

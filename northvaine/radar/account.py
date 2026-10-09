@@ -109,7 +109,9 @@ def evidence_level(requirement: str, role: AccountRole, direct_buyer: bool | Non
         return "explicit_purchase" if requirement == "stated" else "project_requirement"
     if role in ("demand_source", "awarded_contractor"):
         return "project_requirement"
-    # An announcement: the gate's direct-buyer judgement is the only account evidence.
+    # An announcement: a launch or plan implies a need but never states a purchase, and a
+    # matched word is not a purchase (CEO review, 9 Oct). It stays a project requirement at most,
+    # so it is never "contact now" on a word match alone.
     if requirement == "stated" and direct_buyer is True:
-        return "explicit_purchase"
+        return "project_requirement"
     return "generic_mention"

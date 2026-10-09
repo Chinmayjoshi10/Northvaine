@@ -181,3 +181,10 @@ async def test_tenders_and_suppliers_are_not_checked(monkeypatch: Any) -> None:
         entries, SPEC, http=None, fetcher=FakeFetcher({}), as_of=NOW, settings=SETTINGS
     )
     assert out == entries and sensor.queries == []
+
+
+def test_menus_are_not_fit_quotes() -> None:
+    menu = "Nos Engagements Accessibilité Granite Durabilité Le Changement Contact Plan"
+    assert fit_sentences(menu, {"granite"}, set(), limit=5) == []
+    prose = "Nous posons du granite pour les places et les rues du centre ancien."
+    assert fit_sentences(prose, {"granite"}, set(), limit=5)

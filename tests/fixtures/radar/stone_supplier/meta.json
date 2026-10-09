@@ -1,7 +1,7 @@
 {
   "client": "stone_supplier",
-  "as_of": "2026-10-07T22:29:48Z",
-  "recorded_at": "2026-10-07T22:39:55+00:00",
+  "as_of": "2026-10-08T23:52:54Z",
+  "recorded_at": "2026-10-08T23:57:52+00:00",
   "queries": {
     "ted": [
       {
@@ -18,8 +18,9 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-08-23",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-08-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -36,8 +37,9 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-06-23",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-06-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -55,8 +57,9 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-08-23",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-08-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       },
       {
@@ -74,8 +77,9 @@
         ],
         "languages": [],
         "text": null,
-        "published_from": "2026-06-23",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-06-24",
+        "published_to": "2026-10-08",
         "max_results": 100
       }
     ],
@@ -91,8 +95,9 @@
           "en"
         ],
         "text": "natural stone paving specification new public realm scheme",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       },
       {
@@ -106,8 +111,9 @@
           "fr"
         ],
         "text": "pavage en pierre naturelle projet d'amenagement place publique",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       },
       {
@@ -121,8 +127,9 @@
           "de"
         ],
         "text": "Natursteinpflaster Ausschreibung Neugestaltung Marktplatz",
-        "published_from": "2026-07-07",
-        "published_to": "2026-10-07",
+        "domains": [],
+        "published_from": "2026-07-08",
+        "published_to": "2026-10-08",
         "max_results": 5
       }
     ]
