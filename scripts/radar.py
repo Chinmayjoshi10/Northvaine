@@ -92,6 +92,10 @@ SHAPING_SETTINGS = (
     "radar_bidder_max_queries",
     "radar_bidder_max_codes",
     "radar_bidder_max_results",
+    "radar_fit_max_accounts",  # company-fit searches and page fetches (D96) too
+    "radar_fit_pages",
+    "radar_fit_quotes",
+    "radar_fit_min_token",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.
 GATE_TOKENS = (2000, 300)
@@ -111,6 +115,20 @@ class RadarMeta(NorthvaineModel):
     as_of: datetime
     recorded_at: str
     queries: dict[str, list[SensorQuery]]
+
+
+class RecordingPageFetcher:
+    """Wraps the live fetcher and keeps every page it returns, so pages fetched after discovery
+    (company fit, D96) replay too, not only the upgraded leads."""
+
+    def __init__(self, inner: PageFetcher) -> None:
+        self._inner = inner
+        self.pages: list[UpgradedPage] = []
+
+    async def fetch(self, url: str) -> UpgradedPage:
+        page = await self._inner.fetch(url)
+        self.pages.append(page)
+        return page
 
 
 @dataclass
@@ -391,7 +409,9 @@ async def run_record(
     evidence: list[Any] = []
     http_recorder = RecordingTransport(inner_transport or httpx.AsyncHTTPTransport())
     llm_recorder = RecordingClient((client_factory or llm.get_client)())
-    fetcher = (fetcher_factory or (lambda s: LivePageFetcher(settings=s)))(settings)
+    fetcher = RecordingPageFetcher(
+        (fetcher_factory or (lambda s: LivePageFetcher(settings=s)))(settings)
+    )
     if session_factory is None:
         # A live run writes an llm_calls row per call and is held to the daily and lifetime
         # caps, like every other live model call (CLAUDE.md #8).
@@ -429,10 +449,21 @@ async def run_record(
     recording = Recording(
         meta=meta,
         exchanges=list(http_recorder.exchanges),
-        pages=list(run.upgraded),
+        pages=_all_pages(run.upgraded, fetcher.pages),
         llm=llm_recorder.recording(models=models_of(settings), settings=shaping),
     )
     return run, recording
+
+
+def _all_pages(upgraded: list[UpgradedPage], fetched: list[UpgradedPage]) -> list[UpgradedPage]:
+    """The upgraded leads, then any other fetched page, once per lead URL."""
+    pages = list(upgraded)
+    seen = {p.lead_url for p in pages}
+    for page in fetched:
+        if page.lead_url not in seen:
+            seen.add(page.lead_url)
+            pages.append(page)
+    return pages
 
 
 # --- reporting ----------------------------------------------------------------------------

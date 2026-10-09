@@ -887,3 +887,27 @@ brief with Claude's five corrections (docs/COLLAB.md).
     negative.
   - **Import (`scripts/import_feedback.py`):** writes `feedback` rows on the saved cases,
     idempotent on case and received time.
+- **D96 — Company fit from the company's own website (CEO priority 2, 9 Oct).** `radar/fit.py`,
+  code only, no model call.
+  - **What it answers:** does a shortlisted account (an awarded contractor, or an unresolved
+    announcement) handle what the client sells, in its own words? A fit is not a purchase, so it
+    is shown separately and never replaces dated demand evidence.
+  - **Method:** one Tavily search for the company name. A result counts as the official site only
+    when its registrable domain contains a distinctive token of the normalised name (code check).
+    Then one search restricted to that domain for the client's `offer_terms`. The first pages are
+    fetched through the run's PageFetcher (robots respected, replayable).
+  - **Quotes:** code finds sentences naming an `offer_terms` word (stated fit) or a
+    `related_terms` word (related fit). Each is a verbatim quote at an offset in the stored page
+    text, so it is a verified claim by construction. A sentence must read as prose (6+ words, at
+    most half capitalised), so menus and link lists never count.
+  - **Effect:** a stated fit lifts the evidence level from generic mention or no evidence to
+    "company fit". It never lifts it above project requirement or explicit purchase.
+  - **Caps (settings):** `radar_fit_max_accounts` 5, `radar_fit_pages` 2, `radar_fit_quotes` 3.
+    They are recorded shaping settings, so a replay uses the recorded values.
+  - **Only a company's own claims count:** a claim whose subject is another organisation on the
+    same page no longer counts toward an account (`entities._own_claims`).
+  - **Recording:** the radar recorder now saves every page fetched (fit pages included), not
+    only upgraded leads. The sensor-fixture recorder withholds natural-person names in TED
+    notices before writing.
+  - **Known weak spots:** sites are found, but stated fit is still rare; page selection needs
+    work. Prefix matching of offer terms is loose ("tube" matches "tubing").

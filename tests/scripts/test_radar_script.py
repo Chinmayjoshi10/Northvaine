@@ -77,6 +77,7 @@ def record_settings(**extra: Any) -> Settings:
         # The M3 recordings hold one page of 10; replay must reuse this recorded value (D71).
         "radar_enumerable_max_results": 10,
         "radar_bidder_max_queries": 0,  # no award searches in the M3 recordings (D81)
+        "radar_fit_max_accounts": 0,  # nor company-fit searches (D96)
     }
     values.update(extra)
     return Settings(_env_file=None, **values)

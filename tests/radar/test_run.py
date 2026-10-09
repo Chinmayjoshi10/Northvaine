@@ -43,6 +43,7 @@ SETTINGS = Settings(
     tavily_api_key=SecretStr("replay-only-key-0123"),
     radar_enumerable_max_results=10,  # the M3 recordings hold one page of 10 per query
     radar_bidder_max_queries=0,  # the M3 recordings hold no award searches (D81)
+    radar_fit_max_accounts=0,  # nor company-fit searches (D96)
 )
 
 
