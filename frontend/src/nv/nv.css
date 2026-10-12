@@ -1,0 +1,426 @@
+/* Northvaine app design system (D98, docs/design/final/nv.css). Scoped to .nv so the older
+   pages keep their own styles until they are replaced. Dark is the identity; light is warm paper.
+   Vermilion only ever means "a window is open". */
+.nv {
+  --serif: "Newsreader", Georgia, serif;
+  --sans: "Geist", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --bg: #0c0c0a;
+  --surface: rgba(255, 255, 255, 0.028);
+  --raised: #121210;
+  --ink: #ede9e0;
+  --bright: #ffffff;
+  --soft: #a9a499;
+  --dim: #6e6a60;
+  --faint: #45433c;
+  --hair: #22211d;
+  --hair2: #35332d;
+  --signal: #ea5629;
+  --signal-ink: #ffffff;
+  --signal-wash: rgba(234, 86, 41, 0.12);
+  --signal-ring: rgba(234, 86, 41, 0.32);
+  --account: #8aa6b6;
+  --mapdot: #57534a;
+  --scrim: rgba(0, 0, 0, 0.18);
+  --sheet-shadow: 0 50px 140px rgba(0, 0, 0, 0.55);
+  --atmos: radial-gradient(1100px 620px at 32% 26%, #16150f 0%, #0c0c0a 64%);
+  color-scheme: dark;
+}
+.nv[data-theme="light"] {
+  --bg: #f4f1ea;
+  --surface: rgba(23, 21, 15, 0.03);
+  --raised: #fbfaf7;
+  --ink: #18160f;
+  --bright: #000000;
+  --soft: #555148;
+  --dim: #8b867b;
+  --faint: #c7c0b1;
+  --hair: #e0dacd;
+  --hair2: #ccc5b6;
+  --signal: #c63f17;
+  --signal-wash: rgba(198, 63, 23, 0.08);
+  --signal-ring: rgba(198, 63, 23, 0.35);
+  --account: #3f6479;
+  --mapdot: #bdb5a4;
+  --scrim: rgba(40, 32, 20, 0.08);
+  --sheet-shadow: 0 40px 120px rgba(60, 50, 30, 0.25);
+  --atmos: #f4f1ea;
+  color-scheme: light;
+}
+
+.nv {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 50px 1fr;
+  background: var(--atmos);
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+.nv *,
+.nv *::before,
+.nv *::after {
+  box-sizing: border-box;
+}
+.nv a {
+  color: inherit;
+}
+.nv :focus-visible {
+  outline: 1.5px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.nv .mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+}
+.nv .caps {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  color: var(--soft);
+}
+.nv .serif {
+  font-family: var(--serif);
+}
+
+/* the window bar */
+.nv-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--hair);
+  min-width: 0;
+}
+.nv-word {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-decoration: none;
+}
+.nv-crumb {
+  color: var(--soft);
+  font-size: 12.5px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.nv-crumb b {
+  color: var(--ink);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nv-crumb .sl {
+  color: var(--faint);
+}
+.nv-ask {
+  margin-left: auto;
+  width: min(380px, 30vw);
+  height: 30px;
+  border: 1px solid var(--hair2);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--dim);
+  font-size: 12.5px;
+  background: var(--surface);
+}
+.nv-ask kbd {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  border: 1px solid var(--hair2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--soft);
+}
+.nv-toggle {
+  display: flex;
+  border: 1px solid var(--hair2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.nv-toggle button {
+  all: unset;
+  cursor: pointer;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.nv-toggle button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--ink);
+}
+.nv-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.nv-live i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: block;
+}
+
+/* body: rail + content */
+.nv-body {
+  display: grid;
+  grid-template-columns: 188px minmax(0, 1fr);
+  min-height: 0;
+  transition:
+    transform 0.5s var(--ease),
+    filter 0.5s var(--ease);
+  transform-origin: 50% 40%;
+}
+.nv.peek .nv-body {
+  transform: scale(0.985);
+  filter: brightness(0.55) saturate(0.9);
+}
+.nv[data-theme="light"].peek .nv-body {
+  filter: brightness(0.9) saturate(0.9);
+}
+.nv-rail {
+  border-right: 1px solid var(--hair);
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.nv-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--soft);
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.nv-nav:hover {
+  color: var(--ink);
+}
+.nv-nav[aria-current="page"] {
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.nv-nav .n {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+}
+.nv-nav .n.hot {
+  color: var(--signal);
+}
+.nv-rail .sep {
+  height: 1px;
+  background: var(--hair);
+  margin: 12px 6px;
+}
+.nv-rail .foot {
+  margin-top: auto;
+  padding: 10px;
+  color: var(--dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.nv-main {
+  overflow: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.nv-page {
+  padding: 26px 34px 48px;
+  max-width: 1400px;
+}
+
+/* evidence marks: solid = on record, hollow = inferred, dashed = not yet known */
+.nv .m {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: none;
+}
+.nv .m.s {
+  background: var(--ink);
+}
+.nv .m.h {
+  box-shadow: inset 0 0 0 1.3px var(--soft);
+}
+.nv .m.u {
+  border: 1px dashed var(--dim);
+}
+.nv .m.y {
+  border-radius: 50%;
+  background: var(--signal);
+}
+.nv .glyph {
+  display: inline-flex;
+  gap: 3px;
+}
+.nv .glyph .m {
+  width: 7px;
+  height: 7px;
+}
+
+/* buttons */
+.nv .btn {
+  all: unset;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px 11px;
+  border-radius: 6px;
+  border: 1px solid var(--hair2);
+  color: var(--soft);
+  background: var(--surface);
+  white-space: nowrap;
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.nv .btn:hover {
+  color: var(--ink);
+  border-color: var(--soft);
+}
+.nv .btn:active {
+  transform: scale(0.97);
+}
+.nv .btn.rec {
+  border-color: var(--signal-ring);
+  color: var(--ink);
+  background: var(--signal-wash);
+}
+.nv .btn.rec::before {
+  content: "●";
+  color: var(--signal);
+  font-size: 8px;
+  margin-right: 7px;
+  vertical-align: 1px;
+}
+
+/* the editorial layer */
+.nv .dateline {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.nv .dateline b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.nv .hl {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.nv .lede {
+  font-family: var(--serif);
+  font-weight: 300;
+  color: var(--soft);
+  margin: 0;
+}
+.nv .infer {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--soft);
+}
+.nv .pull {
+  margin: 0;
+  background: none;
+  white-space: normal;
+  border-left: 2px solid var(--ink);
+  padding: 2px 0 2px 16px;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.nv .pull cite {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--dim);
+}
+.nv .tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  border: 1px solid var(--hair2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: 3px;
+  font-style: normal;
+}
+.nv .wait {
+  min-height: 40vh;
+}
+.nv .alert {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--soft);
+}
+
+@media (max-width: 860px) {
+  .nv-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nv-rail,
+  .nv-ask,
+  .nv-live {
+    display: none;
+  }
+  .nv-page {
+    padding: 20px 16px 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv *,
+  .nv *::before,
+  .nv *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

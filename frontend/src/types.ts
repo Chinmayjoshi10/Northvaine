@@ -143,6 +143,7 @@ export interface FeedbackRecord {
   new: boolean | null;
   actionable: boolean | null;
   failure_chip: string | null;
+  accepted_for_contact?: boolean | null;
   known_already: boolean | null;
   new_intelligence: boolean | null;
   contacted: boolean | null;
