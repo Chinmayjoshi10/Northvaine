@@ -530,10 +530,10 @@ async function voice() {
   try { sessionStorage.setItem("nv-seen", "1"); } catch {}
   const say = async (words, gap) => { for (const x of words) { if (skipped) return; t.textContent = x; await sleep(gap); } };
   await sleep(500);
-  await say(["Thousands", "of", "companies"], 380);
+  await say(["Your", "competitors", "don’t", "know", "yet"], 400);
   if (skipped) return; t.textContent = ""; calc.classList.add("on"); await sleep(1300); calc.classList.remove("on");
-  await say(["One", "is", "ready", "to"], 340);
-  if (skipped) return; t.textContent = "buy"; w.classList.add("mark"); await sleep(1300);
+  await say(["You"], 420);
+  if (skipped) return; t.textContent = "will"; w.classList.add("mark"); await sleep(1300);
   v.classList.add("done");
 }
 
