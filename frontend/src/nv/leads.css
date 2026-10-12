@@ -1,0 +1,531 @@
+/* Leads: the list, and the case as a sheet over it (D98). */
+.nv .ed {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+}
+.nv .ed .rule {
+  flex: 0 0 90px;
+  height: 1px;
+  background: var(--hair);
+  transform: translateY(-3px);
+}
+.nv .lh {
+  font-size: 30px;
+  margin: 8px 0 4px;
+}
+.nv .lsub {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 16.5px;
+  color: var(--soft);
+  margin: 0;
+  max-width: 60em;
+}
+
+.nv .filters {
+  display: flex;
+  gap: 6px;
+  margin: 22px 0 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.nv .chip {
+  all: unset;
+  cursor: pointer;
+  font-size: 12.5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--hair2);
+  color: var(--soft);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.nv .chip .mono {
+  margin-left: 6px;
+  font-size: 10.5px;
+}
+.nv .chip:hover {
+  color: var(--ink);
+}
+.nv .chip[aria-pressed="true"] {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--ink);
+}
+.nv .filters .right {
+  margin-left: auto;
+}
+
+.nv .lhead,
+.nv .lrow {
+  display: grid;
+  grid-template-columns:
+    58px minmax(170px, 1.1fr) 96px minmax(200px, 1.7fr)
+    132px 96px;
+  gap: 16px;
+  align-items: center;
+}
+.nv .lhead {
+  padding: 14px 12px 8px;
+  border-bottom: 1px solid var(--hair);
+}
+.nv .lhead span {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.nv .lrow {
+  all: unset;
+  display: grid;
+  grid-template-columns:
+    58px minmax(170px, 1.1fr) 96px minmax(200px, 1.7fr)
+    132px 96px;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border-bottom: 1px solid var(--hair);
+  border-radius: 7px;
+  cursor: pointer;
+  position: relative;
+  animation: nv-rowin 0.6s var(--ease) both;
+  transition: background 0.2s ease;
+}
+@keyframes nv-rowin {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.nv .lrow:hover {
+  background: var(--surface);
+}
+.nv .lrow[aria-current="true"] {
+  background: var(--surface);
+  box-shadow: inset 2px 0 0 var(--signal);
+}
+.nv .co {
+  min-width: 0;
+}
+.nv .co b {
+  display: block;
+  font-weight: 500;
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nv .co span {
+  font-size: 11.5px;
+  color: var(--dim);
+}
+.nv .type {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--hair2);
+  border-radius: 4px;
+  padding: 2px 7px;
+  justify-self: start;
+  color: var(--soft);
+}
+.nv .type.award {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.nv .what {
+  color: var(--soft);
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nv .win {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--soft);
+}
+.nv .win.hot {
+  color: var(--signal);
+}
+.nv .stage {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.nv .stage.act {
+  color: var(--signal);
+}
+.nv .noted {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  transform: translate(0, -50%) scale(0);
+  transition: transform 0.4s var(--spring);
+}
+.nv .lrow.done .noted {
+  transform: translate(0, -50%) scale(1);
+}
+.nv .empty {
+  padding: 40px 12px;
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--soft);
+}
+
+/* the sheet */
+.nv-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+  pointer-events: none;
+  transition: background 0.45s ease;
+}
+.nv.peek .nv-scrim {
+  pointer-events: auto;
+  background: var(--scrim);
+}
+.nv-sheet {
+  position: fixed;
+  z-index: 6;
+  left: 50%;
+  top: 50%;
+  width: min(1180px, calc(100vw - 180px));
+  height: min(820px, calc(100vh - 88px));
+  transform: translate(-50%, -46%) scale(0.965);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--bg);
+  border: 1px solid var(--hair2);
+  border-radius: 16px;
+  box-shadow: var(--sheet-shadow);
+  transition:
+    transform 0.52s var(--ease),
+    opacity 0.32s ease;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-rows: 46px minmax(0, 1fr);
+  overflow: hidden;
+}
+.nv.peek .nv-sheet {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.nv-sheet .sbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--hair);
+}
+.nv-sheet .keys {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+}
+.nv-sheet kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  border: 1px solid var(--hair2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--soft);
+  margin-right: 5px;
+}
+.nv-sheet .x {
+  all: unset;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--soft);
+  cursor: pointer;
+}
+.nv-sheet .x:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+.nv-sheet .sart,
+.nv-sheet .sside {
+  overflow: auto;
+  min-height: 0;
+}
+.nv-sheet .sart {
+  padding: 30px 40px 30px 44px;
+}
+.nv-sheet .content {
+  transition:
+    opacity 0.22s ease,
+    transform 0.32s var(--ease);
+}
+.nv-sheet .content.out-up {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.nv-sheet .content.out-down {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.nv-sheet .hl {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 32px;
+  line-height: 1.12;
+  margin: 10px 0 12px;
+  max-width: 22em;
+}
+.nv-sheet .lede {
+  font-size: 18px;
+  line-height: 1.45;
+  max-width: 38em;
+}
+.nv-sheet .pull {
+  margin-top: 22px;
+  max-width: 44em;
+}
+
+.nv-sheet .chain {
+  display: grid;
+  margin-top: 32px;
+}
+.nv-sheet .link {
+  position: relative;
+  padding: 24px 14px 0 0;
+  min-width: 0;
+}
+.nv-sheet .link::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 0;
+  border-top: 1px solid var(--ink);
+  transform-origin: left;
+  animation: nv-draw 0.6s var(--ease) both;
+}
+.nv-sheet .link.inferred::before {
+  border-top: 1px dashed var(--soft);
+}
+.nv-sheet .link.unknown::before {
+  border-top: 1px dashed var(--faint);
+}
+.nv-sheet .link.you::before {
+  display: none;
+}
+@keyframes nv-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+.nv-sheet .node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 13px;
+  height: 13px;
+  background: var(--bg);
+}
+.nv-sheet .link.stated .node {
+  border: 1.4px solid var(--ink);
+}
+.nv-sheet .link.stated .node::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: var(--ink);
+}
+.nv-sheet .link.inferred .node {
+  border: 1.4px solid var(--soft);
+}
+.nv-sheet .link.unknown .node {
+  border: 1px dashed var(--dim);
+}
+.nv-sheet .link.you .node {
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 6px var(--signal-wash);
+}
+.nv-sheet .link .caps {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.nv-sheet .link .l {
+  font-size: 13px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nv-sheet .link.inferred .l {
+  color: var(--soft);
+}
+.nv-sheet .link.unknown .l {
+  color: var(--dim);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+}
+.nv-sheet .link button {
+  all: unset;
+  cursor: pointer;
+  display: block;
+}
+.nv-sheet .link button:hover .l {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nv-sheet .kiu {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 26px;
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hair);
+}
+.nv-sheet .kiu .caps {
+  display: block;
+  margin-bottom: 10px;
+}
+.nv-sheet .r {
+  display: flex;
+  gap: 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  padding: 3px 0;
+}
+.nv-sheet .r .m {
+  margin-top: 5px;
+}
+.nv-sheet .r.h {
+  color: var(--soft);
+}
+.nv-sheet .r.u {
+  color: var(--dim);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+}
+
+.nv-sheet .sside {
+  border-left: 1px solid var(--hair);
+  padding: 26px 24px;
+  background: linear-gradient(180deg, var(--surface), transparent 50%);
+}
+.nv-sheet .sec {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--hair);
+}
+.nv-sheet .sec:last-child {
+  border-bottom: none;
+}
+.nv-sheet .sec > .caps {
+  display: block;
+  margin-bottom: 12px;
+}
+.nv-sheet .ask2 {
+  font-family: var(--serif);
+  font-size: 21px;
+  margin: 0 0 14px;
+}
+.nv-sheet .opts {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.nv-sheet .why {
+  margin-top: 12px;
+}
+.nv-sheet .why .caps {
+  display: block;
+  margin-bottom: 8px;
+}
+.nv-sheet .thanks {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: 12px;
+  animation: nv-rowin 0.45s var(--ease) both;
+}
+.nv-sheet .err {
+  font-size: 12.5px;
+  color: var(--signal);
+  margin-top: 10px;
+}
+.nv-sheet .fine {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.nv-sheet .kv {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  row-gap: 9px;
+  font-size: 12.5px;
+}
+.nv-sheet .kv .caps {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.nv-sheet .kv a {
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1000px) {
+  .nv .lhead {
+    display: none;
+  }
+  .nv .lrow {
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+  }
+  .nv .lrow .what,
+  .nv .lrow .stage,
+  .nv .lrow .win {
+    display: none;
+  }
+  .nv-sheet {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 40px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 46px minmax(0, 1fr) auto;
+  }
+  .nv-sheet .sside {
+    border-left: 0;
+    border-top: 1px solid var(--hair);
+    max-height: 40vh;
+  }
+  .nv-sheet .sart {
+    padding: 22px 20px;
+  }
+  .nv-sheet .kiu {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -4,6 +4,7 @@ import { BriefPage } from "./pages/BriefPage";
 import { ClientsPage } from "./pages/ClientsPage";
 import { DossierPage } from "./pages/DossierPage";
 import { MorningPage } from "./pages/MorningPage";
+import { LeadsPage } from "./nv/LeadsPage";
 import { link } from "./routes";
 
 // Hash routes keep the app a static bundle that any server can host:
@@ -11,6 +12,7 @@ import { link } from "./routes";
 //   #/c/<client>/<day>      brief (day may be "latest")
 //   #/c/<client>/<day>/e/<rank>   dossier
 //   #/m/<client>/<day>      the Morning (day may be "latest")
+//   #/app/<client>/<day>/leads   the app: leads, with the case as a sheet
 function currentPath(): string[] {
   return window.location.hash
     .replace(/^#\/?/, "")
@@ -30,6 +32,9 @@ export function App() {
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
 
+  if (path[0] === "app" && path.length >= 3) {
+    return <LeadsPage client={path[1]} day={path[2]} />;
+  }
   if (path[0] === "m" && path.length >= 3) {
     return <MorningPage client={path[1]} day={path[2]} />;
   }

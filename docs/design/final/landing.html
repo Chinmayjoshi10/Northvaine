@@ -526,14 +526,15 @@ const SEEN_AT_LOAD = seen();
 async function voice() {
   const v = document.getElementById("voice"), t = document.getElementById("vtext"), w = document.getElementById("vword"), calc = document.getElementById("calc");
   let skipped = false; document.getElementById("skip").onclick = () => { skipped = true; v.classList.add("done"); };
-  if (STILL || seen()) { v.classList.add("done"); return; }
+  const replay = location.hash === "#intro";  /* #intro always plays the opening */
+  if (STILL || (seen() && !replay)) { v.classList.add("done"); return; }
   try { sessionStorage.setItem("nv-seen", "1"); } catch {}
   const say = async (words, gap) => { for (const x of words) { if (skipped) return; t.textContent = x; await sleep(gap); } };
   await sleep(500);
-  await say(["Thousands", "of", "companies"], 380);
+  await say(["Your", "competitors", "don’t", "know", "yet"], 400);
   if (skipped) return; t.textContent = ""; calc.classList.add("on"); await sleep(1300); calc.classList.remove("on");
-  await say(["One", "is", "ready", "to"], 340);
-  if (skipped) return; t.textContent = "buy"; w.classList.add("mark"); await sleep(1300);
+  await say(["You"], 420);
+  if (skipped) return; t.textContent = "will"; w.classList.add("mark"); await sleep(1300);
   v.classList.add("done");
 }
 
@@ -551,7 +552,7 @@ const CASES = [
 async function typeInto(el, text, ms) { el.textContent = ""; for (const ch of text) { el.textContent += ch; await sleep(ms); } }
 async function assess() {
   const lead = document.getElementById("lead"), $ = (id) => document.getElementById(id);
-  if (!STILL) await sleep(SEEN_AT_LOAD ? 300 : 5600);
+  if (!STILL) await sleep(SEEN_AT_LOAD && location.hash !== "#intro" ? 300 : 6600);
   for (let k = 0; k < (STILL ? 1 : 999); k++) {
     const c = CASES[k % CASES.length];
     lead.querySelectorAll(".on-in").forEach(e => e.classList.remove("on-in"));

@@ -1,0 +1,261 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { api } from "../api";
+import type { BriefView, FeedbackRecord, Row } from "../types";
+import { useLoad } from "../useLoad";
+import { CaseSheet } from "./CaseSheet";
+import type { Decision } from "./CaseSheet";
+import {
+  isHot,
+  longDate,
+  nice,
+  roleOf,
+  stageOf,
+  stripCountry,
+  typeOf,
+  windowOf,
+} from "./lead";
+import { Shell } from "./Shell";
+import "./leads.css";
+
+// Leads: every lead in one list, each with its type; a lead opens as a sheet over the list.
+
+export function LeadsPage({ client, day }: { client: string; day: string }) {
+  const brief = useLoad(() => api.brief(client, day), [client, day]);
+  const crumb = (
+    <>
+      Leads <span className="sl">/</span>{" "}
+      <b>{brief.state === "ready" ? brief.data.offer : client}</b>
+    </>
+  );
+  if (brief.state !== "ready")
+    return (
+      <Shell client={client} day={day} screen="leads" crumb={crumb}>
+        <div className="nv-page">
+          {brief.state === "loading" ? (
+            <div className="wait" aria-busy="true" />
+          ) : (
+            <p className="alert">{brief.message}</p>
+          )}
+        </div>
+      </Shell>
+    );
+  return <Leads client={client} day={day} brief={brief.data} crumb={crumb} />;
+}
+
+function Leads(props: {
+  client: string;
+  day: string;
+  brief: BriefView;
+  crumb: React.ReactNode;
+}) {
+  const { client, day, brief, crumb } = props;
+  const rows = useMemo(
+    () => [...brief.accounts, ...brief.tenders, ...brief.weaker],
+    [brief],
+  );
+  const [filter, setFilter] = useState("All");
+  const [current, setCurrent] = useState<number | null>(null);
+  const [decided, setDecided] = useState<Record<number, string>>({});
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  // answers already given for this run, so the list shows what has been decided
+  useEffect(() => {
+    // the run's own date: "latest" is a route word, not a date the feedback store knows
+    api.feedback(client, brief.as_of).then(
+      (records: FeedbackRecord[]) => {
+        const seen: Record<number, string> = {};
+        for (const f of records) seen[f.rank] = f.note || "decided";
+        setDecided(seen);
+      },
+      () => undefined,
+    );
+  }, [client, brief.as_of]);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const r of rows) c[typeOf(r)] = (c[typeOf(r)] ?? 0) + 1;
+    return c;
+  }, [rows]);
+  const shown = rows.filter((r) => filter === "All" || typeOf(r) === filter);
+  const open = current !== null && shown[current] ? shown[current] : null;
+
+  const step = useCallback(
+    (d: number) => {
+      if (current === null) return;
+      const n = current + d;
+      if (n < 0 || n >= shown.length) return;
+      const parts =
+        sheetRef.current?.querySelectorAll<HTMLElement>("[data-content]") ?? [];
+      parts.forEach((p) => p.classList.add(d > 0 ? "out-up" : "out-down"));
+      window.setTimeout(() => {
+        setCurrent(n);
+        parts.forEach((p) => {
+          p.classList.remove("out-up", "out-down");
+          p.classList.add(d > 0 ? "out-down" : "out-up");
+        });
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() =>
+            parts.forEach((p) => p.classList.remove("out-up", "out-down")),
+          ),
+        );
+      }, 180);
+      document
+        .querySelector(`[data-row="${n}"]`)
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    },
+    [current, shown.length],
+  );
+
+  useEffect(() => {
+    if (open === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCurrent(null);
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        step(1);
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        step(-1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, step]);
+
+  const decide = async (r: Row, d: Decision) => {
+    const body: Omit<FeedbackRecord, "received_at"> = {
+      client: brief.client_id,
+      as_of: brief.as_of,
+      rank: r.rank,
+      company: r.company,
+      correct: d.kind === "drop" && d.reason === "wrong fact" ? false : null,
+      relevant: d.kind === "drop" ? false : true,
+      new: null,
+      actionable: d.kind === "take" ? true : d.kind === "later" ? false : null,
+      failure_chip:
+        d.kind === "drop" ? (d.reason as FeedbackRecord["failure_chip"]) : null,
+      accepted_for_contact:
+        d.kind === "take" ? true : d.kind === "drop" ? false : null,
+      known_already: null,
+      new_intelligence: null,
+      contacted: null,
+      outcome: null,
+      note: d.label,
+    };
+    await api.sendFeedback(body);
+    setDecided((prev) => ({ ...prev, [r.rank]: d.label }));
+  };
+
+  const { weekday, date } = longDate(brief.as_of);
+  const act = rows.filter((r) => stageOf(r) === "Act now").length;
+
+  return (
+    <Shell
+      client={client}
+      day={day}
+      screen="leads"
+      crumb={crumb}
+      counts={{ leads: rows.length }}
+      peek={open !== null}
+      overlay={
+        <>
+          <div className="nv-scrim" onClick={() => setCurrent(null)} />
+          <div ref={sheetRef}>
+            <CaseSheet
+              row={open}
+              decided={open ? (decided[open.rank] ?? null) : null}
+              onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
+              onClose={() => setCurrent(null)}
+            />
+          </div>
+        </>
+      }
+    >
+      <div className="nv-page">
+        <div className="ed">
+          <span className="caps">{weekday} edition</span>
+          <span className="rule" />
+          <span className="mono">{date}</span>
+        </div>
+        <h1 className="hl lh">Leads</h1>
+        <p className="lsub">
+          {rows.length} leads, every fact checked against its source.{" "}
+          {act > 0
+            ? `${act} ${act === 1 ? "needs" : "need"} a decision now.`
+            : "None needs a decision today."}
+        </p>
+
+        <div className="filters" role="group" aria-label="Lead type">
+          {[["All", rows.length] as const, ...Object.entries(counts)].map(
+            ([k, n]) => (
+              <button
+                key={k}
+                type="button"
+                className="chip"
+                aria-pressed={filter === k}
+                onClick={() => {
+                  setFilter(k);
+                  setCurrent(null);
+                }}
+              >
+                {k === "All" ? "All" : `${k}s`}
+                <span className="mono">{n}</span>
+              </button>
+            ),
+          )}
+          <span className="right mono">ranked by evidence, then timing</span>
+        </div>
+
+        <div className="lhead" aria-hidden="true">
+          <span>Chain</span>
+          <span>Company</span>
+          <span>Type</span>
+          <span>What happened</span>
+          <span>Window</span>
+          <span>Stage</span>
+        </div>
+        {shown.length === 0 && (
+          <p className="empty">No leads of this type in this run.</p>
+        )}
+        {shown.map((r, i) => (
+          <button
+            key={r.rank}
+            type="button"
+            data-row={i}
+            className={`lrow${decided[r.rank] ? " done" : ""}`}
+            aria-current={current === i ? "true" : undefined}
+            style={{ animationDelay: `${Math.min(i, 14) * 28}ms` }}
+            onClick={() => setCurrent(i)}
+          >
+            <span className="glyph" aria-label="How much of the chain is known">
+              {(r.chain ?? []).map((l) => (
+                <i
+                  key={l.slot}
+                  className={`m ${l.state === "stated" ? "s" : l.state === "inferred" ? "h" : "u"}`}
+                />
+              ))}
+            </span>
+            <span className="co">
+              <b>{nice(r.company)}</b>
+              <span>
+                {r.country} · {roleOf(r)}
+              </span>
+            </span>
+            <span className={`type ${typeOf(r).toLowerCase()}`}>
+              {typeOf(r)}
+            </span>
+            <span className="what">{stripCountry(r.what)}</span>
+            <span className={`win${isHot(r) ? " hot" : ""}`}>
+              {windowOf(r)}
+            </span>
+            <span className={`stage${stageOf(r) === "Act now" ? " act" : ""}`}>
+              {stageOf(r)}
+            </span>
+            <span className="noted" aria-hidden="true" />
+          </button>
+        ))}
+      </div>
+    </Shell>
+  );
+}
