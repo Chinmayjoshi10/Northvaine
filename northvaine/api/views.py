@@ -9,7 +9,18 @@ from pydantic import BaseModel, ConfigDict
 
 from northvaine.core.settings import Settings
 from northvaine.radar import brief
-from northvaine.radar.models import RadarRun, RadarStream, RankedEntry
+from northvaine.radar.models import CandidateClaim, RadarRun, RadarStream, RankedEntry
+
+
+class Link(BaseModel):
+    """One step of the commercial chain. `state` is how it is known: stated (a verified quote),
+    inferred (code reasoning over verified records) or unknown. Never a guess dressed as fact."""
+
+    slot: str  # authority | project | contract | contractor | buyer
+    label: str
+    state: str  # stated | inferred | unknown
+    quote: str | None = None
+    url: str | None = None
 
 
 class Row(BaseModel):
@@ -23,6 +34,21 @@ class Row(BaseModel):
     requirement_ref: str | None
     why_now: str
     caution: str
+    # D94: who the account is and how strong its evidence is (None in older run records)
+    account_role: str | None = None
+    evidence_level: str | None = None
+    contract_nature: str | None = None
+    company_key: str = ""
+    chain: list[Link] = []
+
+
+class Funnel(BaseModel):
+    """What the run looked at and what it set aside: all counted, none guessed."""
+
+    documents: int
+    candidates: int
+    rejected: dict[str, int]  # reason -> count
+    briefed: int
 
 
 class BriefView(BaseModel):
@@ -34,6 +60,7 @@ class BriefView(BaseModel):
     weaker: list[Row]
     thin: bool
     notes: list[str]
+    funnel: Funnel | None = None
 
 
 class Claim(BaseModel):
@@ -112,6 +139,11 @@ def _row(entry: RankedEntry, today: date) -> Row:
         requirement_ref=entry.requirement_ref,
         why_now=brief._why_now(entry, today),
         caution=brief.caution(entry),
+        account_role=entry.account_role,
+        evidence_level=entry.evidence_level,
+        contract_nature=entry.contract_nature,
+        company_key=c.key,
+        chain=chain(entry),
     )
 
 
@@ -132,6 +164,20 @@ def brief_view(run: RadarRun, settings: Settings) -> BriefView:
         weaker=[_row(e, today) for e in weaker],
         thin=len(accounts) + len(tenders) < brief._THIN_BELOW,
         notes=[brief._inline(n) for n in run.notes],
+        funnel=_funnel(run),
+    )
+
+
+def _funnel(run: RadarRun) -> Funnel:
+    rejected: dict[str, int] = {}
+    for r in run.rejected:
+        reason = r.gate.rejected_as.value if r.gate.rejected_as else "rejected"
+        rejected[reason] = rejected.get(reason, 0) + 1
+    return Funnel(
+        documents=sum(run.documents_by_kind.values()),
+        candidates=len(run.entries) + len(run.rejected),
+        rejected=rejected,
+        briefed=len(run.entries),
     )
 
 
@@ -244,3 +290,85 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         likely_bidders=[Bidder.model_validate(b) for b in raw_bidders],
         decision_line=brief.DECISION_LINE,
     )
+
+
+def _line(entry: RankedEntry, prefix: str) -> CandidateClaim | None:
+    return next((k for k in entry.candidate.claims if k.source_quote.startswith(prefix)), None)
+
+
+def _stated(slot: str, label: str, claim: CandidateClaim) -> Link:
+    return Link(slot=slot, label=label, state="stated", quote=claim.source_quote, url=claim.url)
+
+
+def chain(entry: RankedEntry) -> list[Link]:
+    """Authority -> project -> contract -> contractor -> who buys what the client sells, each
+    step as known from the run's verified record lines (D94), composed by code."""
+    c, role = entry.candidate, entry.account_role
+    name = brief._name(c)
+    buyer, title = _line(entry, "Buyer ["), _line(entry, "Title [")
+    winner = _line(entry, "Winner [")
+    unknown = lambda slot, label: Link(slot=slot, label=label, state="unknown")  # noqa: E731
+
+    if buyer is not None:
+        authority = _stated("authority", brief._after_colon(buyer.source_quote), buyer)
+    elif role in ("demand_source", "direct_purchaser") and c.claims:
+        authority = _stated("authority", name, c.claims[0])
+    else:
+        authority = unknown("authority", "who runs the project")
+
+    project = (
+        _stated("project", brief._after_colon(title.source_quote), title)
+        if title is not None
+        else Link(slot="project", label=brief._what(c), state="inferred")
+        if c.events
+        else unknown("project", "the project")
+    )
+
+    nature = entry.contract_nature or "contract"
+    if winner is not None:
+        contract = _stated("contract", f"{nature} contract awarded", winner)
+    elif c.stream == RadarStream.TENDER and c.claims:
+        contract = _stated("contract", f"{nature} tender open", title or c.claims[0])
+    else:
+        contract = unknown("contract", "no contract on record")
+
+    if role == "awarded_contractor" and winner is not None:
+        contractor = _stated("contractor", name, winner)
+    elif role == "direct_purchaser":
+        contractor = Link(
+            slot="contractor", label="none: the authority buys directly", state="stated"
+        )
+    elif entry.likely_bidders:
+        top = entry.likely_bidders[0]
+        more = len(entry.likely_bidders) - 1
+        label = top.name + (f" +{more} likely" if more else " (likely)")
+        contractor = Link(
+            slot="contractor", label=label, state="inferred", quote=top.quote, url=top.source_url
+        )
+    else:
+        contractor = unknown("contractor", "not yet awarded")
+
+    ref = next((k for k in c.claims if k.ref == entry.requirement_ref), None)
+    level = entry.evidence_level
+    if level == "explicit_purchase" and ref is not None:
+        buys = _stated("buyer", "buys what you sell", ref)
+    elif level == "company_fit" and entry.company_fit:
+        fit = entry.company_fit[0]
+        buys = Link(
+            slot="buyer",
+            label="its own site names what you sell",
+            state="stated",
+            quote=fit.quote,
+            url=fit.url,
+        )
+    elif level == "project_requirement":
+        buys = Link(
+            slot="buyer",
+            label="the project needs what you sell",
+            state="inferred",
+            quote=ref.source_quote if ref else None,
+            url=ref.url if ref else None,
+        )
+    else:
+        buys = unknown("buyer", "who buys the material")
+    return [authority, project, contract, contractor, buys]

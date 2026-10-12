@@ -3,14 +3,20 @@ import type { ReactNode } from "react";
 import { BriefPage } from "./pages/BriefPage";
 import { ClientsPage } from "./pages/ClientsPage";
 import { DossierPage } from "./pages/DossierPage";
+import { MorningPage } from "./pages/MorningPage";
 import { link } from "./routes";
 
 // Hash routes keep the app a static bundle that any server can host:
 //   #/                      clients
 //   #/c/<client>/<day>      brief (day may be "latest")
 //   #/c/<client>/<day>/e/<rank>   dossier
+//   #/m/<client>/<day>      the Morning (day may be "latest")
 function currentPath(): string[] {
-  return window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
+  return window.location.hash
+    .replace(/^#\/?/, "")
+    .split("/")
+    .filter(Boolean)
+    .map(decodeURIComponent);
 }
 
 export function App() {
@@ -23,6 +29,10 @@ export function App() {
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
+
+  if (path[0] === "m" && path.length >= 3) {
+    return <MorningPage client={path[1]} day={path[2]} />;
+  }
 
   let page: ReactNode;
   if (path[0] === "c" && path.length >= 3 && path[3] === "e" && path[4]) {

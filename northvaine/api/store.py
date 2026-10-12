@@ -12,9 +12,10 @@ from datetime import date
 from pathlib import Path
 
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from northvaine.core.settings import Settings
-from northvaine.radar.models import REPO_ROOT, RadarRun
+from northvaine.radar.models import REPO_ROOT, LikelyBidder, RadarRun
 
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 _DAY = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -76,8 +77,18 @@ def load_run(base: Path, client: str, day: str) -> tuple[RadarRun, dict]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     cleaned = json.loads(json.dumps(raw))
     for entry in cleaned.get("entries", []):
-        entry.pop("likely_bidders", None)
+        entry["likely_bidders"] = [
+            b for b in entry.get("likely_bidders") or [] if _valid_bidder(b)
+        ]  # an older build wrote bidders without the verified quote: those are dropped
     return RadarRun.model_validate(cleaned), raw
+
+
+def _valid_bidder(item: object) -> bool:
+    try:
+        LikelyBidder.model_validate(item)
+    except ValidationError:
+        return False
+    return True
 
 
 def feedback_path(base: Path, client: str) -> Path:

@@ -20,6 +20,27 @@ export interface Row {
   requirement_ref: string | null;
   why_now: string;
   caution: string;
+  account_role?: string | null;
+  evidence_level?: string | null;
+  contract_nature?: string | null;
+  company_key?: string;
+  chain?: Link[];
+}
+
+/** One step of the commercial chain, as known: stated (a verified quote), inferred, unknown. */
+export interface Link {
+  slot: "authority" | "project" | "contract" | "contractor" | "buyer";
+  label: string;
+  state: "stated" | "inferred" | "unknown";
+  quote: string | null;
+  url: string | null;
+}
+
+export interface Funnel {
+  documents: number;
+  candidates: number;
+  rejected: Record<string, number>;
+  briefed: number;
 }
 
 export interface BriefView {
@@ -31,6 +52,7 @@ export interface BriefView {
   weaker: Row[];
   thin: boolean;
   notes: string[];
+  funnel?: Funnel | null;
 }
 
 export interface Claim {

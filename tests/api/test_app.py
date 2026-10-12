@@ -114,6 +114,21 @@ async def test_missing_things_are_404(client: AsyncClient) -> None:
     assert (await client.get("/api/clients/..%2Fx/runs/latest")).status_code == 404
 
 
+async def test_brief_has_a_counted_funnel_and_an_honest_chain(client: AsyncClient) -> None:
+    data = (await client.get("/api/clients/acme/runs/latest")).json()
+    f = data["funnel"]
+    assert f["briefed"] == 3 and f["candidates"] >= f["briefed"]
+    for row in data["accounts"] + data["tenders"] + data["weaker"]:
+        slots = [link["slot"] for link in row["chain"]]
+        assert slots == ["authority", "project", "contract", "contractor", "buyer"]
+        for link in row["chain"]:
+            assert link["state"] in ("stated", "inferred", "unknown")
+            if link["state"] == "stated" and link["quote"] is not None:
+                assert link["url"]  # a solid mark always shows its source
+            if link["state"] == "unknown":
+                assert link["quote"] is None
+
+
 async def test_graph_has_companies_events_and_cited_lines(client: AsyncClient) -> None:
     g = (await client.get("/api/clients/acme/runs/2026-10-05/graph")).json()
     nodes = {f"{n['kind']}:{n['id']}": n for n in g["nodes"]}
