@@ -68,7 +68,7 @@ export function nice(name: string): string {
     .join("");
 }
 
-/** "France – Paving works – Travaux…" → "Paving works – Travaux…": the country is shown elsewhere. */
+/** "France – Supplies of equipment – Fourniture…" → "Supplies of equipment – Fourniture…": the country is shown elsewhere. */
 export function stripCountry(text: string): string {
   return text.replace(/^[A-Z][\p{L}]+(?: [A-Z][\p{L}]+)? – /u, "");
 }
