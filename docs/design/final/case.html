@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — Case</title>
+<script>document.documentElement.dataset.theme = location.hash.slice(1) || "dark";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nv.css">
+<style>
+  .body { display: grid; grid-template-columns: 188px 1fr 392px; min-height: 0; }
+  .art { padding: 30px 44px 0 48px; overflow: hidden; }
+  .back { display: flex; gap: 10px; align-items: center; margin-bottom: 22px; }
+  .stage { display: flex; gap: 0; margin-left: auto; }
+  .stage span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); padding: 0 12px; border-left: 1px solid var(--hair2); }
+  .stage span:first-child { border-left: none; }
+  .stage span.on { color: var(--signal); }
+  .stage span.past { color: var(--soft); }
+  .art .hl { font-size: 40px; line-height: 1.1; margin: 10px 0 12px; max-width: 18em; }
+  .art .lede { font-size: 19px; line-height: 1.45; max-width: 36em; }
+  .art .lede b { color: var(--ink); font-weight: 400; }
+  .tag { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: 3px; font-style: normal; }
+  .art .pull { margin: 24px 0 0; max-width: 40em; }
+
+  .chain { display: grid; grid-template-columns: repeat(5, 1fr) 60px; margin-top: 36px; }
+  .link { position: relative; padding: 24px 14px 0 0; }
+  .link::before { content: ""; position: absolute; top: 6px; left: 14px; right: 0; border-top: 1px solid var(--ink); }
+  .link.h::before { border-top: 1px dashed var(--soft); }
+  .link.y::before { display: none; }
+  .node { position: absolute; top: 0; left: 0; width: 13px; height: 13px; background: var(--bg); }
+  .link.s .node { border: 1.4px solid var(--ink); } .link.s .node::after { content: ""; position: absolute; inset: 3px; background: var(--ink); }
+  .link.h .node { border: 1.4px solid var(--soft); }
+  .link.y .node { border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 6px var(--signal-wash); }
+  .link .caps { display: block; margin-bottom: 6px; font-size: 9.5px; color: var(--dim); }
+  .link .l { font-size: 13.5px; line-height: 1.35; }
+  .link.h .l { color: var(--soft); }
+
+  .kiu { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 28px; margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--hair); }
+  .kiu .caps { display: block; margin-bottom: 10px; }
+  .r { display: flex; gap: 10px; font-size: 12.5px; line-height: 1.45; padding: 3px 0; }
+  .r .m { margin-top: 5px; }
+  .r.h { color: var(--soft); } .r.u { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 13.5px; }
+  .r sup { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-left: 3px; }
+
+  .side { border-left: 1px solid var(--hair); padding: 28px 26px; display: flex; flex-direction: column; gap: 0; background: linear-gradient(180deg, var(--surface), transparent 45%); }
+  .side .sec { padding: 0 0 20px; margin-bottom: 20px; border-bottom: 1px solid var(--hair); }
+  .side .sec:last-child { border-bottom: none; margin-bottom: 0; }
+  .side .caps { display: block; margin-bottom: 12px; }
+  .ask2 { font-family: var(--serif); font-size: 21px; margin: 0 0 14px; }
+  .opts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fine { font-family: var(--mono); font-size: 10.5px; color: var(--dim); margin-top: 12px; line-height: 1.5; }
+  .kv { display: grid; grid-template-columns: 96px 1fr; row-gap: 9px; font-size: 12.5px; }
+  .kv .caps { margin: 0; padding-top: 2px; font-size: 9.5px; color: var(--dim); }
+  .kv .dash { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 13.5px; }
+  .tl { position: relative; padding-left: 18px; }
+  .tl::before { content: ""; position: absolute; left: 3px; top: 6px; bottom: 6px; border-left: 1px solid var(--hair2); }
+  .ev { position: relative; padding: 0 0 12px; font-size: 12.5px; line-height: 1.4; }
+  .ev::before { content: ""; position: absolute; left: -18px; top: 5px; width: 7px; height: 7px; background: var(--ink); }
+  .ev.y::before { background: var(--signal); }
+  .ev.f::before { background: var(--bg); border: 1px dashed var(--dim); }
+  .ev .mono { display: block; font-size: 10px; margin-bottom: 1px; }
+  .ev.f { color: var(--dim); }
+  .similar { font-size: 12.5px; line-height: 1.45; color: var(--soft); }
+  .similar b { color: var(--ink); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="crumb">Situations <span class="sl">/</span> <b>Corte old town · SAS Antoniotti</b></span>
+    <div class="ask">Ask about this situation…<kbd>⌘ K</kbd></div>
+    <div class="toggle"><span class="on">Dark</span><span>Light</span></div>
+    <span class="live mono"><i></i>watching · 07:40</span>
+  </div>
+  <div class="body">
+    <nav class="rail">
+      <div class="nav">Station</div>
+      <div class="nav">Decisions <span class="n hot">4</span></div>
+      <div class="nav on">Situations <span class="n">14</span></div>
+      <div class="nav">Back in motion <span class="n">2</span></div>
+      <div class="nav">Accounts <span class="n">38</span></div>
+      <div class="nav">Territory</div>
+      <div class="nav">Connections</div>
+      <div class="nav">Editions</div>
+      <div class="nav">Outcomes</div>
+      <div class="sep"></div>
+      <div class="nav">What I’ve learned</div>
+      <div class="nav">Your business</div>
+      <div class="foot"><span class="av">AJ</span>Sales director</div>
+    </nav>
+
+    <article class="art">
+      <div class="back">
+        <span class="dateline"><b>Corte, Corsica</b> · 6 October 2026</span>
+        <div class="stage"><span class="past">Detected</span><span class="past">Watching</span><span class="past">Developing</span><span class="on">Act now</span><span>Won · Lost</span></div>
+      </div>
+      <h1 class="hl">Corte awards its old-town paving works to SAS&nbsp;Antoniotti</h1>
+      <p class="lede">The commune’s requalification of the old town went to <b>SAS Antoniotti</b>, with Raffalli Travaux Publics and a signage firm. <span class="infer">The works will need paving stone, and the contractor will be the one ordering it.</span><span class="tag">inferred</span></p>
+
+      <blockquote class="pull">Winner: SAS ANTONIOTTI; RAFFALLI TRAVAUX PUBLICS; COMPAGNIE DE DIFFUSION DE PANNEAUX DE SIGNALISATION ET ACCESSOIRES
+        <cite>EU award notice 688574-2026 · ted.europa.eu · published 6 Oct 2026 ↗</cite></blockquote>
+
+      <div class="chain">
+        <div class="link s"><span class="node"></span><span class="caps">Authority</span><span class="l">Commune de Corte</span></div>
+        <div class="link s"><span class="node"></span><span class="caps">Project</span><span class="l">Old-town requalification: paving &amp; surfacing</span></div>
+        <div class="link s"><span class="node"></span><span class="caps">Contract</span><span class="l">Works awarded<br>6 Oct 2026</span></div>
+        <div class="link s"><span class="node"></span><span class="caps">Contractor</span><span class="l">SAS Antoniotti<br><span style="color:var(--dim)">+ 2 partners</span></span></div>
+        <div class="link h"><span class="node"></span><span class="caps">Needs</span><span class="l">Paving stone for the works</span></div>
+        <div class="link y"><span class="node"></span><span class="caps" style="color:var(--signal)">You</span></div>
+      </div>
+
+      <div class="kiu">
+        <div><span class="caps">On record</span>
+          <div class="r"><i class="m s"></i><span>Commune de Corte is the buyer<sup>C3</sup></span></div>
+          <div class="r"><i class="m s"></i><span>Old-town requalification, paving and asphalting works<sup>C2</sup></span></div>
+          <div class="r"><i class="m s"></i><span>Awarded to SAS Antoniotti and two partners<sup>C4</sup></span></div>
+        </div>
+        <div><span class="caps">Inferred</span>
+          <div class="r h"><i class="m h"></i><span>The works need stone: the notice’s codes cover paving and surfacing<sup>C6</sup></span></div>
+        </div>
+        <div><span class="caps">Not yet known</span>
+          <div class="r u"><i class="m u"></i><span>who orders materials at Antoniotti</span></div>
+          <div class="r u"><i class="m u"></i><span>when work starts on site</span></div>
+          <div class="r u"><i class="m u"></i><span>the contract value</span></div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="side">
+      <div class="sec">
+        <span class="caps">Your decision</span>
+        <p class="ask2">Is this one for you?</p>
+        <div class="opts"><span class="btn rec">Assign to Marta</span><span class="btn">I’ll take it</span><span class="btn">Not now</span><span class="btn">Not for us</span></div>
+        <div class="fine">Your answer teaches Northvaine. Nothing is ever sent for you.</div>
+      </div>
+      <div class="sec">
+        <span class="caps">How to reach them · company only</span>
+        <div class="kv">
+          <span class="caps">Company</span><span class="dash">official site not found yet</span>
+          <span class="caps">Authority</span><span>Commune de Corte, procurement contact on the notice ↗</span>
+          <span class="caps">Ask for</span><span>Purchasing, for the old-town works</span>
+        </div>
+      </div>
+      <div class="sec">
+        <span class="caps">History</span>
+        <div class="tl">
+          <div class="ev"><span class="mono">6 Oct</span>Award published by the Commune de Corte</div>
+          <div class="ev y"><span class="mono">13 Oct · 06:12</span>Northvaine moved it to act now</div>
+          <div class="ev f"><span class="mono">next</span>Watching for site start and the material buyer</div>
+        </div>
+      </div>
+      <div class="sec">
+        <span class="caps">From your history</span>
+        <div class="similar">Like <b>Munich paths → Haderstorfer</b>: a works award where the contractor buys the stone. That one led to a quote within three weeks of contact.</div>
+      </div>
+    </aside>
+  </div>
+</div>
+</body>
+</html>

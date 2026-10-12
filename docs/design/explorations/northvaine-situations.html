@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — situations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0b; --ink: #ece8df; --soft: #a8a398; --dim: #6b675e;
+    --hair: #24231f; --hair2: #383630; --signal: #e8532a; --signal-glow: rgba(232,83,42,.16);
+    --serif: "Newsreader", Georgia, serif; --sans: "Geist", system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #070706; }
+  body { width: 1600px; height: 1000px; padding: 28px; font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .window { width: 100%; height: 100%; background: radial-gradient(1100px 520px at 45% 0%, #16150f 0%, var(--bg) 62%);
+    border: 1px solid var(--hair2); border-radius: 14px; box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
+    display: grid; grid-template-columns: 196px 1fr 380px; grid-template-rows: 52px 1fr; overflow: hidden; }
+  .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--dim); }
+  .caps { text-transform: uppercase; letter-spacing: .18em; font-size: 10.5px; }
+
+  .bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 28px; padding: 0 22px; border-bottom: 1px solid var(--hair); }
+  .lights { display: flex; gap: 7px; } .lights i { width: 11px; height: 11px; border-radius: 50%; background: #2c2b27; display: block; }
+  .word { font-weight: 600; font-size: 11.5px; letter-spacing: .3em; }
+  .world { color: var(--soft); font-size: 12.5px; } .world b { color: var(--ink); font-weight: 500; }
+  .ask { margin-left: auto; width: 360px; height: 30px; border: 1px solid var(--hair2); border-radius: 7px; display: flex; align-items: center; padding: 0 10px; color: var(--dim); font-size: 12.5px; }
+  .ask kbd { margin-left: auto; font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; color: var(--soft); }
+  .now { display: flex; align-items: center; gap: 8px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgba(236,232,223,.07); }
+
+  /* rail */
+  .rail { border-right: 1px solid var(--hair); padding: 22px 14px; display: flex; flex-direction: column; gap: 2px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 7px; font-size: 13.5px; color: var(--soft); }
+  .nav.on { color: var(--ink); background: rgba(255,255,255,.045); }
+  .nav .mono { font-size: 10.5px; }
+  .nav .new { color: var(--signal); }
+  .rail .sep { height: 1px; background: var(--hair); margin: 14px 6px; }
+  .rail .who { margin-top: auto; padding: 10px; display: flex; gap: 10px; align-items: center; font-size: 12.5px; color: var(--soft); }
+  .av { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-family: var(--mono); font-size: 9.5px; color: var(--ink); background: #2a2925; border: 1px solid var(--hair2); }
+
+  /* main */
+  .main { padding: 30px 34px 0 38px; overflow: hidden; }
+  .lede { font-family: var(--serif); font-weight: 300; font-size: 25px; line-height: 1.3; margin: 0; max-width: 46em; letter-spacing: -.008em; }
+  .lede b { font-weight: 400; color: #fff; } .lede .sig { color: var(--signal); font-weight: 400; }
+  .lede2 { font-family: var(--serif); font-weight: 300; font-size: 17px; color: var(--soft); margin: 8px 0 0; }
+
+  .tabs { display: flex; gap: 6px; margin: 26px 0 0; border-bottom: 1px solid var(--hair); padding-bottom: 12px; align-items: center; }
+  .tab { font-size: 12.5px; color: var(--soft); padding: 6px 11px; border-radius: 6px; display: flex; gap: 8px; align-items: baseline; }
+  .tab.on { color: var(--ink); background: rgba(255,255,255,.05); }
+  .tab .mono { font-size: 10.5px; }
+  .tabs .right { margin-left: auto; display: flex; gap: 14px; }
+
+  .lane { display: flex; align-items: baseline; gap: 12px; margin: 20px 0 4px; }
+  .lane .caps { font-family: var(--mono); color: var(--soft); }
+  .lane.act .caps { color: var(--signal); }
+  .lane .line { flex: 1; height: 1px; background: var(--hair); transform: translateY(-3px); }
+
+  .row { display: grid; grid-template-columns: 58px 1.35fr 92px 1.6fr 112px 30px; gap: 14px; align-items: center; padding: 10px 10px; border-bottom: 1px solid var(--hair); font-size: 13px; border-radius: 6px; }
+  .row.sel { background: rgba(255,255,255,.04); box-shadow: inset 2px 0 0 var(--signal); }
+  .co b { font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .co span { color: var(--dim); font-size: 11.5px; }
+  .glyph { display: inline-flex; gap: 3px; } .glyph i { width: 7px; height: 7px; display: block; }
+  .glyph .s { background: var(--ink); } .glyph .h { box-shadow: inset 0 0 0 1.2px var(--soft); } .glyph .u { border: 1px dashed #55524a; }
+  .glyph .y { background: var(--signal); border-radius: 50%; }
+  .origin { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); border: 1px solid var(--hair2); border-radius: 4px; padding: 2px 6px; justify-self: start; }
+  .origin.new { color: var(--signal); border-color: rgba(232,83,42,.45); }
+  .origin.res { border-style: dashed; color: var(--dim); }
+  .dev { color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dev em { font-style: normal; color: var(--ink); }
+  .win { font-family: var(--mono); font-size: 11px; color: var(--soft); }
+  .win.hot { color: var(--signal); }
+  .researching { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 13.5px; }
+
+  /* preview */
+  .peek { border-left: 1px solid var(--hair); padding: 26px; display: flex; flex-direction: column; background: linear-gradient(180deg, rgba(255,255,255,.018), transparent 40%); }
+  .brk { position: relative; padding: 9px 13px; align-self: flex-start; }
+  .brk::before, .brk::after { content: ""; position: absolute; width: 10px; height: 10px; border: 0 solid var(--signal); }
+  .brk::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; } .brk::after { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+  .brk b { font-weight: 500; font-size: 19px; }
+  .peek .role { color: var(--soft); font-size: 12.5px; margin: 2px 0 20px; }
+  .say { font-family: var(--serif); font-weight: 300; font-size: 17.5px; line-height: 1.4; margin: 0 0 22px; }
+  .vchain { position: relative; padding-left: 22px; margin-bottom: 18px; }
+  .vchain::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 26px; border-left: 1px solid var(--ink); }
+  .step { position: relative; padding: 0 0 13px; }
+  .step i { position: absolute; left: -22px; top: 3px; width: 11px; height: 11px; background: var(--bg); }
+  .step.s i { border: 1.3px solid var(--ink); } .step.s i::after { content: ""; position: absolute; inset: 2.5px; background: var(--ink); }
+  .step.h i { border: 1.3px solid var(--soft); } .step.u i { border: 1px dashed var(--dim); }
+  .step.y i { border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 5px var(--signal-glow); }
+  .step .mono { display: block; font-size: 9.5px; text-transform: uppercase; letter-spacing: .16em; margin-bottom: 2px; }
+  .step span.l { font-size: 13px; } .step.h span.l { color: var(--soft); } .step.u span.l { color: var(--dim); font-family: var(--serif); font-style: italic; }
+  .team { border-top: 1px solid var(--hair); padding-top: 16px; display: grid; grid-template-columns: 90px 1fr; row-gap: 9px; font-size: 12.5px; }
+  .team .mono { font-size: 10px; text-transform: uppercase; letter-spacing: .14em; padding-top: 2px; }
+  .peek .acts { margin-top: auto; display: flex; gap: 8px; }
+  .btn { font-size: 12.5px; padding: 8px 12px; border-radius: 7px; border: 1px solid var(--hair2); color: var(--ink); }
+  .btn.go { border-color: var(--signal); color: #fff; background: rgba(232,83,42,.12); }
+  .open { margin-left: auto; color: var(--soft); font-size: 12.5px; padding: 8px 0; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="world">Your market · <b>natural stone into the UK &amp; EU</b></span>
+    <div class="ask">Ask about your market…<kbd>⌘ K</kbd></div>
+    <span class="now mono"><span class="pulse"></span>watching · Tue 13 Oct, 07:40</span>
+  </div>
+
+  <nav class="rail">
+    <div class="nav">Today <span class="mono new">3 new</span></div>
+    <div class="nav on">Situations <span class="mono">14</span></div>
+    <div class="nav">Accounts <span class="mono">38</span></div>
+    <div class="nav">Your market</div>
+    <div class="nav">Outcomes</div>
+    <div class="sep"></div>
+    <div class="nav">What I’ve learned</div>
+    <div class="nav">Settings</div>
+    <div class="who"><span class="av">AJ</span>Your team · 3</div>
+  </nav>
+
+  <section class="main">
+    <p class="lede"><span class="sig">Corte</span> moved to <b>act now</b> overnight. Two German works contracts are still open and I’m tracking who bids. <b>Haderstorfer</b>, already in your CRM, just won paving work in Munich.</p>
+    <p class="lede2">Three decisions are waiting for you; the rest is moving on its own.</p>
+
+    <div class="tabs">
+      <span class="tab on">All <span class="mono">14</span></span>
+      <span class="tab">New <span class="mono">3</span></span>
+      <span class="tab">Researching <span class="mono">4</span></span>
+      <span class="tab">Your accounts <span class="mono">5</span></span>
+      <span class="tab">With your team <span class="mono">2</span></span>
+      <span class="right mono">Market: all ▾ &nbsp;&nbsp; Owner: anyone ▾</span>
+    </div>
+
+    <div class="lane act"><span class="caps">Act now</span><span class="line"></span><span class="mono">2</span></div>
+    <div class="row sel">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="h"></i></span>
+      <span class="co"><b>SAS Antoniotti</b><span>Corsica, FR · contractor</span></span>
+      <span class="origin new">New</span>
+      <span class="dev">Won Corte’s old-town paving works <em>· 6 Oct</em></span>
+      <span class="win hot">within weeks</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="h"></i></span>
+      <span class="co"><b>Haderstorfer GmbH</b><span>Bavaria, DE · contractor</span></span>
+      <span class="origin">CRM</span>
+      <span class="dev">Won Munich’s path-building works <em>· 8 Sep</em></span>
+      <span class="win hot">site start soon</span>
+      <span class="av">MK</span>
+    </div>
+
+    <div class="lane"><span class="caps">Developing</span><span class="line"></span><span class="mono">4</span></div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="u"></i></span>
+      <span class="co"><b>Schulze Tertilt GmbH</b><span>Westphalia, DE · contractor</span></span>
+      <span class="origin">Team</span>
+      <span class="dev">Contacted 9 Oct · <em>asked for a sample</em></span>
+      <span class="win">follow up Thu</span>
+      <span class="av">AJ</span>
+    </div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="u"></i></span>
+      <span class="co"><b>H &amp; W Tiefbau GmbH &amp; Co. KG</b><span>Ruhr, DE · contractor</span></span>
+      <span class="origin res">Researching</span>
+      <span class="researching">finding out who orders materials…</span>
+      <span class="win">—</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="h"></i><i class="u"></i></span>
+      <span class="co"><b>Stadt Mülheim an der Ruhr</b><span>Ruhr, DE · authority</span></span>
+      <span class="origin">New</span>
+      <span class="dev">Landscaping tender re-opened · <em>5 likely bidders</em></span>
+      <span class="win hot">closes 16 Oct</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="u"></i><i class="u"></i></span>
+      <span class="co"><b>Mairie d’Aubagne</b><span>Provence, FR · authority</span></span>
+      <span class="origin res">Researching</span>
+      <span class="researching">construction &amp; surface works; winner not yet known</span>
+      <span class="win">closes 23 Oct</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+
+    <div class="lane"><span class="caps">Watching</span><span class="line"></span><span class="mono">8</span></div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="s"></i><i class="u"></i><i class="u"></i></span>
+      <span class="co"><b>Stadt Nürnberg Hochbauamt</b><span>Bavaria, DE · authority</span></span>
+      <span class="origin">CRM</span>
+      <span class="dev">Road construction tender, Zeppelinstraße</span>
+      <span class="win">closes 23 Oct</span>
+      <span class="av">MK</span>
+    </div>
+    <div class="row">
+      <span class="glyph"><i class="s"></i><i class="s"></i><i class="h"></i><i class="u"></i><i class="u"></i></span>
+      <span class="co"><b>Klinikum Dortmund gGmbH</b><span>Ruhr, DE · authority</span></span>
+      <span class="origin">Watching</span>
+      <span class="dev">Works tender published</span>
+      <span class="win">closes 30 Oct</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+    <div class="row" style="border-bottom:none;opacity:.55">
+      <span class="glyph"><i class="s"></i><i class="h"></i><i class="u"></i><i class="u"></i><i class="u"></i></span>
+      <span class="co"><b>Emschergenossenschaft</b><span>Ruhr, DE · authority</span></span>
+      <span class="origin">Watching</span>
+      <span class="dev">Drain-laying works, Reinwasserkanal</span>
+      <span class="win">—</span>
+      <span class="av" style="opacity:.35">—</span>
+    </div>
+  </section>
+
+  <aside class="peek">
+    <div class="brk"><b>SAS Antoniotti</b></div>
+    <div class="role">Contractor · Corsica, France · new this morning</div>
+    <p class="say">Won Corte’s old-town paving with two partners. Somebody there will be ordering stone in the coming weeks.</p>
+    <div class="vchain">
+      <div class="step s"><i></i><span class="mono">Authority</span><span class="l">Commune de Corte</span></div>
+      <div class="step s"><i></i><span class="mono">Project</span><span class="l">Old-town requalification, paving</span></div>
+      <div class="step s"><i></i><span class="mono">Contract</span><span class="l">Works awarded 6 Oct</span></div>
+      <div class="step s"><i></i><span class="mono">Contractor</span><span class="l">SAS Antoniotti + 2 partners</span></div>
+      <div class="step h"><i></i><span class="mono">Needs</span><span class="l">Paving stone for the works</span></div>
+      <div class="step y"><i></i><span class="mono" style="color:var(--signal)">You</span></div>
+    </div>
+    <div class="team">
+      <span class="mono">Owner</span><span style="color:var(--dim)">nobody yet</span>
+      <span class="mono">Next step</span><span>Find who orders materials</span>
+      <span class="mono">Source</span><span style="color:var(--soft)">EU award notice 688574-2026 ↗</span>
+    </div>
+    <div class="acts">
+      <span class="btn go">I’ll take it</span>
+      <span class="btn">Not for us</span>
+      <span class="open">Open case →</span>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

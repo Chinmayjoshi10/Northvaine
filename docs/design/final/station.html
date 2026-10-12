@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — Station</title>
+<script>document.documentElement.dataset.theme = location.hash.slice(1) || "dark";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nv.css">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<style>
+  .body { display: grid; grid-template-columns: 188px 1fr; min-height: 0; }
+  .main { display: grid; grid-template-columns: 1.08fr 1fr; grid-template-rows: auto 1fr 214px; min-height: 0; }
+
+  .mast { grid-column: 1 / -1; padding: 22px 30px 20px; border-bottom: 1px solid var(--hair); display: grid; grid-template-columns: 1fr auto; column-gap: 40px; align-items: end; }
+  .mast .ed { display: flex; gap: 14px; align-items: baseline; margin-bottom: 10px; }
+  .mast .ed .rule { flex: 1; height: 1px; background: var(--hair); transform: translateY(-3px); max-width: 120px; }
+  .mast .hl { font-size: 33px; line-height: 1.12; max-width: 24em; }
+  .mast .lede { font-size: 17.5px; line-height: 1.4; margin-top: 8px; max-width: 46em; }
+  .mast .lede b { color: var(--ink); font-weight: 400; }
+  .stats { display: flex; gap: 30px; padding-bottom: 4px; }
+  .stat b { display: block; font-family: var(--serif); font-weight: 300; font-size: 34px; line-height: 1; color: var(--ink); font-feature-settings: "lnum"; }
+  .stat .caps { font-size: 9.5px; color: var(--dim); }
+  .stat.sig b { color: var(--signal); }
+
+  .map { position: relative; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); overflow: hidden; min-height: 0; }
+  .map .top { position: absolute; top: 14px; left: 22px; right: 18px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+  .legend { display: flex; gap: 14px; align-items: center; }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .legend .m { width: 7px; height: 7px; }
+  .legend .m.y { box-shadow: 0 0 6px var(--signal); }
+  #map { position: absolute; inset: 0; }
+  #map text { font-family: var(--sans); font-size: 11.5px; fill: var(--soft); paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
+  #map text.hot { fill: var(--ink); font-weight: 500; }
+  #map text.sub { font-family: var(--mono); font-size: 9.5px; fill: var(--dim); }
+  .mapnote { position: absolute; left: 22px; bottom: 14px; display: flex; gap: 18px; }
+  .mapnote span { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--dim); }
+  .zoom { position: absolute; right: 16px; bottom: 14px; display: flex; flex-direction: column; border: 1px solid var(--hair2); border-radius: 6px; overflow: hidden; background: var(--bg); }
+  .zoom span { width: 26px; height: 24px; display: grid; place-items: center; color: var(--soft); font-size: 13px; }
+  .zoom span + span { border-top: 1px solid var(--hair2); }
+
+  .dec { padding: 14px 26px 0; border-bottom: 1px solid var(--hair); overflow: hidden; min-height: 0; }
+  .dec .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .d { padding: 14px 0 15px; border-top: 1px solid var(--hair); }
+  .d:first-of-type { border-top: none; }
+  .d .meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .d .wait { font-family: var(--mono); font-size: 10.5px; color: var(--soft); }
+  .d .wait.hot { color: var(--signal); }
+  .d .q { font-family: var(--serif); font-size: 18.5px; line-height: 1.25; margin: 6px 0 5px; letter-spacing: -0.008em; }
+  .d .why { font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+  .d .why b { color: var(--ink); font-weight: 500; }
+  .d .opts { display: flex; gap: 6px; margin-top: 10px; }
+
+  .bottom { grid-column: 1 / -1; display: grid; grid-template-columns: 1.08fr 0.62fr 0.38fr; min-height: 0; }
+  .cell { padding: 14px 22px; border-right: 1px solid var(--hair); overflow: hidden; }
+  .cell:last-child { border-right: none; }
+  .cell .top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .feed .e { display: grid; grid-template-columns: 44px 12px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--hair); font-size: 12.5px; }
+  .feed .e:last-child { border-bottom: none; }
+  .feed .e .m { width: 6px; height: 6px; transform: translateY(-1px); }
+  .feed .e .t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feed .e .t em { font-style: normal; color: var(--soft); }
+
+  .back .who { display: flex; align-items: center; gap: 10px; margin: 2px 0 8px; }
+  .back .who b { font-family: var(--serif); font-weight: 400; font-size: 18px; }
+  .back .row { display: grid; grid-template-columns: 44px 1fr; gap: 10px; font-size: 12.5px; line-height: 1.45; padding: 3px 0; }
+  .back .row .caps { font-size: 9.5px; padding-top: 2px; color: var(--dim); }
+  .back .row .then { color: var(--soft); }
+  .back .opts { display: flex; gap: 6px; margin-top: 9px; }
+
+  .member { display: grid; grid-template-columns: 22px 1fr auto; gap: 9px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--hair); font-size: 12px; }
+  .member:last-of-type { border-bottom: none; }
+  .load { display: flex; gap: 2px; } .load i { width: 5px; height: 11px; background: var(--faint); display: block; }
+  .load i.on { background: var(--ink); } .load i.late { background: var(--signal); }
+  .overdue { margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--signal); }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="crumb">Station <span class="sl">/</span> <b>Natural stone · UK &amp; EU</b></span>
+    <div class="ask">Ask: “who is likely to win the Mülheim works?”<kbd>⌘ K</kbd></div>
+    <div class="toggle"><span class="on" id="t-d">Dark</span><span id="t-l">Light</span></div>
+    <span class="live mono"><i></i>watching · 07:40</span>
+  </div>
+
+  <div class="body">
+    <nav class="rail">
+      <div class="nav on">Station</div>
+      <div class="nav">Decisions <span class="n hot">4</span></div>
+      <div class="nav">Situations <span class="n">14</span></div>
+      <div class="nav">Back in motion <span class="n">2</span></div>
+      <div class="nav">Accounts <span class="n">38</span></div>
+      <div class="nav">Territory</div>
+      <div class="nav">Connections</div>
+      <div class="nav">Editions</div>
+      <div class="nav">Outcomes</div>
+      <div class="sep"></div>
+      <div class="nav">What I’ve learned</div>
+      <div class="nav">Your business</div>
+      <div class="foot"><span class="av">AJ</span>Sales director</div>
+    </nav>
+
+    <section class="main">
+      <header class="mast">
+        <div>
+          <div class="ed"><span class="caps">Tuesday edition</span><span class="rule"></span><span class="mono">13 October 2026</span></div>
+          <h1 class="hl">Corte awards its old-town paving to SAS&nbsp;Antoniotti</h1>
+          <p class="lede">One window opened overnight. <b>Haderstorfer</b>, quiet in your CRM since spring, is back in motion, and Mülheim’s tender closes on Friday.</p>
+        </div>
+        <div class="stats">
+          <div class="stat sig"><b>4</b><span class="caps">to decide</span></div>
+          <div class="stat"><b>3</b><span class="caps">new</span></div>
+          <div class="stat"><b>2</b><span class="caps">returning</span></div>
+        </div>
+      </header>
+
+      <div class="map">
+        <div class="top">
+          <span class="caps">Territory</span>
+          <span class="legend mono"><span><i class="m y"></i>act</span><span><i class="m s"></i>developing</span><span><i class="m h"></i>watching</span><span><i class="m a"></i>your account</span></span>
+        </div>
+        <svg id="map"></svg>
+        <div class="mapnote"><span>UK quiet since 2 Oct</span><span>Gulf · US: no movement</span></div>
+        <div class="zoom"><span>+</span><span>−</span></div>
+      </div>
+
+      <div class="dec">
+        <div class="top"><span class="caps">To decide · by cost of waiting</span><span class="mono">4</span></div>
+
+        <div class="d">
+          <div class="meta"><span class="dateline"><b>Mülheim, Ruhr</b> · works tender</span><span class="wait hot">closes Fri 16 Oct</span></div>
+          <p class="q">Approach the likely winners before the award?</p>
+          <div class="why">The buyer of your stone will be the winning contractor. <b>Five firms</b> have won similar landscaping work nearby.</div>
+          <div class="opts"><span class="btn rec">Approach top two</span><span class="btn">Wait for the award</span><span class="btn">Drop</span></div>
+        </div>
+
+        <div class="d">
+          <div class="meta"><span class="dateline"><b>Corte, Corsica</b> · awarded 6 Oct</span><span class="wait hot">ordering within weeks</span></div>
+          <p class="q">Take SAS Antoniotti?</p>
+          <div class="why">Won the old-town works with two partners. <b>Who orders materials</b> is the one thing not yet known.</div>
+          <div class="opts"><span class="btn rec">Assign to Marta</span><span class="btn">I’ll take it</span><span class="btn">Not for us</span></div>
+        </div>
+
+        <div class="d">
+          <div class="meta"><span class="dateline"><b>Münster</b> · your team’s lead</span><span class="wait">asked 9 Oct</span></div>
+          <p class="q">Schulze Tertilt asked for a sample. Approve it?</p>
+          <div class="why">They are building Münster’s sewage plant. Interest usually cools after about a week.</div>
+          <div class="opts"><span class="btn rec">Approve sample</span><span class="btn">Ask for the spec first</span></div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <div class="cell feed">
+          <div class="top"><span class="caps">Overnight</span><span class="mono">developments only</span></div>
+          <div class="e"><span class="mono">06:12</span><i class="m y"></i><span class="t">Corte moved to <em>act now</em> · award confirmed on record</span></div>
+          <div class="e"><span class="mono">05:40</span><i class="m a"></i><span class="t">Haderstorfer <em>(your account)</em> won Munich’s path-building works</span></div>
+          <div class="e"><span class="mono">04:58</span><i class="m h"></i><span class="t">Mülheim re-opened its tender <em>· five likely bidders identified</em></span></div>
+          <div class="e"><span class="mono">03:21</span><i class="m s"></i><span class="t">Münster works → Schulze Tertilt <em>· matched to your team’s lead</em></span></div>
+          <div class="e"><span class="mono">02:07</span><i class="m u"></i><span class="t">Aubagne surface works <em>· the winner is not yet known</em></span></div>
+        </div>
+
+        <div class="cell back">
+          <div class="top"><span class="caps">Back in motion</span><span class="mono">1 of 2</span></div>
+          <div class="who"><i class="m a"></i><b>Haderstorfer GmbH</b><span class="mono">Bavaria</span></div>
+          <div class="row"><span class="caps">Then</span><span class="then">Quoted for a Nuremberg depot in March; lost on delivery time. Quiet since.</span></div>
+          <div class="row"><span class="caps">Now</span><span>Won Munich’s path-building works · 8 Sep</span></div>
+          <div class="opts"><span class="btn rec">Reactivate with Marta</span><span class="btn">Not now</span></div>
+        </div>
+
+        <div class="cell">
+          <div class="top"><span class="caps">Team</span></div>
+          <div class="member"><span class="av">MK</span><span>Marta · DE</span><span class="load"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+          <div class="member"><span class="av">AJ</span><span>You · FR</span><span class="load"><i class="on"></i><i class="on"></i><i class="late"></i><i></i><i></i></span></div>
+          <div class="member"><span class="av">SR</span><span>Sam · UK</span><span class="load"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="overdue">1 follow-up overdue</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(async () => {
+  const theme = document.documentElement.dataset.theme;
+  document.getElementById(theme === "light" ? "t-l" : "t-d").classList.add("on");
+  document.getElementById(theme === "light" ? "t-d" : "t-l").classList.remove("on");
+  const css = getComputedStyle(document.documentElement);
+  const v = (n) => css.getPropertyValue(n).trim();
+  const el = document.getElementById("map");
+  const { width: W, height: H } = el.parentElement.getBoundingClientRect();
+  const svg = d3.select(el).attr("width", W).attr("height", H);
+  const world = await (await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json")).json();
+  const land = topojson.feature(world, world.objects.land);
+  const proj = d3.geoConicConformal().rotate([-3.5, 0]).center([0, 48.4]).parallels([40, 58]).scale(1220).translate([W * 0.5, H * 0.53]);
+  const dots = svg.append("g");
+  for (let x = 4; x < W; x += 5) for (let y = 34; y < H - 4; y += 5) {
+    const ll = proj.invert([x, y]);
+    if (ll && d3.geoContains(land, ll)) dots.append("circle").attr("cx", x).attr("cy", y).attr("r", 1.05).attr("fill", v("--mapdot"));
+  }
+  const P = (lon, lat) => proj([lon, lat]);
+  // one chain drawn on the map: authority to contractor (Münster)
+  const sites = [
+    { n: "Corte → SAS Antoniotti", s: "awarded 6 Oct", ll: [9.15, 42.31], k: "act", dx: 14, dy: 4 },
+    { n: "Munich → Haderstorfer", s: "back in motion", ll: [11.58, 48.14], k: "acc-act", dx: 15, dy: 4 },
+    { n: "Mülheim", s: "closes Fri", ll: [6.88, 51.43], k: "watch", dx: -12, dy: 2, anchor: "end" },
+    { n: "Münster → Schulze Tertilt", s: "sample asked", ll: [7.63, 51.96], k: "dev", dx: 12, dy: -6 },
+    { n: "Aubagne", s: "winner unknown", ll: [5.57, 43.29], k: "watch", dx: -12, dy: 2, anchor: "end" },
+    { n: "Nuremberg", s: "your account", ll: [11.08, 49.45], k: "acc", dx: 12, dy: 3 },
+    { n: "", ll: [7.47, 51.51], k: "watch" }, { n: "", ll: [7.01, 51.45], k: "watch" },
+  ];
+  const sig = v("--signal"), ink = v("--ink"), soft = v("--soft"), bg = v("--bg"), acc = v("--account");
+  for (const s of sites) {
+    const [x, y] = P(...s.ll);
+    if (s.k.includes("act")) {
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 22).attr("fill", v("--signal-wash"));
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 12).attr("fill", "none").attr("stroke", v("--signal-ring"));
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 4.2).attr("fill", sig).style("filter", v("--glow"));
+      if (s.k === "acc-act") svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 7.5).attr("fill", "none").attr("stroke", acc).attr("stroke-width", 1.3);
+    } else if (s.k === "dev") {
+      svg.append("rect").attr("x", x - 4).attr("y", y - 4).attr("width", 8).attr("height", 8).attr("fill", ink);
+    } else if (s.k === "watch") {
+      svg.append("rect").attr("x", x - 3.5).attr("y", y - 3.5).attr("width", 7).attr("height", 7).attr("fill", bg).attr("stroke", soft).attr("stroke-width", 1.2);
+    } else if (s.k === "acc") {
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 4).attr("fill", bg).attr("stroke", acc).attr("stroke-width", 1.4);
+    }
+    if (s.n) {
+      svg.append("text").attr("x", x + s.dx).attr("y", y + s.dy).attr("text-anchor", s.anchor || "start").attr("class", s.k.includes("act") ? "hot" : "").text(s.n);
+      svg.append("text").attr("x", x + s.dx).attr("y", y + s.dy + 13).attr("text-anchor", s.anchor || "start").attr("class", "sub").text(s.s);
+    }
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+/* Northvaine design tokens: one system, two palettes. Dark is the identity; light is the
+   morning edition on warm paper. Vermilion only ever means "a window is open". */
+:root, [data-theme="dark"] {
+  --bg: #0c0c0a;
+  --bg-lift: #12120f;
+  --surface: rgba(255, 255, 255, 0.028);
+  --ink: #ede9e0;
+  --bright: #ffffff;
+  --soft: #a9a499;
+  --dim: #6e6a60;
+  --faint: #45433c;
+  --hair: #22211d;
+  --hair2: #35332d;
+  --signal: #ea5629;
+  --signal-ink: #ffffff;
+  --signal-wash: rgba(234, 86, 41, 0.12);
+  --signal-ring: rgba(234, 86, 41, 0.32);
+  --account: #8aa6b6;
+  --mapdot: #57534a;
+  --frame: #070706;
+  --shadow: 0 40px 120px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --glow: drop-shadow(0 0 6px #ea5629);
+  --atmos: radial-gradient(1100px 620px at 32% 26%, #16150f 0%, #0c0c0a 64%);
+}
+[data-theme="light"] {
+  --bg: #f4f1ea;
+  --bg-lift: #efebe2;
+  --surface: rgba(23, 21, 15, 0.03);
+  --ink: #18160f;
+  --bright: #000000;
+  --soft: #555148;
+  --dim: #8b867b;
+  --faint: #c7c0b1;
+  --hair: #e0dacd;
+  --hair2: #ccc5b6;
+  --signal: #c63f17;
+  --signal-ink: #ffffff;
+  --signal-wash: rgba(198, 63, 23, 0.08);
+  --signal-ring: rgba(198, 63, 23, 0.35);
+  --account: #3f6479;
+  --mapdot: #bdb5a4;
+  --frame: #d9d3c6;
+  --shadow: 0 30px 90px rgba(60, 50, 30, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --glow: none;
+  --atmos: #f4f1ea;
+}
+
+:root {
+  --serif: "Newsreader", Georgia, serif;
+  --sans: "Geist", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--frame); }
+body { width: 1600px; height: 1000px; padding: 28px; font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; font-size: 13px; }
+
+.window { width: 100%; height: 100%; background: var(--atmos); border: 1px solid var(--hair2); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-rows: 50px 1fr; }
+.mono { font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em; color: var(--dim); }
+.caps { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em; font-size: 10px; color: var(--soft); }
+.serif { font-family: var(--serif); }
+
+/* chrome */
+.bar { display: flex; align-items: center; gap: 26px; padding: 0 20px; border-bottom: 1px solid var(--hair); }
+.lights { display: flex; gap: 7px; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--hair2); display: block; }
+.word { font-weight: 600; font-size: 11px; letter-spacing: 0.32em; }
+.crumb { color: var(--soft); font-size: 12.5px; display: flex; gap: 10px; align-items: center; }
+.crumb b { color: var(--ink); font-weight: 500; }
+.crumb .sl { color: var(--faint); }
+.ask { margin-left: auto; width: 380px; height: 30px; border: 1px solid var(--hair2); border-radius: 7px; display: flex; align-items: center; padding: 0 10px; color: var(--dim); font-size: 12.5px; background: var(--surface); }
+.ask kbd { margin-left: auto; font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; color: var(--soft); }
+.live { display: flex; align-items: center; gap: 8px; }
+.live i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px var(--surface); display: block; }
+.toggle { display: flex; border: 1px solid var(--hair2); border-radius: 6px; overflow: hidden; }
+.toggle span { padding: 3px 7px; font-family: var(--mono); font-size: 10px; color: var(--dim); }
+.toggle span.on { background: var(--surface); color: var(--ink); }
+
+.av { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-family: var(--mono); font-size: 9px; color: var(--ink); background: var(--surface); border: 1px solid var(--hair2); flex: none; }
+
+/* rail */
+.rail { border-right: 1px solid var(--hair); padding: 18px 12px; display: flex; flex-direction: column; gap: 1px; }
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; font-size: 13px; color: var(--soft); }
+.nav.on { color: var(--ink); background: var(--surface); box-shadow: inset 0 0 0 1px var(--hair); }
+.nav .n { font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
+.nav .n.hot { color: var(--signal); }
+.rail .sep { height: 1px; background: var(--hair); margin: 12px 6px; }
+.rail .foot { margin-top: auto; padding: 10px; display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--soft); }
+
+/* evidence marks */
+.m { display: inline-block; width: 8px; height: 8px; flex: none; }
+.m.s { background: var(--ink); }
+.m.h { box-shadow: inset 0 0 0 1.3px var(--soft); }
+.m.u { border: 1px dashed var(--dim); }
+.m.y { border-radius: 50%; background: var(--signal); }
+.m.a { border-radius: 50%; box-shadow: inset 0 0 0 1.3px var(--account); }
+.glyph { display: inline-flex; gap: 3px; } .glyph .m { width: 7px; height: 7px; }
+
+/* buttons */
+.btn { font-size: 12px; padding: 6px 11px; border-radius: 6px; border: 1px solid var(--hair2); color: var(--soft); background: var(--surface); white-space: nowrap; }
+.btn.rec { border-color: var(--signal-ring); color: var(--ink); background: var(--signal-wash); }
+.btn.rec::before { content: "●"; color: var(--signal); font-size: 8px; margin-right: 7px; vertical-align: 1px; }
+.btn.solid { background: var(--signal); border-color: var(--signal); color: var(--signal-ink); }
+
+/* editorial */
+.dateline { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); }
+.dateline b { color: var(--ink); font-weight: 500; }
+.hl { font-family: var(--serif); font-weight: 400; letter-spacing: -0.012em; color: var(--ink); margin: 0; }
+.lede { font-family: var(--serif); font-weight: 300; color: var(--soft); margin: 0; }
+.infer { font-family: var(--serif); font-style: italic; color: var(--soft); }
+.pull { border-left: 2px solid var(--ink); padding: 2px 0 2px 16px; font-family: var(--serif); font-size: 17px; line-height: 1.4; color: var(--ink); }
+.pull cite { display: block; margin-top: 8px; font-family: var(--mono); font-style: normal; font-size: 10.5px; color: var(--dim); letter-spacing: 0.02em; }

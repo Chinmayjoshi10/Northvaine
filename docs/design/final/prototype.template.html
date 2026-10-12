@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northvaine — Leads</title>
+<script>document.documentElement.dataset.theme = localStorage.getItem("nv-theme") || "dark";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nv.css">
+<style>
+  /* the prototype fills the browser window instead of a fixed frame */
+  body { width: auto; height: 100vh; padding: 0; overflow: hidden; }
+  .window { border-radius: 0; border: none; height: 100vh; box-shadow: none; }
+  body, .window, .row, .btn, .nav, .sheet { transition: background-color .35s ease, color .35s ease, border-color .35s ease; }
+
+  .app { display: grid; grid-template-columns: 188px 1fr; min-height: 0; height: 100%;
+    transition: transform .5s cubic-bezier(.32,.72,0,1), filter .5s cubic-bezier(.32,.72,0,1); transform-origin: 50% 40%; }
+  body.peek .app { transform: scale(.985); filter: brightness(.55) saturate(.9); }
+  [data-theme="light"] body.peek .app { filter: brightness(.88) saturate(.9); }
+
+  .main { overflow: auto; padding: 26px 34px 40px; }
+  .ed { display: flex; gap: 14px; align-items: baseline; }
+  .ed .rule { flex: 0 0 90px; height: 1px; background: var(--hair); transform: translateY(-3px); }
+  h1.hl { font-size: 30px; margin: 8px 0 4px; }
+  .sub { font-family: var(--serif); font-weight: 300; font-size: 16.5px; color: var(--soft); margin: 0; }
+
+  .filters { display: flex; gap: 6px; margin: 22px 0 6px; align-items: center; }
+  .chip { font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--hair2); color: var(--soft); cursor: pointer; user-select: none;
+    transition: background .2s ease, color .2s ease, border-color .2s ease; }
+  .chip .mono { margin-left: 6px; font-size: 10.5px; }
+  .chip:hover { color: var(--ink); }
+  .chip.on { color: var(--ink); background: var(--surface); border-color: var(--ink); }
+  .filters .right { margin-left: auto; }
+
+  .head, .row { display: grid; grid-template-columns: 58px minmax(180px, 1.15fr) 104px minmax(220px, 1.7fr) 130px 104px; gap: 16px; align-items: center; }
+  .head { padding: 14px 12px 8px; border-bottom: 1px solid var(--hair); }
+  .head span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .row { padding: 12px 12px; border-bottom: 1px solid var(--hair); cursor: pointer; border-radius: 7px; position: relative;
+    opacity: 0; transform: translateY(6px); animation: rowin .6s cubic-bezier(.32,.72,0,1) forwards; }
+  @keyframes rowin { to { opacity: 1; transform: none; } }
+  .row:hover { background: var(--surface); }
+  .row.sel { background: var(--surface); box-shadow: inset 2px 0 0 var(--signal); }
+  .co b { display: block; font-weight: 500; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .co span { font-size: 11.5px; color: var(--dim); }
+  .type { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--hair2); border-radius: 4px; padding: 2px 7px; justify-self: start; color: var(--soft); }
+  .type.award { color: var(--ink); border-color: var(--ink); }
+  .what { color: var(--soft); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .win { font-family: var(--mono); font-size: 11px; color: var(--soft); }
+  .win.hot { color: var(--signal); }
+  .stage { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .row .noted { position: absolute; right: -2px; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); transform: translate(0,-50%) scale(0); transition: transform .4s cubic-bezier(.34,1.56,.64,1); }
+  .row.done .noted { transform: translate(0,-50%) scale(1); }
+
+  /* the sheet: you look into a lead; the list stays behind it */
+  .scrim { position: fixed; inset: 0; background: transparent; pointer-events: none; transition: background .45s ease; z-index: 5; }
+  body.peek .scrim { pointer-events: auto; background: rgba(0,0,0,.18); }
+  .sheet { position: fixed; z-index: 6; left: 50%; top: 50%;
+    width: min(1180px, calc(100vw - 180px)); height: min(820px, calc(100vh - 88px));
+    transform: translate(-50%, -46%) scale(.965); opacity: 0; pointer-events: none;
+    background: var(--bg); border: 1px solid var(--hair2); border-radius: 16px;
+    box-shadow: 0 50px 140px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03) inset;
+    transition: transform .52s cubic-bezier(.32,.72,0,1), opacity .32s ease;
+    display: grid; grid-template-columns: 1fr 340px; grid-template-rows: 46px 1fr; overflow: hidden; }
+  [data-theme="light"] .sheet { box-shadow: 0 40px 120px rgba(60,50,30,.25), 0 0 0 1px rgba(255,255,255,.5) inset; }
+  body.peek .sheet { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+  .sbar { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 0 18px; border-bottom: 1px solid var(--hair); }
+  .sbar .keys { margin-left: auto; display: flex; gap: 14px; }
+  .sbar kbd { font-family: var(--mono); font-size: 10px; border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; color: var(--soft); margin-right: 5px; }
+  .x { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; color: var(--soft); cursor: pointer; }
+  .x:hover { background: var(--surface); color: var(--ink); }
+
+  .sart, .sside { overflow: auto; }
+  .sart { padding: 30px 40px 30px 44px; }
+  .content { transition: opacity .22s ease, transform .32s cubic-bezier(.32,.72,0,1); }
+  .content.out-up { opacity: 0; transform: translateY(-10px); }
+  .content.out-down { opacity: 0; transform: translateY(10px); }
+  .sart .hl { font-size: 34px; line-height: 1.12; margin: 10px 0 12px; max-width: 20em; }
+  .sart .lede { font-size: 18px; line-height: 1.45; max-width: 36em; }
+  .sart .pull { margin: 22px 0 0; max-width: 42em; font-size: 16px; }
+  .tag { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: 3px; font-style: normal; }
+
+  .chain { display: grid; grid-template-columns: repeat(5, 1fr) 46px; margin-top: 32px; }
+  .link { position: relative; padding: 24px 14px 0 0; }
+  .link::before { content: ""; position: absolute; top: 6px; left: 14px; right: 0; border-top: 1px solid var(--ink); transform-origin: left; transform: scaleX(0); animation: draw .6s cubic-bezier(.32,.72,0,1) forwards; }
+  .link.inferred::before { border-top: 1px dashed var(--soft); }
+  .link.unknown::before { border-top: 1px dashed var(--faint); }
+  .link.you::before { display: none; }
+  @keyframes draw { to { transform: scaleX(1); } }
+  .node { position: absolute; top: 0; left: 0; width: 13px; height: 13px; background: var(--bg); }
+  .link.stated .node { border: 1.4px solid var(--ink); } .link.stated .node::after { content: ""; position: absolute; inset: 3px; background: var(--ink); }
+  .link.inferred .node { border: 1.4px solid var(--soft); }
+  .link.unknown .node { border: 1px dashed var(--dim); }
+  .link.you .node { border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 6px var(--signal-wash); }
+  .link .caps { display: block; margin-bottom: 6px; font-size: 9.5px; color: var(--dim); }
+  .link .l { font-size: 13px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .link.inferred .l { color: var(--soft); } .link.unknown .l { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 14px; }
+
+  .kiu { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 26px; margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--hair); }
+  .kiu .caps { display: block; margin-bottom: 10px; }
+  .r { display: flex; gap: 10px; font-size: 12.5px; line-height: 1.45; padding: 3px 0; }
+  .r .m { margin-top: 5px; }
+  .r.h { color: var(--soft); } .r.u { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 13.5px; }
+
+  .sside { border-left: 1px solid var(--hair); padding: 26px 24px; background: linear-gradient(180deg, var(--surface), transparent 50%); }
+  .sec { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--hair); }
+  .sec:last-child { border-bottom: none; }
+  .sec .caps { display: block; margin-bottom: 12px; }
+  .ask2 { font-family: var(--serif); font-size: 21px; margin: 0 0 14px; }
+  .opts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .opts .btn { cursor: pointer; transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease; }
+  .opts .btn:hover { color: var(--ink); border-color: var(--soft); }
+  .opts .btn:active { transform: scale(.97); }
+  .thanks { font-family: var(--serif); font-size: 15px; color: var(--ink); margin-top: 12px; opacity: 0; transform: translateY(4px); transition: opacity .35s ease, transform .45s cubic-bezier(.32,.72,0,1); }
+  .thanks.show { opacity: 1; transform: none; }
+  .fine { font-family: var(--mono); font-size: 10.5px; color: var(--dim); margin-top: 12px; line-height: 1.5; }
+  .kv { display: grid; grid-template-columns: 90px 1fr; row-gap: 9px; font-size: 12.5px; }
+  .kv .caps { margin: 0; padding-top: 2px; font-size: 9.5px; color: var(--dim); }
+  .kv a { color: var(--ink); text-underline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } .row { opacity: 1; transform: none; } .link::before { transform: none; } }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="crumb">Leads <span class="sl">/</span> <b>Natural stone · UK &amp; EU</b></span>
+    <div class="ask">Ask about your market…<kbd>⌘ K</kbd></div>
+    <div class="toggle" id="toggle" style="cursor:pointer"><span data-t="dark">Dark</span><span data-t="light">Light</span></div>
+    <span class="live mono"><i></i>watching</span>
+  </div>
+  <div class="app">
+    <nav class="rail">
+      <div class="nav">Station</div>
+      <div class="nav on">Leads <span class="n" id="navcount"></span></div>
+      <div class="nav">Back in motion</div>
+      <div class="nav">Accounts</div>
+      <div class="nav">Territory</div>
+      <div class="nav">Connections</div>
+      <div class="nav">Editions</div>
+      <div class="nav">Outcomes</div>
+      <div class="sep"></div>
+      <div class="nav">What I’ve learned</div>
+      <div class="nav">Your business</div>
+      <div class="foot"><span class="av">AJ</span>Sales director</div>
+    </nav>
+    <section class="main">
+      <div class="ed"><span class="caps" id="edition"></span><span class="rule"></span><span class="mono">replay of a real run</span></div>
+      <h1 class="hl">Leads</h1>
+      <p class="sub" id="sub"></p>
+      <div class="filters" id="filters"></div>
+      <div class="head"><span>Chain</span><span>Company</span><span>Type</span><span>What happened</span><span>Window</span><span>Stage</span></div>
+      <div id="list"></div>
+    </section>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="sbar">
+    <span class="dateline" id="s-crumb"></span>
+    <span class="keys mono"><span><kbd>↑</kbd><kbd>↓</kbd>next lead</span><span><kbd>esc</kbd>close</span></span>
+    <span class="x" id="close" title="Close">✕</span>
+  </div>
+  <div class="sart"><div class="content" id="s-art"></div></div>
+  <aside class="sside"><div class="content" id="s-side"></div></aside>
+</div>
+
+<script>
+const DATA = __DATA__;
+const SLOT = { authority: "Authority", project: "Project", contract: "Contract", contractor: "Contractor", buyer: "Buys what you sell" };
+const KEEP = new Set(["SAS", "SA", "SARL", "SEDIF", "GMBH", "KG", "AG", "LBM", "TU"]);
+const nice = (name) => name === name.toUpperCase()
+  ? name.split(/(\s+|-)/).map(w => KEEP.has(w.toUpperCase()) || w.length <= 2 ? w : w.charAt(0) + w.slice(1).toLowerCase()).join("")
+  : name;
+const COUNTRY = { France: "FR", Germany: "DE", "United Kingdom": "UK" };
+const stripCountry = (t) => t.replace(/^[A-Z][a-z]+(?: [A-Z][a-z]+)? – /, "");
+const typeOf = (r) => r.stream === "tender" ? "Tender" : r.stream === "award" ? "Award" : r.stream === "announcement" ? "Project" : r.stream;
+const stageOf = (r) => ({ "contact now": "Act now", "bid now": "Act now", "qualify first": "Developing", "watch only": "Watching" }[r.status] || "Detected");
+const domain = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const rows = [...DATA.accounts, ...DATA.tenders, ...DATA.weaker.slice(0, 4)];
+const day = new Date(DATA.as_of + "T06:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+document.getElementById("edition").textContent = day.split(" ")[0].replace(",", "") + " edition · " + day.split(" ").slice(1).join(" ");
+document.getElementById("navcount").textContent = rows.length;
+const counts = rows.reduce((a, r) => (a[typeOf(r)] = (a[typeOf(r)] || 0) + 1, a), {});
+document.getElementById("sub").textContent =
+  `${rows.length} leads, all from official records. ${counts.Award || 0} contracts were awarded to companies that will buy materials; ${counts.Tender || 0} tenders are still open.`;
+
+let filter = "All", current = -1, shown = [];
+function renderFilters() {
+  const f = document.getElementById("filters");
+  const chips = [["All", rows.length], ...Object.entries(counts)];
+  f.innerHTML = chips.map(([k, n]) => `<span class="chip${k === filter ? " on" : ""}" data-f="${k}">${k === "All" ? "All" : k + "s"}<span class="mono">${n}</span></span>`).join("")
+    + `<span class="right mono">sorted by window</span>`;
+  f.querySelectorAll(".chip").forEach(c => c.onclick = () => { filter = c.dataset.f; renderFilters(); renderList(); });
+}
+function renderList() {
+  shown = rows.filter(r => filter === "All" || typeOf(r) === filter);
+  const list = document.getElementById("list");
+  list.innerHTML = shown.map((r, i) => {
+    const glyph = (r.chain || []).map(l => `<i class="m ${l.state === "stated" ? "s" : l.state === "inferred" ? "h" : "u"}"></i>`).join("");
+    const t = typeOf(r);
+    const hot = /closes in ([0-9]) days|published 2026-10-0[5-9]/.test(r.why_now);
+    return `<div class="row" data-i="${i}" style="animation-delay:${i * 28}ms">
+      <span class="glyph">${glyph}</span>
+      <span class="co"><b>${esc(nice(r.company))}</b><span>${esc(r.country)} · ${esc((r.account_role || "").replace("_", " ").replace("demand source", "authority").replace("awarded contractor", "contractor"))}</span></span>
+      <span class="type ${t.toLowerCase()}">${t}</span>
+      <span class="what">${esc(stripCountry(r.what))}</span>
+      <span class="win${hot ? " hot" : ""}">${esc(r.why_now.replace("award published ", "awarded ").replace("tender ", ""))}</span>
+      <span class="stage">${stageOf(r)}</span>
+      <span class="noted"></span>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".row").forEach(el => el.onclick = () => open(+el.dataset.i));
+}
+
+function headline(r) {
+  const c = r.chain || [];
+  const auth = c.find(l => l.slot === "authority"), proj = c.find(l => l.slot === "project");
+  const project = proj && proj.state === "stated" ? stripCountry(proj.label).split(" – ").slice(-1)[0] : stripCountry(r.what);
+  const who = nice(r.company);
+  if (r.stream === "award") return `${esc(nice(auth?.label || "An authority"))} awards ${esc(project)} to ${esc(who)}`;
+  if (r.stream === "tender") return `${esc(who)} opens a tender: ${esc(project)}`;
+  return esc(who);
+}
+function render(r) {
+  const c = r.chain || [];
+  const quote = c.find(l => l.state === "stated" && l.quote);
+  const t = typeOf(r);
+  document.getElementById("s-crumb").innerHTML = `<b>${esc(r.country)}</b> · ${t.toLowerCase()} · ${esc(r.why_now)}`;
+  const linkHtml = c.map(l => `<div class="link ${l.state}"><span class="node"></span><span class="caps">${SLOT[l.slot]}</span><span class="l">${esc(nice(stripCountry(l.label)))}</span></div>`).join("")
+    + `<div class="link you"><span class="node"></span><span class="caps" style="color:var(--signal)">You</span></div>`;
+  const by = (s) => c.filter(l => l.state === s);
+  const item = (l, cls, m) => `<div class="r ${cls}"><i class="m ${m}"></i><span>${SLOT[l.slot]}: ${esc(nice(stripCountry(l.label)))}</span></div>`;
+  const inferNote = r.stream === "award"
+    ? "The works will need materials, and the contractor will be the one ordering them."
+    : "The buyer of your product will be the contractor who wins this tender.";
+  document.getElementById("s-art").innerHTML = `
+    <span class="dateline"><b>${esc(r.country)}</b> · ${esc(r.contract_nature || "")} ${t.toLowerCase()}</span>
+    <h1 class="hl">${headline(r)}</h1>
+    <p class="lede">${esc(r.caution.charAt(0).toUpperCase() + r.caution.slice(1))}. <span class="infer">${inferNote}</span><span class="tag">inferred</span></p>
+    ${quote ? `<blockquote class="pull">${esc(quote.quote)}<cite>${esc(domain(quote.url))} ↗</cite></blockquote>` : ""}
+    <div class="chain">${linkHtml}</div>
+    <div class="kiu">
+      <div><span class="caps">On record</span>${by("stated").map(l => item(l, "", "s")).join("") || '<div class="r u">nothing yet</div>'}</div>
+      <div><span class="caps">Inferred</span>${by("inferred").map(l => item(l, "h", "h")).join("") || '<div class="r u">nothing</div>'}</div>
+      <div><span class="caps">Not yet known</span>${by("unknown").map(l => `<div class="r u"><i class="m u"></i><span>${esc(l.label)}</span></div>`).join("") || '<div class="r u">nothing open</div>'}</div>
+    </div>`;
+  const opts = r.stream === "tender" ? ["Approach likely bidders", "Wait for the award", "Not for us"] : ["Assign to Marta", "I’ll take it", "Not now", "Not for us"];
+  document.getElementById("s-side").innerHTML = `
+    <div class="sec"><span class="caps">Your decision</span><p class="ask2">Is this one for you?</p>
+      <div class="opts">${opts.map((o, i) => `<span class="btn${i === 0 ? " rec" : ""}">${o}</span>`).join("")}</div>
+      <div class="thanks" id="thanks">Noted. I’ll weigh this tonight.</div>
+      <div class="fine">Your answer teaches Northvaine. Nothing is ever sent for you.</div></div>
+    <div class="sec"><span class="caps">Source</span><div class="kv">
+      <span class="caps">Record</span>${quote ? `<a href="${esc(quote.url)}" target="_blank" rel="noopener">${esc(domain(quote.url))} ↗</a>` : "<span>—</span>"}
+      <span class="caps">Stage</span><span>${stageOf(r)}</span>
+      <span class="caps">Evidence</span><span>${esc((r.evidence_level || "").replace("_", " "))}</span></div></div>
+    <div class="sec"><span class="caps">How to reach them · company only</span><div class="kv">
+      <span class="caps">Ask for</span><span>${r.stream === "tender" ? "The procurement contact on the notice" : "Purchasing, for this project"}</span></div></div>`;
+  document.querySelectorAll("#s-side .opts .btn").forEach(b => b.onclick = () => {
+    document.querySelectorAll("#s-side .opts .btn").forEach(x => x.classList.remove("rec"));
+    b.classList.add("rec");
+    document.getElementById("thanks").classList.add("show");
+    document.querySelector(`.row[data-i="${current}"]`)?.classList.add("done");
+  });
+}
+function select(i) {
+  document.querySelectorAll(".row").forEach(el => el.classList.toggle("sel", +el.dataset.i === i));
+  document.querySelector(`.row[data-i="${i}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+function open(i) {
+  current = i; render(shown[i]); select(i);
+  document.body.classList.add("peek");
+}
+function close() { document.body.classList.remove("peek"); }
+function step(d) {
+  const n = current + d;
+  if (n < 0 || n >= shown.length) return;
+  const parts = [document.getElementById("s-art"), document.getElementById("s-side")];
+  parts.forEach(p => p.classList.add(d > 0 ? "out-up" : "out-down"));
+  setTimeout(() => {
+    current = n; render(shown[n]); select(n);
+    parts.forEach(p => { p.classList.remove("out-up", "out-down"); p.classList.add(d > 0 ? "out-down" : "out-up"); });
+    requestAnimationFrame(() => requestAnimationFrame(() => parts.forEach(p => p.classList.remove("out-up", "out-down"))));
+  }, 180);
+}
+document.getElementById("scrim").onclick = close;
+document.getElementById("close").onclick = close;
+document.addEventListener("keydown", (e) => {
+  if (!document.body.classList.contains("peek")) return;
+  if (e.key === "Escape") close();
+  if (e.key === "ArrowDown") { e.preventDefault(); step(1); }
+  if (e.key === "ArrowUp") { e.preventDefault(); step(-1); }
+});
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem("nv-theme", t); } catch {}
+  document.querySelectorAll("#toggle span").forEach(s => s.classList.toggle("on", s.dataset.t === t));
+}
+document.querySelectorAll("#toggle span").forEach(s => s.onclick = () => setTheme(s.dataset.t));
+setTheme(document.documentElement.dataset.theme);
+renderFilters(); renderList();
+if (location.hash === "#open") setTimeout(() => open(1), 400);
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0b;
+    --panel: #141412;
+    --raise: #1a1a17;
+    --ink: #ece8df;
+    --soft: #a8a398;
+    --dim: #6b675e;
+    --hair: #2a2925;
+    --hair2: #383630;
+    --signal: #e8532a;
+    --signal-glow: rgba(232, 83, 42, 0.18);
+    --serif: "Newsreader", Georgia, serif;
+    --sans: "Geist", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #070706; }
+  body { width: 1600px; height: 1000px; padding: 28px; font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .window {
+    width: 100%; height: 100%;
+    background: radial-gradient(1200px 600px at 38% 30%, #15140f 0%, var(--bg) 60%);
+    border: 1px solid var(--hair2);
+    border-radius: 14px;
+    box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
+    display: grid;
+    grid-template-columns: 270px 1fr 400px;
+    grid-template-rows: 52px 1fr 250px;
+    overflow: hidden;
+  }
+  .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--dim); }
+  .caps { text-transform: uppercase; letter-spacing: .18em; font-size: 10.5px; }
+
+  /* top bar */
+  .bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 28px; padding: 0 22px; border-bottom: 1px solid var(--hair); }
+  .lights { display: flex; gap: 7px; }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; background: #2c2b27; display: block; }
+  .word { font-weight: 600; font-size: 11.5px; letter-spacing: .3em; }
+  .world { color: var(--soft); font-size: 12.5px; }
+  .world b { color: var(--ink); font-weight: 500; }
+  .ask { margin-left: auto; width: 360px; height: 30px; border: 1px solid var(--hair2); border-radius: 7px; display: flex; align-items: center; padding: 0 10px; gap: 10px; color: var(--dim); font-size: 12.5px; background: rgba(255,255,255,.015); }
+  .ask kbd { margin-left: auto; font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; color: var(--soft); }
+  .now { display: flex; align-items: center; gap: 8px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgba(236,232,223,.07); }
+
+  /* developments */
+  .dev { grid-column: 1; grid-row: 2 / 4; border-right: 1px solid var(--hair); padding: 26px 22px; display: flex; flex-direction: column; gap: 4px; }
+  .dev h3, .case h3 { margin: 0 0 14px; font-weight: 500; color: var(--soft); }
+  .d { padding: 13px 0 14px; border-bottom: 1px solid var(--hair); position: relative; padding-left: 16px; }
+  .d::before { content: ""; position: absolute; left: 0; top: 19px; width: 6px; height: 6px; background: var(--ink); }
+  .d.hollow::before { background: transparent; box-shadow: inset 0 0 0 1.2px var(--soft); }
+  .d.signal::before { background: var(--signal); box-shadow: 0 0 10px var(--signal); }
+  .d .t { font-size: 13px; line-height: 1.4; color: var(--ink); }
+  .d .t em { font-style: normal; color: var(--soft); }
+  .d .mono { margin-top: 5px; display: block; }
+  .quiet { margin-top: auto; color: var(--dim); font-size: 12px; line-height: 1.5; font-family: var(--serif); font-style: italic; }
+
+  /* the insight */
+  .main { grid-column: 2; grid-row: 2; padding: 64px 56px 0 64px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 10px; color: var(--signal); }
+  .kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 5px var(--signal-glow); }
+  .insight { font-family: var(--serif); font-weight: 300; font-size: 46px; line-height: 1.12; letter-spacing: -.015em; margin: 22px 0 0; max-width: 15.5em; }
+  .insight .hl { color: #fff; font-weight: 400; }
+  .sub { font-family: var(--serif); font-weight: 300; font-size: 20px; color: var(--soft); margin: 18px 0 0; max-width: 34em; line-height: 1.4; }
+
+  /* the chain */
+  .chain { margin-top: 54px; display: grid; grid-template-columns: repeat(5, 1fr) 70px; position: relative; }
+  .link { position: relative; padding-top: 26px; padding-right: 16px; }
+  .link::before { content: ""; position: absolute; top: 6px; left: 14px; right: 0; border-top: 1px solid var(--ink); }
+  .link.inferred::before { border-top: 1px dashed var(--soft); }
+  .link.you::before { display: none; }
+  .node { position: absolute; top: 0; left: 0; width: 13px; height: 13px; }
+  .stated .node { border: 1.4px solid var(--ink); }
+  .stated .node::after { content: ""; position: absolute; inset: 3px; background: var(--ink); }
+  .inferred .node { border: 1.4px solid var(--soft); }
+  .you .node { border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 6px var(--signal-glow), 0 0 22px var(--signal); }
+  .slot { display: block; margin-bottom: 7px; }
+  .lbl { font-size: 14px; line-height: 1.35; }
+  .inferred .lbl { color: var(--soft); }
+  .how { margin-top: 26px; display: inline-flex; gap: 10px; align-items: center; color: var(--soft); font-size: 12.5px; border-bottom: 1px solid var(--hair2); padding-bottom: 3px; }
+
+  /* the case */
+  .case { grid-column: 3; grid-row: 2 / 4; border-left: 1px solid var(--hair); background: linear-gradient(180deg, rgba(255,255,255,.018), transparent 40%); padding: 26px 26px; display: flex; flex-direction: column; }
+  .who { position: relative; padding: 10px 14px; align-self: flex-start; margin-bottom: 8px; }
+  .who::before, .who::after { content: ""; position: absolute; width: 11px; height: 11px; border: 0 solid var(--signal); }
+  .who::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+  .who::after { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+  .who b { font-weight: 500; font-size: 21px; letter-spacing: -.01em; }
+  .role { color: var(--soft); font-size: 13px; margin: 2px 0 22px; }
+  .k { margin: 0 0 18px; }
+  .k .mono { display: block; margin-bottom: 8px; }
+  .row { display: flex; gap: 11px; font-size: 13px; line-height: 1.45; padding: 4px 0; color: var(--ink); }
+  .row i { flex: none; width: 8px; height: 8px; margin-top: 6px; display: block; }
+  .row.s i { background: var(--ink); }
+  .row.h i { box-shadow: inset 0 0 0 1.2px var(--soft); }
+  .row.h { color: var(--soft); }
+  .row.u i { border: 1px dashed var(--dim); }
+  .row.u { color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 14px; }
+  .quote { margin: 4px 0 20px; padding: 12px 14px; border-left: 1.5px solid var(--hair2); background: rgba(255,255,255,.02); font-family: var(--serif); font-size: 14.5px; line-height: 1.45; color: var(--soft); }
+  .quote .mono { display: block; margin-top: 8px; font-style: normal; }
+  .acts { margin-top: auto; }
+  .acts .lead { font-family: var(--serif); font-size: 16px; color: var(--ink); margin: 0 0 12px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { font-size: 12.5px; padding: 8px 12px; border-radius: 7px; border: 1px solid var(--hair2); color: var(--ink); background: rgba(255,255,255,.02); }
+  .btn.go { border-color: var(--signal); color: #fff; background: rgba(232,83,42,.12); }
+  .acts .mono { display: block; margin-top: 12px; }
+
+  /* the field: situations through time */
+  .field { grid-column: 2; grid-row: 3; border-top: 1px solid var(--hair); padding: 18px 56px 0 64px; position: relative; }
+  .field-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .field-head .mono b { color: var(--soft); font-weight: 400; }
+  svg text { font-family: var(--mono); font-size: 10.5px; fill: var(--dim); }
+  svg .name { font-family: var(--sans); font-size: 12px; fill: var(--soft); }
+  svg .name.hot { fill: #fff; }
+</style>
+</head>
+<body>
+<div class="window">
+
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="world">Your market · <b>natural stone into the UK &amp; EU</b></span>
+    <div class="ask">Ask about your market…<kbd>⌘ K</kbd></div>
+    <span class="now mono"><span class="pulse"></span>watching · Tue 13 Oct, 07:40</span>
+  </div>
+
+  <aside class="dev">
+    <h3 class="caps">Since you were last here</h3>
+    <div class="d signal"><div class="t">Corte awarded its old-town paving works <em>→ SAS Antoniotti</em></div><span class="mono">6 Oct · Corsica · official award</span></div>
+    <div class="d hollow"><div class="t">Mülheim re-opened its landscaping tender for the new Heißen pool</div><span class="mono">6 Oct · Ruhr · closes in 3 days</span></div>
+    <div class="d"><div class="t">Münster's sewage-plant works <em>→ Schulze Tertilt</em></div><span class="mono">2 Oct · Westphalia · official award</span></div>
+    <div class="d"><div class="t">Munich's path-building works <em>→ Haderstorfer</em></div><span class="mono">8 Sep · Bavaria · official award</span></div>
+    <p class="quiet">Everything else I looked at overnight was noise, or a seller like you.</p>
+  </aside>
+
+  <section class="main">
+    <div class="kicker"><span class="dot"></span><span class="mono caps" style="color:var(--signal)">A window is opening</span></div>
+    <p class="insight">Corte has given its old-town paving to <span class="hl">SAS&nbsp;Antoniotti</span>. Somebody there will be ordering stone in the coming weeks.</p>
+    <p class="sub">The project and the award are on record. Who buys the materials inside Antoniotti is the one thing I don’t know yet.</p>
+
+    <div class="chain">
+      <div class="link stated"><span class="node"></span><span class="slot mono caps">Authority</span><span class="lbl">Commune de Corte</span></div>
+      <div class="link stated"><span class="node"></span><span class="slot mono caps">Project</span><span class="lbl">Old-town requalification, paving &amp; surfacing</span></div>
+      <div class="link stated"><span class="node"></span><span class="slot mono caps">Contract</span><span class="lbl">Works awarded<br>6 Oct 2026</span></div>
+      <div class="link stated"><span class="node"></span><span class="slot mono caps">Contractor</span><span class="lbl">SAS Antoniotti<br><span style="color:var(--dim)">with 2 partners</span></span></div>
+      <div class="link inferred"><span class="node"></span><span class="slot mono caps">Needs</span><span class="lbl">Paving stone for the works</span></div>
+      <div class="link you"><span class="node"></span><span class="slot mono caps" style="color:var(--signal)">You</span></div>
+    </div>
+    <span class="how mono">How I know: 1 official award notice, 4 verified lines ↗</span>
+  </section>
+
+  <aside class="case">
+    <div class="who"><b>SAS Antoniotti</b></div>
+    <div class="role">Contractor · Corsica, France · <span style="color:var(--signal)">act within weeks</span></div>
+
+    <div class="k"><span class="mono caps">Known</span>
+      <div class="row s"><i></i>Won the Corte old-town works, with two partners</div>
+      <div class="row s"><i></i>Awarded by the Commune de Corte on 6 Oct</div>
+    </div>
+    <div class="quote">“Winner: SAS ANTONIOTTI; RAFFALLI TRAVAUX PUBLICS; …”<span class="mono">ted.europa.eu · notice 688574-2026</span></div>
+    <div class="k"><span class="mono caps">Inferred</span>
+      <div class="row h"><i></i>The paving works will need stone; the notice’s codes cover paving and surfacing</div>
+    </div>
+    <div class="k"><span class="mono caps">Not yet known</span>
+      <div class="row u"><i></i>who orders materials there</div>
+      <div class="row u"><i></i>when work starts on site</div>
+    </div>
+
+    <div class="acts">
+      <p class="lead">Is this one for you?</p>
+      <div class="btns">
+        <span class="btn go">I’ll reach out</span>
+        <span class="btn">Not for us</span>
+        <span class="btn">Knew them already</span>
+      </div>
+      <span class="mono">I learn from what you choose. Nothing is ever sent for you.</span>
+    </div>
+  </aside>
+
+  <section class="field">
+    <div class="field-head">
+      <span class="mono caps">Your market, through time</span>
+      <span class="mono"><b>■</b> on record &nbsp; <b>□</b> inferred &nbsp; <b>┄</b> window ahead</span>
+    </div>
+    <svg width="760" height="196" viewBox="0 0 760 196">
+      <!-- axis -->
+      <line x1="0" y1="168" x2="760" y2="168" stroke="#2a2925"/>
+      <g>
+        <line x1="40" y1="164" x2="40" y2="172" stroke="#383630"/><text x="40" y="188" text-anchor="middle">1 Sep</text>
+        <line x1="250" y1="164" x2="250" y2="172" stroke="#383630"/><text x="250" y="188" text-anchor="middle">15 Sep</text>
+        <line x1="460" y1="164" x2="460" y2="172" stroke="#383630"/><text x="460" y="188" text-anchor="middle">1 Oct</text>
+        <line x1="640" y1="164" x2="640" y2="172" stroke="#383630"/><text x="640" y="188" text-anchor="middle">today</text>
+      </g>
+      <line x1="640" y1="10" x2="640" y2="168" stroke="#ece8df" stroke-opacity=".25" stroke-dasharray="2 4"/>
+
+      <!-- Munich: award 8 Sep -> watched -->
+      <line x1="145" y1="132" x2="640" y2="132" stroke="#383630"/>
+      <rect x="140" y="127" width="10" height="10" fill="#ece8df"/>
+      <text class="name" x="160" y="124">Munich paths → Haderstorfer</text>
+
+      <!-- Mülheim: tender 14 Sep, re-opened 6 Oct, closes 16 Oct -->
+      <line x1="250" y1="96" x2="640" y2="96" stroke="#383630"/>
+      <rect x="245" y="91" width="10" height="10" fill="none" stroke="#a8a398" stroke-width="1.3"/>
+      <rect x="535" y="91" width="10" height="10" fill="none" stroke="#a8a398" stroke-width="1.3"/>
+      <line x1="640" y1="96" x2="700" y2="96" stroke="#a8a398" stroke-dasharray="3 4"/>
+      <text class="name" x="265" y="88">Mülheim landscaping · bidders not yet known</text>
+      <text x="706" y="99">16 Oct</text>
+
+      <!-- Münster: award 2 Oct -->
+      <line x1="475" y1="60" x2="640" y2="60" stroke="#383630"/>
+      <rect x="470" y="55" width="10" height="10" fill="#ece8df"/>
+      <text class="name" x="490" y="52">Münster → Schulze Tertilt</text>
+
+      <!-- Corte: award 6 Oct, the window -->
+      <rect x="535" y="19" width="10" height="10" fill="#e8532a"/>
+      <circle cx="540" cy="24" r="16" fill="rgba(232,83,42,.12)"/>
+      <line x1="545" y1="24" x2="640" y2="24" stroke="#e8532a" stroke-width="1.4"/>
+      <line x1="640" y1="24" x2="740" y2="24" stroke="#e8532a" stroke-dasharray="3 4"/>
+      <text class="name hot" x="560" y="16">Corte → SAS Antoniotti</text>
+    </svg>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — Connections</title>
+<script>document.documentElement.dataset.theme = location.hash.slice(1) || "light";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nv.css">
+<style>
+  .body { display: grid; grid-template-columns: 188px 1fr 360px; min-height: 0; }
+  .stagearea { position: relative; padding: 28px 36px 0 40px; overflow: hidden; }
+  .stagearea .hl { font-size: 32px; line-height: 1.12; margin: 10px 0 8px; }
+  .stagearea .lede { font-size: 17px; line-height: 1.45; max-width: 44em; }
+  .cols { position: absolute; left: 40px; right: 36px; top: 178px; height: 14px; }
+  .cols span { position: absolute; top: 0; font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); }
+  #g { position: absolute; left: 40px; top: 206px; }
+  #g text { font-family: var(--sans); font-size: 13px; fill: var(--ink); }
+  #g text.sub { font-family: var(--mono); font-size: 10px; fill: var(--dim); }
+  #g text.ser { font-family: var(--serif); font-size: 16px; }
+  #g text.it { font-family: var(--serif); font-style: italic; fill: var(--dim); font-size: 14px; }
+  #g text.conf { font-family: var(--mono); font-size: 10px; fill: var(--soft); }
+  .time { position: absolute; left: 40px; right: 36px; bottom: 26px; }
+  .time .track { position: relative; height: 1px; background: var(--hair2); margin: 26px 0 10px; }
+  .tick { position: absolute; top: -4px; width: 9px; height: 9px; background: var(--ink); transform: translateX(-4px); }
+  .tick.h { background: var(--bg); border: 1.3px solid var(--ink); }
+  .tick.f { background: var(--bg); border: 1px dashed var(--dim); }
+  .tick.now { width: 1px; height: 22px; top: -11px; background: var(--signal); transform: none; }
+  .labels { position: relative; height: 30px; }
+  .labels span { position: absolute; transform: translateX(-50%); font-family: var(--mono); font-size: 10px; color: var(--dim); white-space: nowrap; text-align: center; line-height: 1.4; }
+  .labels span b { color: var(--ink); font-weight: 500; font-family: var(--sans); font-size: 11.5px; display: block; }
+  .time .caps { display: block; }
+
+  .side { border-left: 1px solid var(--hair); padding: 28px 26px; display: flex; flex-direction: column; background: linear-gradient(180deg, var(--surface), transparent 45%); }
+  .side .caps { display: block; margin-bottom: 12px; }
+  .side h2 { font-family: var(--serif); font-weight: 400; font-size: 23px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .side .role { font-size: 12.5px; color: var(--soft); margin-bottom: 18px; }
+  .side .pull { font-size: 15px; margin-bottom: 18px; }
+  .kv { display: grid; grid-template-columns: 100px 1fr; row-gap: 9px; font-size: 12.5px; padding-bottom: 18px; border-bottom: 1px solid var(--hair); margin-bottom: 18px; }
+  .kv .caps { margin: 0; padding-top: 2px; font-size: 9.5px; color: var(--dim); }
+  .why { font-family: var(--serif); font-size: 14.5px; line-height: 1.45; color: var(--soft); margin: 0 0 16px; }
+  .why b { color: var(--ink); font-weight: 400; }
+  .opts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="crumb">Connections <span class="sl">/</span> <b>Mülheim · Heißen pool landscaping</b></span>
+    <div class="ask">Ask: “who else won landscaping in the Ruhr?”<kbd>⌘ K</kbd></div>
+    <div class="toggle"><span>Dark</span><span class="on">Light</span></div>
+    <span class="live mono"><i></i>watching · 07:40</span>
+  </div>
+  <div class="body">
+    <nav class="rail">
+      <div class="nav">Station</div>
+      <div class="nav">Decisions <span class="n hot">4</span></div>
+      <div class="nav">Situations <span class="n">14</span></div>
+      <div class="nav">Back in motion <span class="n">2</span></div>
+      <div class="nav">Accounts <span class="n">38</span></div>
+      <div class="nav">Territory</div>
+      <div class="nav on">Connections</div>
+      <div class="nav">Editions</div>
+      <div class="nav">Outcomes</div>
+      <div class="sep"></div>
+      <div class="nav">What I’ve learned</div>
+      <div class="nav">Your business</div>
+      <div class="foot"><span class="av">AJ</span>Sales director</div>
+    </nav>
+
+    <section class="stagearea">
+      <span class="dateline"><b>Mülheim an der Ruhr</b> · works tender · closes Fri 16 Oct</span>
+      <h1 class="hl">Who will buy the stone for the Heißen pool?</h1>
+      <p class="lede">The city runs the tender, but the winning contractor will order the materials. Five firms have won similar landscaping work nearby; one has won twice.</p>
+      <div class="cols"><span style="left:0">Authority</span><span style="left:220px">Contract</span><span style="left:452px">Likely winners · inferred</span><span style="left:840px">Buys your stone</span></div>
+      <svg id="g" width="1000" height="560"></svg>
+      <div class="time">
+        <span class="caps">How it unfolds</span>
+        <div class="track">
+          <i class="tick" style="left:4%"></i>
+          <i class="tick" style="left:44%"></i>
+          <i class="tick now" style="left:60%"></i>
+          <i class="tick f" style="left:66%"></i>
+          <i class="tick f" style="left:92%"></i>
+        </div>
+        <div class="labels">
+          <span style="left:4%"><b>Tender published</b>14 Sep</span>
+          <span style="left:44%"><b>Re-opened</b>6 Oct</span>
+          <span style="left:60%;color:var(--signal)"><b style="color:var(--signal)">Today</b>13 Oct</span>
+          <span style="left:67%"><b>Closes</b>16 Oct</span>
+          <span style="left:92%"><b>Award expected</b>about 3 weeks later</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <span class="caps">Selected · likely winner</span>
+      <h2>Krahnstöver und Wolf</h2>
+      <div class="role">Landscaping contractor · Germany</div>
+      <blockquote class="pull">Winner: Krahnstöver und Wolf<cite>EU award notice · ted.europa.eu · 15 Oct 2025 ↗</cite></blockquote>
+      <div class="kv">
+        <span class="caps">Similar wins</span><span>2 in the last year</span>
+        <span class="caps">Last won</span><span>15 Oct 2025</span>
+        <span class="caps">Confidence</span><span>0.67 <span class="mono">· wins ÷ (wins + 1)</span></span>
+        <span class="caps">In your CRM</span><span style="color:var(--dim)">no</span>
+      </div>
+      <p class="why">If they win again, <b>they</b> will order the stone. Reaching them before the award puts you on their supplier list when it matters.</p>
+      <div class="opts"><span class="btn rec">Approach now</span><span class="btn">Watch for the award</span><span class="btn">Not for us</span></div>
+    </aside>
+  </div>
+</div>
+<script>
+  const css = getComputedStyle(document.documentElement), v = (n) => css.getPropertyValue(n).trim();
+  const ink = v("--ink"), soft = v("--soft"), dim = v("--dim"), sig = v("--signal"), bg = v("--bg"), hair2 = v("--hair2");
+  const svg = document.getElementById("g"), NS = "http://www.w3.org/2000/svg";
+  const add = (tag, a, text) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (text) e.textContent = text; svg.appendChild(e); return e; };
+  const cy = 250;
+  const A = [0, cy], T = [220, cy], Y = [854, cy], B = 452;
+  const bidders = [
+    ["Krahnstöver und Wolf", 2, "15 Oct 2025", 0.67],
+    ["Baum- und Landschaftspflege GmbH", 1, "22 Oct 2025", 0.5],
+    ["Forst- & Landschaftsbau GmbH", 1, "22 Oct 2025", 0.5],
+    ["Heinrich Steinhake GmbH", 1, "22 Oct 2025", 0.5],
+    ["Heim GmbH, Garten- und Landschaftsbau", 1, "21 Oct 2025", 0.5],
+  ];
+  // authority -> contract (stated)
+  add("line", { x1: A[0] + 12, y1: cy, x2: T[0] - 2, y2: cy, stroke: ink, "stroke-width": 1.2 });
+  add("rect", { x: A[0], y: cy - 6, width: 12, height: 12, fill: bg, stroke: ink, "stroke-width": 1.4 });
+  add("rect", { x: A[0] + 3, y: cy - 3, width: 6, height: 6, fill: ink });
+  add("text", { x: A[0], y: cy + 28, class: "ser" }, "Stadt Mülheim");
+  add("text", { x: A[0], y: cy + 46, class: "sub" }, "buyer · on record");
+  add("rect", { x: T[0], y: cy - 6, width: 12, height: 12, fill: bg, stroke: ink, "stroke-width": 1.4 });
+  add("rect", { x: T[0] + 3, y: cy - 3, width: 6, height: 6, fill: ink });
+  add("text", { x: T[0] - 60, y: cy + 30, class: "ser" }, "Heißen pool");
+  add("text", { x: T[0] - 60, y: cy + 48, class: "sub" }, "landscaping works");
+  add("text", { x: T[0] - 60, y: cy + 62, class: "sub" }, "tender open · on record");
+  bidders.forEach(([name, wins, last, conf], i) => {
+    const y = 40 + i * 105, x = B;
+    const sel = i === 0;
+    add("path", { d: `M ${T[0] + 12} ${cy} C ${T[0] + 110} ${cy}, ${x - 110} ${y}, ${x} ${y}`, fill: "none", stroke: sel ? ink : soft, "stroke-width": sel ? 1.4 : 1, "stroke-dasharray": "4 4" });
+    add("text", { x: x - 40, y: y - 8, class: "conf" }, conf.toFixed(2));
+    add("rect", { x: x, y: y - 6, width: 12, height: 12, fill: bg, stroke: sel ? ink : soft, "stroke-width": 1.4 });
+    add("text", { x: x + 22, y: y + 4, style: sel ? "font-weight:500" : "" }, name);
+    add("text", { x: x + 22, y: y + 20, class: "sub" }, `${wins} similar win${wins > 1 ? "s" : ""} · last ${last}`);
+    add("path", { d: `M ${x + 330} ${y} C ${x + 370} ${y}, ${Y[0] - 50} ${cy}, ${Y[0] - 14} ${cy}`, fill: "none", stroke: hair2, "stroke-width": 1, "stroke-dasharray": "2 4" });
+    if (sel) { add("rect", { x: x - 6, y: y - 12, width: 320, height: 40, fill: "none", stroke: sig, "stroke-width": 1, rx: 3 }); }
+  });
+  add("rect", { x: Y[0] - 14, y: cy - 7, width: 14, height: 14, fill: bg, stroke: dim, "stroke-dasharray": "2 2" });
+  add("text", { x: Y[0] - 14, y: cy + 32, class: "it" }, "unknown until");
+  add("text", { x: Y[0] - 14, y: cy + 50, class: "it" }, "the award");
+  add("circle", { cx: Y[0] + 70, cy: cy, r: 6, fill: sig });
+  add("circle", { cx: Y[0] + 70, cy: cy, r: 12, fill: "none", stroke: sig, "stroke-opacity": 0.3 });
+  add("line", { x1: Y[0] + 2, y1: cy, x2: Y[0] + 58, y2: cy, stroke: sig, "stroke-dasharray": "2 3" });
+  add("text", { x: Y[0] + 60, y: cy - 22, class: "sub", style: `fill:${sig}` }, "YOU");
+</script>
+</body>
+</html>

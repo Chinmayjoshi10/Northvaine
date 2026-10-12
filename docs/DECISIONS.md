@@ -926,3 +926,21 @@ brief with Claude's five corrections (docs/COLLAB.md).
     a node for a natural person (D76).
   - **Not yet:** company-fit lines (D96). No recorded run has a stated fit yet, and there is no
     node kind for the client's offer.
+- **D98 — The design is locked (founder, 13 Oct).** `docs/design/final/`: the Station (dark and
+  light), Leads with the case as a sheet, the case, Connections, and a clickable prototype on real
+  run data. Tokens live in `docs/design/final/nv.css`.
+  - **Look:** dark by default, warm off-white as the light mode, each designed rather than
+    inverted. One signal colour (vermilion) that only means "a window is open". A serif for
+    Northvaine's voice, a sans for the interface, mono for facts.
+  - **Evidence marks everywhere:** solid = on record (a verified quote), hollow = inferred,
+    dashed = not yet known.
+  - **Editorial layer:** an edition per morning, datelines, headlines, pull quotes. Headlines are
+    built from verified fields only; a model may phrase one only if code finds every name, number
+    and date in the verified quotes. Judgement sits below the headline, marked as inferred.
+  - **Interaction:** the Leads list shows each lead's type; a lead opens as a sheet over the list
+    (↑/↓ to move, Esc to close); decisions are one tap and are the feedback. Motion is spring-based
+    and quiet, and respects "reduce motion".
+  - **Contacts:** company-level routes only (official site, the notice's procurement contact, the
+    role to ask for). No personal emails or phone numbers of named people.
+  - **Lead types are data, not code:** the list, filters and chain read the type from the lead,
+    so a new kind of signal needs a registry entry and a chain template, not new screens.

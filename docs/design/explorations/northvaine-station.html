@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northvaine — station</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0d0b; --ink: #ece8df; --soft: #a8a398; --dim: #6b675e; --faint: #46443d;
+    --hair: #24231f; --hair2: #383630; --signal: #e8532a; --signal-glow: rgba(232,83,42,.16);
+    --serif: "Newsreader", Georgia, serif; --sans: "Geist", system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #070706; }
+  body { width: 1600px; height: 1000px; padding: 28px; font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .window { width: 100%; height: 100%; background: radial-gradient(1100px 600px at 35% 30%, #15140f 0%, var(--bg) 62%);
+    border: 1px solid var(--hair2); border-radius: 14px; box-shadow: 0 40px 120px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
+    display: grid; grid-template-columns: 186px 1fr; grid-template-rows: 52px 1fr; overflow: hidden; }
+  .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--dim); }
+  .caps { text-transform: uppercase; letter-spacing: .18em; font-size: 10px; font-family: var(--mono); color: var(--soft); }
+
+  .bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 28px; padding: 0 22px; border-bottom: 1px solid var(--hair); }
+  .lights { display: flex; gap: 7px; } .lights i { width: 11px; height: 11px; border-radius: 50%; background: #2c2b27; display: block; }
+  .word { font-weight: 600; font-size: 11.5px; letter-spacing: .3em; }
+  .world { color: var(--soft); font-size: 12.5px; } .world b { color: var(--ink); font-weight: 500; }
+  .ask { margin-left: auto; width: 380px; height: 30px; border: 1px solid var(--hair2); border-radius: 7px; display: flex; align-items: center; padding: 0 10px; color: var(--dim); font-size: 12.5px; }
+  .ask kbd { margin-left: auto; font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--hair2); border-radius: 4px; padding: 1px 5px; color: var(--soft); }
+  .now { display: flex; align-items: center; gap: 8px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgba(236,232,223,.07); }
+
+  .rail { border-right: 1px solid var(--hair); padding: 20px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 7px; font-size: 13px; color: var(--soft); }
+  .nav.on { color: var(--ink); background: rgba(255,255,255,.05); }
+  .nav .mono { font-size: 10.5px; } .nav .hot { color: var(--signal); }
+  .sep { height: 1px; background: var(--hair); margin: 12px 6px; }
+  .rail .who { margin-top: auto; padding: 10px; display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--soft); }
+  .av { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-family: var(--mono); font-size: 9.5px; color: var(--ink); background: #2a2925; border: 1px solid var(--hair2); flex: none; }
+
+  .main { display: grid; grid-template-columns: 1.2fr 1fr; grid-template-rows: auto 1fr 236px; min-height: 0; }
+  .lede { grid-column: 1 / -1; padding: 24px 32px 18px; border-bottom: 1px solid var(--hair); display: flex; align-items: flex-end; gap: 40px; }
+  .lede p { font-family: var(--serif); font-weight: 300; font-size: 24px; line-height: 1.28; margin: 0; max-width: 40em; letter-spacing: -.008em; }
+  .lede b { font-weight: 400; color: #fff; } .lede .sig { color: var(--signal); }
+  .lede .stats { margin-left: auto; display: flex; gap: 28px; flex: none; }
+  .stat b { display: block; font-family: var(--serif); font-weight: 300; font-size: 30px; color: var(--ink); line-height: 1; }
+  .stat .mono { font-size: 10px; text-transform: uppercase; letter-spacing: .14em; }
+  .stat.sig b { color: var(--signal); }
+
+  /* map */
+  .map { position: relative; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); min-height: 0; overflow: hidden; }
+  .map .head { position: absolute; top: 16px; left: 22px; right: 22px; display: flex; justify-content: space-between; z-index: 2; }
+  .legend { display: flex; gap: 14px; align-items: center; }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .k-act { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 8px var(--signal); }
+  .k-dev { width: 7px; height: 7px; background: var(--ink); }
+  .k-watch { width: 7px; height: 7px; box-shadow: inset 0 0 0 1.2px var(--soft); }
+  .k-acc { width: 7px; height: 7px; border-radius: 50%; box-shadow: inset 0 0 0 1.2px #7d9db0; }
+  #map { position: absolute; inset: 0; }
+  #map text { font-family: var(--sans); font-size: 11.5px; fill: var(--soft); }
+  #map text.hot { fill: #fff; font-weight: 500; }
+  #map text.sub { font-family: var(--mono); font-size: 9.5px; fill: var(--dim); }
+  .quietnote { position: absolute; left: 22px; top: 40px; font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--dim); }
+
+  /* decisions */
+  .dec { padding: 16px 24px 0; border-bottom: 1px solid var(--hair); overflow: hidden; }
+  .dec .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .d { padding: 13px 0 13px; border-top: 1px solid var(--hair); display: grid; grid-template-columns: 1fr auto; column-gap: 14px; row-gap: 6px; }
+  .d:first-of-type { border-top: none; }
+  .d .q { font-size: 14px; font-weight: 500; line-height: 1.35; }
+  .d .q .sigdot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); margin-right: 8px; transform: translateY(-2px); box-shadow: 0 0 0 4px var(--signal-glow); }
+  .d .wait { font-family: var(--mono); font-size: 10.5px; color: var(--soft); text-align: right; white-space: nowrap; padding-top: 2px; }
+  .d .wait.hot { color: var(--signal); }
+  .d .why { grid-column: 1 / -1; font-family: var(--serif); font-size: 14px; color: var(--soft); line-height: 1.4; }
+  .d .why b { color: var(--ink); font-weight: 400; }
+  .d .opts { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 3px; }
+  .o { font-size: 11.5px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--hair2); color: var(--soft); }
+  .o.rec { border-color: rgba(232,83,42,.6); color: #fff; background: rgba(232,83,42,.1); }
+  .o.rec::before { content: "recommended · "; font-family: var(--mono); font-size: 9.5px; color: var(--signal); letter-spacing: .04em; }
+
+  /* bottom */
+  .bottom { grid-column: 1 / -1; display: grid; grid-template-columns: 1.15fr 1fr .85fr; }
+  .cell { padding: 16px 22px; border-right: 1px solid var(--hair); overflow: hidden; }
+  .cell:last-child { border-right: none; }
+  .cell .head { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .feed .e { display: grid; grid-template-columns: 52px 10px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; font-size: 12.5px; border-bottom: 1px solid var(--hair); }
+  .feed .e:last-child { border-bottom: none; }
+  .feed .e i { width: 6px; height: 6px; display: block; background: var(--ink); transform: translateY(-1px); }
+  .feed .e i.h { background: none; box-shadow: inset 0 0 0 1.2px var(--soft); }
+  .feed .e i.s { background: var(--signal); }
+  .feed .e i.c { border-radius: 50%; background: none; box-shadow: inset 0 0 0 1.2px #7d9db0; }
+  .feed .e span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feed .e em { font-style: normal; color: var(--soft); }
+
+  .flow { display: flex; align-items: flex-end; gap: 0; height: 120px; margin-top: 18px; }
+  .stage { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .stage .n { font-family: var(--serif); font-weight: 300; font-size: 28px; line-height: 1; }
+  .stage .bar2 { height: 3px; background: var(--hair2); position: relative; }
+  .stage .bar2::after { content: ""; position: absolute; right: -2px; top: -3px; border-left: 6px solid var(--hair2); border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent; }
+  .stage.act .n { color: var(--signal); } .stage.act .bar2 { background: var(--signal); }
+  .stage.act .bar2::after { border-left-color: var(--signal); }
+  .stage.won .bar2::after { display: none; }
+  .stage .mono { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; }
+  .flownote { margin-top: 16px; font-family: var(--serif); font-size: 13.5px; color: var(--soft); }
+  .flownote b { color: var(--ink); font-weight: 400; }
+
+  .member { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--hair); font-size: 12.5px; }
+  .member:last-child { border-bottom: none; }
+  .load { display: flex; gap: 3px; } .load i { width: 6px; height: 12px; background: var(--faint); display: block; }
+  .load i.on { background: var(--ink); } .load i.late { background: var(--signal); }
+  .member .mono { font-size: 10.5px; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <span class="word">NORTHVAINE</span>
+    <span class="world">Your market · <b>natural stone into the UK &amp; EU</b></span>
+    <div class="ask">Ask: “who’s likely to win the Mülheim works?”<kbd>⌘ K</kbd></div>
+    <span class="now mono"><span class="pulse"></span>watching · Tue 13 Oct, 07:40</span>
+  </div>
+
+  <nav class="rail">
+    <div class="nav on">Station</div>
+    <div class="nav">Decisions <span class="mono hot">4</span></div>
+    <div class="nav">Situations <span class="mono">14</span></div>
+    <div class="nav">Accounts <span class="mono">38</span></div>
+    <div class="nav">Territory</div>
+    <div class="nav">Team</div>
+    <div class="nav">Outcomes</div>
+    <div class="sep"></div>
+    <div class="nav">What I’ve learned</div>
+    <div class="nav">Your business</div>
+    <div class="who"><span class="av">AJ</span>Sales director</div>
+  </nav>
+
+  <section class="main">
+    <div class="lede">
+      <p><span class="sig">Corte</span> moved to act now overnight. <b>Haderstorfer</b>, a dormant account in your CRM, just won paving work in Munich. Mülheim’s tender closes on Friday.</p>
+      <div class="stats">
+        <div class="stat sig"><b>4</b><span class="mono">decisions</span></div>
+        <div class="stat"><b>3</b><span class="mono">new</span></div>
+        <div class="stat"><b>1</b><span class="mono">stuck</span></div>
+      </div>
+    </div>
+
+    <div class="map">
+      <div class="head">
+        <span class="caps">Territory · where your demand is forming</span>
+        <span class="legend mono"><span><i class="k-act"></i>act</span><span><i class="k-dev"></i>developing</span><span><i class="k-watch"></i>watching</span><span><i class="k-acc"></i>your account</span></span>
+      </div>
+      <svg id="map"></svg>
+      <div class="quietnote">UK quiet this week: no relevant tenders or awards since 2 Oct.</div>
+    </div>
+
+    <div class="dec">
+      <div class="head"><span class="caps">Decisions waiting · by cost of waiting</span><span class="mono">4</span></div>
+
+      <div class="d">
+        <div class="q"><span class="sigdot"></span>Mülheim closes Friday. Approach the likely winners now?</div>
+        <div class="wait hot">3 days left</div>
+        <div class="why">Landscaping for the new Heißen pool. The buyer of your stone will be the winning contractor; <b>5 firms</b> have won similar work here.</div>
+        <div class="opts"><span class="o rec">Approach top 2 bidders</span><span class="o">Wait for the award</span><span class="o">Drop</span></div>
+      </div>
+
+      <div class="d">
+        <div class="q">Take SAS Antoniotti (Corte old town)?</div>
+        <div class="wait hot">ordering within weeks</div>
+        <div class="why">Works awarded 6 Oct with two partners. <b>Who orders materials</b> is the one thing not yet known.</div>
+        <div class="opts"><span class="o rec">Assign to MK</span><span class="o">I’ll take it</span><span class="o">Not for us</span></div>
+      </div>
+
+      <div class="d">
+        <div class="q">Re-open Haderstorfer? Dormant in your CRM since spring.</div>
+        <div class="wait">site start soon</div>
+        <div class="why">Won Munich’s path-building works on 8 Sep. An account you already know, with a fresh project.</div>
+        <div class="opts"><span class="o rec">Reactivate with MK</span><span class="o">Not now</span></div>
+      </div>
+
+      <div class="d">
+        <div class="q">Schulze Tertilt asked for a sample. Approve?</div>
+        <div class="wait">asked 9 Oct</div>
+        <div class="why">They are on Münster’s sewage-plant build. Interest usually cools after about a week.</div>
+        <div class="opts"><span class="o rec">Approve sample</span><span class="o">Ask for specs first</span></div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="cell feed">
+        <div class="head"><span class="caps">Developments</span><span class="mono">live</span></div>
+        <div class="e"><span class="mono">06:12</span><i class="s"></i><span>Corte → <em>act now</em>: award confirmed on record</span></div>
+        <div class="e"><span class="mono">05:40</span><i class="c"></i><span>Haderstorfer <em>(your account)</em> won Munich works</span></div>
+        <div class="e"><span class="mono">04:58</span><i class="h"></i><span>Mülheim tender re-opened <em>· 5 likely bidders found</em></span></div>
+        <div class="e"><span class="mono">03:21</span><i></i><span>Münster works → Schulze Tertilt <em>· matched to your team’s lead</em></span></div>
+        <div class="e"><span class="mono">02:07</span><i class="h"></i><span>Aubagne surface works <em>· still finding the winner</em></span></div>
+      </div>
+
+      <div class="cell">
+        <div class="head"><span class="caps">Pipeline · how situations mature</span><span class="mono">this month</span></div>
+        <div class="flow">
+          <div class="stage"><span class="n">9</span><span class="bar2"></span><span class="mono">Detected</span></div>
+          <div class="stage"><span class="n">8</span><span class="bar2"></span><span class="mono">Watching</span></div>
+          <div class="stage"><span class="n">4</span><span class="bar2"></span><span class="mono">Developing</span></div>
+          <div class="stage act"><span class="n">2</span><span class="bar2"></span><span class="mono">Act now</span></div>
+          <div class="stage won"><span class="n">1</span><span class="bar2"></span><span class="mono">Won</span></div>
+        </div>
+        <div class="flownote">Works awards reach <b>act now</b> about 3 weeks after the tender here.</div>
+      </div>
+
+      <div class="cell">
+        <div class="head"><span class="caps">Team</span><span class="mono">load</span></div>
+        <div class="member"><span class="av">MK</span><span>Marta K. · Germany</span><span class="load"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="member"><span class="av">AJ</span><span>You · France</span><span class="load"><i class="on"></i><i class="on"></i><i class="late"></i><i></i><i></i></span></div>
+        <div class="member"><span class="av">SR</span><span>Sam R. · UK</span><span class="load"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="member" style="color:var(--soft)"><span></span><span class="mono" style="color:var(--signal)">1 follow-up overdue (AJ)</span><span></span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(async () => {
+  const el = document.getElementById("map");
+  const box = el.parentElement.getBoundingClientRect();
+  const W = box.width, H = box.height;
+  const svg = d3.select(el).attr("width", W).attr("height", H);
+  const world = await (await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json")).json();
+  const land = topojson.feature(world, world.objects.land);
+  const projection = d3.geoConicConformal().rotate([-2, 0]).center([0, 48.6]).parallels([40, 58]).scale(1180).translate([W * 0.56, H * 0.56]);
+  const STEP = 5;
+  const g = svg.append("g");
+  for (let x = 0; x < W; x += STEP) {
+    for (let y = 40; y < H; y += STEP) {
+      const ll = projection.invert([x, y]);
+      if (ll && d3.geoContains(land, ll)) {
+        g.append("circle").attr("cx", x).attr("cy", y).attr("r", 1).attr("fill", "#4a473f");
+      }
+    }
+  }
+  const P = (lon, lat) => projection([lon, lat]);
+  const sites = [
+    { n: "Corte → SAS Antoniotti", s: "awarded 6 Oct", ll: [9.15, 42.31], k: "act", dx: 14, dy: 4 },
+    { n: "Munich → Haderstorfer", s: "your account", ll: [11.58, 48.14], k: "acc-act", dx: 14, dy: 4 },
+    { n: "Mülheim", s: "closes Fri", ll: [6.88, 51.43], k: "dev", dx: -12, dy: -10, anchor: "end" },
+    { n: "Münster → Schulze Tertilt", s: "sample asked", ll: [7.63, 51.96], k: "dev", dx: 12, dy: -8 },
+    { n: "Aubagne", s: "researching", ll: [5.57, 43.29], k: "watch", dx: -12, dy: -2, anchor: "end" },
+    { n: "Nuremberg", s: "your account", ll: [11.08, 49.45], k: "acc", dx: 12, dy: 4 },
+    { n: "", s: "", ll: [7.47, 51.51], k: "watch" },
+    { n: "", s: "", ll: [7.01, 51.45], k: "watch" },
+  ];
+  // the chain behind a situation: authority to contractor (Münster's award)
+  const a = P(7.63, 51.96), b = P(6.88, 51.43);
+  for (const s of sites) {
+    const [x, y] = P(...s.ll);
+    if (s.k === "act" || s.k === "acc-act") {
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 26).attr("fill", "rgba(232,83,42,.07)");
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 14).attr("fill", "none").attr("stroke", "rgba(232,83,42,.35)");
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 4.5).attr("fill", "#e8532a").style("filter", "drop-shadow(0 0 6px #e8532a)");
+      if (s.k === "acc-act") svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 8).attr("fill", "none").attr("stroke", "#7d9db0").attr("stroke-width", 1.2);
+    } else if (s.k === "dev") {
+      svg.append("rect").attr("x", x - 4).attr("y", y - 4).attr("width", 8).attr("height", 8).attr("fill", "#ece8df");
+    } else if (s.k === "watch") {
+      svg.append("rect").attr("x", x - 3.5).attr("y", y - 3.5).attr("width", 7).attr("height", 7).attr("fill", "#0d0d0b").attr("stroke", "#a8a398").attr("stroke-width", 1.2);
+    } else if (s.k === "acc") {
+      svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 4).attr("fill", "#0d0d0b").attr("stroke", "#7d9db0").attr("stroke-width", 1.3);
+    }
+    if (s.n) {
+      svg.append("text").attr("x", x + s.dx).attr("y", y + s.dy).attr("text-anchor", s.anchor || "start").attr("class", s.k.includes("act") ? "hot" : "").text(s.n);
+      svg.append("text").attr("x", x + s.dx).attr("y", y + s.dy + 13).attr("text-anchor", s.anchor || "start").attr("class", "sub").text(s.s);
+    }
+  }
+  document.body.dataset.ready = "1";
+})();
+</script>
+</body>
+</html>
