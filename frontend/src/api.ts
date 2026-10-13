@@ -1,4 +1,4 @@
-import type { BriefView, ClientSummary, Dossier, FeedbackRecord } from "./types";
+import type { BriefView, ClientSummary, Dossier, FeedbackRecord, Learning } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, init);
@@ -20,6 +20,8 @@ export const api = {
     request<Dossier>(`/api/clients/${seg(client)}/runs/${seg(day)}/entries/${rank}`),
   feedback: (client: string, day: string) =>
     request<FeedbackRecord[]>(`/api/clients/${seg(client)}/feedback?as_of=${seg(day)}`),
+  learning: (client: string) =>
+    request<Learning>(`/api/clients/${seg(client)}/learning`),
   sendFeedback: (body: Omit<FeedbackRecord, "received_at">) =>
     request<FeedbackRecord>("/api/feedback", {
       method: "POST",

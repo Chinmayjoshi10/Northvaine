@@ -11,6 +11,7 @@ from pydantic import Field
 
 from northvaine.api import store
 from northvaine.core.models import NorthvaineModel
+from northvaine.radar.lessons import Learning
 
 router = APIRouter(prefix="/api", tags=["feedback"])
 
@@ -74,3 +75,10 @@ def get_feedback(client: str, as_of: str, base: Base) -> list[FeedbackRecord]:
     store.check_day(as_of)
     rows = store.read_feedback(base, client)
     return [FeedbackRecord.model_validate(r) for r in rows if r.get("as_of") == as_of]
+
+
+@router.get("/clients/{client}/learning")
+def get_learning(client: str, base: Base) -> Learning:
+    """What the client's answers taught, newest first, and whether it changes the next run."""
+    learning = store.client_learning(base, store.check_client(client))
+    return learning.model_copy(update={"strategy": None})  # the page needs words, not numbers

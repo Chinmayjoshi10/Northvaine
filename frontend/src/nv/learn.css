@@ -1,0 +1,100 @@
+/* The learning loop, made visible (D100). */
+.nv-lesson {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 60;
+  width: min(420px, calc(100vw - 32px));
+  padding: 14px 40px 14px 16px;
+  background: var(--raised);
+  border: 1px solid var(--hair2);
+  border-left: 2px solid var(--signal);
+  border-radius: 8px;
+  box-shadow: var(--sheet-shadow);
+  animation: nv-lesson-in 0.5s var(--spring) both;
+}
+.nv-lesson .caps {
+  display: block;
+  font-size: 9.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nv-lesson p {
+  margin: 6px 0 8px;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.nv-lesson .x {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  color: var(--dim);
+  font-size: 12px;
+}
+.nv-lesson .x:hover {
+  color: var(--ink);
+}
+@keyframes nv-lesson-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+
+/* Station: what your answers changed */
+.st .taught .l {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--hair);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.st .taught .l:last-of-type {
+  border-bottom: none;
+}
+.st .taught .l .said {
+  color: var(--soft);
+}
+.st .taught .l .said b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.st .taught .prog {
+  margin-top: 8px;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+.st .taught .prog i {
+  width: 14px;
+  height: 4px;
+  background: var(--hair2);
+  display: block;
+}
+.st .taught .prog i.on {
+  background: var(--ink);
+}
+.st .taught .prog span {
+  margin-left: 8px;
+}
+
+/* the case sheet: follow-ups */
+.nv-sheet .flag {
+  all: unset;
+  cursor: pointer;
+  margin-left: 10px;
+  color: var(--dim);
+  border-bottom: 1px dotted var(--dim);
+}
+.nv-sheet .flag:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+.nv-sheet .flagged {
+  margin-left: 10px;
+  color: var(--signal);
+}

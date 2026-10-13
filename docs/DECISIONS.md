@@ -957,3 +957,16 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Masthead:** the newest award, else the most urgent decision, assembled from stated fields;
     the lede is counts and dates, never model text. "New" means not in the previous edition by
     company identity.
+- **D100 — The learning loop runs from the saved answers, and says what each one changed
+  (14 Oct).** Answers in the app were saved but never reached a run. Now
+  `radar/lessons.py` turns the feedback file into the same labels as the database path (D89,
+  D95), fits them, and a live run (`scripts/radar.py --record`) uses that strategy to choose its
+  searches once `learning_min_labels` answers exist. Replays stay exact reproductions.
+  - **"Not now" is timing:** relevant but not actionable now, with no failure reason, is
+    `later`, which never moves a search's or a source's rate. This changes the D95 table.
+  - **Each answer is explained** by fitting the beliefs without it and with it, and naming the
+    largest real move ("I moved the search “…” down: 50% → 38%"; a wrong fact lowers trust in
+    its source). If nothing moved, it says so. The page also shows how many answers remain
+    before the answers choose the searches.
+  - **Follow-ups:** after taking a lead, "What happened?" records the outcome (D95 fields); any
+    quoted chain step can be flagged as a wrong fact. The latest answer per lead counts.

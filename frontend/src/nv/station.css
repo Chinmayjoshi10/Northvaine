@@ -284,6 +284,14 @@
 }
 
 /* bottom row */
+.st .bottom {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.6fr) minmax(0, 0.4fr);
+}
+.st .taught {
+  border-right: 1px solid var(--hair);
+}
 .st .cell {
   padding: 14px 22px 18px;
   min-width: 0;
@@ -330,7 +338,7 @@
 }
 .st .run .step {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 40px;
+  grid-template-columns: 104px minmax(0, 1fr) 32px;
   gap: 12px;
   align-items: center;
   padding: 6px 0;
@@ -403,7 +411,11 @@
     height: 420px;
     border-right: none;
   }
-  .st .feed {
+  .st .bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .st .feed,
+  .st .taught {
     border-right: none;
     border-bottom: 1px solid var(--hair);
   }

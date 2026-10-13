@@ -161,3 +161,22 @@ export interface FeedbackRecord {
   note: string;
   received_at: string;
 }
+
+/** One answer and what it taught (D100), worded by the server from the real change. */
+export interface Lesson {
+  as_of: string;
+  rank: number;
+  company: string;
+  said: string;
+  teaches: string | null;
+  change: string;
+  received_at: string;
+}
+
+export interface Learning {
+  answers: number;
+  labels: number;
+  needed: number;
+  active: boolean;
+  lessons: Lesson[];
+}

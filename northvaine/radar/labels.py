@@ -11,6 +11,7 @@ new intelligence, accepted for contact, contacted, outcome). Nothing is parsed f
 | failure reason "wrong fact", or correct = no | `wrong_facts` (source reliability only) |
 | a positive outcome (redirect, info request, requirement, sample, quote, meeting) | `good` |
 | accepted for contact, or relevant and actionable | `good` |
+| relevant but not actionable now, with no failure reason ("Not now") | `later` (timing, D100) |
 | any other failure reason, or relevant = no, or actionable = no | `not_relevant` |
 | anything else | no label (unknown is not negative) |
 
@@ -43,6 +44,8 @@ def rating_of(record: Mapping[str, Any]) -> tuple[FeedbackRating, str | None] | 
         record.get("relevant") is True and record.get("actionable") is True
     ):
         return FeedbackRating.GOOD, None
+    if not chip and record.get("relevant") is True and record.get("actionable") is False:
+        return FeedbackRating.LATER, "later"  # timing, not a judgement of the lead (D100)
     if chip or record.get("relevant") is False or record.get("actionable") is False:
         return FeedbackRating.NOT_RELEVANT, chip
     return None

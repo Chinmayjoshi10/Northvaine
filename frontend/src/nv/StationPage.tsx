@@ -19,6 +19,7 @@ import {
   unknownSteps,
   windowOf,
 } from "./lead";
+import { LessonNote, progressLine } from "./LessonNote";
 import { Shell } from "./Shell";
 import { TerritoryMap } from "./TerritoryMap";
 import type { Place } from "./TerritoryMap";
@@ -129,7 +130,8 @@ function Station(props: {
     [brief],
   );
   const decisions = useMemo(() => toDecide(rows, brief.as_of), [rows, brief.as_of]);
-  const { decided, decide } = useDecisions(client, brief);
+  const { decided, decide, followed, follow, learning, lesson, dismiss } =
+    useDecisions(client, brief);
   const [open, setOpen] = useState<Row | null>(null);
   const [fresh, setFresh] = useState<number | null>(null);
 
@@ -257,8 +259,11 @@ function Station(props: {
             row={open}
             decided={open ? (decided[open.rank] ?? null) : null}
             onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
+            followed={open ? (followed[open.rank] ?? []) : []}
+            onFollow={(f) => (open ? follow(open, f) : Promise.resolve())}
             onClose={() => setOpen(null)}
           />
+          <LessonNote lesson={lesson} learning={learning} onClose={dismiss} />
         </>
       }
     >
@@ -393,6 +398,7 @@ function Station(props: {
           })}
         </section>
 
+        <div className="bottom">
         <section className="feed cell" aria-label="Latest developments">
           <div className="hd">
             <span className="caps">Latest on record</span>
@@ -411,6 +417,34 @@ function Station(props: {
               </span>
             </button>
           ))}
+        </section>
+
+        <section className="taught cell" aria-label="What your answers changed">
+          <div className="hd">
+            <span className="caps">What your answers changed</span>
+            {learning && <span className="mono">{learning.answers} answers</span>}
+          </div>
+          {(!learning || learning.lessons.length === 0) && (
+            <p className="quiet">
+              Answer a decision and I’ll show here what it changed.
+            </p>
+          )}
+          {learning?.lessons.slice(0, 3).map((l) => (
+            <div className="l" key={l.received_at}>
+              <span className="said">
+                “{l.said}” on <b>{nice(l.company)}</b>:
+              </span>{" "}
+              {l.change}
+            </div>
+          ))}
+          {learning && learning.answers > 0 && (
+            <div className="prog" aria-label={progressLine(learning)}>
+              {Array.from({ length: Math.round(learning.needed) }, (_, i) => (
+                <i key={i} className={i < learning.labels ? "on" : ""} />
+              ))}
+              <span className="mono">{progressLine(learning)}</span>
+            </div>
+          )}
         </section>
 
         <section className="run cell" aria-label="This edition">
@@ -443,6 +477,7 @@ function Station(props: {
             </p>
           )}
         </section>
+        </div>
       </div>
     </Shell>
   );

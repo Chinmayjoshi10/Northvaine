@@ -404,6 +404,7 @@ async def run_record(
     fetcher_factory: FetcherFactory | None = None,
     session_factory: Any = None,
     save: bool = False,
+    strategy: Any = None,
 ) -> tuple[RadarRun, Recording]:
     """The live run, with every HTTP exchange and model exchange recorded (not yet redacted)."""
     evidence: list[Any] = []
@@ -433,6 +434,7 @@ async def run_record(
                 settings=settings,
                 session=session,
                 evidence_out=evidence,
+                strategy=strategy,
             )
         if save:
             from northvaine.radar.persist import persist_run
@@ -569,6 +571,14 @@ def main(
             print("\nNothing was called. Re-run with --yes to record.", file=sys.stderr)
             return 1
         check_preconditions(spec, base)
+        # The owner's saved answers choose this run's searches once there are enough (D100).
+        from northvaine.api.store import client_learning
+
+        learned = client_learning(out_dir, args.client, base)
+        print(
+            f"learning: {learned.labels:.0f} of {learned.needed:.0f} answers needed "
+            + ("(the answers choose this run's searches)" if learned.active else "(not yet)")
+        )
         run, recording = asyncio.run(
             run_record(
                 spec,
@@ -579,6 +589,7 @@ def main(
                 fetcher_factory=fetcher_factory,
                 session_factory=session_factory,
                 save=args.save,
+                strategy=learned.strategy,
             )
         )
         clean = redact_recording(recording, base)

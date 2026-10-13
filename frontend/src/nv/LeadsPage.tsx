@@ -4,6 +4,7 @@ import type { BriefView } from "../types";
 import { useLoad } from "../useLoad";
 import { CaseSheet } from "./CaseSheet";
 import { useDecisions } from "./decide";
+import { LessonNote } from "./LessonNote";
 import {
   isHot,
   longDate,
@@ -55,7 +56,8 @@ function Leads(props: {
   );
   const [filter, setFilter] = useState("All");
   const [current, setCurrent] = useState<number | null>(null);
-  const { decided, decide } = useDecisions(client, brief);
+  const { decided, decide, followed, follow, learning, lesson, dismiss } =
+    useDecisions(client, brief);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const counts = useMemo(() => {
@@ -129,9 +131,12 @@ function Leads(props: {
               row={open}
               decided={open ? (decided[open.rank] ?? null) : null}
               onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
+              followed={open ? (followed[open.rank] ?? []) : []}
+              onFollow={(f) => (open ? follow(open, f) : Promise.resolve())}
               onClose={() => setCurrent(null)}
             />
           </div>
+          <LessonNote lesson={lesson} learning={learning} onClose={dismiss} />
         </>
       }
     >
