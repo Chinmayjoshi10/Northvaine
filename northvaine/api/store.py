@@ -15,6 +15,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from northvaine.core.settings import Settings
+from northvaine.radar.lessons import Learning, learn_from_files
 from northvaine.radar.models import REPO_ROOT, LikelyBidder, RadarRun
 
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
@@ -114,3 +115,16 @@ def read_feedback(base: Path, client: str) -> list[dict]:
             except json.JSONDecodeError:
                 continue
     return rows
+
+
+def client_learning(base: Path, client: str, settings: Settings | None = None) -> Learning:
+    """What a client's saved answers taught (D100), from the feedback file and the runs it
+    answers. A run that is no longer on file is skipped, never guessed."""
+    records = read_feedback(base, client)
+    runs: dict[str, RadarRun] = {}
+    for day in sorted({str(r.get("as_of")) for r in records}):
+        try:
+            runs[day] = load_run(base, client, day)[0]
+        except HTTPException:
+            continue
+    return learn_from_files(records, runs, settings=settings)

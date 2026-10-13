@@ -10,6 +10,7 @@ from northvaine.core.models import FeedbackRating
 from northvaine.radar.labels import rating_of
 
 G, N, W = FeedbackRating.GOOD, FeedbackRating.NOT_RELEVANT, FeedbackRating.WRONG_FACTS
+L = FeedbackRating.LATER
 
 
 @pytest.mark.parametrize(
@@ -23,7 +24,9 @@ G, N, W = FeedbackRating.GOOD, FeedbackRating.NOT_RELEVANT, FeedbackRating.WRONG
         ({"relevant": True, "actionable": True}, G),
         ({"failure_chip": "not a buyer"}, N),
         ({"relevant": False}, N),
-        ({"relevant": True, "actionable": False}, N),
+        ({"relevant": True, "actionable": False}, L),  # "Not now" is timing (D100)
+        ({"relevant": True, "actionable": False, "failure_chip": "not actionable"}, N),
+        ({"actionable": False}, N),
         ({"known_already": True}, None),
         ({"contacted": True, "outcome": "none"}, None),  # no reply yet is unknown, not negative
         ({}, None),

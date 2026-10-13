@@ -54,7 +54,7 @@ from northvaine.radar.models import (
 )
 from northvaine.sensors.base import content_hash
 
-__all__ = ["PersistResult", "persist_run"]
+__all__ = ["PersistResult", "persist_run", "provenance"]
 
 # A rejection that names no organisation never becomes a company row (privacy, D76).
 _NO_COMPANY = {RejectedAs.UNIDENTIFIED, RejectedAs.NOT_AN_ORGANISATION}
@@ -370,7 +370,7 @@ async def _link_events(session: Any, candidate: Candidate, company_id: UUID) -> 
         )
 
 
-def _provenance(candidate: Candidate, run: RadarRun) -> dict[str, Any]:
+def provenance(candidate: Candidate, run: RadarRun) -> dict[str, Any]:
     """The sources and the queries ("sensor:index") behind a candidate's evidence (D87)."""
     queries = sorted(
         {ref for c in candidate.claims for ref in run.found_by.get(str(c.document_id), [])}
@@ -465,7 +465,7 @@ async def persist_run(
             company_id=companies[c.key],
             features={
                 **_features(c),
-                **_provenance(c, run),
+                **provenance(c, run),
                 "as_of": run.as_of,
                 "strength": entry.strength,
             },
@@ -527,7 +527,7 @@ async def _rejection(
         workspace_id,
         case_id=None,
         company_id=company_id,
-        features={**_features(c), **_provenance(c, run), "as_of": run.as_of},
+        features={**_features(c), **provenance(c, run), "as_of": run.as_of},
         choice={
             "briefed": False,
             "rejected_as": gate.rejected_as.value if gate.rejected_as else None,

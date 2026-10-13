@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { safeHref } from "../api";
-import { FAILURE_CHIPS } from "../types";
+import { FAILURE_CHIPS, OUTCOMES } from "../types";
 import type { Link, Row } from "../types";
+import { HAPPENED, WRONG } from "./decide";
+import type { FollowUp } from "./decide";
 import {
   SLOT,
   domain,
@@ -45,9 +47,12 @@ export function CaseSheet(props: {
   row: Row | null;
   decided: string | null;
   onDecide: (d: Decision) => Promise<void>;
+  /** Notes of the follow-ups already given ("What happened: …", "Wrong fact: …"). */
+  followed?: string[];
+  onFollow?: (f: FollowUp) => Promise<void>;
   onClose: () => void;
 }) {
-  const { row, decided, onDecide, onClose } = props;
+  const { row, decided, onDecide, followed = [], onFollow, onClose } = props;
   const [picked, setPicked] = useState<number | null>(null);
   const [askWhy, setAskWhy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,11 +76,11 @@ export function CaseSheet(props: {
         ? "The buyer of your product will be the contractor who wins this tender."
         : null;
 
-  const decide = async (d: Decision) => {
+  const save = async (act: () => Promise<void>) => {
     setSaving(true);
     setError(null);
     try {
-      await onDecide(d);
+      await act();
       setAskWhy(false);
     } catch (e) {
       setError(
@@ -87,6 +92,14 @@ export function CaseSheet(props: {
       setSaving(false);
     }
   };
+  const decide = (d: Decision) => save(() => onDecide(d));
+  const follow = (f: FollowUp) => (onFollow ? save(() => onFollow(f)) : undefined);
+  const took = decided !== null && optionsFor(row)[0].label === decided;
+  const happened = followed
+    .filter((n) => n.startsWith(HAPPENED))
+    .map((n) => n.slice(HAPPENED.length))
+    .pop();
+  const flagged = (slot: Link["slot"]) => followed.includes(`${WRONG}${SLOT[slot]}`);
 
   return (
     <div
@@ -150,6 +163,21 @@ export function CaseSheet(props: {
                 ) : (
                   domain(shown.url)
                 )}
+                {onFollow &&
+                  shown.state === "stated" &&
+                  (flagged(shown.slot) ? (
+                    <span className="flagged">flagged as wrong</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="flag"
+                      disabled={saving}
+                      title="This fact is wrong: tell Northvaine"
+                      onClick={() => follow({ kind: "wrong", step: SLOT[shown.slot] })}
+                    >
+                      Wrong?
+                    </button>
+                  ))}
               </cite>
             </blockquote>
           )}
@@ -279,9 +307,23 @@ export function CaseSheet(props: {
                 </div>
               </div>
             )}
-            {decided && !askWhy && (
-              <div className="thanks">
-                Noted. I’ll weigh this in the next run.
+            {decided && !askWhy && !took && <div className="thanks">Noted.</div>}
+            {took && onFollow && (
+              <div className="why">
+                <span className="caps">What happened?</span>
+                <div className="opts">
+                  {OUTCOMES.map((o) => (
+                    <button
+                      key={o}
+                      type="button"
+                      className={`btn${happened === o ? " rec" : ""}`}
+                      disabled={saving}
+                      onClick={() => follow({ kind: "outcome", outcome: o })}
+                    >
+                      {o === "none" ? "no reply yet" : o}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {error && (
