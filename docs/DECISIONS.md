@@ -944,3 +944,16 @@ brief with Claude's five corrections (docs/COLLAB.md).
     role to ask for). No personal emails or phone numbers of named people.
   - **Lead types are data, not code:** the list, filters and chain read the type from the lead,
     so a new kind of signal needs a registry entry and a chain template, not new screens.
+- **D99 — Station shows only what the run records (14 Oct).** The built Station keeps the locked
+  look (D98) but drops the mock's Team and Back-in-motion blocks: they need CRM and team data the
+  product does not have yet, and a screen must not show invented records. In their place, "This
+  edition" shows what the run read (documents → companies → set aside → on record).
+  - **Map:** leads are placed by country, because that is the most precise place the record
+    states. The view fits the countries with leads; with none, it shows the world and says how
+    many leads state no country.
+  - **Decisions:** at most four, most urgent first: act-now leads, tenders closing within 7 days,
+    awards from the last 14 days, tenders closing within 14, then leads still to qualify by rank.
+    One per project (co-winners are one decision). A "no" opens the case to ask for its reason.
+  - **Masthead:** the newest award, else the most urgent decision, assembled from stated fields;
+    the lede is counts and dates, never model text. "New" means not in the previous edition by
+    company identity.
