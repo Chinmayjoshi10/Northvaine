@@ -117,15 +117,20 @@ export function isHot(r: Row): boolean {
 }
 
 /** The headline is assembled from the chain's stated fields only (D98). */
-export function headline(r: Row): string {
+export function headline(r: Row, maxProject = Infinity): string {
   const chain = r.chain ?? [];
   const auth = chain.find(
     (l) => l.slot === "authority" && l.state === "stated",
   );
   const proj = chain.find((l) => l.slot === "project" && l.state === "stated");
-  const project = proj
+  const full = proj
     ? stripCountry(proj.label).split(" – ").slice(-1)[0]
     : stripCountry(r.what);
+  // cut at a word, never mid-name
+  const project =
+    full.length <= maxProject
+      ? full
+      : `${full.slice(0, maxProject).replace(/\s+\S*$/, "")}…`;
   const who = nice(r.company);
   if (r.stream === "award" && auth)
     return `${nice(auth.label)} awards ${project} to ${who}`;
@@ -156,4 +161,42 @@ export function longDate(day: string): { weekday: string; date: string } {
       timeZone: "UTC",
     }),
   };
+}
+
+/** The project's own name, from the chain when it is on record, else from the lead. */
+export function projectOf(r: Row): string {
+  const proj = (r.chain ?? []).find(
+    (l) => l.slot === "project" && l.state === "stated",
+  );
+  return stripCountry(proj ? proj.label : r.what)
+    .split(" – ")
+    .slice(-1)[0];
+}
+
+/** Days until a tender closes, or null when it is not a tender with a stated deadline. */
+export function daysLeft(r: Row): number | null {
+  const m = r.why_now.match(/closes in (\d+) days?/);
+  if (!m || /too late/.test(r.why_now)) return null;
+  return Number(m[1]);
+}
+
+/** The award's date ("2026-10-06"), when the lead is an award. */
+export function awardDay(r: Row): string | null {
+  const m = r.why_now.match(/award(?:ed| published) (\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : null;
+}
+
+/** The chain steps not yet known, worded for a sentence. */
+export function unknownSteps(r: Row): string[] {
+  return (r.chain ?? [])
+    .filter((l) => l.state === "unknown")
+    .map((l) => (l.slot === "buyer" ? "who buys" : SLOT[l.slot].toLowerCase()));
+}
+
+export function shortDate(day: string): string {
+  return new Date(`${day.slice(0, 10)}T12:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
 }

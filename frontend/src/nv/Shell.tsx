@@ -69,13 +69,14 @@ export function Shell(props: {
   });
 
   const nav: { id: Screen; label: string }[] = [
+    { id: "station", label: "Station" },
     { id: "leads", label: "Leads" },
   ];
 
   return (
     <div className={`nv${peek ? " peek" : ""}`} data-theme={theme}>
       <header className="nv-bar">
-        <a className="nv-word" href={link("app", client, day, "leads")}>
+        <a className="nv-word" href={link("app", client, day)}>
           NORTHVAINE
         </a>
         <span className="nv-crumb">{crumb}</span>
@@ -109,7 +110,7 @@ export function Shell(props: {
             <a
               key={n.id}
               className="nv-nav"
-              href={link("app", client, day, n.id)}
+              href={link("app", client, day, ...(n.id === "station" ? [] : [n.id]))}
               aria-current={screen === n.id ? "page" : undefined}
             >
               {n.label}

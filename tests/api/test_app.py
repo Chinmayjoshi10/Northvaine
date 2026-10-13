@@ -129,6 +129,19 @@ async def test_brief_has_a_counted_funnel_and_an_honest_chain(client: AsyncClien
                 assert link["quote"] is None
 
 
+async def test_brief_log_is_newest_first_and_tied_to_entries(client: AsyncClient) -> None:
+    data = (await client.get("/api/clients/acme/runs/latest")).json()
+    ranks = {r["rank"] for r in data["accounts"] + data["tenders"] + data["weaker"]}
+    events = [i for i in data["log"] if i["kind"] != "set_aside"]
+    assert events
+    assert all(i["rank"] in ranks and i["company"] for i in events)
+    dated = [i["at"] for i in events if i["at"]]
+    assert dated == sorted(dated, reverse=True)
+    for item in data["log"]:
+        if item["kind"] == "set_aside":
+            assert item["rank"] is None
+
+
 async def test_graph_has_companies_events_and_cited_lines(client: AsyncClient) -> None:
     g = (await client.get("/api/clients/acme/runs/2026-10-05/graph")).json()
     nodes = {f"{n['kind']}:{n['id']}": n for n in g["nodes"]}
