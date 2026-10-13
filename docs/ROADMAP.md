@@ -16,6 +16,21 @@ general engine with nothing hard-coded per industry.
   companies selling into the UK, EU and US public sector. The engine is built so that GTM teams
   can use it through an API.
 
+**Update 14 Oct (D101):**
+- **Objective:** find who the client should target.
+- **Gate 0's first head-to-head** (our run vs manual research) lost for exporters, so the
+  buyer-intent plan (`docs/BUYER_INTENT_PLAN.md`) now comes before more frontend. It adds:
+  - a per-client buyer model;
+  - UK import records (HMRC);
+  - the company register;
+  - cases watched over time;
+  - timing signals;
+  - projects routed through the client's customers.
+- **Gateway-lite** moves from Phase 4 to Phase 2, because it is the only way to catch a buyer's
+  private decision.
+- **First focus:** exporters into the UK and US. Freight forwarders and customs brokers are a
+  second test (same import data).
+
 ---
 
 ## Phase 0: Hackathon version (now to about 15 Oct; submit by 29 Oct)
@@ -55,6 +70,8 @@ labelled as simulated. Real partner outcomes replace the simulation as they arri
 - **Gate 1:** at least 1 lead acted on per brief on average, and at least 2 partners willing to pay.
 
 ## Phase 2: Learning and coverage (Nov-Dec)
+- **Gateway-lite** (moved up 14 Oct): a findable page, a fact-only receptionist, buyer requests
+  become cases.
 - **Learning:**
   - a "your business" learner, from corrections;
   - a buying-pattern learner once there are about 20-30 outcomes;

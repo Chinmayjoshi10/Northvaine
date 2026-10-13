@@ -154,3 +154,10 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
 - Trade-fair exhibitor lists and new exhibitors.
 - Ordering calendars per market (e.g. spring stock shipping windows).
 - US shipping manifests (importer + supplier + origin): paid, needs founder approval.
+
+## Adoption: what makes clients keep using it (14 Oct)
+- Weekly WhatsApp/email digest linking into the app (optional pre-hackathon if a day frees up).
+- Draft next step per taken lead from verified facts only; company-level route.
+- Simple tracker per lead (contacted, sample, quote) and a results line on Station.
+- One login across many clients for the agency.
+- "3 accounts to work today" from the proven-buyer list.
