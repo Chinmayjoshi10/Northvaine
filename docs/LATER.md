@@ -146,3 +146,11 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
   reads them as optional settings attributes already).
 - Client spec flag for "the business the owner knows", so the scorecard can name that client
   without an industry word in code (T5.5 uses a generic wording).
+
+## From the 14 Oct buyer-intent field test (D101)
+- Competitors' "where to buy" / stockist pages as proven-buyer lists.
+- Trade-body and embassy published buyer enquiries (stated intent for exporters).
+- Watching proven buyers' websites for a new range or out-of-stock pages.
+- Trade-fair exhibitor lists and new exhibitors.
+- Ordering calendars per market (e.g. spring stock shipping windows).
+- US shipping manifests (importer + supplier + origin): paid, needs founder approval.

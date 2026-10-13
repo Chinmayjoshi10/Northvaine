@@ -970,3 +970,16 @@ brief with Claude's five corrections (docs/COLLAB.md).
     before the answers choose the searches.
   - **Follow-ups:** after taking a lead, "What happened?" records the outcome (D95 fields); any
     quoted chain step can be flagged as a wrong fact. The latest answer per lead counts.
+- **D101 — Buyer intent comes before more frontend (14 Oct).** A hand search for a
+  design-partner exporter showed the radar finds public-works contractors but misses the buyers
+  an exporter lives on (importers, distributors, merchants), and that a lead searched once is
+  either too early or too late. The founder: "if we can't find real opportunities for the client
+  continuously they won't pay us". The objective, in the founder's words: find who the client
+  should target. Plan and lessons: `docs/BUYER_INTENT_PLAN.md`.
+  - A per-client **buyer model** (data) decides who is a buyer; the gate uses it, so a
+    distributor can be a buyer for one client and a competitor for another.
+  - **Official import records** (UK HMRC, free and keyless) are the first source of proof of
+    buying for exporter clients; a **company register** check removes hauliers and agents.
+  - **Cases are watched across editions**, each naming the step it is waiting for, with two
+    scores (potential and now) and states such as hold, too late and back in motion.
+  - Every step is accepted only if a rerun matches the verified hand-made list kept in `.refs/`.
