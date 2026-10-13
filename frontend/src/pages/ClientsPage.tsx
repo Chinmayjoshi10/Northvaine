@@ -26,8 +26,8 @@ export function ClientsPage() {
                         Latest run {c.latest}: {c.accounts} to approach, {c.tenders} tender
                         {c.tenders === 1 ? "" : "s"} to watch.
                       </p>
-                      <a className="btn primary" href={link("c", c.client_id, c.latest)}>
-                        Open brief
+                      <a className="btn primary" href={link("app", c.client_id, c.latest)}>
+                        Open Station
                       </a>
                     </>
                   ) : (

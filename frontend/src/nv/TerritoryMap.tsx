@@ -149,7 +149,7 @@ export function TerritoryMap(props: {
     if (!ctx) return;
     const css = getComputedStyle(cv);
     const dot = css.getPropertyValue("--mapdot").trim();
-    const lit = css.getPropertyValue("--soft").trim();
+    const lit = css.getPropertyValue("--maplit").trim();
 
     const mask = document.createElement("canvas");
     mask.width = w;
@@ -174,7 +174,7 @@ export function TerritoryMap(props: {
         const i = (y * w + x) * 4;
         if (px[i + 3] < 128) continue;
         const hasLeads = px[i + 1] > px[i];
-        ctx.globalAlpha = hasLeads ? 0.7 : 1;
+        ctx.globalAlpha = hasLeads ? 0.75 : 1;
         ctx.fillStyle = hasLeads ? lit : dot;
         ctx.beginPath();
         ctx.arc(x, y, hasLeads ? 1.15 : 1.05, 0, Math.PI * 2);
