@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
-import { BriefPage } from "./pages/BriefPage";
 import { ClientsPage } from "./pages/ClientsPage";
-import { DossierPage } from "./pages/DossierPage";
-import { MorningPage } from "./pages/MorningPage";
 import { LeadsPage } from "./nv/LeadsPage";
+import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
 
 // Hash routes keep the app a static bundle that any server can host:
-//   #/                      clients
-//   #/c/<client>/<day>      brief (day may be "latest")
-//   #/c/<client>/<day>/e/<rank>   dossier
-//   #/m/<client>/<day>      the Morning (day may be "latest")
-//   #/app/<client>/<day>/leads   the app: leads, with the case as a sheet
+//   #/                           clients
+//   #/app/<client>/<day>         Station, the edition (day may be "latest")
+//   #/app/<client>/<day>/leads   Leads, with the case as a sheet
+// Older links (#/c/..., #/m/...) open Station for the same client and day.
 function currentPath(): string[] {
   return window.location.hash
     .replace(/^#\/?/, "")
@@ -33,24 +29,14 @@ export function App() {
   }, []);
 
   if (path[0] === "app" && path.length >= 3) {
-    return <LeadsPage client={path[1]} day={path[2]} />;
-  }
-  if (path[0] === "m" && path.length >= 3) {
-    return <MorningPage client={path[1]} day={path[2]} />;
-  }
-
-  let page: ReactNode;
-  if (path[0] === "c" && path.length >= 3 && path[3] === "e" && path[4]) {
-    const rank = Number(path[4]);
-    page = Number.isInteger(rank) ? (
-      <DossierPage client={path[1]} day={path[2]} rank={rank} />
+    return path[3] === "leads" ? (
+      <LeadsPage client={path[1]} day={path[2]} />
     ) : (
-      <p role="alert">That entry link is not valid.</p>
+      <StationPage client={path[1]} day={path[2]} />
     );
-  } else if (path[0] === "c" && path.length >= 3) {
-    page = <BriefPage client={path[1]} day={path[2]} />;
-  } else {
-    page = <ClientsPage />;
+  }
+  if ((path[0] === "c" || path[0] === "m") && path.length >= 3) {
+    return <StationPage client={path[1]} day={path[2]} />;
   }
 
   return (
@@ -65,7 +51,7 @@ export function App() {
         <span className="tag">Radar</span>
       </header>
       <main id="main" tabIndex={-1}>
-        {page}
+        <ClientsPage />
       </main>
       <footer className="foot">
         Drafts and briefs only. A person decides and makes contact.

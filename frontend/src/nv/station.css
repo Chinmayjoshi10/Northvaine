@@ -1,0 +1,423 @@
+/* Station: the edition (docs/design/final/station.html). */
+.st {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(440px, 60vh) auto;
+  min-height: 100%;
+}
+.st .hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.st .quiet {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--dim);
+  font-size: 15px;
+}
+
+/* masthead */
+.st .mast {
+  grid-column: 1 / -1;
+  padding: 22px 30px 20px;
+  border-bottom: 1px solid var(--hair);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 40px;
+  align-items: end;
+  animation: st-rise 0.7s var(--ease) both;
+}
+.st .ed {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.st .ed .rule {
+  flex: 1;
+  height: 1px;
+  background: var(--hair);
+  transform: translateY(-3px);
+  max-width: 120px;
+}
+.st .mast .hl {
+  font-size: 33px;
+  line-height: 1.12;
+  max-width: 26em;
+}
+.st .hlink {
+  all: unset;
+  cursor: pointer;
+  text-decoration: underline transparent 1px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 0.25s ease;
+}
+.st .hlink:hover {
+  text-decoration-color: var(--hair2);
+}
+.st .mast .lede {
+  font-size: 17.5px;
+  line-height: 1.4;
+  margin-top: 8px;
+  max-width: 46em;
+}
+.st .mast .lede b {
+  color: var(--ink);
+  font-weight: 400;
+}
+.st .stats {
+  display: flex;
+  gap: 30px;
+  padding-bottom: 4px;
+}
+.st .stat {
+  text-decoration: none;
+}
+.st .stat b {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--ink);
+  font-feature-settings: "lnum";
+}
+.st .stat .caps {
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.st .stat.sig b {
+  color: var(--signal);
+}
+.st a.stat:hover .caps {
+  color: var(--ink);
+}
+
+/* territory */
+.st .map {
+  position: relative;
+  background: var(--mapbg);
+  border-right: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+  overflow: hidden;
+  min-height: 0;
+}
+.st .map > .hd {
+  position: absolute;
+  top: 14px;
+  left: 22px;
+  right: 18px;
+  z-index: 2;
+  align-items: center;
+}
+.st .legend {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.st .legend span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.st .legend .m {
+  width: 7px;
+  height: 7px;
+}
+.st .legend .m.y {
+  box-shadow: 0 0 6px var(--signal);
+}
+.st .mapnote {
+  position: absolute;
+  left: 22px;
+  bottom: 14px;
+  display: flex;
+  gap: 18px;
+}
+.st .mapnote span {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--dim);
+}
+.tmap {
+  position: absolute;
+  inset: 0;
+}
+.tmap .dots,
+.tmap svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.tmap .dots {
+  animation: st-fade 1.4s ease both;
+  /* the legend and the note sit on clear ground */
+  -webkit-mask-image: linear-gradient(transparent 20px, #000 72px, #000 calc(100% - 60px), transparent calc(100% - 24px));
+  mask-image: linear-gradient(transparent 20px, #000 72px, #000 calc(100% - 60px), transparent calc(100% - 24px));
+}
+.tmap text {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  fill: var(--soft);
+  paint-order: stroke;
+  stroke: var(--mapbg-solid, var(--bg));
+  stroke-width: 3px;
+}
+.tmap .hot text {
+  fill: var(--ink);
+  font-weight: 500;
+}
+.tmap text.sub {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 400;
+  fill: var(--dim);
+}
+.tmap .mk {
+  animation: st-fade 0.8s var(--ease) both;
+}
+.tmap .sq {
+  fill: var(--mapbg-solid, var(--bg));
+  stroke: var(--soft);
+  stroke-width: 1.2;
+}
+.tmap .wash {
+  fill: var(--signal-wash);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: st-breathe 3.2s ease-in-out infinite;
+}
+.tmap .ring {
+  fill: none;
+  stroke: var(--signal-ring);
+}
+.tmap .core {
+  fill: var(--signal);
+  filter: drop-shadow(0 0 5px var(--signal));
+}
+.tmap .tfail {
+  position: absolute;
+  inset: auto 22px 44px;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--dim);
+}
+
+/* decisions */
+.st .dec {
+  padding: 14px 26px 6px;
+  border-bottom: 1px solid var(--hair);
+  overflow: auto;
+  min-height: 0;
+}
+.st .dec > .hd {
+  margin-bottom: 4px;
+}
+.st .d {
+  padding: 14px 0 15px;
+  border-top: 1px solid var(--hair);
+  animation: st-rise 0.6s var(--ease) both;
+}
+.st .d:first-of-type {
+  border-top: none;
+}
+.st .d .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.st .d .dateline {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.st .d .wait {
+  min-height: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--soft);
+  white-space: nowrap;
+}
+.st .d .wait.hot {
+  color: var(--signal);
+}
+.st .d .q {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 18.5px;
+  line-height: 1.25;
+  margin: 6px 0 5px;
+  letter-spacing: -0.008em;
+}
+.st .d .q button {
+  all: unset;
+  cursor: pointer;
+}
+.st .d .q button:hover {
+  color: var(--bright);
+}
+.st .d .why {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--soft);
+  margin: 0;
+}
+.st .d .why b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.st .d .opts {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.st .d .did {
+  color: var(--soft);
+  margin-right: 6px;
+}
+
+/* bottom row */
+.st .cell {
+  padding: 14px 22px 18px;
+  min-width: 0;
+}
+.st .cell > .hd {
+  margin-bottom: 8px;
+}
+.st .feed {
+  border-right: 1px solid var(--hair);
+}
+.st .feed .e {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48px 12px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--hair);
+  font-size: 12.5px;
+  transition: background 0.2s ease;
+}
+.st .feed .e:last-child {
+  border-bottom: none;
+}
+.st .feed .e:hover .t {
+  color: var(--bright);
+}
+.st .feed .e .m {
+  width: 6px;
+  height: 6px;
+  transform: translateY(-1px);
+}
+.st .feed .e .t {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.st .feed .e .t em {
+  font-style: normal;
+  color: var(--soft);
+}
+.st .run .step {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 40px;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12.5px;
+  color: var(--soft);
+}
+.st .run .step b {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--ink);
+  text-align: right;
+}
+.st .run .bar {
+  height: 5px;
+  background: var(--hair);
+  overflow: hidden;
+}
+.st .run .bar i {
+  display: block;
+  height: 100%;
+  background: var(--faint);
+  transform-origin: left;
+  animation: st-grow 0.9s var(--ease) both;
+}
+.st .run .bar i.on {
+  background: var(--ink);
+}
+.st .run .aside {
+  margin: 10px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+@keyframes st-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes st-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes st-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes st-breathe {
+  50% {
+    transform: scale(1.18);
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 1100px) {
+  .st {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+  .st .mast {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 18px;
+  }
+  .st .map {
+    height: 420px;
+    border-right: none;
+  }
+  .st .feed {
+    border-right: none;
+    border-bottom: 1px solid var(--hair);
+  }
+}
+@media (max-width: 860px) {
+  .st .mast {
+    padding: 20px 16px;
+  }
+  .st .mast .hl {
+    font-size: 26px;
+  }
+  .st .dec,
+  .st .cell {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

@@ -53,6 +53,16 @@ export interface BriefView {
   thin: boolean;
   notes: string[];
   funnel?: Funnel | null;
+  log?: LogItem[];
+}
+
+/** One thing the run saw, newest first: when its source made it public, what, and about whom. */
+export interface LogItem {
+  at: string | null;
+  kind: string;
+  text: string;
+  company: string | null;
+  rank: number | null;
 }
 
 export interface Claim {

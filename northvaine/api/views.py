@@ -51,6 +51,16 @@ class Funnel(BaseModel):
     briefed: int
 
 
+class LogItem(BaseModel):
+    """One thing the run saw, as recorded: when it became public, what, and about whom."""
+
+    at: str | None  # ISO time the source made it public; None when the source gives none
+    kind: str  # an event type, or "set_aside"
+    text: str
+    company: str | None
+    rank: int | None  # the situation it belongs to, when it is one
+
+
 class BriefView(BaseModel):
     client_id: str
     offer: str
@@ -61,6 +71,7 @@ class BriefView(BaseModel):
     thin: bool
     notes: list[str]
     funnel: Funnel | None = None
+    log: list[LogItem] = []
 
 
 class Claim(BaseModel):
@@ -165,7 +176,54 @@ def brief_view(run: RadarRun, settings: Settings) -> BriefView:
         thin=len(accounts) + len(tenders) < brief._THIN_BELOW,
         notes=[brief._inline(n) for n in run.notes],
         funnel=_funnel(run),
+        log=_log(run),
     )
+
+
+# Only organisations are named in the log; other set-aside mentions may be people (D76).
+_NAMED_ASIDE = {"competitor", "reseller", "publisher", "not_a_buyer"}
+_ASIDE_TEXT = {
+    "competitor": "a competitor",
+    "reseller": "sells what you sell",
+    "publisher": "a publisher, not a buyer",
+    "not_a_buyer": "not a buyer",
+}
+
+
+def _log(run: RadarRun, limit: int = 60) -> list[LogItem]:
+    items: list[LogItem] = []
+    for entry in run.entries:
+        c = entry.candidate
+        for ev in c.events:
+            when = ev.available_at or next(
+                (k.available_at for k in c.claims if k.ref in ev.claim_refs and k.available_at),
+                None,
+            )
+            items.append(
+                LogItem(
+                    at=when.isoformat() if when else None,
+                    kind=ev.event_type,
+                    text=brief._inline(ev.description),
+                    company=brief._name(c),
+                    rank=entry.rank,
+                )
+            )
+    items.sort(key=lambda i: i.at or "", reverse=True)
+    for r in run.rejected:
+        reason = r.gate.rejected_as.value if r.gate.rejected_as else ""
+        named = reason in _NAMED_ASIDE and not r.candidate.name.startswith("[")
+        items.append(
+            LogItem(
+                at=None,
+                kind="set_aside",
+                text=f"Set aside: {_ASIDE_TEXT[reason]}"
+                if named
+                else "Set aside a mention with no identifiable organisation",
+                company=brief._name(r.candidate) if named else None,
+                rank=None,
+            )
+        )
+    return items[:limit]
 
 
 def _funnel(run: RadarRun) -> Funnel:

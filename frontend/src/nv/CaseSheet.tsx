@@ -19,7 +19,7 @@ export type Decision =
   | { kind: "later"; label: string }
   | { kind: "drop"; label: string; reason: string };
 
-function optionsFor(
+export function optionsFor(
   r: Row,
 ): { kind: "take" | "later" | "drop"; label: string }[] {
   if (r.stream === "tender" && r.account_role === "direct_purchaser")

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api";
-import type { BriefView, FeedbackRecord, Row } from "../types";
+import type { BriefView } from "../types";
 import { useLoad } from "../useLoad";
 import { CaseSheet } from "./CaseSheet";
-import type { Decision } from "./CaseSheet";
+import { useDecisions } from "./decide";
 import {
   isHot,
   longDate,
@@ -55,21 +55,8 @@ function Leads(props: {
   );
   const [filter, setFilter] = useState("All");
   const [current, setCurrent] = useState<number | null>(null);
-  const [decided, setDecided] = useState<Record<number, string>>({});
+  const { decided, decide } = useDecisions(client, brief);
   const sheetRef = useRef<HTMLDivElement>(null);
-
-  // answers already given for this run, so the list shows what has been decided
-  useEffect(() => {
-    // the run's own date: "latest" is a route word, not a date the feedback store knows
-    api.feedback(client, brief.as_of).then(
-      (records: FeedbackRecord[]) => {
-        const seen: Record<number, string> = {};
-        for (const f of records) seen[f.rank] = f.note || "decided";
-        setDecided(seen);
-      },
-      () => undefined,
-    );
-  }, [client, brief.as_of]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -122,30 +109,6 @@ function Leads(props: {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, step]);
-
-  const decide = async (r: Row, d: Decision) => {
-    const body: Omit<FeedbackRecord, "received_at"> = {
-      client: brief.client_id,
-      as_of: brief.as_of,
-      rank: r.rank,
-      company: r.company,
-      correct: d.kind === "drop" && d.reason === "wrong fact" ? false : null,
-      relevant: d.kind === "drop" ? false : true,
-      new: null,
-      actionable: d.kind === "take" ? true : d.kind === "later" ? false : null,
-      failure_chip:
-        d.kind === "drop" ? (d.reason as FeedbackRecord["failure_chip"]) : null,
-      accepted_for_contact:
-        d.kind === "take" ? true : d.kind === "drop" ? false : null,
-      known_already: null,
-      new_intelligence: null,
-      contacted: null,
-      outcome: null,
-      note: d.label,
-    };
-    await api.sendFeedback(body);
-    setDecided((prev) => ({ ...prev, [r.rank]: d.label }));
-  };
 
   const { weekday, date } = longDate(brief.as_of);
   const act = rows.filter((r) => stageOf(r) === "Act now").length;
