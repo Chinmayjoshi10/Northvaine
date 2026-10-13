@@ -119,12 +119,21 @@ async def gate_candidate(
     # Imported here: brain.llm pulls in the SDK (httpx), which module import must not do.
     from northvaine.brain.llm import complete_json
 
+    # A client with a buyer model gets the prompt that reads it (v4, D101); every other client
+    # keeps v3, so its recorded runs replay unchanged.
+    variables: dict[str, Any] = {"offer": spec.offer, "markets": ", ".join(spec.markets)}
+    if spec.buyer_roles:
+        prompt = load_prompt("radar_gate", version=4)
+        variables["buyer_roles"] = "; ".join(spec.buyer_roles)
+        variables["not_buyers"] = "; ".join(spec.not_buyers) or "not stated"
+    else:
+        prompt = load_prompt("radar_gate", version=3)
+
     result = await complete_json(
         tier=ModelTier.MID,
-        prompt=load_prompt("radar_gate"),
+        prompt=prompt,
         variables={
-            "offer": spec.offer,
-            "markets": ", ".join(spec.markets),
+            **variables,
             "candidate_name": Untrusted(candidate.name),
             "candidate_roles": Untrusted(", ".join(candidate.roles)),
             "claims": Untrusted(claim_lines(candidate.claims)),

@@ -227,3 +227,31 @@ def test_a_citation_that_copies_the_whole_claim_line_still_names_its_ref() -> No
     assert ref_of("C12") == "C12"
     assert ref_of(" C3 ") == "C3"
     assert ref_of("not a ref") == "not a ref"  # left as is, so the caller drops it
+
+
+# The buyer model (D101): a client whose customers are traders gets the prompt that reads it.
+BUYER_MODEL_SPEC = SPEC.model_copy(
+    update={
+        "buyer_roles": ["importer", "distributor"],
+        "not_buyers": ["other manufacturers of the same products"],
+    }
+)
+
+
+async def test_a_buyer_model_selects_the_prompt_that_reads_it() -> None:
+    client = FakeClient(reply())
+    with llm.client_override(client):
+        decision = await gate_candidate(make_candidate(), BUYER_MODEL_SPEC, run=RunContext())
+    assert decision.passed
+    prompt = client.prompt
+    assert "Who buys from the client" in prompt
+    assert "importer; distributor" in prompt
+    assert "other manufacturers of the same products" in prompt
+
+
+async def test_without_a_buyer_model_the_gate_prompt_is_unchanged() -> None:
+    _, client = await run_gate(reply())
+    assert "Who buys from the client" not in client.prompt
+    assert "trades or distributes goods like the client's offer rather than using them" in (
+        client.prompt
+    )

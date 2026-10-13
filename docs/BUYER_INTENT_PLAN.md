@@ -324,3 +324,37 @@ so recordings and tests stay stable.
 - A run for a non-stone test client works unchanged.
 - `tasks.py gate` passes.
 - Time: about 1.5 sessions; 1b when the key arrives.
+
+---
+
+# Daily edition: 3-5 checked targets a day (founder, 14 Oct)
+
+**Promise:** 3-5 checked targets every day, each with a reason to contact them today, each
+labelled:
+- **act now:** a live purchase, award or tender;
+- **just changed:** something happened to this company;
+- **account to work:** a proven buyer with a fresh, researched angle.
+
+Never padded: a thin day says so.
+
+**Daily mix:** 1 act now (if any) + 1-2 just changed + 1-2 accounts to work.
+
+**Sources per label:**
+- **Act now:** tenders and awards in every market of the client, across all its product codes.
+- **Just changed:**
+  - the Companies House streaming API (same free key as the lookup): new owners (PSC
+    changes), renames, new companies registered under the client's buyers' trade codes (SIC),
+    officer changes;
+  - import records (started or stopped importing);
+  - news, trade press and job ads.
+- **Account to work:** the proven-buyer list from import records, ranked by fit, each with a
+  researched brief (what they sell, ownership, recent changes, import pattern, why now).
+
+**Evidence:** the field test's best lead (a tile group taking control of a new company, renaming
+it for stone and porcelain distribution, and starting to import) came from register changes plus
+import records.
+
+**Build order:**
+1. Step 1 (buyer model, import records).
+2. Companies House lookup and stream (step 1b, moved earlier).
+3. A per-client daily quota with labels in the edition.

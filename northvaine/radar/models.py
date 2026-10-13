@@ -76,6 +76,18 @@ class ClientSpec(NorthvaineModel):
     # Words for related products: a quote naming one is "related", a possibility that needs a
     # specification check, never "stated" (D84).
     related_terms: list[str] = Field(default_factory=list)
+    # The buyer model (D101): who buys from this client, as data. Empty means "as before": the
+    # gate treats traders of the offer as resellers. A client whose customers are importers or
+    # distributors lists those roles here, and the gate then counts them as buyers.
+    buyer_roles: list[str] = Field(default_factory=list)
+    # Who is competition rather than a buyer, in plain words (e.g. "other manufacturers of the
+    # same products").
+    not_buyers: list[str] = Field(default_factory=list)
+    # Official codes buyers use for the offer, scheme-prefixed: "hs:<6-8 digits>", "cpv:<8>".
+    product_codes: list[str] = Field(default_factory=list)
+    # The client's current customers: never shown as new, used as routes. Real lists live only
+    # in specs outside the repo.
+    existing_customers: list[str] = Field(default_factory=list)
 
 
 def load_client_spec(client_id: str, clients_dir: Path | None = None) -> ClientSpec:
