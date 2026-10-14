@@ -223,6 +223,7 @@ async def test_structured_evidence_quotes_every_line_and_names_the_importer() ->
     assert len(claims) == len(doc.text.splitlines())
     assert claims[0].subject is not None and claims[0].subject.role == "importer"
     assert claims[0].subject.country == "GB"
+    assert "Country: GB" in [c.source_quote for c in claims]  # grounds the subject's country
     (event,) = events
     assert event.event_type == "imports_recorded"
     assert event.claim_indices == list(range(len(claims)))

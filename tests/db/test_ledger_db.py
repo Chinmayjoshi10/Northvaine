@@ -188,7 +188,7 @@ async def test_save_events_refuses_unverified_and_is_idempotent(
 async def test_concepts(maker: async_sessionmaker[AsyncSession]) -> None:
     async with maker() as s:
         seeds = await ledger.load_concepts(s)
-        assert len(seeds) == 12 and all(c.level == 0 for c in seeds)
+        assert len(seeds) == 13 and all(c.level == 0 for c in seeds)
         parent = seeds[0]
         a = ConceptAssignment(
             parent_id=parent.id,
@@ -204,7 +204,7 @@ async def test_concepts(maker: async_sessionmaker[AsyncSession]) -> None:
             level=0, label=parent.label, description="x", status="active", is_new=False
         )
         assert await ledger.ensure_concept(s, top) == parent.id
-        assert len(await ledger.load_concepts(s)) == 13
+        assert len(await ledger.load_concepts(s)) == 14  # 13 seeds + the new one
         assert len(await ledger.load_concepts(s, statuses=("retired",))) == 0
         await ledger.set_concept_embedding(s, first, [0.5] * 1024)
         got = {c.id: c for c in await ledger.load_concepts(s)}

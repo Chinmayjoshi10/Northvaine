@@ -3,13 +3,20 @@
 
 from __future__ import annotations
 
+import re
 from datetime import date
 
 from pydantic import BaseModel, ConfigDict
 
 from northvaine.core.settings import Settings
 from northvaine.radar import brief
-from northvaine.radar.models import CandidateClaim, RadarRun, RadarStream, RankedEntry
+from northvaine.radar.models import (
+    Candidate,
+    CandidateClaim,
+    RadarRun,
+    RadarStream,
+    RankedEntry,
+)
 
 
 class Link(BaseModel):
@@ -139,15 +146,32 @@ class Dossier(BaseModel):
     decision_line: str
 
 
+_MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
+
+
+def _plain(text: str) -> str:
+    """Brief text without its Markdown escapes (brief._safe): the app renders plain text,
+    never Markdown, so an escaped bracket must reach it as a bracket."""
+    return _MD_ESCAPE.sub(r"\1", text)
+
+
+def _plain_name(candidate: Candidate) -> str:
+    return _plain(brief._name(candidate))
+
+
+def _plain_what(candidate: Candidate) -> str:
+    return _plain(brief._what(candidate))
+
+
 def _row(entry: RankedEntry, today: date) -> Row:
     c = entry.candidate
     return Row(
         rank=entry.rank,
         status=brief.action_status(entry),
-        company=brief._name(c),
+        company=_plain_name(c),
         country=brief._country(c.country),
         stream=c.stream.value,
-        what=brief._what(c),
+        what=_plain_what(c),
         requirement=entry.requirement,
         requirement_ref=entry.requirement_ref,
         why_now=brief._why_now(entry, today),
@@ -206,7 +230,7 @@ def _log(run: RadarRun, limit: int = 60) -> list[LogItem]:
                     at=when.isoformat() if when else None,
                     kind=ev.event_type,
                     text=brief._inline(ev.description),
-                    company=brief._name(c),
+                    company=_plain_name(c),
                     rank=entry.rank,
                 )
             )
@@ -221,7 +245,7 @@ def _log(run: RadarRun, limit: int = 60) -> list[LogItem]:
                 text=f"Set aside: {_ASIDE_TEXT[reason]}"
                 if named
                 else "Set aside a mention with no identifiable organisation",
-                company=brief._name(r.candidate) if named else None,
+                company=_plain_name(r.candidate) if named else None,
                 rank=None,
             )
         )
@@ -314,7 +338,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
     )
     return Dossier(
         rank=entry.rank,
-        company=brief._name(c),
+        company=_plain_name(c),
         country=brief._country(c.country),
         stream=stream,
         stream_note=brief._STREAM_NOTE[c.stream],
@@ -366,7 +390,7 @@ def chain(entry: RankedEntry) -> list[Link]:
     c, role = entry.candidate, entry.account_role
     if c.stream == RadarStream.TRADE:
         return _trade_chain(entry)
-    name = brief._name(c)
+    name = _plain_name(c)
     buyer, title = _line(entry, "Buyer ["), _line(entry, "Title [")
     winner = _line(entry, "Winner [")
     unknown = lambda slot, label: Link(slot=slot, label=label, state="unknown")  # noqa: E731
@@ -381,7 +405,7 @@ def chain(entry: RankedEntry) -> list[Link]:
     project = (
         _stated("project", brief._after_colon(title.source_quote), title)
         if title is not None
-        else Link(slot="project", label=brief._what(c), state="inferred")
+        else Link(slot="project", label=_plain_what(c), state="inferred")
         if c.events
         else unknown("project", "the project")
     )
@@ -444,7 +468,7 @@ def _trade_chain(entry: RankedEntry) -> list[Link]:
     product = _line(entry, "Commodity ")
     history = _line(entry, "New importer: ") or _line(entry, "Also recorded ")
     links = [
-        _stated("importer", brief._name(entry.candidate), importer)
+        _stated("importer", _plain_name(entry.candidate), importer)
         if importer
         else unknown("importer", "the importer"),
         _stated("product", product.source_quote.split(": imported")[0], product)

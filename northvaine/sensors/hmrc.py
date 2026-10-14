@@ -168,6 +168,8 @@ def render_trader_text(trader: _Trader, descriptions: dict[str, str], previous_y
     lines = [f"Importer: {trader.name}"]
     if trader.postcode:
         lines.append(f"Postcode: {trader.postcode}")
+    # Only UK addresses are kept (non-UK sellers are dropped), so the country is on record.
+    lines.append(f"Country: {HMRC_COUNTRY}")
     for cn8 in sorted(trader.months):
         months = ", ".join(month_label(m) for m in sorted(trader.months[cn8]))
         about = f" ({descriptions[cn8]})" if descriptions.get(cn8) else ""

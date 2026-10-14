@@ -199,3 +199,11 @@ def test_proven_buyers_are_gated_after_open_tenders_and_before_the_rest() -> Non
 def test_what_names_the_imported_goods() -> None:
     what = brief._what(importer("What Imports Ltd", new=True))
     assert what == r"imports 12345678 \(Test goods\)"  # escaped for the Markdown tables
+
+
+def test_the_app_gets_names_without_markdown_escapes() -> None:
+    from northvaine.api.views import _plain_name, _plain_what
+
+    c = importer("K & H (Example) Ltd", new=True)
+    assert _plain_name(c) == "K & H (Example) Ltd"
+    assert _plain_what(c) == "imports 12345678 (Test goods)"

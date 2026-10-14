@@ -66,19 +66,19 @@ def test_upgrade_downgrade_upgrade_round_trip(migrated_url: str) -> None:
     extensions, concepts, views, embedding = run(migrated_url, probe)
     assert "vector" in extensions
     print("pgcrypto present:", "pgcrypto" in extensions)  # reported, not asserted
-    assert concepts == 12
+    assert concepts == 13  # 0002 seeds 12, 0007 adds imports_recorded (D102)
     assert views == 2
     # 0003 sizes the vectors (D7/D14): a round trip to base and back must end at the head's
     # shape, not M1's dimensionless one.
     assert embedding == f"vector({EMBED_DIM_EXPECTED})"
 
 
-def test_event_concepts_has_twelve_level_zero_rows(migrated_url: str) -> None:
+def test_event_concepts_has_thirteen_level_zero_rows(migrated_url: str) -> None:
     async def count(conn: AsyncConnection) -> int:
         result = await conn.execute(text("SELECT count(*) FROM event_concepts WHERE level = 0"))
         return result.scalar_one()
 
-    assert run(migrated_url, count) == 12
+    assert run(migrated_url, count) == 13
 
 
 def test_decision_propensity_must_be_in_zero_one(migrated_url: str) -> None:

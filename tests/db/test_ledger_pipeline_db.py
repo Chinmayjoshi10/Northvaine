@@ -176,12 +176,12 @@ async def test_seed_concept_embeddings_is_idempotent(
 ) -> None:
     async with maker() as s:
         client = Recorder()
-        client.vectors = [unit(i) for i in range(12)]
+        client.vectors = [unit(i) for i in range(13)]
         with llm_module.client_override(client):
             written = await seed_concept_embeddings(s, run=RunContext())
             await s.commit()
             again = await seed_concept_embeddings(s, run=RunContext())
-        assert written == 12 and again == 0
-        assert [k for k, _ in client.log] == ["embed"] * 12
+        assert written == 13 and again == 0
+        assert [k for k, _ in client.log] == ["embed"] * 13
         left = await count(s, "event_concepts WHERE level = 0 AND embedding IS NULL")
         assert left == 0
