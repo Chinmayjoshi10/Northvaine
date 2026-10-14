@@ -101,6 +101,7 @@ function question(r: Row): string {
   if (r.stream === "tender" && r.account_role === "direct_purchaser")
     return "Bid on this tender?";
   if (r.stream === "tender") return "Approach the likely bidders before the award?";
+  if (r.stream === "trade") return `Approach ${nice(r.company)}?`;
   return `Take ${nice(r.company)}?`;
 }
 
@@ -112,6 +113,7 @@ function sentence(s: string): string {
 const VERB: Record<string, string> = {
   tender_published: "opened a tender",
   contract_awarded: "won a contract",
+  imports_recorded: "imports your product",
   product_launch: "launched a product",
   facility_opened: "opened a facility",
   expansion: "is expanding",

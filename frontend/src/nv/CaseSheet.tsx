@@ -36,6 +36,12 @@ export function optionsFor(
       { kind: "later", label: "Wait for the award" },
       { kind: "drop", label: "Not for us" },
     ];
+  if (r.stream === "trade")
+    return [
+      { kind: "take", label: "Approach them" },
+      { kind: "later", label: "Not now" },
+      { kind: "drop", label: "Not a buyer" },
+    ];
   return [
     { kind: "take", label: "I’ll take it" },
     { kind: "later", label: "Not now" },
@@ -74,7 +80,9 @@ export function CaseSheet(props: {
       ? "The works will need materials, and the contractor will be the one ordering them."
       : row.stream === "tender" && row.account_role !== "direct_purchaser"
         ? "The buyer of your product will be the contractor who wins this tender."
-        : null;
+        : row.stream === "trade"
+          ? "Official import records show it buys goods under your product codes. They do not show its suppliers, or whether it would take a new one."
+          : null;
 
   const save = async (act: () => Promise<void>) => {
     setSaving(true);
@@ -365,7 +373,9 @@ export function CaseSheet(props: {
               <span>
                 {row.stream === "tender"
                   ? "The procurement contact on the notice"
-                  : "Purchasing, for this project"}
+                  : row.stream === "trade"
+                    ? "Purchasing or the buying team"
+                    : "Purchasing, for this project"}
               </span>
             </div>
           </div>

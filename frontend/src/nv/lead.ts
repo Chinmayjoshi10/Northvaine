@@ -8,6 +8,9 @@ export const SLOT: Record<Link["slot"], string> = {
   contract: "Contract",
   contractor: "Contractor",
   buyer: "Buys what you sell",
+  importer: "Importer",
+  product: "Product code",
+  history: "Import history",
 };
 
 const KEEP_UPPER = new Set([
@@ -77,6 +80,7 @@ export function typeOf(r: Row): string {
   if (r.stream === "tender") return "Tender";
   if (r.stream === "award") return "Award";
   if (r.stream === "announcement") return "Project";
+  if (r.stream === "trade") return "Importer";
   return r.stream.charAt(0).toUpperCase() + r.stream.slice(1);
 }
 
@@ -92,6 +96,7 @@ export function roleOf(r: Row): string {
   if (role === "demand_source" || role === "direct_purchaser")
     return "authority";
   if (role === "awarded_contractor") return "contractor";
+  if (role === "importer_of_record") return "importer";
   return role.replace(/_/g, " ");
 }
 

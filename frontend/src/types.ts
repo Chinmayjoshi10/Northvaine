@@ -29,7 +29,16 @@ export interface Row {
 
 /** One step of the commercial chain, as known: stated (a verified quote), inferred, unknown. */
 export interface Link {
-  slot: "authority" | "project" | "contract" | "contractor" | "buyer";
+  // a trade record (D102) uses importer, product, history and buyer
+  slot:
+    | "authority"
+    | "project"
+    | "contract"
+    | "contractor"
+    | "buyer"
+    | "importer"
+    | "product"
+    | "history";
   label: string;
   state: "stated" | "inferred" | "unknown";
   quote: string | null;
