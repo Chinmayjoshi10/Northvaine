@@ -246,9 +246,13 @@ def _trade_urgency(candidate: Candidate) -> tuple[int, int, str]:
     last, first = slots.get("last_month"), slots.get("first_month")
     months = slots.get("months_active")
     span = f"imported in {months} month(s) from {first} to {last}" if last else "imports recorded"
+    # new importers first, then more months, then more product codes
+    active = months if isinstance(months, int) else 0
+    codes = len([c for c in str(slots.get("codes") or "").split(",") if c.strip()])
+    position = -(active * 100 + codes)
     if slots.get("new_this_year"):
-        return _TIER_RECENT, 0, f"Timing: started importing this year; {span}"
-    return _TIER_RECENT, 1, f"Timing: a regular importer; {span}"
+        return _TIER_RECENT, position, f"Timing: started importing this year; {span}"
+    return _TIER_RECENT, 10_000 + position, f"Timing: a regular importer; {span}"
 
 
 def _trade_requirement(candidate: Candidate) -> CandidateClaim | None:
@@ -521,11 +525,23 @@ def _what(candidate: Candidate, limit: int = 90) -> str:
     verified statement. Code-composed from verified claims only."""
     title = _title(candidate)
     text = _quoted_value(title, _TITLE_PREFIX) if title else ""
+    if not text and candidate.stream == RadarStream.TRADE:
+        text = _imports_what(candidate)
     if not text and candidate.claims:
         text = _safe(candidate.claims[0].statement)
     if len(text) > limit:
         text = text[: limit - 1].rstrip() + "…"
     return text or NOT_STATED
+
+
+def _imports_what(candidate: Candidate) -> str:
+    """ "imports <code> (<description>); ..." from the record's commodity lines (D102)."""
+    parts: list[str] = []
+    for claim in candidate.claims:
+        quote = claim.source_quote
+        if quote.startswith("Commodity "):
+            parts.append(_safe(quote.removeprefix("Commodity ").split(": imported")[0]))
+    return "imports " + "; ".join(parts) if parts else ""
 
 
 def _plain_happened(candidate: Candidate) -> str | None:
@@ -562,7 +578,7 @@ def _plain_imported(candidate: Candidate) -> str | None:
         return None
     parts = [f"{_name(candidate)} imported goods under your product codes"]
     parts.append(": " + "; ".join(f"{_safe(k.source_quote)} [{k.ref}]" for k in lines[:3]))
-    new = _claim_starting(candidate, "Not recorded as ")
+    new = _claim_starting(candidate, "New importer: ")
     if new is not None:
         parts.append(f". {_safe(new.source_quote)} [{new.ref}]")
     return "".join(parts) + "."

@@ -44,6 +44,7 @@ from northvaine.radar.models import (
     ClientSpec,
     GateDecision,
     RadarRun,
+    RadarStream,
     RejectedEntry,
     SkepticFinding,
 )
@@ -93,13 +94,17 @@ def seeded_concepts() -> list[EventConceptRow]:
 
 
 def _gate_order(candidates: list[Candidate], today: date) -> list[Candidate]:
-    """Open tender windows first (a seller can still bid), then most claims, then key, so the
-    gate cap never drops an actionable tender in favour of a closed one (D71)."""
+    """Open tender windows first (a seller can still bid), then proven buyers from trade
+    records (D102), then most claims, then key, so the gate cap never drops an actionable tender
+    in favour of a closed one (D71), nor a proven buyer in favour of a past award."""
 
     def still_open(c: Candidate) -> bool:
         return c.window_end is not None and c.window_end >= today
 
-    return sorted(candidates, key=lambda c: (not still_open(c), -len(c.claims), c.key))
+    return sorted(
+        candidates,
+        key=lambda c: (not still_open(c), c.stream != RadarStream.TRADE, -len(c.claims), c.key),
+    )
 
 
 async def run_radar(

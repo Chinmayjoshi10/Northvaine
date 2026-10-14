@@ -442,7 +442,7 @@ def _trade_chain(entry: RankedEntry) -> list[Link]:
     unknown = lambda slot, label: Link(slot=slot, label=label, state="unknown")  # noqa: E731
     importer = _line(entry, "Importer: ")
     product = _line(entry, "Commodity ")
-    history = _line(entry, "Not recorded as ") or _line(entry, "Also recorded ")
+    history = _line(entry, "New importer: ") or _line(entry, "Also recorded ")
     links = [
         _stated("importer", brief._name(entry.candidate), importer)
         if importer
@@ -453,7 +453,7 @@ def _trade_chain(entry: RankedEntry) -> list[Link]:
         _stated(
             "history",
             "new importer this year"
-            if history.source_quote.startswith("Not")
+            if history.source_quote.startswith("New importer")
             else "imported last year too",
             history,
         )

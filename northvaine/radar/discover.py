@@ -84,8 +84,10 @@ def focus_queries(
     A query for an event the settings map to the tender stream looks back at most
     `radar_tender_lookback_days`, since a bidding window is about a month (D27). A query to an
     enumerable source asks for up to `radar_enumerable_max_results` records, so recent notices
-    are not cut off by a small page. Returns copies."""
+    are not cut off by a small page. A query only for trade records keeps its own cap: the
+    sensor ranks its importers, so the cap is a choice, not a page size (D102). Returns copies."""
     tender_kinds = {k for k, stream in settings.radar_stream_by_event.items() if stream == "tender"}
+    trade_kinds = {k for k, stream in settings.radar_stream_by_event.items() if stream == "trade"}
     lookback = timedelta(days=settings.radar_tender_lookback_days)
     wanted = min(settings.radar_enumerable_max_results, settings.sensor_max_results)
     focused: dict[str, list[SensorQuery]] = {}
@@ -99,7 +101,12 @@ def focus_queries(
                 and (q.published_from is None or q.published_to - q.published_from > lookback)
             ):
                 update["published_from"] = q.published_to - lookback
-            if sensor_name in settings.radar_enumerable_sources and q.max_results < wanted:
+            trade_only = bool(q.kinds) and {k.value for k in q.kinds} <= trade_kinds
+            if (
+                sensor_name in settings.radar_enumerable_sources
+                and q.max_results < wanted
+                and not trade_only
+            ):
                 update["max_results"] = wanted
             out.append(q.model_copy(update=update))
         focused[sensor_name] = out

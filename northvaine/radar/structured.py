@@ -28,7 +28,7 @@ EXTRACTED_BY = "code"
 TENDER = "tender_published"
 AWARD = "contract_awarded"
 IMPORTS = "imports_recorded"  # D102: official trade records (sensors/hmrc.py)
-TRADE_LINE_PREFIXES = ("Postcode: ", "Commodity ", "Not recorded as ", "Also recorded ")
+TRADE_LINE_PREFIXES = ("Postcode: ", "Commodity ", "New importer: ", "Also recorded ")
 
 
 @lru_cache(maxsize=1)

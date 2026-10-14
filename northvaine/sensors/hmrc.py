@@ -175,7 +175,11 @@ def render_trader_text(trader: _Trader, descriptions: dict[str, str], previous_y
     if trader.seen_last_year:
         lines.append(f"Also recorded importing these codes in {previous_year}")
     else:
-        lines.append(f"Not recorded as importing these codes in {previous_year}")
+        first = month_label(min(set().union(*trader.months.values())))
+        lines.append(
+            f"New importer: first recorded importing these codes in {first}, none recorded in "
+            f"{previous_year}"
+        )
     return "\n".join(lines)
 
 

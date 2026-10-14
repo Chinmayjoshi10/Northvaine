@@ -46,7 +46,7 @@ def claim(ref: str, quote: str, kind: EvidenceKind = EvidenceKind.STRUCTURED) ->
 
 def importer(name: str, *, new: bool) -> Candidate:
     history = (
-        "Not recorded as importing these codes in 2025"
+        "New importer: first recorded importing these codes in 2026-05, none recorded in 2025"
         if new
         else "Also recorded importing these codes in 2025"
     )
@@ -164,3 +164,38 @@ def test_chain_reads_the_record_lines() -> None:
     assert [link.state for link in links] == ["stated", "stated", "stated", "unknown"]
     assert links[1].label == "Commodity 12345678 (Test goods)"
     assert links[2].label == "new importer this year"
+
+
+def test_a_trade_query_keeps_its_own_cap() -> None:
+    from northvaine.core.models import EventType
+    from northvaine.radar.discover import focus_queries
+    from northvaine.sensors.base import SensorQuery
+
+    trade = SensorQuery(kinds=[EventType.IMPORTS_RECORDED], codes=["hs:123456"], max_results=20)
+    award = SensorQuery(kinds=[EventType.CONTRACT_AWARDED], codes=["cpv:12345678"], max_results=20)
+    out = focus_queries({"hmrc": [trade], "fts": [award]}, SETTINGS)
+    assert out["hmrc"][0].max_results == 20
+    assert out["fts"][0].max_results == SETTINGS.radar_enumerable_max_results
+
+
+def test_proven_buyers_are_gated_after_open_tenders_and_before_the_rest() -> None:
+    from northvaine.radar.run import _gate_order
+
+    trade = importer("Gate Imports Ltd", new=True)
+    many = trade.model_copy(
+        update={
+            "key": "award",
+            "stream": RadarStream.AWARD,
+            "claims": trade.claims * 3,
+        }
+    )
+    open_tender = trade.model_copy(
+        update={"key": "tender", "stream": RadarStream.TENDER, "window_end": date(2026, 11, 1)}
+    )
+    order = _gate_order([many, trade, open_tender], date(2026, 10, 14))
+    assert [c.key for c in order] == ["tender", "gate imports ltd", "award"]
+
+
+def test_what_names_the_imported_goods() -> None:
+    what = brief._what(importer("What Imports Ltd", new=True))
+    assert what == r"imports 12345678 \(Test goods\)"  # escaped for the Markdown tables

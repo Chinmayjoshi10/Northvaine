@@ -96,7 +96,12 @@ async def test_replay_lists_company_importers_ranked() -> None:
             int(d.meta["last_month"].replace("-", "")), SETTINGS
         )
         new = d.meta["new_this_year"]
-        assert ("Not recorded as importing these codes in 2025" in d.text) is new
+        assert ("none recorded in 2025" in d.text) is new
+        if new:
+            assert (
+                f"New importer: first recorded importing these codes in {d.meta['first_month']}"
+                in d.text
+            )
 
 
 async def test_as_of_bounds_the_request_and_drops_late_months() -> None:
