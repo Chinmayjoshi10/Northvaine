@@ -83,8 +83,11 @@ async def test_replay_lists_company_importers_ranked() -> None:
     assert any("non-UK sellers" in n for n in result.notes)
     assert all(d.source == "hmrc" and d.meta["schema_ver"] == 1 for d in docs)
     assert all("AB10 1ZP" not in d.text for d in docs)
-    keys = [(-len(d.meta["families"]), -d.meta["months_active"]) for d in docs]
-    assert keys == sorted(keys)
+    new = [d for d in docs if d.meta["new_this_year"]]
+    assert docs[: len(new)] == new  # new importers first
+    for group in (new, docs[len(new) :]):
+        keys = [(-len(d.meta["families"]), -d.meta["months_active"]) for d in group]
+        assert keys == sorted(keys)
     assert sum(d.meta["new_this_year"] for d in docs) == 4
     for d in docs:
         assert d.text.splitlines()[0] == f"Importer: {d.meta['importer']}"
@@ -122,8 +125,18 @@ async def test_as_of_bounds_the_request_and_drops_late_months() -> None:
 async def test_cap_keeps_the_best() -> None:
     full = await replay(query())
     top = await replay(query(max_results=3))
-    assert [d.external_id for d in top.documents] == [d.external_id for d in full.documents[:3]]
     assert top.truncated is True
+    new = [d.external_id for d in full.documents if d.meta["new_this_year"]]
+    old = [d.external_id for d in full.documents if not d.meta["new_this_year"]]
+    # half the slots (rounded) for new importers, the best of each group
+    assert [d.external_id for d in top.documents] == new[:2] + old[:1]
+
+
+def test_split_legal_form_still_counts_as_a_company() -> None:
+    assert hmrc._is_company("EXAMPLE TRADING LIMITE D", SETTINGS)
+    assert hmrc._is_company("EXAMPLE PLC", SETTINGS)
+    assert not hmrc._is_company("JOHN EXAMPLE", SETTINGS)
+    assert not hmrc._is_company("JOHN EXAMPLE AS AGENT", SETTINGS)  # "as" is a word, not a form
 
 
 @pytest.mark.parametrize(

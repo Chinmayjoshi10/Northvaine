@@ -996,8 +996,11 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Status:** "qualify first" until the importer's own site names what the client sells
     (company fit, D96, now run for importers too), then "contact now". In the field test half
     the raw new importers were not buyers (a haulier, a machinery dealer).
-  - **New importers lead:** "not recorded as importing these codes" last year ranks first
-    among importers (BUYER_INTENT_PLAN lesson 5).
+  - **New importers lead:** half the sensor's slots (`hmrc_new_importer_share`) go to
+    companies not recorded importing these codes last year, and they rank first among importers
+    (BUYER_INTENT_PLAN lesson 5). Ranked by codes and months alone, 40 slots for the field-test
+    codes were all established importers and the hand list's best lead was cut; with the share
+    it is second.
   - **Sensor `hmrc`** (`api.uktradeinfo.com`, OGL v3.0): one document per importer per run,
     ranked (most requested codes, most months, new this year) and capped by `max_results`.
     **Company-level only:** a name without a legal form (`hmrc_company_markers`) may be a sole

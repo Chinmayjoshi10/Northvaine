@@ -86,11 +86,14 @@ class Settings(BaseSettings):
     hmrc_availability_lag_days: int = Field(default=70, ge=0)
     # HMRC lists non-UK sellers that import through it at its own Aberdeen address.
     hmrc_overseas_postcodes: tuple[str, ...] = ("AB10 1ZP",)
+    # Share of a query's documents kept for importers new this year: they are still building
+    # their supplier list, and established importers would otherwise fill every slot.
+    hmrc_new_importer_share: float = Field(default=0.5, ge=0, le=1)
     # Company-level only: a trader name without one of these legal forms may be a person (a sole
     # trader) and is never stored. Matched as whole words, case-insensitive. Legal terms only.
     hmrc_company_markers: tuple[str, ...] = (
         "ltd", "limited", "plc", "llp", "cic", "llc", "inc", "corp", "gmbh", "ag", "bv", "nv",
-        "sa", "sas", "sarl", "srl", "spa", "sl", "aps", "ab", "oy", "as", "asa",
+        "sa", "sas", "sarl", "srl", "spa", "sl", "aps", "ab", "oy", "asa",
     )  # fmt: skip
     tavily_api_url: str = "https://api.tavily.com"
     tavily_max_calls_per_run: int = Field(default=20, ge=1)

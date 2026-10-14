@@ -19,8 +19,9 @@ What this sensor does and does not do:
   sole trader, so it is dropped before anything stores or renders it. Address lines other than
   the postcode are never rendered or stored.
 - Traders at HMRC's own address for non-UK sellers (`hmrc_overseas_postcodes`) are dropped.
-- Documents are ranked (most requested codes, most months active, new this year) and capped at
-  `max_results`.
+- Documents are ranked (most requested codes, then most months active) and capped at
+  `max_results`, with `hmrc_new_importer_share` of the slots kept for importers new this year;
+  new importers come first.
 """
 
 from __future__ import annotations
@@ -148,8 +149,14 @@ class _Trader:
 
 
 def _is_company(name: str, settings: Settings) -> bool:
-    words = set(re.findall(r"[a-z0-9]+", name.casefold()))
-    return any(marker.casefold() in words for marker in settings.hmrc_company_markers)
+    """A legal form as a whole word, or at the end once spaces are removed: the register
+    sometimes splits a word ("TRADING LIMITE D")."""
+    words = re.findall(r"[a-z0-9]+", name.casefold())
+    joined = "".join(words)
+    markers = [m.casefold() for m in settings.hmrc_company_markers]
+    return any(m in words for m in markers) or any(
+        joined.endswith(m) for m in markers if len(m) >= 3
+    )
 
 
 def _family(cn8: str, codes: list[str]) -> str | None:
@@ -218,9 +225,20 @@ def trader_document(
     )
 
 
-def _rank_key(t: _Trader) -> tuple[int, int, int, str]:
+def _rank_key(t: _Trader) -> tuple[int, int, str]:
     months = len(set().union(*t.months.values()))
-    return (-len(t.families), -months, 0 if not t.seen_last_year else 1, t.name)
+    return (-len(t.families), -months, t.name)
+
+
+def select(traders: list[_Trader], cap: int, new_share: float) -> list[_Trader]:
+    """Up to `cap` traders: the best new importers in their share of the slots, the best
+    established ones in the rest, any unused slots filled from the other group. New first."""
+    new = sorted((t for t in traders if not t.seen_last_year), key=_rank_key)
+    old = sorted((t for t in traders if t.seen_last_year), key=_rank_key)
+    n_new = min(len(new), round(cap * new_share))
+    n_old = min(len(old), cap - n_new)
+    n_new = min(len(new), cap - n_old)
+    return new[:n_new] + old[:n_old]
 
 
 # ----------------------------------------------------------------------------- the sensor
@@ -396,8 +414,8 @@ class HmrcSensor:
                         if isinstance(tid, int) and tid in traders:
                             traders[tid].seen_last_year = True
 
-        ranked = sorted(traders.values(), key=_rank_key)
-        truncated = len(ranked) > query.max_results
+        ranked = select(list(traders.values()), query.max_results, settings.hmrc_new_importer_share)
+        truncated = len(traders) > query.max_results
         docs = [
             trader_document(
                 t,
@@ -406,14 +424,18 @@ class HmrcSensor:
                 fetched_at=fetched_at,
                 settings=settings,
             )
-            for t in ranked[: query.max_results]
+            for t in ranked
         ]
         notes: list[str] = [
             f"{len(traders)} importer(s) of {', '.join(codes)} from {month_label(first)}"
             + (f" to {month_label(last)}" if last is not None else "")
         ]
         if truncated:
-            notes.append(f"kept the top {query.max_results} by codes, months and newness")
+            new = sum(not t.seen_last_year for t in ranked)
+            notes.append(
+                f"kept {len(ranked)}: {new} new this year and {len(ranked) - new} established, "
+                "each ranked by codes and months"
+            )
         if dropped_person:
             notes.append(f"dropped {dropped_person} trader(s) with no company legal form")
         if dropped_overseas:
