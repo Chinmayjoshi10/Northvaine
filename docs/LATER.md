@@ -161,3 +161,21 @@ Fold into whichever milestone first implements the gate (M4/M5), as a column and
 - Simple tracker per lead (contacted, sample, quote) and a results line on Station.
 - One login across many clients for the agency.
 - "3 accounts to work today" from the proven-buyer list.
+
+## More signal sources (15 Oct, founder asked "where else can opportunities come from")
+Industry-neutral; official APIs and public pages only; company-level facts only.
+- **Proof of buying:** Canada importers database; trade-fair visitor lists.
+- **Just changed:** company registers abroad with change data (France SIRENE, Belgium KBO,
+  Denmark CVR, Norway Brønnøysund, Czech ARES, Slovakia, Poland KRS); company filings (growth,
+  funding); job ads for buyer, purchasing and sales roles via official job-board APIs or company
+  sites; press releases and trade-press RSS.
+- **Stated intent:** UK Contracts Finder (below the Find a Tender threshold); SAM.gov (free
+  key, founder); US city and state building permits; planning applications that name the
+  product; private-sector RFQ portals.
+- **Market changes:** trade deals entering into force; anti-dumping duties; insolvency notices
+  (UK Gazette) of large suppliers or merchants; import statistics by origin country (Eurostat,
+  HMRC OTS); port and shipping disruption.
+- **The client's own world:** reorder due from a customer's past pattern; quotes gone quiet;
+  lost bids whose winner fails to deliver.
+- **Priority after step 1b:** Contracts Finder, job ads, insolvency notices and trade deals,
+  competitors' stockist lists.
