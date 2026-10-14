@@ -55,8 +55,9 @@ def kind(fn: object, name: str) -> inspect._ParameterKind:
 
 
 def test_stream_values_and_enumerability() -> None:
-    assert [s.value for s in RadarStream] == ["tender", "award", "announcement"]
+    assert [s.value for s in RadarStream] == ["tender", "award", "announcement", "trade"]
     assert stream_is_enumerable(RadarStream.TENDER)
+    assert stream_is_enumerable(RadarStream.TRADE)
     assert stream_is_enumerable(RadarStream.AWARD)
     assert not stream_is_enumerable(RadarStream.ANNOUNCEMENT)
     assert stream_is_enumerable("tender")

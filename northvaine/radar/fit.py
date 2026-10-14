@@ -4,8 +4,8 @@ ChatGPT's CEO priority 2: before an account is promoted, check on its own offici
 handles what the client sells. A fit is not a purchase, so it is shown separately and never
 replaces dated demand evidence.
 
-For each shortlisted account (an awarded contractor, or an unresolved announcement), in rank
-order and capped:
+For each shortlisted account (an awarded contractor, an importer of record, or an unresolved
+announcement), in rank order and capped:
 1. **Find the official site.** One search for the company's name. A result counts only when its
    registrable domain contains a distinctive token of the company's normalised name (code
    check). Otherwise: "no official site found", and no fit.
@@ -108,6 +108,7 @@ def fit_sentences(
 def _eligible(entry: RankedEntry) -> bool:
     return entry.candidate.stream != RadarStream.TENDER and entry.account_role in (
         "awarded_contractor",
+        "importer_of_record",  # D102: tells a stockist from a haulier clearing goods for others
         "unresolved",
     )
 

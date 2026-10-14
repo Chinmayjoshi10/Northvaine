@@ -27,6 +27,8 @@ EXTRA_CODE_LINES = (
 EXTRACTED_BY = "code"
 TENDER = "tender_published"
 AWARD = "contract_awarded"
+IMPORTS = "imports_recorded"  # D102: official trade records (sensors/hmrc.py)
+TRADE_LINE_PREFIXES = ("Postcode: ", "Commodity ", "Not recorded as ", "Also recorded ")
 
 
 @lru_cache(maxsize=1)
@@ -58,17 +60,20 @@ def _find_line(lines: list[str], prefix: str, *needles: str) -> str | None:
     return None
 
 
-def _statement(line: str) -> str:
+def _statement(line: str, record: str = "notice record") -> str:
     label, _, value = line.partition(": ")
-    return f"The notice record states {label.lower()}: {value}"
+    if not value:
+        return f"The {record} states: {line}"
+    return f"The {record} states {label.lower()}: {value}"
 
 
 class _Builder:
     """Collects claims, one per distinct rendered line, and hands out their indices."""
 
-    def __init__(self) -> None:
+    def __init__(self, record: str = "notice record") -> None:
         self.claims: list[ClaimDraft] = []
         self._index: dict[str, int] = {}
+        self._record = record
 
     def add(self, line: str | None, subject: SubjectMention | None = None) -> int | None:
         if line is None:
@@ -77,7 +82,7 @@ class _Builder:
             self._index[line] = len(self.claims)
             self.claims.append(
                 ClaimDraft(
-                    statement=_statement(line),
+                    statement=_statement(line, self._record),
                     source_quote=line,
                     subject=subject,
                     extracted_by=EXTRACTED_BY,
@@ -96,6 +101,8 @@ def structured_evidence(
     meta = doc.meta
     if meta.get("schema_ver") != SCHEMA_VER:
         return None
+    if meta.get("record_kind") == IMPORTS:
+        return _trade_evidence(doc)
 
     lines = doc.text.split("\n")
     build = _Builder()
@@ -241,3 +248,38 @@ def structured_evidence(
             )
 
     return build.claims, events
+
+
+def _trade_evidence(doc: EvidenceDocument) -> tuple[list[ClaimDraft], list[EventDraft]] | None:
+    """One `imports_recorded` event for one importer (D102). Every rendered line is a claim;
+    the importer line carries the subject. Facts come from meta, quotes from the text."""
+    meta = doc.meta
+    name = meta.get("importer")
+    last_month = meta.get("last_month")
+    if not isinstance(name, str) or not name or not isinstance(last_month, str):
+        return None
+    lines = doc.text.split("\n")
+    importer_line = _find_line(lines, "Importer: ", name)
+    if importer_line is None:
+        return None
+    subject = SubjectMention(name=name, country=_iso2(meta.get("country")), role="importer")
+    build = _Builder(record="official import record")
+    indices = [build.add(importer_line, subject)]
+    indices += [build.add(line) for line in lines if line.startswith(TRADE_LINE_PREFIXES)]
+    slots: dict[str, Any] = {
+        "codes": ", ".join(_strings(meta.get("codes"))),
+        "first_month": meta.get("first_month"),
+        "last_month": last_month,
+        "months_active": meta.get("months_active"),
+        "new_this_year": bool(meta.get("new_this_year")),
+    }
+    event = EventDraft(
+        event_type=IMPORTS,
+        claim_indices=[i for i in indices if i is not None],
+        subject=subject,
+        date_text=last_month,
+        occurred_on=parse_date(f"{last_month}-01"),
+        group_key=doc.group_key,
+        slots=slots,
+    )
+    return build.claims, [event]

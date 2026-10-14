@@ -19,7 +19,8 @@ CLAUDE.md, CLAUDE.md wins. Record any change in docs/DECISIONS.md.
   products HS codes, industries ISIC/NAICS (`isic:4663`), tenders CPV.
 - **Event types** are generic: `facility_opened`, `contract_awarded`, `tender_published`,
   `hiring_surge`, `leadership_change`, `product_launch`, `market_entry`, `trade_measure`,
-  `website_change`, `reorder_due`, `quote_stale`, `inbound_question`. Add new types only
+  `website_change`, `reorder_due`, `quote_stale`, `inbound_question`, `imports_recorded`
+  (official trade records show the company imported under given product codes; D102). Add new types only
   in `core/models.py` with a docstring; never industry-specific.
 - Every JSONB field has a versioned Pydantic model; store `schema_ver` where provided.
 - Never overwrite profiles or strategies: insert a new version.

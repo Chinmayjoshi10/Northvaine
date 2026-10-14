@@ -16,7 +16,9 @@ class Link(BaseModel):
     """One step of the commercial chain. `state` is how it is known: stated (a verified quote),
     inferred (code reasoning over verified records) or unknown. Never a guess dressed as fact."""
 
-    slot: str  # authority | project | contract | contractor | buyer
+    # authority | project | contract | contractor | buyer; a trade record (D102): importer |
+    # product | history | buyer
+    slot: str
     label: str
     state: str  # stated | inferred | unknown
     quote: str | None = None
@@ -362,6 +364,8 @@ def chain(entry: RankedEntry) -> list[Link]:
     """Authority -> project -> contract -> contractor -> who buys what the client sells, each
     step as known from the run's verified record lines (D94), composed by code."""
     c, role = entry.candidate, entry.account_role
+    if c.stream == RadarStream.TRADE:
+        return _trade_chain(entry)
     name = brief._name(c)
     buyer, title = _line(entry, "Buyer ["), _line(entry, "Title [")
     winner = _line(entry, "Winner [")
@@ -430,3 +434,43 @@ def chain(entry: RankedEntry) -> list[Link]:
     else:
         buys = unknown("buyer", "who buys the material")
     return [authority, project, contract, contractor, buys]
+
+
+def _trade_chain(entry: RankedEntry) -> list[Link]:
+    """Importer -> product code -> import history -> buys what you sell, from the official
+    import record lines (D102). What it sells itself comes only from its own site (D96)."""
+    unknown = lambda slot, label: Link(slot=slot, label=label, state="unknown")  # noqa: E731
+    importer = _line(entry, "Importer: ")
+    product = _line(entry, "Commodity ")
+    history = _line(entry, "Not recorded as ") or _line(entry, "Also recorded ")
+    links = [
+        _stated("importer", brief._name(entry.candidate), importer)
+        if importer
+        else unknown("importer", "the importer"),
+        _stated("product", product.source_quote.split(": imported")[0], product)
+        if product
+        else unknown("product", "the product code"),
+        _stated(
+            "history",
+            "new importer this year"
+            if history.source_quote.startswith("Not")
+            else "imported last year too",
+            history,
+        )
+        if history
+        else unknown("history", "import history"),
+    ]
+    if entry.company_fit:
+        fit = entry.company_fit[0]
+        links.append(
+            Link(
+                slot="buyer",
+                label="its own site names what you sell",
+                state="stated",
+                quote=fit.quote,
+                url=fit.url,
+            )
+        )
+    else:
+        links.append(unknown("buyer", "whether it stocks or uses what you sell"))
+    return links

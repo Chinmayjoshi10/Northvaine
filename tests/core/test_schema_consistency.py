@@ -238,9 +238,9 @@ def test_every_check_in_list_has_a_matching_enum(schema_tables: Tables) -> None:
 def test_event_type_equals_seed_labels_and_spec(rendered_sql: str) -> None:
     labels = seed_labels(rendered_sql)
     spec = spec_event_types(SPEC.read_text(encoding="utf-8"))
-    assert len(labels) == len(set(labels)) == 12
+    assert len(labels) == len(set(labels)) == 13
     assert {e.value for e in m.EventType} == set(labels) == set(spec)
-    assert len(spec) == 12
+    assert len(spec) == 13
 
 
 # ------------------------------------------------------------------ adversarial checks

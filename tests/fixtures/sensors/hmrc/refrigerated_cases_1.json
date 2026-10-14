@@ -1,0 +1,894 @@
+[
+  {
+    "method": "GET",
+    "url": "https://api.uktradeinfo.com/Commodity?%24filter=Hs6Code+eq+%27841850%27&%24expand=Imports%28%24filter%3DMonthId+ge+202605%3B%24expand%3DTrader%29",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "@odata.context": "https://api.uktradeinfo.com/$metadata#Commodity(Imports(Trader()))",
+      "value": [
+        {
+          "CommodityId": 84185011,
+          "Cn8Code": "84185011",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerated show-cases and counters, with a refrigerating unit or evaporator, for frozen food storage",
+          "Imports": [
+            {
+              "TraderId": 1044821,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 1044821,
+                "CompanyName": "LA CREMOSA UK LTD",
+                "Address1": "74",
+                "Address2": "CHARING CROSS ROAD",
+                "Address3": "LONDON",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "WC2H 0BB"
+              }
+            },
+            {
+              "TraderId": 1042558,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 1042558,
+                "CompanyName": "ALI BROS FOODS LTD",
+                "Address1": "12 THORNCLIFFE ROAD, BRADFORD",
+                "Address2": "",
+                "Address3": "WEST YORKSHIRE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "BD8 7DD"
+              }
+            },
+            {
+              "TraderId": 1042248,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 1042248,
+                "CompanyName": "ZHEPA TWO LTD",
+                "Address1": "LOWER GROUND FLOOR, 46 CHELTE",
+                "Address2": "HAM MOUNT",
+                "Address3": "HARROGATE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "HG1 1DL"
+              }
+            },
+            {
+              "TraderId": 428692,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 428692,
+                "CompanyName": "MEININGER HOTELS LIMITED",
+                "Address1": "3RD FLOOR",
+                "Address2": "30 MILLBANK",
+                "Address3": "LONDON",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "SW1P 4DU"
+              }
+            },
+            {
+              "TraderId": 463237,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 463237,
+                "CompanyName": "R S CLIMATE CONTROL LTD",
+                "Address1": "57 AVENUE END DRIVE",
+                "Address2": "GLASGOW",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "G33 3UH"
+              }
+            },
+            {
+              "TraderId": 489423,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 489423,
+                "CompanyName": "W-GREEN CO., LIMITED",
+                "Address1": "HM REVENUE AND CUSTOMS",
+                "Address2": "RUBY HOUSE",
+                "Address3": "8 RUBY PLACE",
+                "Address4": "ABERDEEN",
+                "Address5": "",
+                "PostCode": "AB10 1ZP"
+              }
+            },
+            {
+              "TraderId": 972538,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 972538,
+                "CompanyName": "THE THIRST ALTERNATIVE LTD",
+                "Address1": "186 ST MARY STREET",
+                "Address2": "LATCHFORD",
+                "Address3": "WARRINGTON",
+                "Address4": "CHESHIRE",
+                "Address5": "",
+                "PostCode": "WA4 1EL"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 529650,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 529650,
+                "CompanyName": "CARTER RETAIL EQUIPMENT LTD",
+                "Address1": "90 LEA FORD ROAD",
+                "Address2": "BIRMINGHAM",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "B33 9TX"
+              }
+            },
+            {
+              "TraderId": 69,
+              "CommodityId": 84185011,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 69,
+                "CompanyName": "STAYCOLD EXPORT LTD",
+                "Address1": "UNIT 2A",
+                "Address2": "HAWARDEN INDUSTRIAL PARK HA",
+                "Address3": "DEESIDE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "CH5 3US"
+              }
+            },
+            {
+              "TraderId": 428692,
+              "CommodityId": 84185011,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 428692,
+                "CompanyName": "MEININGER HOTELS LIMITED",
+                "Address1": "3RD FLOOR",
+                "Address2": "30 MILLBANK",
+                "Address3": "LONDON",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "SW1P 4DU"
+              }
+            },
+            {
+              "TraderId": 529650,
+              "CommodityId": 84185011,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 529650,
+                "CompanyName": "CARTER RETAIL EQUIPMENT LTD",
+                "Address1": "90 LEA FORD ROAD",
+                "Address2": "BIRMINGHAM",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "B33 9TX"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185011,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185011,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185019,
+          "Cn8Code": "84185019",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerated show-cases and counters, with a refrigerating unit or evaporator (excl. for frozen food storage)",
+          "Imports": [
+            {
+              "TraderId": 529650,
+              "CommodityId": 84185019,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 529650,
+                "CompanyName": "CARTER RETAIL EQUIPMENT LTD",
+                "Address1": "90 LEA FORD ROAD",
+                "Address2": "BIRMINGHAM",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "B33 9TX"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185019,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 529650,
+              "CommodityId": 84185019,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 529650,
+                "CompanyName": "CARTER RETAIL EQUIPMENT LTD",
+                "Address1": "90 LEA FORD ROAD",
+                "Address2": "BIRMINGHAM",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "B33 9TX"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185019,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 463237,
+              "CommodityId": 84185019,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 463237,
+                "CompanyName": "R S CLIMATE CONTROL LTD",
+                "Address1": "57 AVENUE END DRIVE",
+                "Address2": "GLASGOW",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "G33 3UH"
+              }
+            },
+            {
+              "TraderId": 529650,
+              "CommodityId": 84185019,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 529650,
+                "CompanyName": "CARTER RETAIL EQUIPMENT LTD",
+                "Address1": "90 LEA FORD ROAD",
+                "Address2": "BIRMINGHAM",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "B33 9TX"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185019,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 463237,
+              "CommodityId": 84185019,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 463237,
+                "CompanyName": "R S CLIMATE CONTROL LTD",
+                "Address1": "57 AVENUE END DRIVE",
+                "Address2": "GLASGOW",
+                "Address3": "",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "G33 3UH"
+              }
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185090,
+          "Cn8Code": "84185090",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerating furniture with a refrigerating unit or evaporator (excl. combined refrigerator-freezers with separate external doors or drawers or combinations thereof, household refrigerators, refrigerated show-cases and counters)",
+          "Imports": [
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185090,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 69,
+              "CommodityId": 84185090,
+              "MonthId": 202606,
+              "Trader": {
+                "TraderId": 69,
+                "CompanyName": "STAYCOLD EXPORT LTD",
+                "Address1": "UNIT 2A",
+                "Address2": "HAWARDEN INDUSTRIAL PARK HA",
+                "Address3": "DEESIDE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "CH5 3US"
+              }
+            },
+            {
+              "TraderId": 69,
+              "CommodityId": 84185090,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 69,
+                "CompanyName": "STAYCOLD EXPORT LTD",
+                "Address1": "UNIT 2A",
+                "Address2": "HAWARDEN INDUSTRIAL PARK HA",
+                "Address3": "DEESIDE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "CH5 3US"
+              }
+            },
+            {
+              "TraderId": 69,
+              "CommodityId": 84185090,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 69,
+                "CompanyName": "STAYCOLD EXPORT LTD",
+                "Address1": "UNIT 2A",
+                "Address2": "HAWARDEN INDUSTRIAL PARK HA",
+                "Address3": "DEESIDE",
+                "Address4": "",
+                "Address5": "",
+                "PostCode": "CH5 3US"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185090,
+              "MonthId": 202605,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            },
+            {
+              "TraderId": 518870,
+              "CommodityId": 84185090,
+              "MonthId": 202607,
+              "Trader": {
+                "TraderId": 518870,
+                "CompanyName": "PENTLAND WHOLESALE LTD",
+                "Address1": "LAKESIDE HOUSE",
+                "Address2": "SQUIRES LANE",
+                "Address3": "FICHLEY",
+                "Address4": "LONDON",
+                "Address5": "",
+                "PostCode": "N3 2QL"
+              }
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185091,
+          "Cn8Code": "84185091",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Furniture for deep-freezing, for storage and display (excl. freezers of the chest type of a capacity <= 800 l, freezers of the upright type of a capacity <= 900 l and refrigerated show-cases and counters with a refrigerating unit or evaporator)  ",
+          "Imports": []
+        },
+        {
+          "CommodityId": 84185099,
+          "Cn8Code": "84185099",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerating furniture with a refrigerating unit or evaporator (excl. combined refrigerator-freezers, with separate external doors, household refrigerators, refrigerated show-cases and counters and deep-freezing furniture)  ",
+          "Imports": []
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-14T17:45:22.521435Z"
+  },
+  {
+    "method": "GET",
+    "url": "https://api.uktradeinfo.com/Commodity?%24filter=Hs6Code+eq+%27841850%27&%24expand=Imports%28%24filter%3DMonthId+ge+202501+and+MonthId+le+202512%3B%24select%3DTraderId%2CMonthId%29",
+    "request_json": null,
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body_json": {
+      "@odata.context": "https://api.uktradeinfo.com/$metadata#Commodity(Imports(TraderId,MonthId))",
+      "value": [
+        {
+          "CommodityId": 84185011,
+          "Cn8Code": "84185011",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerated show-cases and counters, with a refrigerating unit or evaporator, for frozen food storage",
+          "Imports": [
+            {
+              "TraderId": 463237,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 972538,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 972538,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202505
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 972538,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 972538,
+              "MonthId": 202512
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 463237,
+              "MonthId": 202512
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202507
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202504
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185019,
+          "Cn8Code": "84185019",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerated show-cases and counters, with a refrigerating unit or evaporator (excl. for frozen food storage)",
+          "Imports": [
+            {
+              "TraderId": 518870,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202504
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202505
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202505
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202512
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202507
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202507
+            },
+            {
+              "TraderId": 529650,
+              "MonthId": 202504
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202504
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202506
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185090,
+          "Cn8Code": "84185090",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerating furniture with a refrigerating unit or evaporator (excl. combined refrigerator-freezers with separate external doors or drawers or combinations thereof, household refrigerators, refrigerated show-cases and counters)",
+          "Imports": [
+            {
+              "TraderId": 518870,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202504
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202502
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202511
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202509
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202510
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202505
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202505
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202501
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202512
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202508
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202512
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202503
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202507
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202507
+            },
+            {
+              "TraderId": 69,
+              "MonthId": 202506
+            },
+            {
+              "TraderId": 518870,
+              "MonthId": 202504
+            }
+          ]
+        },
+        {
+          "CommodityId": 84185091,
+          "Cn8Code": "84185091",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Furniture for deep-freezing, for storage and display (excl. freezers of the chest type of a capacity <= 800 l, freezers of the upright type of a capacity <= 900 l and refrigerated show-cases and counters with a refrigerating unit or evaporator)  ",
+          "Imports": []
+        },
+        {
+          "CommodityId": 84185099,
+          "Cn8Code": "84185099",
+          "Hs2Code": "84",
+          "Hs4Code": "8418",
+          "Hs6Code": "841850",
+          "Hs2Description": "Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",
+          "Hs4Description": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps; parts thereof (excl. air conditioning machines of heading 8415)",
+          "Hs6Description": "Furniture \"chests, cabinets, display counters, show-cases and the like\" for storage and display, incorporating refrigerating or freezing equipment (excl. combined refrigerator-freezers with separate external doors, household refrigerators and freezer",
+          "SitcCommodityCode": "74143",
+          "Cn8LongDescription": "Refrigerating furniture with a refrigerating unit or evaporator (excl. combined refrigerator-freezers, with separate external doors, household refrigerators, refrigerated show-cases and counters and deep-freezing furniture)  ",
+          "Imports": []
+        }
+      ]
+    },
+    "body_text": null,
+    "recorded_at": "2026-10-14T17:45:22.521435Z"
+  }
+]

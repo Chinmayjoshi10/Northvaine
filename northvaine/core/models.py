@@ -84,6 +84,8 @@ class EventType(StrEnum):
     """A quote was sent and has had no reply for too long."""
     INBOUND_QUESTION = "inbound_question"
     """A buyer or buyer agent asked a question through the Gateway."""
+    IMPORTS_RECORDED = "imports_recorded"
+    """Official trade records show the company imported goods under given product codes (D102)."""
 
 
 # ---------------------------------------------------------------------------

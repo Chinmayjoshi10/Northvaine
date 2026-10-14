@@ -10,7 +10,15 @@ from northvaine.sensors.base import Sensor
 if TYPE_CHECKING:
     import httpx
 
-SENSOR_NAMES: tuple[str, ...] = ("ted", "tavily", "website", "fts", "worldbank", "usaspending")
+SENSOR_NAMES: tuple[str, ...] = (
+    "ted",
+    "tavily",
+    "website",
+    "fts",
+    "worldbank",
+    "usaspending",
+    "hmrc",
+)
 
 
 def get_sensor(
@@ -45,4 +53,8 @@ def get_sensor(
         from northvaine.sensors.usaspending import UsaspendingSensor
 
         return UsaspendingSensor(client=client, settings=settings)
+    if name == "hmrc":
+        from northvaine.sensors.hmrc import HmrcSensor
+
+        return HmrcSensor(client=client, settings=settings)
     raise KeyError(f"unknown sensor {name!r}; known sensors: {', '.join(SENSOR_NAMES)}")

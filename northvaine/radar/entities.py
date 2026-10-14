@@ -34,7 +34,12 @@ __all__ = ["build_candidates", "company_key", "stream_for", "subject_problem", "
 
 NO_COMPANY = "(no company named)"
 _NO_COUNTRY = "--"
-_PRIMARY_ORDER = (RadarStream.TENDER, RadarStream.ANNOUNCEMENT, RadarStream.AWARD)
+_PRIMARY_ORDER = (
+    RadarStream.TENDER,
+    RadarStream.TRADE,
+    RadarStream.ANNOUNCEMENT,
+    RadarStream.AWARD,
+)
 
 # D68: generic words that make a "name" a description rather than a company. Not industry
 # words. Overridable from settings (`radar_non_name_pronouns`, `radar_non_name_words`,
@@ -151,6 +156,15 @@ def window_for(
     stream = RadarStream(stream)
     if stream == RadarStream.AWARD:
         return None, None, False, "Decided; account for future bids."
+    if stream == RadarStream.TRADE:
+        firsts = [
+            parse_date(f"{e.slots['first_month']}-01")
+            for e in events
+            if isinstance(e.slots.get("first_month"), str)
+        ]
+        found = [d for d in firsts if d is not None]
+        start = min(found) if found else None
+        return start, None, False, "Imports recorded monthly; no purchase window."
     if stream == RadarStream.TENDER:
         tenders = [e for e in events if _type_stream(e.event_type, settings) == stream]
         dates = [e.occurred_on for e in tenders if e.occurred_on is not None]

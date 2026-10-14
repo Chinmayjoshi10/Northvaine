@@ -78,6 +78,20 @@ class Settings(BaseSettings):
         "EIRL",
         "Entreprise individuelle",
     )
+    # UK HMRC trade data (D102): open, keyless OData, 60 requests a minute.
+    hmrc_api_url: str = "https://api.uktradeinfo.com"
+    hmrc_min_interval_seconds: float = Field(default=1.0, ge=0)
+    # A month's importer list is published about ten weeks after the month ends (mid October
+    # showed July). A conservative estimate for the time machine, not an official calendar.
+    hmrc_availability_lag_days: int = Field(default=70, ge=0)
+    # HMRC lists non-UK sellers that import through it at its own Aberdeen address.
+    hmrc_overseas_postcodes: tuple[str, ...] = ("AB10 1ZP",)
+    # Company-level only: a trader name without one of these legal forms may be a person (a sole
+    # trader) and is never stored. Matched as whole words, case-insensitive. Legal terms only.
+    hmrc_company_markers: tuple[str, ...] = (
+        "ltd", "limited", "plc", "llp", "cic", "llc", "inc", "corp", "gmbh", "ag", "bv", "nv",
+        "sa", "sas", "sarl", "srl", "spa", "sl", "aps", "ab", "oy", "as", "asa",
+    )  # fmt: skip
     tavily_api_url: str = "https://api.tavily.com"
     tavily_max_calls_per_run: int = Field(default=20, ge=1)
     sensor_max_results: int = Field(default=250, ge=1)
@@ -109,6 +123,7 @@ class Settings(BaseSettings):
         "reorder_due",
         "quote_stale",
         "inbound_question",
+        "imports_recorded",  # code-only, from official trade records (D102)
     )
     evidence_source_rules: dict[str, str] = Field(
         default_factory=lambda: {
@@ -116,6 +131,7 @@ class Settings(BaseSettings):
             "fts": "structured",
             "worldbank": "structured",
             "usaspending": "structured",
+            "hmrc": "structured",
             "website": "full_text",
             "tavily": "raw_only",
         }
@@ -133,9 +149,19 @@ class Settings(BaseSettings):
     radar_enumerable_max_results: int = Field(default=100, ge=1)  # D71
     radar_recent_days: int = Field(default=90, ge=1)
     radar_stream_by_event: dict[str, str] = Field(
-        default_factory=lambda: {"tender_published": "tender", "contract_awarded": "award"}
+        default_factory=lambda: {
+            "tender_published": "tender",
+            "contract_awarded": "award",
+            "imports_recorded": "trade",
+        }
     )
-    radar_enumerable_sources: tuple[str, ...] = ("ted", "fts", "worldbank", "usaspending")
+    radar_enumerable_sources: tuple[str, ...] = (
+        "ted",
+        "fts",
+        "worldbank",
+        "usaspending",
+        "hmrc",
+    )
     radar_legal_forms: tuple[str, ...] = (
         "ltd", "limited", "plc", "llc", "llp", "lp", "inc", "incorporated", "corp",
         "corporation", "co", "company", "gmbh", "ag", "kg", "ug", "sa", "sas", "sarl",
@@ -230,6 +256,10 @@ class Settings(BaseSettings):
             "announcement": (
                 "The organisation named is acting on its own plans and is the likely buyer."
             ),
+            "trade": (
+                "Official import records show this company buys goods under your product "
+                "codes. They do not show its suppliers or whether it is looking for a new one."
+            ),
         }
     )
     # A first message tests a hypothesis, never claims a need (COLLAB, WOS field test, D80).
@@ -243,6 +273,10 @@ class Settings(BaseSettings):
                 "As you plan this, would another supplier option or cover for supply risk be "
                 "useful?"
             ),
+            "trade": (
+                "You already import this kind of product. Would a second source, with a sample "
+                "to compare, be worth a look?"
+            ),
         }
     )
     radar_action_by_stream: dict[str, str] = Field(
@@ -255,6 +289,10 @@ class Settings(BaseSettings):
             "announcement": (
                 "Contact the organisation, or the people designing its project, before "
                 "suppliers are chosen."
+            ),
+            "trade": (
+                "Check what it sells and who it serves, then offer a sample or a price list to "
+                "its buying team."
             ),
         }
     )
@@ -385,9 +423,9 @@ class Settings(BaseSettings):
     @classmethod
     def _streams_are_known(cls, value: dict[str, str]) -> dict[str, str]:
         for event, stream in value.items():
-            if stream not in {"tender", "award", "announcement"}:
+            if stream not in {"tender", "award", "announcement", "trade"}:
                 raise ValueError(
-                    f"radar_stream_by_event[{event!r}] must be tender, award or announcement"
+                    f"radar_stream_by_event[{event!r}] must be tender, award, announcement or trade"
                 )
         return value
 

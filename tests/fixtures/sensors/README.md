@@ -66,3 +66,11 @@ Recorded with `tasks.py record-sensors`; 3 of 8 Tavily responses were refused by
 no address or contact is present. `internal_id`, `awarding_agency_id`, `agency_slug` and the API
 `messages` were removed. Reviewed by eye: all twelve recipients are companies. US federal data
 is public.
+
+## HMRC trade data (D102)
+
+`hmrc/refrigerated_cases_1.json` is the two calls `HmrcSensor` makes for HS 841850 from May 2026
+(the window's importers, then the 2025 trader ids), recorded live on 2026-10-14 and trimmed to
+ten traders: four that are new in 2026, five that also imported in 2025, and one at HMRC's
+address for non-UK sellers. Every kept name is a company with a legal form; no sole trader is in
+the file. Source: HM Revenue & Customs, uktradeinfo, Open Government Licence v3.0.

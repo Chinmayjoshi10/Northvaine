@@ -12,8 +12,9 @@ from __future__ import annotations
 import re
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
-from northvaine.core.models import EvidenceKind
+from northvaine.core.models import EventType, EvidenceKind
 from northvaine.core.settings import Settings, get_settings
 from northvaine.core.standards import iso2_to_name
 from northvaine.radar.account import LEVEL_ORDER, account_role, contract_nature, evidence_level
@@ -60,6 +61,10 @@ _STREAM_NOTE = {
     RadarStream.AWARD: "award (a public notice of who won; every matching notice is listed)",
     RadarStream.ANNOUNCEMENT: (
         "announcement (a company or press statement; some are found, never all)"
+    ),
+    RadarStream.TRADE: (
+        "trade record (official import records of your product codes; every named importer is "
+        "listed)"
     ),
 }
 
@@ -210,6 +215,8 @@ def _urgency(
             -left,
             f"Window: tender closed on {end.isoformat()} ({how}); the window is closed",
         )
+    if candidate.stream == RadarStream.TRADE:
+        return _trade_urgency(candidate)
     last = _last_dated(candidate)
     if last is not None:
         age = (today - last).days
@@ -223,6 +230,41 @@ def _urgency(
             )
         return _TIER_UNDATED, 0, f"Timing: dated {last.isoformat()}, not recent"
     return _TIER_UNDATED, 0, "Timing: no date stated"
+
+
+def _trade_slots(candidate: Candidate) -> dict[str, Any]:
+    """The slots of the candidate's latest `imports_recorded` event, or {}."""
+    events = [e for e in candidate.events if e.event_type == EventType.IMPORTS_RECORDED.value]
+    events.sort(key=lambda e: str(e.slots.get("last_month") or ""))
+    return dict(events[-1].slots) if events else {}
+
+
+def _trade_urgency(candidate: Candidate) -> tuple[int, int, str]:
+    """Import records are a standing proof of buying, not a window. New importers lead: they are
+    still building their supplier list (BUYER_INTENT_PLAN, lesson 5)."""
+    slots = _trade_slots(candidate)
+    last, first = slots.get("last_month"), slots.get("first_month")
+    months = slots.get("months_active")
+    span = f"imported in {months} month(s) from {first} to {last}" if last else "imports recorded"
+    if slots.get("new_this_year"):
+        return _TIER_RECENT, 0, f"Timing: started importing this year; {span}"
+    return _TIER_RECENT, 1, f"Timing: a regular importer; {span}"
+
+
+def _trade_requirement(candidate: Candidate) -> CandidateClaim | None:
+    """The record line naming a product code: the sensor only lists the client's own codes, so
+    this line states the requirement (D102)."""
+    if candidate.stream != RadarStream.TRADE:
+        return None
+    return next(
+        (
+            k
+            for k in candidate.claims
+            if k.evidence_kind == EvidenceKind.STRUCTURED
+            and k.source_quote.startswith("Commodity ")
+        ),
+        None,
+    )
 
 
 def _buyer_reason(gate: GateDecision) -> str:
@@ -261,13 +303,21 @@ def rank(
             candidate, today, cfg.radar_recent_days, cfg.radar_min_days_left
         )
         requirement, requirement_ref = requirement_of(candidate, term_set, prefix=prefix)
+        trade_line = _trade_requirement(candidate)
+        if trade_line is not None:
+            requirement, requirement_ref = "stated", trade_line.ref
         if requirement != "stated" and related_set:
             related, related_ref = requirement_of(candidate, related_set, prefix=True)
             if related == "stated":
                 requirement, requirement_ref = "related", related_ref
         requirement_line = {
-            "stated": f"Requirement: stated (a verified quote names what you sell) "
-            f"[{requirement_ref}]",
+            "stated": (
+                f"Requirement: stated (official import records under your product codes) "
+                f"[{requirement_ref}]"
+                if trade_line is not None
+                else f"Requirement: stated (a verified quote names what you sell) "
+                f"[{requirement_ref}]"
+            ),
             "related": f"Requirement: related (a verified quote names a related product, not "
             f"exactly what you sell; check the specification) [{requirement_ref}]",
             "inferred": "Requirement: inferred (no verified quote names what you sell)",
@@ -481,6 +531,8 @@ def _what(candidate: Candidate, limit: int = 90) -> str:
 def _plain_happened(candidate: Candidate) -> str | None:
     """One readable sentence for an official record, each part with its claim ref, built from
     the record's own lines (D80). None when the candidate has no such record."""
+    if candidate.stream == RadarStream.TRADE:
+        return _plain_imported(candidate)
     title = _title(candidate)
     published = _claim_starting(candidate, "Published: ")
     deadline = _claim_starting(candidate, "Deadline: ")
@@ -500,6 +552,19 @@ def _plain_happened(candidate: Candidate) -> str | None:
         parts.append(f"; published {_quoted_value(published, 'Published: ')} [{published.ref}]")
     if deadline is not None:
         parts.append(f"; bids due {_quoted_value(deadline, 'Deadline: ')} [{deadline.ref}]")
+    return "".join(parts) + "."
+
+
+def _plain_imported(candidate: Candidate) -> str | None:
+    """<name> imported goods under your product codes: <record line> [ref]; ..."""
+    lines = [k for k in candidate.claims if k.source_quote.startswith("Commodity ")]
+    if not lines:
+        return None
+    parts = [f"{_name(candidate)} imported goods under your product codes"]
+    parts.append(": " + "; ".join(f"{_safe(k.source_quote)} [{k.ref}]" for k in lines[:3]))
+    new = _claim_starting(candidate, "Not recorded as ")
+    if new is not None:
+        parts.append(f". {_safe(new.source_quote)} [{new.ref}]")
     return "".join(parts) + "."
 
 
@@ -523,6 +588,16 @@ def action_status(entry: RankedEntry) -> str:
     if entry.candidate.stream == RadarStream.TENDER:
         clean = explicit and not entry.steered and not entry.skeptic.against
         return "bid now" if clean and entry.account_role == "direct_purchaser" else "watch only"
+    if entry.candidate.stream == RadarStream.TRADE:
+        # Proof it buys the product, not a live order. Half the raw new importers in the field
+        # test were not buyers, so contact waits for a check of what the company itself sells.
+        clean = (
+            entry.evidence_level == "proven_buyer"
+            and not entry.steered
+            and not entry.skeptic.against
+            and entry.gate.direct_buyer is not False
+        )
+        return "contact now" if clean and entry.company_fit else "qualify first"
     doubts = (
         not explicit
         or entry.steered
@@ -539,6 +614,7 @@ _ROLE_LABEL = {
     "demand_source": "the authority runs the project; the material buyer is the future winner",
     "awarded_contractor": "won the contract; the account to approach",
     "supplier": "won a supplies contract for this kind of product (a competitor or a channel)",
+    "importer_of_record": "official import records show it buys your product codes",
     "unresolved": "role not established by an official record",
 }
 
@@ -587,6 +663,13 @@ def caution(entry: RankedEntry) -> str:
         )
     if entry.account_role == "supplier":
         return "it won a supplies contract for this kind of product: a competitor or a channel"
+    if c.stream == RadarStream.TRADE:
+        if entry.skeptic.against:
+            return "the brief lists evidence against; read section 8"
+        return (
+            "import records prove it buys these codes, not from whom or whether it wants a new "
+            "supplier; check what it sells before contact"
+        )
     if entry.skeptic.against:
         return "the brief lists evidence against; read section 8"
     if entry.account_role == "awarded_contractor" and entry.fit_level != "stated":
@@ -618,6 +701,11 @@ def _why_now(entry: RankedEntry, today: date) -> str:
             return f"tender closed {c.window_end.isoformat()}{estimated}"
         late = " (likely too late)" if left < get_settings().radar_min_days_left else ""
         return f"tender closes in {_plural(left, 'day')}{estimated}{late}"
+    if c.stream == RadarStream.TRADE:
+        slots = _trade_slots(c)
+        if slots.get("new_this_year"):
+            return f"started importing in {slots.get('first_month')}"
+        return f"imports regularly; latest recorded month {slots.get('last_month')}"
     last = _last_dated(c)
     if last is None:
         return "date not stated"

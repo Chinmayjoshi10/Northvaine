@@ -136,7 +136,8 @@ INSERT INTO event_concepts (level, label, description) VALUES
   (0, 'website_change', 'A material change to the company website'),
   (0, 'reorder_due', 'A past customer is due to reorder based on its history'),
   (0, 'quote_stale', 'A quote was sent and has had no reply for too long'),
-  (0, 'inbound_question', 'A buyer or buyer agent asked a question through the Gateway');
+  (0, 'inbound_question', 'A buyer or buyer agent asked a question through the Gateway'),
+  (0, 'imports_recorded', 'Official trade records show the company imported goods under given product codes');
 
 CREATE TABLE events (                        -- something that CHANGED, in generic vocabulary
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),

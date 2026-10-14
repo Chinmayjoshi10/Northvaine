@@ -196,12 +196,18 @@ def test_ledger_defaults() -> None:
     assert s.concept_match_min_cosine == 0.80
     assert s.event_cluster_min_cosine == 0.85
     assert s.event_cluster_window_days == 30
-    assert s.extract_excluded_event_types == ("reorder_due", "quote_stale", "inbound_question")
+    assert s.extract_excluded_event_types == (
+        "reorder_due",
+        "quote_stale",
+        "inbound_question",
+        "imports_recorded",
+    )
     assert s.evidence_source_rules == {
         "ted": "structured",
         "fts": "structured",
         "worldbank": "structured",
         "usaspending": "structured",
+        "hmrc": "structured",
         "website": "full_text",
         "tavily": "raw_only",
     }

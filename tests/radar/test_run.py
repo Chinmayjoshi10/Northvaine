@@ -205,7 +205,8 @@ async def radar(
 
 def test_seeded_concepts_are_the_level_zero_seed_in_load_order() -> None:
     concepts = seeded_concepts()
-    assert len(concepts) == 12
+    assert len(concepts) == 13
+    assert "imports_recorded" in {c.label for c in concepts}  # D102, migration 0007
     assert {c.level for c in concepts} == {0}
     labels = [c.label for c in concepts]
     assert labels == sorted(labels)

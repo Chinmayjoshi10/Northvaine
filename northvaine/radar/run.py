@@ -34,7 +34,7 @@ from northvaine.radar.bidders import likely_bidders
 from northvaine.radar.brief import main_selection, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
-from northvaine.radar.entities import build_candidates
+from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
@@ -54,20 +54,28 @@ __all__ = ["run_radar", "seeded_concepts"]
 # A replay mismatch is an AssertionError and is never caught here.
 _ITEM_FAILURES = (LlmInvalidOutput, LlmTimeout, LlmTransportError)
 
-MIGRATION_0002 = (
-    Path(__file__).resolve().parents[2] / "migrations" / "versions" / "0002_architecture_v2.py"
-)
+MIGRATIONS = Path(__file__).resolve().parents[2] / "migrations" / "versions"
+# Migrations that seed level-0 concepts, each with a `_SEED` of (label, description) pairs.
+SEED_MIGRATIONS = ("0002_architecture_v2.py", "0007_trade_records_concept.py")
 SEED_CREATED_AT = datetime(2026, 1, 1, tzinfo=UTC)
 
 
+def _seed_pairs() -> list[tuple[str, str]]:
+    pairs: list[tuple[str, str]] = []
+    for name in SEED_MIGRATIONS:
+        path = MIGRATIONS / name
+        spec = importlib.util.spec_from_file_location(f"nv_migration_{path.stem}", path)
+        if spec is None or spec.loader is None:
+            raise FileNotFoundError(f"cannot load {path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        pairs.extend(module._SEED)
+    return pairs
+
+
 def seeded_concepts() -> list[EventConceptRow]:
-    """The level-0 event concepts seeded by migration 0002, in `load_concepts` order
-    (level, label). Read from the migration so no label is typed here."""
-    spec = importlib.util.spec_from_file_location("nv_migration_0002", MIGRATION_0002)
-    if spec is None or spec.loader is None:
-        raise FileNotFoundError(f"cannot load {MIGRATION_0002}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    """The level-0 event concepts seeded by the migrations, in `load_concepts` order
+    (level, label). Read from the migrations so no label is typed here."""
     return [
         EventConceptRow(
             id=uuid5(NAMESPACE_URL, f"northvaine:concept:0:{label}"),
@@ -80,7 +88,7 @@ def seeded_concepts() -> list[EventConceptRow]:
             merged_into=None,
             created_at=SEED_CREATED_AT,
         )
-        for label, description in sorted(module._SEED)
+        for label, description in sorted(_seed_pairs())
     ]
 
 
@@ -173,6 +181,14 @@ async def run_radar(
         evidence_out.extend(results)
     candidates, rejected = build_candidates(results, settings=settings)
     rejected = list(rejected)
+    # The client's current customers are never shown as new (D101). Matched on the name key
+    # without country; only a count is noted, since the list is the client's own data.
+    if spec.existing_customers:
+        known = {company_key(n, None, settings) for n in spec.existing_customers}
+        before = len(candidates)
+        candidates = [c for c in candidates if company_key(c.name, None, settings) not in known]
+        if before > len(candidates):
+            notes.append(f"{before - len(candidates)} existing customer(s) left out as not new")
 
     # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
     ordered = _gate_order(candidates, as_of.date())

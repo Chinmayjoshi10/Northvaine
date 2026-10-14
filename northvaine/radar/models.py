@@ -48,11 +48,13 @@ class RadarStream(StrEnum):
     TENDER = "tender"
     AWARD = "award"
     ANNOUNCEMENT = "announcement"
+    TRADE = "trade"  # official trade records: a proven buyer of the client's product codes (D102)
 
 
 def stream_is_enumerable(stream: RadarStream | str) -> bool:
-    """Tenders and awards are listed in official registers; announcements are not (D30)."""
-    return RadarStream(stream) in {RadarStream.TENDER, RadarStream.AWARD}
+    """Tenders, awards and trade records are listed in official registers; announcements are
+    not (D30, D102)."""
+    return RadarStream(stream) in {RadarStream.TENDER, RadarStream.AWARD, RadarStream.TRADE}
 
 
 class RejectedAs(StrEnum):

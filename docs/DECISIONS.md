@@ -983,3 +983,27 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Cases are watched across editions**, each naming the step it is waiting for, with two
     scores (potential and now) and states such as hold, too late and back in motion.
   - Every step is accepted only if a rerun matches the verified hand-made list kept in `.refs/`.
+- **D102 — Official import records are a stream of their own: `trade` (14 Oct).** Step 1 of
+  D101. A UK importer of the client's own product codes is a **proven buyer**: it buys the
+  product, though nothing says from whom or whether it wants a new supplier.
+  - **New generic event type `imports_recorded`** (SPEC §1 amended; seeded by migration 0007;
+    code-only, so it is excluded from the extractor's list and recorded LLM replays are
+    unchanged).
+  - **New stream `trade`**, enumerable (the register lists every importer HMRC does not
+    suppress). Role `importer_of_record`; new evidence level `proven_buyer`, ranked below
+    `explicit_purchase` and above `project_requirement`. The record line naming the product
+    code states the requirement, since the sensor only lists the client's codes.
+  - **Status:** "qualify first" until the importer's own site names what the client sells
+    (company fit, D96, now run for importers too), then "contact now". In the field test half
+    the raw new importers were not buyers (a haulier, a machinery dealer).
+  - **New importers lead:** "not recorded as importing these codes" last year ranks first
+    among importers (BUYER_INTENT_PLAN lesson 5).
+  - **Sensor `hmrc`** (`api.uktradeinfo.com`, OGL v3.0): one document per importer per run,
+    ranked (most requested codes, most months, new this year) and capped by `max_results`.
+    **Company-level only:** a name without a legal form (`hmrc_company_markers`) may be a sole
+    trader and is dropped before storage; only the postcode of the address is kept. HMRC's
+    address for non-UK sellers is dropped.
+  - **Availability:** a month counts as known 70 days after it ends (`hmrc_availability_lag_days`;
+    July 2026 was public by 14 Oct). An estimate for the time machine, not an official calendar.
+  - **Existing customers** (`ClientSpec.existing_customers`) are left out of the candidates
+    before the gate; the run notes only a count.

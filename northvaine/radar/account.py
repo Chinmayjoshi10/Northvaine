@@ -11,6 +11,7 @@ Evidence levels (ChatGPT CEO, COLLAB.md 9 Oct), strongest first:
 | Level | Meaning |
 | --- | --- |
 | `explicit_purchase` | a verified quote names what the client sells, and the account buys it |
+| `proven_buyer` | official trade records show it imports the client's product codes (D102) |
 | `project_requirement` | the project needs it, but the material buyer still has to be traced |
 | `company_fit` | the company handles the category, no dated purchase (website check, later) |
 | `generic_mention` | a matching word with no supported commercial relationship |
@@ -36,17 +37,28 @@ __all__ = [
 ]
 
 AccountRole = Literal[
-    "direct_purchaser", "demand_source", "awarded_contractor", "supplier", "unresolved"
+    "direct_purchaser",
+    "demand_source",
+    "awarded_contractor",
+    "supplier",
+    "importer_of_record",
+    "unresolved",
 ]
 EvidenceLevel = Literal[
-    "explicit_purchase", "project_requirement", "company_fit", "generic_mention", "no_evidence"
+    "explicit_purchase",
+    "proven_buyer",
+    "project_requirement",
+    "company_fit",
+    "generic_mention",
+    "no_evidence",
 ]
 LEVEL_ORDER: dict[str, int] = {
     "explicit_purchase": 0,
-    "project_requirement": 1,
-    "company_fit": 2,
-    "generic_mention": 3,
-    "no_evidence": 4,
+    "proven_buyer": 1,
+    "project_requirement": 2,
+    "company_fit": 3,
+    "generic_mention": 4,
+    "no_evidence": 5,
 }
 
 
@@ -96,6 +108,8 @@ def account_role(candidate: Candidate, nature: str | None) -> AccountRole:
         return "direct_purchaser" if nature == "supplies" else "demand_source"
     if candidate.stream == RadarStream.AWARD and "winner" in roles:
         return "supplier" if nature == "supplies" else "awarded_contractor"
+    if candidate.stream == RadarStream.TRADE and "importer" in roles:
+        return "importer_of_record"
     return "unresolved"
 
 
@@ -105,6 +119,9 @@ def evidence_level(requirement: str, role: AccountRole, direct_buyer: bool | Non
         return "no_evidence"
     if role == "supplier":
         return "generic_mention"  # it sells this kind of product: a competitor or a channel
+    if role == "importer_of_record":
+        # official records of the client's own product codes: proof it buys, not a live order
+        return "proven_buyer" if requirement == "stated" else "generic_mention"
     if role == "direct_purchaser":
         return "explicit_purchase" if requirement == "stated" else "project_requirement"
     if role in ("demand_source", "awarded_contractor"):

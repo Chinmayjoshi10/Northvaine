@@ -32,8 +32,9 @@ def test_defaults(s: Settings) -> None:
     assert s.radar_stream_by_event == {
         "tender_published": "tender",
         "contract_awarded": "award",
+        "imports_recorded": "trade",
     }
-    assert s.radar_enumerable_sources == ("ted", "fts", "worldbank", "usaspending")
+    assert s.radar_enumerable_sources == ("ted", "fts", "worldbank", "usaspending", "hmrc")
     assert s.gate_max_tokens == 700
     assert s.skeptic_max_tokens == 600
     assert s.radar_run_budget_usd == Decimal("1.00")
@@ -74,7 +75,7 @@ def test_run_budget_must_be_positive(clean_settings: None, bad: Decimal) -> None
 
 
 def test_stream_map_values_must_be_radar_streams(clean_settings: None) -> None:
-    with pytest.raises(ValidationError, match="tender, award or announcement"):
+    with pytest.raises(ValidationError, match="tender, award, announcement or trade"):
         Settings(_env_file=None, radar_stream_by_event={"tender_published": "bogus"})
     ok = Settings(_env_file=None, radar_stream_by_event={"x_event": "announcement"})
     assert ok.radar_stream_by_event == {"x_event": "announcement"}
