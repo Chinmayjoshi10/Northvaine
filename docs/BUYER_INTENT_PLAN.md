@@ -358,3 +358,102 @@ import records.
 1. Step 1 (buyer model, import records).
 2. Companies House lookup and stream (step 1b, moved earlier).
 3. A per-client daily quota with labels in the edition.
+
+
+---
+
+# Outbound and growth learnings (14 Oct, later)
+
+## The best lead came from company-register changes
+- **What the register showed:** a tile group took control of a small company (ownership change
+  on 16 Dec 2025) and renamed it for stone and porcelain distribution (15 Jan 2026). The company
+  then appeared in the import records from April 2026.
+- **Verified through:** the Companies House API (company profile, previous names, and the
+  controlling-company register).
+- **Lesson:** ownership changes and renames, joined with import activity, are the strongest
+  "just changed" signal found so far. Companies House REST and stream keys are in `.env` and
+  tested.
+- **Privacy:** the ownership stream contains individuals' names. Keep only company-level facts.
+
+## What makes a good first outbound message (from reviewing real drafts)
+- **Speak to the prospect, not about them.** Internal notes ("why it'll land", "what to show
+  them") must never be sent.
+- **3-4 specific, checked findings** about their market. Lead with the one they cannot easily
+  know.
+- **Say what is not yet confirmed.** Honesty raises trust.
+- **Do not reveal sources or method in the first message.** Have a one-line answer ready
+  ("official trade and tender records").
+- **No personal contact details, and never "the award names the contacts".**
+- **No overclaims:**
+  - "nobody publishes this": it is published, just never joined;
+  - "zero duty": not confirmed per product code;
+  - "keeps hiring": the evidence is six months old.
+- **End with an easy question:** "which would your team pursue, and which did you already know?"
+- **Use short numbered lines, not tables:** tables break on WhatsApp and in email.
+
+## The client-winning playbook
+1. **Narrow:** 2-3 niches at a time.
+2. **Intelligence-led cold outreach:** about 10 a day, 3 follow-ups over about 10 days, each
+   adding one new finding.
+3. **Offer ladder:** free sample edition (5 targets in 48 hours) → paid 4-6 week pilot with
+   success defined up front → subscription (optionally a success bonus).
+4. **Track** sent → reply → call → pilot → paid. Turn each win into an anonymous story. Ask each
+   pilot for one introduction.
+5. **Distribution partners later:** export councils, freight forwarders, customs brokers, trade
+   associations.
+6. **Expected funnel per 50 messages:** 5-10 replies, 2-4 calls, 1 paid pilot.
+
+## Foreign client segments (after first exporter case studies)
+- **UK:**
+  - suppliers to construction and the public sector;
+  - freight forwarders and customs brokers (the new-importers list is their prospect list);
+  - wholesalers and distributors.
+- **US** (first through free award data):
+  - equipment rental companies;
+  - construction subcontractors (primes that just won work);
+  - building-materials and equipment distributors;
+  - facilities services;
+  - commercial equipment dealers;
+  - testing and inspection firms.
+  Freight forwarders and foreign exporters need paid manifest data.
+- **Higher prices abroad;** competition from tender-alert and contact-data tools. The pitch is
+  the buying chain and timing, with proof, not "we find tenders".
+
+## Data by region
+- **UK:** HMRC importers (free), Companies House (free API and stream), Find a Tender (built).
+- **US:**
+  - free: USAspending awards and subawards (built), SAM.gov tenders (free key), city permits;
+  - paid: importers via shipping-manifest vendors.
+- **Canada:** a government importers database (verify detail before building).
+- **EU:** no public importer lists in most countries.
+  - **Proof of buying:** fit (websites, trade fairs, stockist pages) and a market split from
+    Eurostat.
+  - **Free registers with change data:** France SIRENE, Belgium KBO, Denmark CVR, Norway
+    Brønnøysund, Czech ARES, the Slovak register, Poland KRS.
+  - **Mostly paid:** Germany, Austria and the Netherlands.
+  - **Tenders:** TED (built).
+- **Everywhere:** UN Comtrade for the market split; news, trade press, jobs.
+
+## Growth ideas (later)
+- **A self-serve "who imports your product" tool** (and "has this buyer changed?") as a cheap,
+  shareable front door to the full product.
+- **The engine has uses beyond sales:**
+  - a verified watcher ("watch anything public, with proof");
+  - supplier-risk monitoring for procurement teams;
+  - deal sourcing for investors;
+  - recruiters, commercial real estate, job seekers, grant seekers.
+  These would be separate products, not now.
+
+## Market size (rough, recorded for context)
+- **Sales-intelligence software:** about $3.7-8.5B in 2025, growing 10-16% a year.
+- **Exporters:** about 288k US exporters (2019, 97% small or mid-sized) and about 633k EU firms
+  exporting outside the EU (2012 data).
+- **India:** active exporters not verified.
+- **Rough scenario:** $10-60M a year in 3-5 years is plausible.
+- **What decides it:** proof of outcomes, cost to serve, distribution.
+
+## Same-niche clients
+- Public events overlap between clients in one niche. Fit, existing customers, routes and
+  learning still make each client's edition different.
+- One client's data is never visible to another.
+- The founder decided not to record an exclusivity policy (14 Oct).
