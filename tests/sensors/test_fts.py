@@ -624,3 +624,13 @@ def test_every_recorded_release_gives_exact_line_quotes(monkeypatch: pytest.Monk
             assert claim.source_quote in lines
             for index_list in [e.claim_indices for e in out[1]]:
                 assert all(0 <= i < len(out[0]) for i in index_list)
+
+
+def test_phone_numbers_in_read_text_are_removed() -> None:
+    doc = parse_release(
+        release(tender={"title": "Wall tiling, enquiries 020 7946 0000 or +44 20 7946 0001"}),
+        fetched_at=FETCHED,
+        settings=SETTINGS,
+    )
+    assert "7946" not in doc.text
+    assert "[phone removed]" in doc.text

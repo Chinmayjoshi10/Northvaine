@@ -66,6 +66,8 @@ from northvaine.radar.models import (  # noqa: E402
 )
 from northvaine.radar.run import run_radar, seeded_concepts  # noqa: E402
 from northvaine.sensors.base import SensorQuery  # noqa: E402
+from northvaine.sensors.fts import FTS_API_URL  # noqa: E402
+from northvaine.sensors.fts import _text as fts_text  # noqa: E402
 from northvaine.sensors.replay import (  # noqa: E402
     RecordedExchange,
     RecordingTransport,
@@ -350,6 +352,56 @@ def _strip_search_contacts(ex: Any, tavily_prefix: str) -> Any:
     return ex.model_copy(update={"body_json": {**body, "results": results}})
 
 
+# The OCDS paths sensors/fts.py reads; everything else (free text, contact points, amendments,
+# terms) is dropped before a recording is saved. `{}` keeps a whole value.
+_FTS_READ: dict[str, Any] = {
+    "ocid": {}, "id": {}, "tag": {}, "date": {}, "language": {},
+    "buyer": {"id": {}, "name": {}},
+    "parties": {"id": {}, "address": {"country": {}}},
+    "tender": {
+        "title": {}, "classification": {}, "mainProcurementCategory": {},
+        "items": {"additionalClassifications": {}},
+        "lots": {"value": {}}, "value": {}, "tenderPeriod": {"endDate": {}},
+        "documents": {"id": {}, "noticeType": {}}, "legalBasis": {"id": {}},
+        "aboveThreshold": {},
+    },
+    "awards": {
+        "suppliers": {"id": {}, "name": {}},
+        "items": {"additionalClassifications": {}},
+        "additionalClassifications": {},
+    },
+    "contracts": {
+        "title": {}, "value": {}, "dateSigned": {}, "documents": {"id": {}, "noticeType": {}},
+    },
+}  # fmt: skip
+
+
+def _project(value: Any, shape: dict[str, Any]) -> Any:
+    if not shape:
+        # read text goes through the sensor's own cleaning (emails and phones removed), which
+        # is idempotent, so replay parses exactly what the live run parsed
+        if isinstance(value, str) and value.strip():
+            return fts_text(value)
+        return value
+    if isinstance(value, list):
+        return [_project(v, shape) for v in value]
+    if isinstance(value, dict):
+        return {k: _project(v, shape[k]) for k, v in value.items() if k in shape}
+    return value
+
+
+def _strip_fts_unread(ex: Any) -> Any:
+    """FTS releases reduced to the fields the sensor reads: nothing else is ever saved."""
+    body = ex.body_json
+    if not ex.url.startswith(FTS_API_URL) or not isinstance(body, dict):
+        return ex
+    releases = body.get("releases")
+    if not isinstance(releases, list):
+        return ex
+    kept = [_project(r, _FTS_READ) for r in releases]
+    return ex.model_copy(update={"body_json": {**body, "releases": kept}})
+
+
 def _withhold_ted_persons(ex: Any, tavily_prefix: str, settings: Settings) -> Any:
     """Withhold natural-person names in TED notices with the sensor's own function, so the
     replayed documents are identical to what the live run parsed (D76)."""
@@ -378,6 +430,7 @@ def redact_recording(recording: Recording, settings: Settings) -> Recording:
         for ex in recording.exchanges
     ]
     exchanges = [_strip_search_contacts(ex, tavily_prefix) for ex in exchanges]
+    exchanges = [_strip_fts_unread(ex) for ex in exchanges]
     exchanges = [_withhold_ted_persons(ex, tavily_prefix, settings) for ex in exchanges]
     problems = sensors.find_pii([e.model_dump(mode="json") for e in exchanges], "http")
     problems += sensors.find_pii([p.model_dump(mode="json") for p in recording.pages], "pages")

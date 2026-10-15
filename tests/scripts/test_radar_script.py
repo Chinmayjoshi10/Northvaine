@@ -320,3 +320,61 @@ def test_search_result_contacts_are_stripped_the_way_the_pipeline_strips_them(
     assert kept["raw_content"] == strip_contacts(raw)
     assert strip_contacts(kept["raw_content"]) == kept["raw_content"]  # idempotent: replay = live
     assert "example.org" not in kept["raw_content"] and kept["score"] == 1
+
+
+def test_fts_free_text_and_contacts_are_dropped_and_the_parse_is_unchanged(
+    radar: ModuleType,
+) -> None:
+    from datetime import UTC, datetime
+
+    from northvaine.sensors.fts import FTS_API_URL, parse_release
+    from northvaine.sensors.replay import RecordedExchange
+
+    mail = "bids" + "@" + "example.org"
+    release = {
+        "ocid": "ocds-test-1",
+        "id": "000001-2026",
+        "tag": ["tender"],
+        "date": "2026-06-01T10:00:00+01:00",
+        "language": "en",
+        "buyer": {"id": "B1", "name": "Example Council"},
+        "parties": [
+            {
+                "id": "B1",
+                "name": "Example Council",
+                "address": {"streetAddress": "1 Example Road", "country": "GB"},
+                "contactPoint": {"email": mail, "telephone": "+44 20 7946 0000"},
+            }
+        ],
+        "planning": {"milestones": [{"description": f"write to {mail}"}]},
+        "tender": {
+            "title": "Wall tiling, enquiries 020 7946 0000",
+            "description": f"Questions to {mail}",
+            "submissionMethodDetails": "Call +44 20 7946 0000",
+            "lots": [
+                {"description": f"Lot 1, {mail}", "value": {"amount": 1000, "currency": "GBP"}}
+            ],
+        },
+    }
+    ex = RecordedExchange.model_validate(
+        {
+            "method": "GET",
+            "url": FTS_API_URL + "?limit=100",
+            "status": 200,
+            "body_json": {"releases": [release]},
+            "recorded_at": "2026-10-15T00:00:00Z",
+        }
+    )
+    cleaned = radar._strip_fts_unread(ex)
+    dumped = json.dumps(cleaned.body_json)
+    assert "example.org" not in dumped and "7946" not in dumped and "Example Road" not in dumped
+    fetched = datetime(2026, 10, 15, tzinfo=UTC)
+    kept = cleaned.body_json["releases"][0]
+    assert (
+        parse_release(kept, fetched_at=fetched).text
+        == parse_release(release, fetched_at=fetched).text
+    )
+    assert (
+        parse_release(kept, fetched_at=fetched).meta
+        == parse_release(release, fetched_at=fetched).meta
+    )

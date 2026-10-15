@@ -71,6 +71,13 @@ FTS_KIND_TO_TAGS: dict[EventType, tuple[str, ...]] = {
 _LANG3 = {"en": "eng", "cy": "cym", "ga": "gle", "gd": "gla"}
 
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+# The same phone patterns as radar.discover and the fixture recorder: a number in a title or a
+# name is removed before anything stores it.
+_PHONE_RES = (
+    re.compile(r"(?<![\w+])\+\d{1,3}[\s.\-()]*\d[\d\s.\-()]{6,}\d"),
+    re.compile(r"(?<![\w.])\(\d{2,5}\)[\s.\-]?\d{3,4}[\s.\-]?\d{3,4}(?!\d)"),
+    re.compile(r"(?<![\w.\-])0\d{1,4}[\s.\-/]\d{3,4}[\s.\-/]?\d{2,4}(?![\w\-])"),
+)
 
 
 def _unique(values: list[str]) -> list[str]:
@@ -124,7 +131,10 @@ def _list(value: Any) -> list[Any]:
 
 def _text(value: Any) -> str | None:
     if isinstance(value, str) and value.strip():
-        return _EMAIL.sub("[email removed]", " ".join(value.split()))
+        text = _EMAIL.sub("[email removed]", " ".join(value.split()))
+        for pattern in _PHONE_RES:
+            text = pattern.sub("[phone removed]", text)
+        return text
     return None
 
 
