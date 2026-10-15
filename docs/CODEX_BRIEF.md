@@ -19,6 +19,11 @@ card at a time. Cards are independent; none touches the engine.
 - Done: typecheck and build pass; old links (`#/c/...`, `#/m/...`, `#/app/...`) still open.
 
 Result:
+Implemented the locked D98 landing as the app home, with its intro replay, responsive sections,
+onboarding placeholder, live-example CTA, and the previous client index at `#/clients`; legacy
+`#/c/...`, `#/m/...`, and `#/app/...` routes remain working. Could not do: nothing. Claude should
+check final visual parity at wide desktop widths and confirm the static example copy is the desired
+public demo copy; typecheck, frontend build, route smoke checks, and the full factory gate pass.
 
 ---
 

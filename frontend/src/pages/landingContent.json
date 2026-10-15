@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "for": "New lead · for a refrigeration maker",
+      "company": "Établissement Français du Sang",
+      "place": "Île-de-France · public health",
+      "intent": "Buying plasma freezers",
+      "level": 5,
+      "strength": "stated",
+      "why": "Purchase decided · closes in 20 days",
+      "who": "Buys directly",
+      "quote": "“Fourniture de surgélateurs à plasma”",
+      "action": "Bid now"
+    },
+    {
+      "for": "New lead · for a packaging supplier",
+      "company": "Sephora Collection",
+      "place": "France · beauty",
+      "intent": "Launching a tubing mascara",
+      "level": 3,
+      "strength": "inferred",
+      "why": "Launch underway",
+      "who": "Brand packaging team",
+      "quote": "“Sephora Collection se lance à son tour dans la tendance du mascara tubing”",
+      "action": "Qualify"
+    },
+    {
+      "for": "New lead · for a natural stone supplier",
+      "company": "SAS Antoniotti",
+      "place": "Corsica · construction",
+      "intent": "Will order paving stone",
+      "level": 4,
+      "strength": "project need",
+      "why": "Contract just won · ordering in weeks",
+      "who": "Contractor’s purchasing",
+      "quote": "“Winner: SAS ANTONIOTTI”",
+      "action": "Act now"
+    }
+  ],
+  "industryLeads": [
+    ["Refrigeration equipment", "Établissement Français du Sang", "Île-de-France · public health", "Buying plasma freezers", "Decided · closes in 20 days", "Buys directly", "“Fourniture de surgélateurs à plasma”", "Bid now", "stated"],
+    ["Cosmetics packaging", "Sephora Collection", "France · beauty", "Launching a tubing mascara", "Launch underway", "Brand packaging team", "“Sephora Collection se lance à son tour dans la tendance du mascara tubing”", "Qualify", "inferred"],
+    ["Natural stone", "SAS Antoniotti", "Corsica · construction", "Will order paving stone", "Contract just won", "Contractor’s purchasing", "“Winner: SAS ANTONIOTTI”", "Act now", "project need"],
+    ["HVAC & refrigeration", "Stadt Heinsberg", "Germany · new primary school", "Needs HVAC for a new school", "Contractor chosen within days", "The winning contractor", "“Heating, ventilation and air-conditioning installation work”", "Watch", "project need"],
+    ["Cosmetics packaging", "Maison Jearom", "France · haircare", "A new solid-shampoo range", "Range launching", "Brand packaging team", "“Avec ses shampoings solides enrichis en actifs professionnels”", "Qualify", "inferred"],
+    ["Natural stone", "Stadt Mülheim an der Ruhr", "Germany · new public pool", "Landscaping for a new pool", "Contractor chosen soon", "The winning contractor", "“Ersatzneubau Hallenbad Heißen - Landschaftsbauarbeiten”", "Watch", "project need"]
+  ],
+  "stream": [
+    ["Stone importer", "seller · removed", "x"],
+    ["Blood service, Île-de-France", "buying freezers · bid", ""],
+    ["Trade magazine", "noise · removed", "x"],
+    ["SAS Antoniotti", "won a contract · act", "y"],
+    ["Packaging distributor", "competitor · removed", "x"]
+  ],
+  "audiences": [
+    ["Manufacturers & exporters", "Contractors who just won work that needs your product."],
+    ["Distributors & importers", "Installers and builders starting projects in your region."],
+    ["Suppliers to construction & infrastructure", "Contractors and authorities starting work that needs your product."],
+    ["Industrial & B2B services", "Organisations expanding, building or changing suppliers."]
+  ],
+  "learnRows": [
+    ["You sell", "Bottles, jars, tubes and cartons for cosmetics", "✓"],
+    ["Buyers", "Beauty and skincare brands", "✓"],
+    ["From", "quoted from your own site", ""]
+  ],
+  "radarRows": [
+    ["Intent", "Brands committing to new products"],
+    ["Ignore", "Distributors, competitors, press"],
+    ["Buyer", "The brand’s packaging team"]
+  ],
+  "actionRows": [
+    ["Bid", "Blood service IDF · plasma freezers", "20 days"],
+    ["Watch", "Heinsberg school · HVAC works", "6 days"],
+    ["Watch", "Niort · air-conditioning works", "10 days"]
+  ]
+}

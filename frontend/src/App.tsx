@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { LandingPage } from "./pages/LandingPage";
 import { ClientsPage } from "./pages/ClientsPage";
 import { LeadsPage } from "./nv/LeadsPage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
 
 // Hash routes keep the app a static bundle that any server can host:
-//   #/                           clients
+//   #/                           landing page
+//   #/clients                    clients
 //   #/app/<client>/<day>         Station, the edition (day may be "latest")
 //   #/app/<client>/<day>/leads   Leads, with the case as a sheet
 // Older links (#/c/..., #/m/...) open Station for the same client and day.
@@ -37,6 +39,29 @@ export function App() {
   }
   if ((path[0] === "c" || path[0] === "m") && path.length >= 3) {
     return <StationPage client={path[1]} day={path[2]} />;
+  }
+
+  if (path.length === 0 || path[0] === "intro") {
+    return <LandingPage intro={path[0] === "intro"} />;
+  }
+
+  if (path[0] === "onboarding") {
+    return (
+      <main className="onboarding" id="main">
+        <p className="mono">NORTHVAINE</p>
+        <h1>Onboarding is coming.</h1>
+        <p>We’re preparing the guided setup for your first radar.</p>
+        <a className="btn primary" href={link()}>
+          Back to Northvaine
+        </a>
+      </main>
+    );
+  }
+
+  // In-page anchors in the locked landing design use plain hashes (#what, #trust, …).
+  // Keep rendering the landing page for those anchors; only #/clients opens the old index.
+  if (path[0] !== "clients") {
+    return <LandingPage intro={false} />;
   }
 
   return (
