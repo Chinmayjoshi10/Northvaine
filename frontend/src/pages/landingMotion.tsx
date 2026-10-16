@@ -3,7 +3,7 @@ import content from "./landingContent.json";
 import { motionOk } from "./useReveal";
 
 // Ports of the locked design's script behaviours (docs/design/final/landing.html):
-// resolveTile(), sideways() and thread(). Each is an effect with cleanup. Without motion
+// resolvePanel(), sideways() and thread(). Each is an effect with cleanup. Without motion
 // (reduced motion, no IntersectionObserver) the final state is shown at once.
 
 const ease3 = (k: number) => 1 - Math.pow(1 - k, 3);
@@ -36,8 +36,8 @@ function makeClock() {
   };
 }
 
-/** "What it does" tile 2: the chain resolves step by step, then loops (design resolveTile). */
-export function ResolveTile() {
+/** "What it does" panel 2: the chain resolves step by step, then loops (design resolvePanel). */
+export function ResolvePanel() {
   const pts = content.resolve;
   const [animated] = useState(motionOk);
   const [shown, setShown] = useState(animated ? 0 : pts.length);

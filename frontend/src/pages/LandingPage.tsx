@@ -5,7 +5,7 @@ import { link } from "../routes";
 import content from "./landingContent.json";
 import "../nv/nv.css";
 import "./landing.css";
-import { ResolveTile, Thread, useSideways } from "./landingMotion";
+import { ResolvePanel, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 
 const cases = content.cases;
@@ -255,7 +255,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
         <div className="landing-eyebrow reveal">What it does</div><h2 className="reveal">It doesn’t give you more leads. <em>It gives you the right one, with proof.</em></h2>
         <div className="lm-stagger landing-three">
           <article className="landing-feature reveal"><div className="landing-visual"><div className="landing-stream">{content.stream.map(([name, note, state], i) => <div className={state} key={i}>{name}<span className="mono">{note}</span></div>)}</div></div><div className="landing-feature-copy"><span className="mono">01 · FINDS</span><h3>Only companies with intent</h3><p>Every company is checked first: would it buy from you, or does it sell what you sell? Competitors and noise never reach you.</p></div></article>
-          <article className="landing-feature reveal"><div className="landing-visual"><ResolveTile /></div><div className="landing-feature-copy"><span className="mono">02 · INVESTIGATES</span><h3>Finds who actually buys</h3><p>The company in the headline is often not the one placing the order. Northvaine follows the chain until it reaches the buyer.</p></div></article>
+          <article className="landing-feature reveal"><div className="landing-visual"><ResolvePanel /></div><div className="landing-feature-copy"><span className="mono">02 · INVESTIGATES</span><h3>Finds who actually buys</h3><p>The company in the headline is often not the one placing the order. Northvaine follows the chain until it reaches the buyer.</p></div></article>
           <article className="landing-feature reveal"><div className="landing-visual"><div className="landing-proof">Winner: <mark>SAS ANTONIOTTI</mark>; RAFFALLI TRAVAUX PUBLICS; COMPAGNIE DE DIFFUSION DE PANNEAUX DE SIGNALISATION ET ACCESSOIRES<span><i />found word for word in the original record</span></div></div><div className="landing-feature-copy"><span className="mono">03 · PROVES</span><h3>Proves every lead</h3><p>Every fact is checked against its original record before you see it. What is inferred says so. What is unknown stays unknown.</p></div></article>
         </div>
       </div></section>
