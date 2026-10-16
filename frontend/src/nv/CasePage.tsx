@@ -20,6 +20,13 @@ import { Shell } from "./Shell";
 import { readable } from "./StationPage";
 import "./case.css";
 
+/** Display text: no citation tags or escape slashes, the first sentence, cut at a word. */
+function plain(text: string, max: number): string {
+  const clean = text.replace(/\s*\[C\d+\]/g, "").replace(/\\/g, "").trim();
+  const first = clean.split(/(?<=\.)\s+(?=[A-Z])/)[0];
+  return first.length > max ? `${first.slice(0, max).replace(/\s+\S*$/, "")}…` : first;
+}
+
 // The full case page: one lead, read top to bottom, with the decision beside it.
 // Every line comes from the dossier or the run record; nothing here is written for the page.
 
@@ -118,7 +125,12 @@ function Case(props: {
   const stated = d.claims.filter((c) => c.statement.trim() !== "");
   // newest first in the run record; a history reads oldest first
   const history: LogItem[] = (brief.log ?? []).filter((l) => l.rank === d.rank).reverse();
-  const title = row.stream === "tender" || row.stream === "award" ? headline(row) : d.what;
+  const title =
+    row.stream === "tender" || row.stream === "award"
+      ? headline(row)
+      : row.stream === "trade"
+        ? `${nice(row.company)} imports your product`
+        : `${nice(row.company)}: ${plain(row.what, 90)}`;
   const against = readable(d.caution) ? sentenceOf(d.caution).replace(/[.;]?$/, ".") : "";
 
   return (
@@ -285,7 +297,7 @@ function Case(props: {
                 {history.map((l, i) => (
                   <li className="ev" key={i}>
                     <span className="mono">{l.at ? shortDate(l.at) : "—"}</span>
-                    {l.text}
+                    {plain(l.text, 140)}
                   </li>
                 ))}
                 {d.stage_action && (
