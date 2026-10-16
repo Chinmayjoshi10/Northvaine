@@ -179,6 +179,17 @@ Industry-neutral; official APIs and public pages only; company-level facts only.
   lost bids whose winner fails to deliver.
 - **Priority after step 1b:** Contracts Finder, job ads, insolvency notices and trade deals,
   competitors' stockist lists.
+- **Added 17 Oct** (founder: "add if we got time"):
+  - UK insolvency notices (The Gazette) go into hackathon step C **only if time allows**: a
+    failed competitor or merchant means its customers need a new supplier.
+  - Grants received (UK 360Giving, EU funding portals); filed-accounts growth; import volume
+    rising or a new origin country; "out of stock" or "discontinued" on a buyer's site; product
+    recall databases; buying seasons per market and the public-sector year end (UK 31 March);
+    new rules that require the client's kind of product; paid customs data for the US
+    (shipping manifests) and India, once revenue covers it.
+  - How they fit: each is one sensor mapped to an existing event type plus a strength rule;
+    web-read signals share one Tavily sensor; derived signals need no new source. Two fresh
+    signals on one company beat one; each client's decisions set its own signal weights.
 
 ## Full SaaS operation (founder, 16 Oct: after the hackathon)
 - Pricing page (Free / Pro / Agency), card payments, invoices and plan limits enforced per account.
