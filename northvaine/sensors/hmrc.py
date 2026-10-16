@@ -451,3 +451,29 @@ class HmrcSensor:
         return SensorResult(
             documents=docs, truncated=truncated, enumerable=self.enumerable, notes=notes
         )
+
+
+async def hs6_descriptions(
+    codes: list[str], *, client: httpx.AsyncClient, settings: Settings | None = None
+) -> dict[str, str]:
+    """Six-digit codes known to the UK tariff, with their official description; unknown codes
+    are left out. One small request per code (D105: checks codes a model proposed)."""
+    settings = settings or get_settings()
+    found: dict[str, str] = {}
+    for code in codes:
+        if not re.fullmatch(r"\d{6}", code):
+            continue
+        response = await client.get(
+            f"{settings.hmrc_api_url}/Commodity",
+            params={
+                "$filter": f"Hs6Code eq '{code}'",
+                "$select": "Hs6Code,Hs6Description",
+                "$top": "1",
+            },
+        )
+        if response.status_code != 200:
+            continue
+        rows = _list(_dict(response.json()).get("value"))
+        if rows and _text(_dict(rows[0]).get("Hs6Description")):
+            found[code] = str(_text(_dict(rows[0]).get("Hs6Description")))
+    return found
