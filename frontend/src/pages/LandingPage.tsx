@@ -9,6 +9,8 @@ import { ResolvePanel, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 
 const cases = content.cases;
+// The hero card's speed: every step of its build and the pause between cases (1 = the design).
+const HERO_PACE = 0.8;
 const industryLeads = content.industryLeads;
 
 function Intro({ replay, onDone }: { replay: boolean; onDone: () => void }) {
@@ -109,7 +111,7 @@ function LeadCard({ ready }: { ready: boolean }) {
         const timer = window.setTimeout(() => {
           timers.delete(timer);
           resolve();
-        }, ms);
+        }, ms * HERO_PACE);
         timers.add(timer);
       });
     const patch = (p: Partial<CardView>) => setView((v) => ({ ...v, ...p }));
