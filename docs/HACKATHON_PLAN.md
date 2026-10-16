@@ -76,6 +76,7 @@ the WOS hand research. About 12-13 sessions remain for 17-26 Oct, so about 1.5 s
 | 6 | Merge Connections; "Your business" page | 0.5 | - |
 | 7 | **Lead quality A: company fit and contact.** Tavily reads each shortlisted company's own site: does it buy this kind of product (not a competitor or haulier), and the company email and phone from its contact page (company only) | 1 | - |
 | 8 | **Lead quality B: customers like yours.** From the client's best customers, find companies with the same activity codes, the same imports and similar words on their site | 1 | Name 3-5 best customers for the test client |
+| 8b | **Lead quality F: distributors.** Onboarding asks "direct buyers, distributors, or both?"; with distributors chosen, a company that sells the client's kind of product (but does not make it) becomes a candidate partner instead of a rejection; "big" is ranked by evidence (import volume and years, accounts, branches and brands read with Tavily, recent growth); the owner decides partner or competitor | 1 | - |
 | 9 | **Scoreboard:** run the WOS catalogue blind and count how many of the 13 sent buyers it finds alone (about 2 today; target 8 or more), plus new ones | 0.5 | - |
 | 10 | Nightly run; public hosting that stays up through December; secrets scan; contact, trial and onboarding files moved to the database. **Done by 23 Oct.** | 1-1.5 | GitHub repo, rotate Neon password, pick the host |
 | 11 | **Lead quality C: timing signals.** Expansion news, trade press, hiring for purchasing roles; two signals together beat one (step 3 of the buyer-intent plan) | 1 | - |
@@ -113,6 +114,7 @@ public records; the client stays anonymous unless the founder agrees.
 
 1. Gateway (already proposed out)
 2. Lead quality E (follow the trail), then C (timing signals), then D (watching over time).
+   F (distributors) is cut after them.
    Hosting (10) and the demo path are never moved later to make room for them.
 3. "What changed since yesterday"
 4. The dawn animation (a plain transition instead)

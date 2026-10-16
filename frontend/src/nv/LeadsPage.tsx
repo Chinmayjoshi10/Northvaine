@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api";
 import type { BriefView } from "../types";
+import { link } from "../routes";
 import { useLoad } from "../useLoad";
 import { CaseSheet } from "./CaseSheet";
 import { useDecisions } from "./decide";
@@ -133,6 +134,14 @@ function Leads(props: {
               onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
               followed={open ? (followed[open.rank] ?? []) : []}
               onFollow={(f) => (open ? follow(open, f) : Promise.resolve())}
+              fullHref={
+                open ? link("app", client, day, "case", open.rank) : undefined
+              }
+              connectionsHref={
+                open && (open.stream === "tender" || open.stream === "award")
+                  ? link("app", client, day, "connections", open.rank)
+                  : undefined
+              }
               onClose={() => setCurrent(null)}
             />
           </div>

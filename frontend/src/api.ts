@@ -6,8 +6,7 @@ import type {
   OnboardingAnswers,
   OnboardingSession,
   FeedbackRecord,
-  Learning,
-} from "./types";
+  Learning, BusinessView } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, init);
@@ -23,6 +22,8 @@ const seg = encodeURIComponent;
 
 export const api = {
   clients: () => request<ClientSummary[]>("/api/clients"),
+  business: (client: string) =>
+    request<BusinessView>(`/api/clients/${seg(client)}/business`),
   brief: (client: string, day: string) =>
     request<BriefView>(`/api/clients/${seg(client)}/runs/${seg(day)}`),
   entry: (client: string, day: string, rank: number) =>

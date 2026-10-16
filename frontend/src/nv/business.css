@@ -1,0 +1,25 @@
+/* Your business: a calm, read-only profile in the Station's type and tokens. */
+.biz { max-width: 1040px; padding: 40px 44px 64px; }
+.biz-eyebrow { margin: 0 0 10px; color: var(--dim-copy, var(--muted)); font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; }
+.biz h1 { margin: 0 0 12px; font: 400 40px/1.1 var(--serif); letter-spacing: -.01em; }
+.biz-offer { max-width: 760px; margin: 0 0 10px; font: 400 19px/1.5 var(--serif); color: var(--soft-copy, inherit); }
+.biz-note { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: var(--dim-copy, var(--muted)); }
+.biz-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.biz-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; margin-top: 36px; border-top: 1px solid var(--line); }
+.biz-block { padding: 22px 0 20px; border-bottom: 1px solid var(--line); }
+.biz-wide { margin-top: 8px; }
+.biz-block h2 { margin: 0 0 10px; font-size: 10.5px; font-weight: 400; letter-spacing: .16em; text-transform: uppercase; color: var(--dim-copy, var(--muted)); }
+.biz-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.biz-tags li { padding: 5px 11px; border: 1px solid var(--line-strong, var(--line)); border-radius: 999px; font-size: 13.5px; }
+.biz-empty { margin: 0; font-size: 13.5px; font-style: italic; color: var(--dim-copy, var(--muted)); }
+.biz-big { margin: 0; font: 300 40px/1 var(--serif); }
+.biz-sources { margin: 0; padding: 0; list-style: none; }
+.biz-sources li { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.biz-sources li:last-child { border-bottom: 0; }
+.biz-sources .mono { color: var(--dim-copy, var(--muted)); font-size: 12px; }
+.biz-back { display: inline-block; margin-top: 28px; color: var(--dim-copy, var(--muted)); font-size: 12px; text-decoration: none; }
+@media (max-width: 760px) {
+  .biz { padding: 28px 16px 48px; }
+  .biz h1 { font-size: 30px; }
+  .biz-grid { grid-template-columns: minmax(0, 1fr); }
+}

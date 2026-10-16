@@ -5,6 +5,8 @@ import { ContactPage } from "./pages/ContactPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { LeadsPage } from "./nv/LeadsPage";
 import { CasePage } from "./nv/CasePage";
+import { ConnectionsPage } from "./nv/ConnectionsPage";
+import { BusinessPage } from "./nv/BusinessPage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
 
@@ -15,6 +17,8 @@ import { link } from "./routes";
 //   #/app/<client>/<day>         Station, the edition (day may be "latest")
 //   #/app/<client>/<day>/leads   Leads, with the case as a sheet
 //   #/app/<client>/<day>/case/<rank>   the full case page
+//   #/app/<client>/<day>/connections[/<rank>]   one lead's chain (default: the most urgent)
+//   #/app/<client>/<day>/business   Your business: what the radar was told about the client
 // Older links (#/c/..., #/m/...) open Station for the same client and day.
 function currentPath(): string[] {
   return window.location.hash
@@ -36,6 +40,17 @@ export function App() {
   }, []);
 
   if (path[0] === "app" && path.length >= 3) {
+    if (path[3] === "connections") {
+      const rank = Number(path[4]);
+      return (
+        <ConnectionsPage
+          client={path[1]}
+          day={path[2]}
+          rank={Number.isInteger(rank) && rank > 0 ? rank : undefined}
+        />
+      );
+    }
+    if (path[3] === "business") return <BusinessPage client={path[1]} day={path[2]} />;
     if (path[3] === "case" && /^\d+$/.test(path[4] ?? ""))
       return <CasePage client={path[1]} day={path[2]} rank={Number(path[4])} />;
     return path[3] === "leads" ? (

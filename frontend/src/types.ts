@@ -253,3 +253,19 @@ export interface OnboardingAnswers {
   search_phrases: string[];
   existing_customers: string[];
 }
+
+/** Your business: what the radar was told about the client (read-only). */
+export interface BusinessView {
+  client_id: string;
+  name: string | null;
+  offer: string;
+  markets: string[];
+  offer_terms: string[];
+  related_terms: string[];
+  buyer_roles: string[];
+  not_buyers: string[];
+  product_codes: string[];
+  /** how many current customers are left out; their names are never sent to the page */
+  existing_customers: number;
+  searches: { source: string; count: number }[];
+}

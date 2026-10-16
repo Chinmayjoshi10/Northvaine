@@ -205,3 +205,42 @@ export function shortDate(day: string): string {
     timeZone: "UTC",
   });
 }
+
+const DAY = 86_400_000;
+
+export function daysBetween(a: string, b: string): number {
+  return Math.round((Date.parse(b) - Date.parse(a.slice(0, 10))) / DAY);
+}
+
+/**
+ * The decisions, most urgent first: anything marked act-now, then tenders closing within a
+ * week, then awards from the last two weeks (the winner orders soon after), then tenders
+ * closing within two, then leads still to qualify, by rank. One per project: co-winners of
+ * one contract are one decision.
+ */
+export function toDecide(rows: Row[], asOf: string): Row[] {
+  const act = rows.filter((r) => stageOf(r) === "Act now");
+  const closing = (lo: number, hi: number) =>
+    rows
+      .filter((r) => {
+        const d = daysLeft(r);
+        return d !== null && d >= lo && d <= hi;
+      })
+      .sort((a, b) => daysLeft(a)! - daysLeft(b)!);
+  const awards = rows
+    .filter((r) => {
+      const d = awardDay(r);
+      return d !== null && daysBetween(d, asOf) <= 14;
+    })
+    .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!));
+  const out: Row[] = [];
+  const seen = new Set<string>();
+  const qualify = rows.filter((r) => stageOf(r) === "Developing");
+  for (const r of [...act, ...closing(0, 7), ...awards, ...closing(8, 14), ...qualify]) {
+    const key = projectOf(r);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(r);
+  }
+  return out.slice(0, 4);
+}

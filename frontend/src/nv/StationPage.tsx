@@ -57,14 +57,20 @@ function clientLabel(b: BriefView): string {
   const name = b.client_name?.trim();
   if (name) return name;
   const first = b.offer.split(",")[0].trim();
-  return first.length > 48 ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…` : first;
+  return first.length > 48
+    ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…`
+    : first;
 }
 
 const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
 
 /** The urgency tag: a stated tender deadline or award, else a date in the label's reason, else nothing. */
 function urgency(r: Row): string | null {
-  if (daysLeft(r) !== null || awardDay(r) || /closes (today|tomorrow)/.test(r.why_now))
+  if (
+    daysLeft(r) !== null ||
+    awardDay(r) ||
+    /closes (today|tomorrow)/.test(r.why_now)
+  )
     return windowOf(r);
   // A label's dates are past changes, not deadlines: show the latest as "changed Mon YYYY".
   const dates = (r.label_reason ?? "").match(/\d{4}-\d{2}(?:-\d{2})?/g);
@@ -140,7 +146,13 @@ function toDecide(rows: Row[], asOf: string): Row[] {
   const out: Row[] = [];
   const seen = new Set<string>();
   const qualify = rows.filter((r) => stageOf(r) === "Developing");
-  for (const r of [...act, ...closing(0, 7), ...awards, ...closing(8, 14), ...qualify]) {
+  for (const r of [
+    ...act,
+    ...closing(0, 7),
+    ...awards,
+    ...closing(8, 14),
+    ...qualify,
+  ]) {
     const key = projectOf(r);
     if (seen.has(key)) continue;
     seen.add(key);
@@ -151,14 +163,17 @@ function toDecide(rows: Row[], asOf: string): Row[] {
 
 /** The dateline's place: the authority when the record states it, else the company. */
 function where(r: Row): string {
-  const auth = r.chain?.find((l) => l.slot === "authority" && l.state !== "unknown");
+  const auth = r.chain?.find(
+    (l) => l.slot === "authority" && l.state !== "unknown",
+  );
   return auth ? auth.label : r.company;
 }
 
 function question(r: Row): string {
   if (r.stream === "tender" && r.account_role === "direct_purchaser")
     return "Bid on this tender?";
-  if (r.stream === "tender") return "Approach the likely bidders before the award?";
+  if (r.stream === "tender")
+    return "Approach the likely bidders before the award?";
   if (r.stream === "trade") return `Approach ${nice(r.company)}?`;
   return `Take ${nice(r.company)}?`;
 }
@@ -236,7 +251,8 @@ function Station(props: {
       if (hot.has(r.rank)) {
         p.toDecide += 1;
         p.kind = "act";
-      } else if (p.kind !== "act" && stageOf(r) === "Developing") p.kind = "developing";
+      } else if (p.kind !== "act" && stageOf(r) === "Developing")
+        p.kind = "developing";
       if (mine.has(r.rank)) p.account = true;
       // the label names the country's most urgent row: a decision first, else the best rank
       const better =
@@ -248,23 +264,30 @@ function Station(props: {
     }
     return [...by.values()].map(({ lead, ...p }) => {
       const fact = shortFact(lead);
-      return { ...p, note: fact ? `${nice(lead.company)} · ${fact}` : nice(lead.company) };
+      return {
+        ...p,
+        note: fact ? `${nice(lead.company)} · ${fact}` : nice(lead.company),
+      };
     });
   }, [rows, decisions, brief.accounts]);
-  const unplaced = rows.filter((r) => !r.country || /not stated/.test(r.country)).length;
+  const unplaced = rows.filter(
+    (r) => !r.country || /not stated/.test(r.country),
+  ).length;
 
   // the masthead: the newest award is the news; otherwise the most urgent decision
   const lead =
     [...rows]
       .filter((r) => awardDay(r))
-      .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!))[0] ?? decisions[0];
+      .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!))[0] ??
+    decisions[0];
   // the dek: the lead's own reason, then plain counts of the rest; zero counts are skipped
   const dek: ReactNode[] = [];
   const top = decisions[0];
   if (top?.label_reason) {
     dek.push(
       <span key="l">
-        <b>{nice(top.company)}</b>: {top.label_reason.replace(/[.\s]+$/, "")}.{" "}
+        <b>{nice(top.company)}</b>: {top.label_reason.replace(/[.\s]+$/, "")}
+        .{" "}
       </span>,
     );
   }
@@ -274,7 +297,8 @@ function Station(props: {
   if (changed || toWork) {
     const parts: string[] = [];
     if (changed) parts.push(`${changed} more changed recently`);
-    if (toWork) parts.push(`${toWork} ${toWork === 1 ? "account" : "accounts"} to work`);
+    if (toWork)
+      parts.push(`${toWork} ${toWork === 1 ? "account" : "accounts"} to work`);
     dek.push(<span key="n">{parts.join("; ")}.</span>);
   }
 
@@ -322,7 +346,14 @@ function Station(props: {
             onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
             followed={open ? (followed[open.rank] ?? []) : []}
             onFollow={(f) => (open ? follow(open, f) : Promise.resolve())}
-            fullHref={open ? link("app", client, day, "case", open.rank) : undefined}
+            fullHref={
+              open ? link("app", client, day, "case", open.rank) : undefined
+            }
+            connectionsHref={
+              open && (open.stream === "tender" || open.stream === "award")
+                ? link("app", client, day, "connections", open.rank)
+                : undefined
+            }
             onClose={() => setOpen(null)}
           />
           <LessonNote lesson={lesson} learning={learning} onClose={dismiss} />
@@ -339,7 +370,11 @@ function Station(props: {
             </div>
             <h1 className="hl">
               {lead ? (
-                <button type="button" className="hlink" onClick={() => setOpen(lead)}>
+                <button
+                  type="button"
+                  className="hlink"
+                  onClick={() => setOpen(lead)}
+                >
                   {title(lead)}
                 </button>
               ) : (
@@ -392,7 +427,8 @@ function Station(props: {
             <span>Placed by country, as each record states it</span>
             {unplaced > 0 && (
               <span>
-                {unplaced} {unplaced === 1 ? "lead states" : "leads state"} no country
+                {unplaced} {unplaced === 1 ? "lead states" : "leads state"} no
+                country
               </span>
             )}
           </div>
@@ -408,10 +444,15 @@ function Station(props: {
           )}
           {decisions.map((r, i) => {
             const d = daysLeft(r);
-            const hot = stageOf(r) === "Act now" || (d !== null && d <= 7) || !!awardDay(r);
+            const hot =
+              stageOf(r) === "Act now" ||
+              (d !== null && d <= 7) ||
+              !!awardDay(r);
             // the chain's steps are a procurement record's; other leads do not have them
             const missing =
-              r.stream === "tender" || r.stream === "award" ? unknownSteps(r) : [];
+              r.stream === "tender" || r.stream === "award"
+                ? unknownSteps(r)
+                : [];
             const done = decided[r.rank];
             return (
               <article
@@ -421,34 +462,52 @@ function Station(props: {
               >
                 <div className="meta">
                   <span className="dateline">
-                    <b>{nice(where(r))}</b>{" "}
-                    · {r.contract_nature ? `${r.contract_nature} ` : ""}
+                    <b>{nice(where(r))}</b> ·{" "}
+                    {r.contract_nature ? `${r.contract_nature} ` : ""}
                     {typeOf(r).toLowerCase()}
                   </span>
                   {urgency(r) && (
-                    <span className={`wait${hot ? " hot" : ""}`}>{urgency(r)}</span>
+                    <span className={`wait${hot ? " hot" : ""}`}>
+                      {urgency(r)}
+                    </span>
                   )}
                 </div>
                 <h2 className="q">
-                  <a href={link("app", client, day, "case", r.rank)}>{question(r)}</a>
+                  <a href={link("app", client, day, "case", r.rank)}>
+                    {question(r)}
+                  </a>
                 </h2>
                 {r.label && (
                   <p className="edlabel">
-                    <span className="mono lab-chip">{LABEL[r.label] ?? r.label}</span>
-                    {r.label_reason && <span className="lab-why">{r.label_reason}</span>}
+                    <span className="mono lab-chip">
+                      {LABEL[r.label] ?? r.label}
+                    </span>
+                    {r.label_reason && (
+                      <span className="lab-why">{r.label_reason}</span>
+                    )}
                   </p>
                 )}
                 <p className="why">
-                  <b>{projectOf(r)}.</b> {readable(r.caution) && sentence(r.caution)}
-                  {missing.length > 0 && ` Not yet known: ${missing.join(", ")}.`}{" "}
-                  <button type="button" className="against" onClick={() => setOpen(r)}>
+                  <b>{projectOf(r)}.</b>{" "}
+                  {readable(r.caution) && sentence(r.caution)}
+                  {missing.length > 0 &&
+                    ` Not yet known: ${missing.join(", ")}.`}{" "}
+                  <button
+                    type="button"
+                    className="against"
+                    onClick={() => setOpen(r)}
+                  >
                     Evidence against →
                   </button>
                 </p>
                 {done ? (
                   <div className="opts">
                     <span className="did mono">✓ {done}</span>
-                    <button type="button" className="btn" onClick={() => setOpen(r)}>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() => setOpen(r)}
+                    >
                       Open the case
                     </button>
                   </div>
@@ -477,101 +536,117 @@ function Station(props: {
         </section>
 
         <div className="bottom">
-        <section className="feed cell" aria-label="Overnight">
-          <div className="hd">
-            <span className="caps">Overnight</span>
-            <span className="mono">developments only</span>
-          </div>
-          {feed.length === 0 && <p className="quiet">No developments in this run.</p>}
-          {shown.map(({ l, r }, i) => {
-            const mark =
-              l.kind === "set_aside"
-                ? "h"
-                : r && (stageOf(r) === "Act now" || decisions.includes(r))
-                  ? "y"
-                  : "s";
-            const body = (
-              <>
-                <span className="mono">{stamp(l.at)}</span>
-                <i className={`m ${mark}`} />
-                <span className="t">{withCompany(l.text, l.company)}</span>
-              </>
-            );
-            return r ? (
-              <button type="button" className="e" key={i} onClick={() => setOpen(r)}>
-                {body}
+          <section className="feed cell" aria-label="Overnight">
+            <div className="hd">
+              <span className="caps">Overnight</span>
+              <span className="mono">developments only</span>
+            </div>
+            {feed.length === 0 && (
+              <p className="quiet">No developments in this run.</p>
+            )}
+            {shown.map(({ l, r }, i) => {
+              const mark =
+                l.kind === "set_aside"
+                  ? "h"
+                  : r && (stageOf(r) === "Act now" || decisions.includes(r))
+                    ? "y"
+                    : "s";
+              const body = (
+                <>
+                  <span className="mono">{stamp(l.at)}</span>
+                  <i className={`m ${mark}`} />
+                  <span className="t">{withCompany(l.text, l.company)}</span>
+                </>
+              );
+              return r ? (
+                <button
+                  type="button"
+                  className="e"
+                  key={i}
+                  onClick={() => setOpen(r)}
+                >
+                  {body}
+                </button>
+              ) : (
+                <div className="e plain" key={i}>
+                  {body}
+                </div>
+              );
+            })}
+            {feed.length > 8 && (
+              <button
+                type="button"
+                className="more"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? "show fewer" : `show all ${feed.length}`}
               </button>
-            ) : (
-              <div className="e plain" key={i}>
-                {body}
+            )}
+          </section>
+
+          <section
+            className="taught cell"
+            aria-label="What your answers changed"
+          >
+            <div className="hd">
+              <span className="caps">What your answers changed</span>
+              {learning && (
+                <span className="mono">{learning.answers} answers</span>
+              )}
+            </div>
+            {(!learning || learning.lessons.length === 0) && (
+              <p className="quiet">
+                Answer a decision and I’ll show here what it changed.
+              </p>
+            )}
+            {learning?.lessons.slice(0, 3).map((l) => (
+              <div className="l" key={l.received_at}>
+                <span className="said">
+                  “{l.said}” on <b>{nice(l.company)}</b>:
+                </span>{" "}
+                {l.change}
               </div>
-            );
-          })}
-          {feed.length > 8 && (
-            <button type="button" className="more" onClick={() => setShowAll(!showAll)}>
-              {showAll ? "show fewer" : `show all ${feed.length}`}
-            </button>
-          )}
-        </section>
+            ))}
+            {learning && learning.answers > 0 && (
+              <div className="prog" aria-label={progressLine(learning)}>
+                {Array.from({ length: Math.round(learning.needed) }, (_, i) => (
+                  <i key={i} className={i < learning.labels ? "on" : ""} />
+                ))}
+                <span className="mono">{progressLine(learning)}</span>
+              </div>
+            )}
+          </section>
 
-        <section className="taught cell" aria-label="What your answers changed">
-          <div className="hd">
-            <span className="caps">What your answers changed</span>
-            {learning && <span className="mono">{learning.answers} answers</span>}
-          </div>
-          {(!learning || learning.lessons.length === 0) && (
-            <p className="quiet">
-              Answer a decision and I’ll show here what it changed.
-            </p>
-          )}
-          {learning?.lessons.slice(0, 3).map((l) => (
-            <div className="l" key={l.received_at}>
-              <span className="said">
-                “{l.said}” on <b>{nice(l.company)}</b>:
-              </span>{" "}
-              {l.change}
+          <section className="run cell" aria-label="This edition">
+            <div className="hd">
+              <span className="caps">This edition</span>
+              <span className="mono">what I read</span>
             </div>
-          ))}
-          {learning && learning.answers > 0 && (
-            <div className="prog" aria-label={progressLine(learning)}>
-              {Array.from({ length: Math.round(learning.needed) }, (_, i) => (
-                <i key={i} className={i < learning.labels ? "on" : ""} />
-              ))}
-              <span className="mono">{progressLine(learning)}</span>
-            </div>
-          )}
-        </section>
-
-        <section className="run cell" aria-label="This edition">
-          <div className="hd">
-            <span className="caps">This edition</span>
-            <span className="mono">what I read</span>
-          </div>
-          {steps.map((s, i) => (
-            <div className="step" key={s.k}>
-              <span>{s.k}</span>
-              <span className="bar">
-                <i
-                  style={{
-                    width: `${(s.n / most) * 100}%`,
-                    animationDelay: `${400 + i * 120}ms`,
-                  }}
-                  className={i === steps.length - 1 ? "on" : ""}
-                />
-              </span>
-              <b>{s.n}</b>
-            </div>
-          ))}
-          {f && setAside > 0 && (
-            <p className="aside">
-              Set aside:{" "}
-              {Object.entries(f.rejected)
-                .map(([k, n]) => `${n} ${k.replace(/_/g, " ")}`)
-                .join(", ")}
-              .
-            </p>
-          )}
-        </section>
+            {steps.map((s, i) => (
+              <div className="step" key={s.k}>
+                <span>{s.k}</span>
+                <span className="bar">
+                  <i
+                    style={{
+                      width: `${(s.n / most) * 100}%`,
+                      animationDelay: `${400 + i * 120}ms`,
+                    }}
+                    className={i === steps.length - 1 ? "on" : ""}
+                  />
+                </span>
+                <b>{s.n}</b>
+              </div>
+            ))}
+            {f && setAside > 0 && (
+              <p className="aside">
+                Set aside:{" "}
+                {Object.entries(f.rejected)
+                  .map(([k, n]) => `${n} ${k.replace(/_/g, " ")}`)
+                  .join(", ")}
+                .
+              </p>
+            )}
+          </section>
         </div>
       </div>
     </Shell>

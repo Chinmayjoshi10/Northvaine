@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from northvaine.api import store, views
 from northvaine.api.feedback import Base
-from northvaine.core.settings import Settings
+from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.graph import GraphView, run_graph
+from northvaine.radar.models import REPO_ROOT, load_client_spec
 
 router = APIRouter(prefix="/api", tags=["runs"])
 
@@ -70,3 +73,55 @@ def get_graph(client: str, day: str, base: Base) -> GraphView:
     """The web of one run: companies, events and the lines between them, each with its quotes."""
     run, _ = store.load_run(base, client, store.resolve_day(base, client, day))
     return run_graph(run, Settings(_env_file=None))
+
+
+class Searches(BaseModel):
+    source: str
+    count: int
+
+
+class BusinessView(BaseModel):
+    """Your business: what the radar was told about the client, read-only (D105). Customer
+    names stay out of the page; only their number is shown."""
+
+    client_id: str
+    name: str | None
+    offer: str
+    markets: list[str]
+    offer_terms: list[str]
+    related_terms: list[str]
+    buyer_roles: list[str]
+    not_buyers: list[str]
+    product_codes: list[str]
+    existing_customers: int
+    searches: list[Searches]
+
+
+def _spec_dirs() -> list[Path]:
+    settings = get_settings()
+    dirs = [Path(settings.onboarding_clients_dir), Path(settings.radar_clients_dir)]
+    return [d if d.is_absolute() else REPO_ROOT / d for d in dirs]
+
+
+@router.get("/clients/{client}/business")
+def get_business(client: str) -> BusinessView:
+    store.check_client(client)
+    for folder in _spec_dirs():
+        if (folder / f"{client}.json").is_file():
+            spec = load_client_spec(client, folder)
+            break
+    else:
+        raise HTTPException(status_code=404, detail="no business profile for this client")
+    return BusinessView(
+        client_id=spec.id,
+        name=spec.name,
+        offer=spec.offer,
+        markets=list(spec.markets),
+        offer_terms=spec.offer_terms,
+        related_terms=spec.related_terms,
+        buyer_roles=spec.buyer_roles,
+        not_buyers=spec.not_buyers,
+        product_codes=spec.product_codes,
+        existing_customers=len(spec.existing_customers),
+        searches=[Searches(source=k, count=len(v)) for k, v in sorted(spec.sensors.items())],
+    )

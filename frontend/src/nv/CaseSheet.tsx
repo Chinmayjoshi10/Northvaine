@@ -173,9 +173,12 @@ export function CaseSheet(props: {
   onFollow?: (f: FollowUp) => Promise<void>;
   /** The full case page for this lead, when the caller has a route for it. */
   fullHref?: string;
+  /** This lead's chain on the Connections screen. */
+  connectionsHref?: string;
   onClose: () => void;
 }) {
-  const { row, decided, onDecide, followed = [], onFollow, fullHref, onClose } = props;
+  const { row, decided, onDecide, followed = [], onFollow, fullHref, connectionsHref, onClose } =
+    props;
   const [picked, setPicked] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -227,6 +230,11 @@ export function CaseSheet(props: {
         {fullHref && (
           <a className="full" href={fullHref}>
             Open full case →
+          </a>
+        )}
+        {connectionsHref && (
+          <a className="full" href={connectionsHref}>
+            See how it connects →
           </a>
         )}
         <span className="keys mono">

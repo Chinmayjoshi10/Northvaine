@@ -1079,3 +1079,7 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **Scoreboard:** the WOS catalogue run blind against the 13 buyers sent (target 8 or more).
     An improvement that does not raise the count is not kept.
   - **Cut order if late:** E, then C, then D. Hosting by 23 Oct and the demo path never move.
+  - **F. Distributors** (added 17 Oct, founder): with "distributors" chosen at onboarding, the gate
+    keeps companies that sell the client's kind of product without making it, as candidate
+    partners ranked by evidence of size; the owner decides partner or competitor. After A and B;
+    cut after C, D and E.

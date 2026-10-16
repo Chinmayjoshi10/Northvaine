@@ -232,3 +232,30 @@ async def test_brief_marks_rows_seen_in_the_previous_run(client: AsyncClient, ba
     assert rows[first.entries[0].candidate.name] is True
     older = (await client.get("/api/clients/acme/runs/2026-10-05")).json()
     assert older["previous"] is None and older["client_name"] is None
+
+
+async def test_business_shows_the_spec_without_customer_names(
+    client: AsyncClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from northvaine.api import runs
+
+    folder = tmp_path / "clients"
+    folder.mkdir()
+    spec = {
+        "id": "acme",
+        "name": "Acme Works",
+        "offer": "Invented offer",
+        "markets": ["GB"],
+        "sensors": {"tavily": [{"text": "new site opening"}, {"text": "contract won"}]},
+        "offer_terms": ["widgets"],
+        "existing_customers": ["Secret Customer Ltd"],
+    }
+    (folder / "acme.json").write_text(json.dumps(spec), encoding="utf-8")
+    monkeypatch.setattr(runs, "_spec_dirs", lambda: [folder])
+
+    resp = await client.get("/api/clients/acme/business")
+    data = resp.json()
+    assert data["name"] == "Acme Works" and data["offer_terms"] == ["widgets"]
+    assert data["existing_customers"] == 1 and "Secret Customer" not in resp.text
+    assert data["searches"] == [{"source": "tavily", "count": 2}]
+    assert (await client.get("/api/clients/nobody/business")).status_code == 404

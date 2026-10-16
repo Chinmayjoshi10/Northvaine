@@ -7,22 +7,26 @@ import "./nv.css";
 // so nothing in the product is a button that does nothing.
 
 export type Theme = "dark" | "light";
-export type Screen = "leads" | "station";
+export type Screen = "leads" | "station" | "connections" | "business";
 
 const KEY = "nv-theme";
 
-// Screens in the locked design that are not built yet: shown, but not links and not focusable.
-const SOON = [
-  "Decisions",
-  "Situations",
-  "Back in motion",
-  "Accounts",
-  "Territory",
-  "Connections",
-  "Editions",
-  "Outcomes",
-  "What I’ve learned",
-  "Your business",
+// The rail in the locked design's order. Items without a screen are not built yet: shown with
+// "Soon", but not links and not focusable. "sep" draws the divider.
+const RAIL: (readonly [string, Screen | null] | "sep")[] = [
+  ["Station", "station"],
+  ["Leads", "leads"],
+  ["Decisions", null],
+  ["Situations", null],
+  ["Back in motion", null],
+  ["Accounts", null],
+  ["Territory", null],
+  ["Connections", "connections"],
+  ["Editions", null],
+  ["Outcomes", null],
+  "sep",
+  ["What I’ve learned", null],
+  ["Your business", "business"],
 ];
 
 function initialTheme(): Theme {
@@ -82,11 +86,6 @@ export function Shell(props: {
     minute: "2-digit",
   });
 
-  const nav: { id: Screen; label: string }[] = [
-    { id: "station", label: "Station" },
-    { id: "leads", label: "Leads" },
-  ];
-
   return (
     <div className={`nv${peek ? " peek" : ""}`} data-theme={theme}>
       <header className="nv-bar">
@@ -120,32 +119,28 @@ export function Shell(props: {
       </header>
       <div className="nv-body">
         <nav className="nv-rail" aria-label="Screens">
-          {nav.slice(0, 2).map((n) => (
-            <a
-              key={n.id}
-              className="nv-nav"
-              href={link("app", client, day, ...(n.id === "station" ? [] : [n.id]))}
-              aria-current={screen === n.id ? "page" : undefined}
-            >
-              {n.label}
-              {counts[n.id] !== undefined && (
-                <span className="n">{counts[n.id]}</span>
-              )}
-            </a>
-          ))}
-          {SOON.slice(0, 8).map((label) => (
-            <span key={label} className="nv-nav off" aria-disabled="true">
-              {label}
-              <span className="soon">Soon</span>
-            </span>
-          ))}
-          <div className="sep" />
-          {SOON.slice(8).map((label) => (
-            <span key={label} className="nv-nav off" aria-disabled="true">
-              {label}
-              <span className="soon">Soon</span>
-            </span>
-          ))}
+          {RAIL.map((item, i) => {
+            if (item === "sep") return <div className="sep" key={`sep${i}`} />;
+            const [label, id] = item;
+            if (!id)
+              return (
+                <span key={label} className="nv-nav off" aria-disabled="true">
+                  {label}
+                  <span className="soon">Soon</span>
+                </span>
+              );
+            return (
+              <a
+                key={id}
+                className="nv-nav"
+                href={link("app", client, day, ...(id === "station" ? [] : [id]))}
+                aria-current={screen === id ? "page" : undefined}
+              >
+                {label}
+                {counts[id] !== undefined && <span className="n">{counts[id]}</span>}
+              </a>
+            );
+          })}
           <div className="foot">
             <span className="mono">{client.replace(/_/g, " ")}</span>
           </div>
