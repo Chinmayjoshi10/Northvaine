@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import stationDark from "../assets/station-dark.png";
+import stationDark from "../assets/station-dark.jpg";
 import { link } from "../routes";
 import content from "./landingContent.json";
 import "../nv/nv.css";
