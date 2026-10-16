@@ -27,7 +27,7 @@ public demo copy; typecheck, frontend build, route smoke checks, and the full fa
 
 ---
 
-## Card B: `sidebar` (frontend only)
+## Card B: `sidebar` (frontend only) - TAKEN BY CLAUDE (Station rework, 17 Oct): do not start
 **Goal:** the app frame matches the locked design without dead links.
 - In `frontend/src/nv/Shell.tsx`, show the full sidebar from `docs/design/final/station.html`
   (Station, Decisions, Situations, Back in motion, Accounts, Territory, Connections, Editions,
