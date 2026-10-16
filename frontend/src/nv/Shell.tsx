@@ -11,6 +11,20 @@ export type Screen = "leads" | "station";
 
 const KEY = "nv-theme";
 
+// Screens in the locked design that are not built yet: shown, but not links and not focusable.
+const SOON = [
+  "Decisions",
+  "Situations",
+  "Back in motion",
+  "Accounts",
+  "Territory",
+  "Connections",
+  "Editions",
+  "Outcomes",
+  "What I’ve learned",
+  "Your business",
+];
+
 function initialTheme(): Theme {
   try {
     const saved = localStorage.getItem(KEY);
@@ -106,7 +120,7 @@ export function Shell(props: {
       </header>
       <div className="nv-body">
         <nav className="nv-rail" aria-label="Screens">
-          {nav.map((n) => (
+          {nav.slice(0, 2).map((n) => (
             <a
               key={n.id}
               className="nv-nav"
@@ -118,6 +132,19 @@ export function Shell(props: {
                 <span className="n">{counts[n.id]}</span>
               )}
             </a>
+          ))}
+          {SOON.slice(0, 8).map((label) => (
+            <span key={label} className="nv-nav off" aria-disabled="true">
+              {label}
+              <span className="soon">Soon</span>
+            </span>
+          ))}
+          <div className="sep" />
+          {SOON.slice(8).map((label) => (
+            <span key={label} className="nv-nav off" aria-disabled="true">
+              {label}
+              <span className="soon">Soon</span>
+            </span>
           ))}
           <div className="foot">
             <span className="mono">{client.replace(/_/g, " ")}</span>

@@ -429,3 +429,23 @@
     transition: none !important;
   }
 }
+
+/* rail: screens still to come are visible but inert */
+.nv-nav.off {
+  color: var(--dim);
+  opacity: 0.7;
+  cursor: default;
+}
+.nv-nav.off:hover {
+  color: var(--dim);
+}
+.nv-nav .soon {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  padding: 1px 4px;
+}

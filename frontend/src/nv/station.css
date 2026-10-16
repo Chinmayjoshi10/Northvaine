@@ -436,3 +436,61 @@
 
 /* D103: the daily edition label on a decision */
 .d .label { margin: 0 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--signal); }
+
+/* the design pass: dek caption, evidence link, overnight list */
+.st .stat .cap2 {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+}
+.st .d .against {
+  all: unset;
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--soft);
+  text-decoration: underline transparent 1px;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.st .d .against:hover,
+.st .d .against:focus-visible {
+  color: var(--ink);
+  text-decoration-color: var(--hair2);
+}
+.st .feed .e.plain {
+  cursor: default;
+}
+.st .feed .e.plain:hover .t {
+  color: inherit;
+}
+.st .feed .e .t b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.st .feed .more {
+  all: unset;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--soft);
+}
+.st .feed .more:hover,
+.st .feed .more:focus-visible {
+  color: var(--ink);
+}
+.nv .m.a {
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.4px var(--account);
+}
+.tmap .acc {
+  fill: none;
+  stroke: var(--account);
+  stroke-width: 1.3;
+}
+.tmap .sq.dev {
+  fill: var(--ink);
+  stroke: none;
+}

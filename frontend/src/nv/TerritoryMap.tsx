@@ -21,6 +21,12 @@ export interface Place {
   country: string;
   total: number;
   toDecide: number;
+  /** act: a decision here; developing: leads to qualify; watching: the rest */
+  kind?: "act" | "developing" | "watching";
+  /** one of the client's own accounts is here */
+  account?: boolean;
+  /** "Company · short fact" for the country's lead row */
+  note?: string;
 }
 
 type Country = Feature<Geometry, { name: string }>;
@@ -199,6 +205,7 @@ export function TerritoryMap(props: {
       <svg width={size.w} height={size.h} role="img" aria-label="Leads by country">
         {markers.map(({ p, x, y }, i) => {
           const hot = p.toDecide > 0;
+          const kind = hot ? "act" : (p.kind ?? "watching");
           const left = x > size.w * 0.72;
           return (
             <g
@@ -215,10 +222,17 @@ export function TerritoryMap(props: {
                   <circle className="core" r={4.2} />
                 </>
               ) : (
-                <rect className="sq" x={-3.5} y={-3.5} width={7} height={7} />
+                <rect
+                  className={kind === "developing" ? "sq dev" : "sq"}
+                  x={-3.5}
+                  y={-3.5}
+                  width={7}
+                  height={7}
+                />
               )}
+              {p.account && <circle className="acc" r={hot ? 7.5 : 7} />}
               <text x={left ? -14 : 14} y={3} textAnchor={left ? "end" : "start"}>
-                {p.country}
+                {p.note ?? p.country}
               </text>
               <text
                 className="sub"
@@ -226,7 +240,7 @@ export function TerritoryMap(props: {
                 y={17}
                 textAnchor={left ? "end" : "start"}
               >
-                {p.total} on record{hot ? ` · ${p.toDecide} to decide` : ""}
+                {p.country} · {p.total} on record{hot ? ` · ${p.toDecide} to decide` : ""}
               </text>
             </g>
           );

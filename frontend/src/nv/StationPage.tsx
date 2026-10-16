@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { api } from "../api";
 import type { BriefView, Row } from "../types";
 import { useLoad } from "../useLoad";
-import { link } from "../routes";
 import { CaseSheet, optionsFor } from "./CaseSheet";
 import { useDecisions } from "./decide";
 import {
@@ -34,7 +33,7 @@ export function StationPage({ client, day }: { client: string; day: string }) {
   const crumb = (
     <>
       Station <span className="sl">/</span>{" "}
-      <b>{brief.state === "ready" ? brief.data.offer : client}</b>
+      <b>{brief.state === "ready" ? clientLabel(brief.data) : client}</b>
     </>
   );
   if (brief.state !== "ready")
@@ -50,6 +49,63 @@ export function StationPage({ client, day }: { client: string; day: string }) {
       </Shell>
     );
   return <Station client={client} day={day} brief={brief.data} crumb={crumb} />;
+}
+
+/** The client's name; else the offer cut at its first comma or 48 characters. Never the whole sentence. */
+function clientLabel(b: BriefView): string {
+  const name = b.client_name?.trim();
+  if (name) return name;
+  const first = b.offer.split(",")[0].trim();
+  return first.length > 48 ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…` : first;
+}
+
+const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
+
+/** The urgency tag: a stated tender deadline or award, else a date in the label's reason, else nothing. */
+function urgency(r: Row): string | null {
+  if (daysLeft(r) !== null || awardDay(r) || /closes (today|tomorrow)/.test(r.why_now))
+    return windowOf(r);
+  const iso = r.label_reason?.match(/\d{4}-\d{2}-\d{2}/);
+  if (iso) return shortDate(iso[0]);
+  const txt = r.label_reason?.match(new RegExp(`\\b\\d{1,2} (?:${MONTH})[a-z]*\\b`));
+  return txt ? txt[0] : null;
+}
+
+/** A caution that only points at a section of the brief says nothing here. */
+function readable(caution: string): boolean {
+  return !/\bsections?\s*\d|read section/i.test(caution);
+}
+
+/** The clock time when `at` carries one, else the short date. */
+function stamp(at: string | null): string {
+  if (!at) return "—";
+  const m = at.match(/T(\d{2}:\d{2})/);
+  return m ? m[1] : shortDate(at);
+}
+
+/** The company in bold when the text names it, else the company followed by the text. */
+function withCompany(text: string, company: string | null): ReactNode {
+  if (!company) return text;
+  const i = text.indexOf(company);
+  if (i < 0)
+    return (
+      <>
+        <b>{nice(company)}</b> {text}
+      </>
+    );
+  return (
+    <>
+      {text.slice(0, i)}
+      <b>{nice(company)}</b>
+      {text.slice(i + company.length)}
+    </>
+  );
+}
+
+/** A short fact for a map label: the label's reason, cut at a word. */
+function shortFact(r: Row): string {
+  const t = (r.label_reason ?? "").trim();
+  return t.length > 34 ? `${t.slice(0, 34).replace(/\s+\S*$/, "")}…` : t;
 }
 
 const DAY = 86_400_000;
@@ -147,31 +203,11 @@ function Station(props: {
   const { decided, decide, followed, follow, learning, lesson, dismiss } =
     useDecisions(client, brief);
   const [open, setOpen] = useState<Row | null>(null);
-  const [fresh, setFresh] = useState<number | null>(null);
-
-  // "new": not in the edition before this one, matched by company identity
-  useEffect(() => {
-    let live = true;
-    api.clients().then(
-      async (all) => {
-        const runs = all.find((c) => c.client_id === client)?.runs ?? [];
-        const prev = runs.filter((d) => d < brief.as_of).sort().pop();
-        if (!prev) return;
-        const before = await api.brief(client, prev);
-        const keys = new Set(
-          [...before.accounts, ...before.tenders, ...before.weaker].map(
-            (r) => r.company_key ?? r.company,
-          ),
-        );
-        if (live)
-          setFresh(rows.filter((r) => !keys.has(r.company_key ?? r.company)).length);
-      },
-      () => undefined,
-    );
-    return () => {
-      live = false;
-    };
-  }, [client, brief.as_of, rows]);
+  const [showAll, setShowAll] = useState(false);
+  // new vs returning comes from the run record (a row is returning when the previous run had it)
+  const returning = rows.filter((r) => r.returning === true).length;
+  const fresh = rows.length - returning;
+  const firstEdition = !brief.previous;
 
   useEffect(() => {
     if (!open) return;
@@ -182,16 +218,37 @@ function Station(props: {
 
   const places = useMemo(() => {
     const hot = new Set(decisions.map((r) => r.rank));
-    const by = new Map<string, Place>();
+    const mine = new Set(brief.accounts.map((r) => r.rank));
+    const by = new Map<string, Place & { lead: Row }>();
     for (const r of rows) {
       if (!r.country || /not stated/.test(r.country)) continue;
-      const p = by.get(r.country) ?? { country: r.country, total: 0, toDecide: 0 };
+      const p = by.get(r.country) ?? {
+        country: r.country,
+        total: 0,
+        toDecide: 0,
+        kind: "watching" as const,
+        account: false,
+        lead: r,
+      };
       p.total += 1;
-      if (hot.has(r.rank)) p.toDecide += 1;
+      if (hot.has(r.rank)) {
+        p.toDecide += 1;
+        p.kind = "act";
+      } else if (p.kind !== "act" && stageOf(r) === "Developing") p.kind = "developing";
+      if (mine.has(r.rank)) p.account = true;
+      // the label names the country's most urgent row: a decision first, else the best rank
+      const better =
+        hot.has(r.rank) !== hot.has(p.lead.rank)
+          ? hot.has(r.rank)
+          : r.rank < p.lead.rank;
+      if (better) p.lead = r;
       by.set(r.country, p);
     }
-    return [...by.values()];
-  }, [rows, decisions]);
+    return [...by.values()].map(({ lead, ...p }) => {
+      const fact = shortFact(lead);
+      return { ...p, note: fact ? `${nice(lead.company)} · ${fact}` : nice(lead.company) };
+    });
+  }, [rows, decisions, brief.accounts]);
   const unplaced = rows.filter((r) => !r.country || /not stated/.test(r.country)).length;
 
   // the masthead: the newest award is the news; otherwise the most urgent decision
@@ -199,46 +256,34 @@ function Station(props: {
     [...rows]
       .filter((r) => awardDay(r))
       .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!))[0] ?? decisions[0];
-  const soonest = rows
-    .filter((r) => daysLeft(r) !== null)
-    .sort((a, b) => daysLeft(a)! - daysLeft(b)!)[0];
-  const weekAwards = rows.filter((r) => {
-    const d = awardDay(r);
-    return d !== null && daysBetween(d, brief.as_of) <= 7;
-  }).length;
-  const lede: ReactNode[] = [];
-  if (soonest) {
-    const d = daysLeft(soonest)!;
-    lede.push(
-      <span key="t">
-        <b>{nice(soonest.company)}</b>’s tender closes{" "}
-        {d === 0 ? "today" : d === 1 ? "tomorrow" : `in ${d} days`}.{" "}
+  // the dek: the lead's own reason, then plain counts of the rest; zero counts are skipped
+  const dek: ReactNode[] = [];
+  const top = decisions[0];
+  if (top?.label_reason) {
+    dek.push(
+      <span key="l">
+        <b>{nice(top.company)}</b>: {top.label_reason.replace(/[.\s]+$/, "")}.{" "}
       </span>,
     );
   }
-  if (weekAwards)
-    lede.push(
-      <span key="a">
-        {weekAwards === 1 ? "One contract was" : `${weekAwards} contracts were`} awarded
-        this week.{" "}
-      </span>,
-    );
-  lede.push(<span key="r">Every fact below is checked against its source.</span>);
+  const labelled = rows.filter((r) => r !== top);
+  const changed = labelled.filter((r) => r.label === "just_changed").length;
+  const toWork = labelled.filter((r) => r.label === "account_to_work").length;
+  if (changed || toWork) {
+    const parts: string[] = [];
+    if (changed) parts.push(`${changed} more changed recently`);
+    if (toWork) parts.push(`${toWork} ${toWork === 1 ? "account" : "accounts"} to work`);
+    dek.push(<span key="n">{parts.join("; ")}.</span>);
+  }
 
   const feed = useMemo(() => {
     const byRank = new Map(rows.map((r) => [r.rank, r]));
-    const seen = new Set<string>();
-    return (brief.log ?? [])
-      .filter((l) => l.kind !== "set_aside" && l.rank !== null && byRank.has(l.rank))
-      .filter((l) => {
-        const k = `${l.rank}:${l.kind}`;
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      })
-      .slice(0, 6)
-      .map((l) => ({ l, r: byRank.get(l.rank!)! }));
+    return (brief.log ?? []).map((l) => ({
+      l,
+      r: l.rank !== null ? (byRank.get(l.rank) ?? null) : null,
+    }));
   }, [brief.log, rows]);
+  const shown = showAll ? feed : feed.slice(0, 8);
 
   const title = (r: Row): string => {
     if (r.stream === "tender" || r.stream === "award") return headline(r, 44);
@@ -298,23 +343,22 @@ function Station(props: {
                 "A quiet edition"
               )}
             </h1>
-            <p className="lede">{lede}</p>
+            {dek.length > 0 && <p className="lede">{dek}</p>}
           </div>
           <div className="stats">
             <div className="stat sig">
               <b>{decisions.length}</b>
               <span className="caps">to decide</span>
             </div>
-            {fresh !== null && (
-              <div className="stat">
-                <b>{fresh}</b>
-                <span className="caps">new</span>
-              </div>
-            )}
-            <a className="stat" href={link("app", client, day, "leads")}>
-              <b>{rows.length}</b>
-              <span className="caps">on record</span>
-            </a>
+            <div className="stat">
+              <b>{fresh}</b>
+              <span className="caps">new</span>
+            </div>
+            <div className="stat">
+              <b>{firstEdition ? "—" : returning}</b>
+              <span className="caps">returning</span>
+              {firstEdition && <span className="cap2">first edition</span>}
+            </div>
           </div>
         </header>
 
@@ -324,11 +368,19 @@ function Station(props: {
             <span className="legend mono">
               <span>
                 <i className="m y" />
-                to decide
+                act
+              </span>
+              <span>
+                <i className="m s" />
+                developing
               </span>
               <span>
                 <i className="m h" />
-                on record
+                watching
+              </span>
+              <span>
+                <i className="m a" />
+                your account
               </span>
             </span>
           </div>
@@ -345,7 +397,7 @@ function Station(props: {
 
         <section className="dec" aria-label="To decide">
           <div className="hd">
-            <span className="caps">To decide · most urgent first</span>
+            <span className="caps">To decide · by cost of waiting</span>
             <span className="mono">{decisions.length}</span>
           </div>
           {decisions.length === 0 && (
@@ -370,7 +422,9 @@ function Station(props: {
                     · {r.contract_nature ? `${r.contract_nature} ` : ""}
                     {typeOf(r).toLowerCase()}
                   </span>
-                  <span className={`wait${hot ? " hot" : ""}`}>{windowOf(r)}</span>
+                  {urgency(r) && (
+                    <span className={`wait${hot ? " hot" : ""}`}>{urgency(r)}</span>
+                  )}
                 </div>
                 <h2 className="q">
                   <button type="button" onClick={() => setOpen(r)}>
@@ -384,8 +438,11 @@ function Station(props: {
                   </p>
                 )}
                 <p className="why">
-                  <b>{projectOf(r)}.</b> {sentence(r.caution)}
-                  {missing.length > 0 && ` Not yet known: ${missing.join(", ")}.`}
+                  <b>{projectOf(r)}.</b> {readable(r.caution) && sentence(r.caution)}
+                  {missing.length > 0 && ` Not yet known: ${missing.join(", ")}.`}{" "}
+                  <button type="button" className="against" onClick={() => setOpen(r)}>
+                    Evidence against →
+                  </button>
                 </p>
                 {done ? (
                   <div className="opts">
@@ -419,24 +476,41 @@ function Station(props: {
         </section>
 
         <div className="bottom">
-        <section className="feed cell" aria-label="Latest developments">
+        <section className="feed cell" aria-label="Overnight">
           <div className="hd">
-            <span className="caps">Latest on record</span>
-            <span className="mono">newest first</span>
+            <span className="caps">Overnight</span>
+            <span className="mono">developments only</span>
           </div>
-          {feed.length === 0 && <p className="quiet">No dated developments in this run.</p>}
-          {feed.map(({ l, r }) => (
-            <button type="button" className="e" key={`${l.rank}:${l.kind}`} onClick={() => setOpen(r)}>
-              <span className="mono">{l.at ? shortDate(l.at) : "—"}</span>
-              <i
-                className={`m ${decisions.includes(r) ? "y" : r.stream === "award" ? "s" : "h"}`}
-              />
-              <span className="t">
-                {nice(l.company ?? r.company)} {VERB[l.kind] ?? l.kind.replace(/_/g, " ")}
-                <em> · {projectOf(r)}</em>
-              </span>
+          {feed.length === 0 && <p className="quiet">No developments in this run.</p>}
+          {shown.map(({ l, r }, i) => {
+            const mark =
+              l.kind === "set_aside"
+                ? "h"
+                : r && (stageOf(r) === "Act now" || decisions.includes(r))
+                  ? "y"
+                  : "s";
+            const body = (
+              <>
+                <span className="mono">{stamp(l.at)}</span>
+                <i className={`m ${mark}`} />
+                <span className="t">{withCompany(l.text, l.company)}</span>
+              </>
+            );
+            return r ? (
+              <button type="button" className="e" key={i} onClick={() => setOpen(r)}>
+                {body}
+              </button>
+            ) : (
+              <div className="e plain" key={i}>
+                {body}
+              </div>
+            );
+          })}
+          {feed.length > 8 && (
+            <button type="button" className="more" onClick={() => setShowAll(!showAll)}>
+              {showAll ? "show fewer" : `show all ${feed.length}`}
             </button>
-          ))}
+          )}
         </section>
 
         <section className="taught cell" aria-label="What your answers changed">
