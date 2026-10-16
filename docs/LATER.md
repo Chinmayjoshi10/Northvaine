@@ -179,3 +179,8 @@ Industry-neutral; official APIs and public pages only; company-level facts only.
   lost bids whose winner fails to deliver.
 - **Priority after step 1b:** Contracts Finder, job ads, insolvency notices and trade deals,
   competitors' stockist lists.
+
+## Full SaaS operation (founder, 16 Oct: after the hackathon)
+- Pricing page (Free / Pro / Agency), card payments, invoices and plan limits enforced per account.
+- Accounts and sign-in for clients and the agency; subscriptions replace `_subscribers.txt`.
+- Contact requests and trial claims in the database with an admin view and email notification.

@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from northvaine.api import feedback, runs
+from northvaine.api import accounts, feedback, runs
 
 app = FastAPI(
     title="Northvaine",
@@ -33,6 +33,7 @@ async def health() -> dict[str, str]:
 
 app.include_router(runs.router)
 app.include_router(feedback.router)
+app.include_router(accounts.router)
 
 # One-service deploy: serve the built frontend when it exists (npm --prefix frontend run build).
 _DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"

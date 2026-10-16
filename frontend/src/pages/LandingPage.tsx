@@ -128,7 +128,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
       <nav className="landing-nav"><div className="landing-wrap">
         <a className="landing-wordmark" href={link()}>NORTHVAINE</a><span className="landing-spacer" />
         <a className="landing-nav-link" href="#what">What it does</a><a className="landing-nav-link" href="#why">Why</a><a className="landing-nav-link" href="#industries">Industries</a><a className="landing-nav-link" href="#how">How it works</a><a className="landing-nav-link" href="#product">The product</a><a className="landing-nav-link" href="#trust">Trust</a>
-        <a className="landing-nav-link" href={link("clients")}>Sign in</a><WebsiteCta label="Try it free" />
+        <a className="landing-nav-link" href={link("contact")}>Talk to us</a><a className="landing-nav-link" href={link("clients")}>Sign in</a><WebsiteCta label="Try it free" />
       </div></nav>
 
       <header className="landing-hero"><div className="landing-wrap landing-hero-grid">

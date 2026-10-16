@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LandingPage } from "./pages/LandingPage";
 import { ClientsPage } from "./pages/ClientsPage";
+import { ContactPage } from "./pages/ContactPage";
 import { LeadsPage } from "./nv/LeadsPage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
@@ -8,6 +9,7 @@ import { link } from "./routes";
 // Hash routes keep the app a static bundle that any server can host:
 //   #/                           landing page
 //   #/clients                    clients
+//   #/contact[/used]             talk to us (D104); "used" after the free radar
 //   #/app/<client>/<day>         Station, the edition (day may be "latest")
 //   #/app/<client>/<day>/leads   Leads, with the case as a sheet
 // Older links (#/c/..., #/m/...) open Station for the same client and day.
@@ -45,6 +47,10 @@ export function App() {
     return <LandingPage intro={path[0] === "intro"} />;
   }
 
+  if (path[0] === "contact") {
+    return <ContactPage reason={path[1]} />;
+  }
+
   if (path[0] === "onboarding") {
     return (
       <main className="onboarding" id="main">
@@ -53,6 +59,9 @@ export function App() {
         <p>We’re preparing the guided setup for your first radar.</p>
         <a className="btn primary" href={link()}>
           Back to Northvaine
+        </a>{" "}
+        <a className="btn" href={link("contact")}>
+          Talk to us
         </a>
       </main>
     );

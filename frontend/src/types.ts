@@ -194,3 +194,14 @@ export interface Learning {
   active: boolean;
   lessons: Lesson[];
 }
+
+/** D104: a "talk to us" request; a person answers it. `website_url` is a hidden bot trap. */
+export interface ContactIn {
+  kind: "subscribe" | "contact";
+  name: string;
+  company: string;
+  email: string;
+  website: string;
+  message: string;
+  website_url: string;
+}

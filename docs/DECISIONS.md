@@ -1037,3 +1037,13 @@ brief with Claude's five corrections (docs/COLLAB.md).
     2 just changed and 2 accounts to work, never padded. Station's "To decide" shows it when
     present.
   - **HMRC lag lowered to 45 days:** August data was public on 15 Oct.
+- **D104 — One free radar, then "talk to us" (16 Oct, founder).** For the hackathon there is no
+  pricing page and no payment.
+  - **Free limit:** one free radar build per email (`POST /api/trial`; a second claim is refused
+    with 409). Emails the founder lists in `_subscribers.txt` are not limited.
+  - **Talk to us:** `#/contact` sends a request (name, company, work email, website, what they
+    sell) to `POST /api/contact`; a person replies. A hidden field drops simple bots.
+  - **Storage:** JSON-lines files in the reports folder, never committed, like owner feedback.
+    Hosting must give that folder persistent storage, or move these files and feedback to the
+    database, before the public demo.
+  - **After the hackathon:** pricing, payments and accounts (`docs/LATER.md`).
