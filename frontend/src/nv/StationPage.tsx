@@ -65,10 +65,11 @@ const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
 function urgency(r: Row): string | null {
   if (daysLeft(r) !== null || awardDay(r) || /closes (today|tomorrow)/.test(r.why_now))
     return windowOf(r);
-  const iso = r.label_reason?.match(/\d{4}-\d{2}-\d{2}/);
-  if (iso) return shortDate(iso[0]);
-  const txt = r.label_reason?.match(new RegExp(`\\b\\d{1,2} (?:${MONTH})[a-z]*\\b`));
-  return txt ? txt[0] : null;
+  // A label's dates are past changes, not deadlines: show the latest as "changed Mon YYYY".
+  const dates = (r.label_reason ?? "").match(/\d{4}-\d{2}(?:-\d{2})?/g);
+  if (!dates) return null;
+  const [y, m] = dates.sort()[dates.length - 1].split("-");
+  return `changed ${MONTH.split("|")[Number(m) - 1]} ${y}`;
 }
 
 /** A caution that only points at a section of the brief says nothing here. */
@@ -102,10 +103,10 @@ function withCompany(text: string, company: string | null): ReactNode {
   );
 }
 
-/** A short fact for a map label: the label's reason, cut at a word. */
+/** A short fact for a map label: the first fact of the label's reason, cut at a word. */
 function shortFact(r: Row): string {
-  const t = (r.label_reason ?? "").trim();
-  return t.length > 34 ? `${t.slice(0, 34).replace(/\s+\S*$/, "")}…` : t;
+  const t = (r.label_reason ?? "").split(";")[0].trim();
+  return t.length > 40 ? `${t.slice(0, 40).replace(/\s+\S*$/, "")}…` : t;
 }
 
 const DAY = 86_400_000;
@@ -432,9 +433,9 @@ function Station(props: {
                   </button>
                 </h2>
                 {r.label && (
-                  <p className="label mono">
-                    {LABEL[r.label] ?? r.label}
-                    {r.label_reason ? ` · ${r.label_reason}` : ""}
+                  <p className="edlabel">
+                    <span className="mono lab-chip">{LABEL[r.label] ?? r.label}</span>
+                    {r.label_reason && <span className="lab-why">{r.label_reason}</span>}
                   </p>
                 )}
                 <p className="why">

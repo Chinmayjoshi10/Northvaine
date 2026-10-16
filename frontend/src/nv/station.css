@@ -435,7 +435,9 @@
 }
 
 /* D103: the daily edition label on a decision */
-.d .label { margin: 0 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--signal); }
+.d .edlabel { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 2px 0 6px; }
+.d .edlabel .lab-chip { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--signal); white-space: nowrap; }
+.d .edlabel .lab-why { min-width: 0; color: var(--soft-copy, inherit); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
 
 /* the design pass: dek caption, evidence link, overnight list */
 .st .stat .cap2 {
