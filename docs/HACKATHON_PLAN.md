@@ -62,20 +62,32 @@ the rules page blocks automated reading, so confirm once by hand):
 - Why-now news per shortlisted company, verified against the page.
 - The case shows the Tavily trace ("found the site → read 3 pages → names the product").
 
-**Order from 15 Oct** (about 10-12 sessions; buyer-intent steps 2-4 wait unless time frees up):
+**Order from 17 Oct** (D106; replaces the 15 Oct order). Lead quality comes into the hackathon:
+the founder chose to build all five improvements that close the gap between the automatic run and
+the WOS hand research. About 12-13 sessions remain for 17-26 Oct, so about 1.5 sessions a day.
 
-| # | Work | Founder |
-|---|---|---|
-| 1 | Step 1b: Companies House check (status, age, activity code; ownership and name changes) and daily-edition labels | Regenerate the Companies House keys |
-| 2 | Onboarding "Build my radar", powered by Tavily | Try it on your own site |
-| 3 | Landing page inside the app, wired to onboarding | React to it |
-| 4 | Station and the full case page to the locked design: Overnight, accounts to work, stage bar, history, Tavily and agent trace | React to it |
-| 5 | Merge Connections; hide or mark the other sidebar screens | — |
-| 6 | Time-machine backtest for "it saw it coming" (real run, never staged) | — |
-| 7 | Nightly run; public hosting that stays up through December; secrets scan; README with "How we use Nemotron, Token Factory and Tavily" and the feedback section | GitHub repo, rotate Neon password, pick the host |
-| 8 | Full demo walk-through and fixes | Walk it once |
-| 9 | Video under 3 minutes (script below), upload | Record (about 1 hour) |
-| 10 | Submit 29 Oct | Submit |
+| # | Work | Sessions | Founder |
+|---|---|---|---|
+| 1 | ~~Step 1b: Companies House check and daily-edition labels~~ done (D103) | - | Regenerate the Companies House keys |
+| 2 | ~~Onboarding "Build my radar"~~ done (D105) | - | Try it on your own site |
+| 3 | ~~Landing page, wired to onboarding~~ done | - | - |
+| 4 | Station to the locked design: company name, headline paragraph, new and returning, legend, urgency tags, Overnight timeline, sidebar with "Soon" | 1 | React to it |
+| 5 | Full case page: stage bar, chain, on record / inferred / not yet known, history, Tavily trace | 1 | React to it |
+| 6 | Merge Connections; "Your business" page | 0.5 | - |
+| 7 | **Lead quality A: company fit and contact.** Tavily reads each shortlisted company's own site: does it buy this kind of product (not a competitor or haulier), and the company email and phone from its contact page (company only) | 1 | - |
+| 8 | **Lead quality B: customers like yours.** From the client's best customers, find companies with the same activity codes, the same imports and similar words on their site | 1 | Name 3-5 best customers for the test client |
+| 9 | **Scoreboard:** run the WOS catalogue blind and count how many of the 13 sent buyers it finds alone (about 2 today; target 8 or more), plus new ones | 0.5 | - |
+| 10 | Nightly run; public hosting that stays up through December; secrets scan; contact, trial and onboarding files moved to the database. **Done by 23 Oct.** | 1-1.5 | GitHub repo, rotate Neon password, pick the host |
+| 11 | **Lead quality C: timing signals.** Expansion news, trade press, hiring for purchasing roles; two signals together beat one (step 3 of the buyer-intent plan) | 1 | - |
+| 12 | **Lead quality D: watching over time.** One case per company across nights; a case wakes up when its missing piece appears (step 2) | 1 | - |
+| 13 | **Lead quality E: follow the trail.** For the top 10, an investigating agent with a budget follows leads and rephrases weak searches; every fact still a checked quote | 1 | - |
+| 14 | Time-machine backtest: "it saw it coming" (real run, never staged) | 1 | - |
+| 15 | README with "How we use Nemotron, Token Factory and Tavily" and the feedback section | 0.5 | Read it |
+| 16 | Full demo walk-through and fixes | 1 | Walk it once |
+| 17 | Video under 3 minutes (27-28 Oct), upload | - | Record (about 1 hour) |
+| 18 | Submit 29 Oct | - | Submit |
+
+Re-run the scoreboard (9) after 11, 12 and 13: each must raise the count or it is not kept.
 
 **Video (3:00):** problem (0:00) → landing, the night run (0:20) → Station and a real importer
 case with sources (0:35) → "it saw it coming" (1:20) → onboarding on a different industry
@@ -100,10 +112,12 @@ public records; the client stays anonymous unless the founder agrees.
 ## If time runs short, cut in this order
 
 1. Gateway (already proposed out)
-2. "What changed since yesterday"
-3. The dawn animation (a plain transition instead)
+2. Lead quality E (follow the trail), then C (timing signals), then D (watching over time).
+   Hosting (10) and the demo path are never moved later to make room for them.
+3. "What changed since yesterday"
+4. The dawn animation (a plain transition instead)
 
-The demo path — landing → onboarding → Station → case — is never cut. Buyer-intent steps 2-4
+The demo path — landing → onboarding → Station → case — is never cut. Lead quality C-E (buyer-intent steps 2-4)
 and the extra sidebar screens are cut before any of it.
 
 ## After the hackathon: first client

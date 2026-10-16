@@ -1066,3 +1066,16 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - **One live run at a time;** the page polls and opens the first edition when done.
   - **Storage:** session files in the reports folder, never committed (same hosting note as
     D104).
+- **D106 — Lead quality comes into the hackathon (17 Oct, founder).** The automatic run found
+  about 2 of the 13 buyers the WOS hand research found. Five improvements close that gap and are
+  now in the hackathon plan, after Station and the case page:
+  - **A. Company fit and contact:** Tavily reads each shortlisted company's own site to confirm
+    it buys this kind of product, and takes the company email and phone from its contact page
+    (company only, never a person).
+  - **B. Customers like yours:** from the client's best customers, find companies with the same
+    activity codes, imports and site words.
+  - **C. Timing signals** (buyer-intent step 3), **D. watching over time** (step 2), **E. an
+    investigating agent** for the top 10, with a budget; every fact is still a checked quote.
+  - **Scoreboard:** the WOS catalogue run blind against the 13 buyers sent (target 8 or more).
+    An improvement that does not raise the count is not kept.
+  - **Cut order if late:** E, then C, then D. Hosting by 23 Oct and the demo path never move.
