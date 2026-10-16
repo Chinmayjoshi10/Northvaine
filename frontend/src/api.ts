@@ -3,6 +3,8 @@ import type {
   ClientSummary,
   ContactIn,
   Dossier,
+  OnboardingAnswers,
+  OnboardingSession,
   FeedbackRecord,
   Learning,
 } from "./types";
@@ -31,6 +33,27 @@ export const api = {
     request<Learning>(`/api/clients/${seg(client)}/learning`),
   sendFeedback: (body: Omit<FeedbackRecord, "received_at">) =>
     request<FeedbackRecord>("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  onboardingStart: (body: { email: string; company: string; website: string }) =>
+    fetch("/api/onboarding", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  onboarding: (id: string) => request<OnboardingSession>(`/api/onboarding/${seg(id)}`),
+  onboardingCatalogue: (id: string, file: File) =>
+    request<{ pages: number; readable: boolean }>(`/api/onboarding/${seg(id)}/catalogue`, {
+      method: "POST",
+      headers: { "Content-Type": "application/pdf" },
+      body: file,
+    }),
+  onboardingPropose: (id: string) =>
+    request<OnboardingSession>(`/api/onboarding/${seg(id)}/propose`, { method: "POST" }),
+  onboardingAnswers: (id: string, body: OnboardingAnswers) =>
+    request<OnboardingSession>(`/api/onboarding/${seg(id)}/answers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

@@ -1047,3 +1047,22 @@ brief with Claude's five corrections (docs/COLLAB.md).
     Hosting must give that folder persistent storage, or move these files and feedback to the
     database, before the public demo.
   - **After the hackathon:** pricing, payments and accounts (`docs/LATER.md`).
+- **D105 — Onboarding: "Build my radar" (16 Oct, founder).** A new business builds its own radar
+  in four steps at `#/onboarding`, without industry words in code.
+  - **Start:** company, website and work email. This claims the one free radar (D104); a used
+    email goes to "talk to us".
+  - **Catalogue (optional, with Skip):** a PDF up to 25 MB, read for text. A catalogue under
+    200 characters per page is flagged as mostly images.
+  - **Suggested answers:** the website (Tavily search and extract, same site only) and the
+    catalogue are cleaned (contacts and steering text removed), fenced as untrusted, and read
+    by one model call. Code then keeps only what it can check:
+    - product words must appear in the site or catalogue text;
+    - markets must be ISO country codes;
+    - HS and CPV codes must be well formed, and HS codes must exist in the UK tariff.
+    Dropped items are shown to the person.
+  - **The person confirms or edits the answers.** They become a client spec with generated
+    queries: HMRC for GB with HS codes, Find a Tender for GB with CPV codes, TED for EU markets
+    with CPV codes, and up to 6 Tavily searches.
+  - **One live run at a time;** the page polls and opens the first edition when done.
+  - **Storage:** session files in the reports folder, never committed (same hosting note as
+    D104).

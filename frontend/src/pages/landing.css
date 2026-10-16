@@ -234,3 +234,12 @@
 .contact-error { color: var(--signal); margin: 6px 0 0; }
 .contact-done { border: 1px solid var(--hair); border-radius: 12px; padding: 24px; background: var(--raised); display: grid; gap: 10px; justify-items: start; }
 .contact-done h2 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0; }
+
+/* D105: onboarding */
+.onb-hint { margin: -2px 0 2px; color: var(--dim); font-size: 13px; line-height: 1.45; }
+.onb-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.onb-row .landing-btn { margin-top: 0; }
+.onb-more { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 14px; margin-top: 10px; background: var(--raised); }
+.onb-more summary { cursor: pointer; font: 500 13.5px var(--sans); }
+.onb-more[open] { display: grid; gap: 8px; }
+.onb-more ul { margin: 6px 0 0; padding-left: 18px; color: var(--dim); font-size: 13px; }

@@ -205,3 +205,45 @@ export interface ContactIn {
   message: string;
   website_url: string;
 }
+
+/** D105: onboarding. The proposal is checked by code; the person edits every field. */
+export interface Proposal {
+  offer: string;
+  offer_terms: string[];
+  related_terms: string[];
+  markets: string[];
+  buyer_roles: string[];
+  not_buyers: string[];
+  hs_codes: string[];
+  cpv_codes: string[];
+  search_phrases: string[];
+  dropped: string[];
+}
+
+export interface OnboardingSession {
+  id: string;
+  company: string;
+  website: string;
+  stage: "reading" | "ready" | "proposing" | "proposed" | "running" | "done" | "failed";
+  site_read: boolean;
+  catalogue: { pages: number; readable: boolean } | null;
+  proposal: Proposal | null;
+  client_id: string | null;
+  error: string | null;
+  notes: string[];
+}
+
+export interface OnboardingAnswers {
+  company: string;
+  website: string;
+  offer: string;
+  offer_terms: string[];
+  related_terms: string[];
+  markets: string[];
+  buyer_roles: string[];
+  not_buyers: string[];
+  hs_codes: string[];
+  cpv_codes: string[];
+  search_phrases: string[];
+  existing_customers: string[];
+}

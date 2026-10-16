@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LandingPage } from "./pages/LandingPage";
 import { ClientsPage } from "./pages/ClientsPage";
 import { ContactPage } from "./pages/ContactPage";
+import { OnboardingPage } from "./pages/OnboardingPage";
 import { LeadsPage } from "./nv/LeadsPage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
@@ -52,20 +53,9 @@ export function App() {
   }
 
   if (path[0] === "onboarding") {
-    return (
-      <main className="onboarding" id="main">
-        <p className="mono">NORTHVAINE</p>
-        <h1>Onboarding is coming.</h1>
-        <p>We’re preparing the guided setup for your first radar.</p>
-        <a className="btn primary" href={link()}>
-          Back to Northvaine
-        </a>{" "}
-        <a className="btn" href={link("contact")}>
-          Talk to us
-        </a>
-      </main>
-    );
+    return <OnboardingPage />;
   }
+
 
   // In-page anchors in the locked landing design use plain hashes (#what, #trust, …).
   // Keep rendering the landing page for those anchors; only #/clients opens the old index.
