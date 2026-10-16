@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import stationDark from "../assets/station-dark.jpg";
 import { link } from "../routes";
 import content from "./landingContent.json";
 import "../nv/nv.css";
 import "./landing.css";
+import { ResolveTile, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 
 const cases = content.cases;
@@ -82,30 +84,94 @@ function Intro({ replay, onDone }: { replay: boolean; onDone: () => void }) {
   );
 }
 
-function LeadCard() {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(() => setIndex((value) => (value + 1) % cases.length), 6400);
-    return () => window.clearInterval(timer);
-  }, []);
-  const lead = cases[index];
+type CardView = { k: number; typed: number; step: number; bars: number };
+
+/**
+ * The hero lead stack (design assess()): each case is typed and built up step by step, then the
+ * card slides out left and the next one comes in from below over the ghost cards.
+ * Without motion the first case is shown complete and nothing cycles.
+ */
+function LeadCard({ ready }: { ready: boolean }) {
+  const [animated] = useState(motionOk);
+  const [view, setView] = useState<CardView>(
+    animated ? { k: 0, typed: 0, step: 0, bars: 0 } : { k: 0, typed: cases[0].company.length, step: 6, bars: cases[0].level },
+  );
+  const card = useRef<HTMLDivElement>(null);
   const stack = useRef<HTMLDivElement>(null);
   useTilt(stack);
+
+  useEffect(() => {
+    if (!animated || !ready) return;
+    let stopped = false;
+    const timers = new Set<number>();
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        const timer = window.setTimeout(() => {
+          timers.delete(timer);
+          resolve();
+        }, ms);
+        timers.add(timer);
+      });
+    const patch = (p: Partial<CardView>) => setView((v) => ({ ...v, ...p }));
+    void (async () => {
+      await sleep(300);
+      for (let n = 0; !stopped; n++) {
+        const k = n % cases.length;
+        const c = cases[k];
+        const el = card.current;
+        flushSync(() => setView({ k, typed: 0, step: 0, bars: 0 }));
+        // The in0/out classes are set by hand (the className prop never changes, so React leaves them alone).
+        if (el) {
+          el.classList.add("in0");
+          el.classList.remove("out");
+          void el.offsetWidth;
+          el.classList.remove("in0");
+        }
+        await sleep(350);
+        for (let i = 1; i <= c.company.length && !stopped; i++) {
+          patch({ typed: i });
+          await sleep(32);
+        }
+        patch({ step: 1 });
+        await sleep(420);
+        for (let i = 1; i <= c.level && !stopped; i++) {
+          patch({ bars: i });
+          await sleep(120);
+        }
+        for (const step of [2, 3, 4]) {
+          patch({ step });
+          await sleep(420);
+        }
+        patch({ step: 5 });
+        await sleep(380);
+        patch({ step: 6 });
+        await sleep(3200);
+        el?.classList.add("out");
+        await sleep(600);
+      }
+    })();
+    return () => {
+      stopped = true;
+      timers.forEach(window.clearTimeout);
+    };
+  }, [animated, ready]);
+
+  const lead = cases[view.k];
+  const on = (n: number) => (view.step >= n ? " landing-on" : "");
   return (
-    <div className="landing-stack lm-tilt" aria-live="polite" ref={stack}>
+    <div className="landing-stack lm-tilt" ref={stack}>
       <div className="landing-ghost g2" /><div className="landing-ghost g1" />
-      <div className="landing-lead-card" key={lead.company}>
-        <div className="landing-lead-top"><span className="mono">{lead.for}</span><span className="landing-seal"><i />Verified</span></div>
-        <div className="landing-company">{lead.company}</div>
+      <div className={`landing-lead-card${animated ? " anim" : ""}`} ref={card}>
+        <div className="landing-lead-top"><span className="landing-lead-for"><i className="landing-live" aria-hidden="true" /><span className="mono">{lead.for}</span></span><span className={`landing-seal${view.step >= 5 ? " on" : ""}`}><i />Verified</span></div>
+        <div className="landing-company">{lead.company.slice(0, view.typed)}</div>
         <div className="landing-place mono">{lead.place}</div>
-        <div className="landing-intent-block">
+        <div className={`landing-intent-block${on(1)}`}>
           <span className="landing-k">Intent</span>
-          <div className="landing-intent"><b>{lead.intent}</b><span className={`landing-meter${lead.level >= 4 ? " hot" : ""}`}>{[0, 1, 2, 3, 4].map((bar) => <i className={bar < lead.level ? "on" : ""} key={bar} />)}</span><span className="mono">{lead.strength}</span></div>
+          <div className="landing-intent"><b>{lead.intent}</b><span className={`landing-meter${lead.level >= 4 ? " hot" : ""}`}>{[0, 1, 2, 3, 4].map((bar) => <i className={bar < view.bars ? "on" : ""} key={bar} />)}</span><span className="mono">{lead.strength}</span></div>
         </div>
-        <div className="landing-lead-grid"><div><span className="landing-k">Why now</span>{lead.why}</div><div><span className="landing-k">Who decides</span>{lead.who}</div></div>
-        <div className="landing-quote">{lead.quote}<span className="mono">verified against the original record</span></div>
-        <div className="landing-actions"><span className="landing-act">{lead.action}</span><span className="landing-ghost-button">Assign</span><span className="mono">added to your leads</span></div>
+        <div className="landing-lead-grid"><div className={on(2).trim()}><span className="landing-k">Why now</span>{lead.why}</div><div className={on(3).trim()}><span className="landing-k">Who decides</span>{lead.who}</div></div>
+        <div className={`landing-quote${on(4)}`}>{lead.quote}<span className="mono">verified against the original record</span></div>
+        <div className={`landing-actions${on(6)}`}><span className="landing-act">{lead.action}</span><span className="landing-ghost-button">Assign</span><span className="mono">added to your leads</span></div>
       </div>
     </div>
   );
@@ -118,6 +184,25 @@ function WebsiteCta({ label }: { label: string }) {
       {text}
       {text !== label && <span className="lm-arrow" aria-hidden="true">→</span>}
     </a>
+  );
+}
+
+function Industries() {
+  const section = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLElement>(null);
+  const [current, setCurrent] = useState(1);
+  useSideways(section, track, bar, setCurrent);
+  return (
+    <section className="landing-industries landing-hz" id="industries" ref={section}>
+      <div className="landing-pin">
+        <div className="landing-wrap landing-industries-head"><div><div className="landing-eyebrow">One lead for every industry</div><h2>Whatever you sell, <em>someone is about to buy it.</em></h2></div><span className="landing-hz-count"><b>{current}</b> / {industryLeads.length} real leads · three industries</span></div>
+        <div className="landing-track" ref={track}>{industryLeads.map((lead) => <article className="landing-industry-card" key={lead[1]}><div className="landing-industry"><span>{lead[0]}</span><span className="landing-seal"><i />Verified</span></div><h3>{lead[1]}</h3><span className="landing-place">{lead[2]}</span><div className="landing-industry-intent"><span><span className="landing-k">Intent</span><b>{lead[3]}</b></span><span className={`landing-meter${Number(lead[9]) >= 4 ? " hot" : ""}`} style={{ marginLeft: "auto" }}>{[0, 1, 2, 3, 4].map((n) => <i className={n < Number(lead[9]) ? "on" : ""} key={n} />)}</span><span className="mono">{lead[8]}</span></div><div className="landing-lead-grid"><div><span className="landing-k">Why now</span>{lead[4]}</div><div><span className="landing-k">Who decides</span>{lead[5]}</div></div><div className="landing-quote">{lead[6]}</div><div className="landing-actions"><span className={`landing-act${lead[7] === "Watch" ? " watch" : ""}`}>{lead[7]}</span><span className="landing-ghost-button">Assign</span></div></article>)}
+          <article className="landing-industry-card end"><h3>Your industry next.</h3><p>Give it your website and see the companies with a reason to buy from you.</p><WebsiteCta label="Find my buyers →" /></article>
+        </div>
+        <div className="landing-hz-bar"><i ref={bar} /></div>
+      </div>
+    </section>
   );
 }
 
@@ -135,6 +220,10 @@ export function LandingPage({ intro }: { intro: boolean }) {
   useEffect(() => {
     document.title = "Northvaine";
     const reveals = Array.from(document.querySelectorAll<HTMLElement>(".landing .reveal"));
+    if (typeof IntersectionObserver === "undefined") {
+      reveals.forEach((element) => element.classList.add("in"));
+      return;
+    }
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("in");
@@ -159,14 +248,14 @@ export function LandingPage({ intro }: { intro: boolean }) {
           <p className="landing-sub lm-h lm-h2">For manufacturers, distributors and B2B suppliers in any industry. Northvaine finds companies with a real reason to buy from you, right now, often before they start looking for suppliers. Every lead comes with its intent, its timing, who decides, and the proof.</p>
           <div className="landing-ctas lm-h lm-h3"><WebsiteCta label="Find my buyers →" /><a className="landing-btn line" href={link("app", "coldchain_maker", "latest")}>See a live example</a></div>
           <div className="landing-fine mono lm-h lm-h4"><span>Free first radar</span><span>No card</span><span>Set up in minutes</span></div>
-        </div><div className="lm-h lm-h5"><LeadCard /></div>
+        </div><div className="lm-h lm-h5"><LeadCard ready={heroIn} /></div>
       </div></header>
 
       <section className="landing-section" id="what"><div className="landing-wrap">
         <div className="landing-eyebrow reveal">What it does</div><h2 className="reveal">It doesn’t give you more leads. <em>It gives you the right one, with proof.</em></h2>
         <div className="lm-stagger landing-three">
-          <article className="landing-feature reveal"><div className="landing-visual"><div className="landing-stream">{content.stream.map(([name, note, state]) => <div className={state} key={name}>{name}<span className="mono">{note}</span></div>)}</div></div><div className="landing-feature-copy"><span className="mono">01 · FINDS</span><h3>Only companies with intent</h3><p>Every company is checked first: would it buy from you, or does it sell what you sell? Competitors and noise never reach you.</p></div></article>
-          <article className="landing-feature reveal"><div className="landing-visual landing-chain"><span><i />Project<small>Old-town works</small></span><b /><span><i />Commitment<small>Contract won</small></span><b /><span><i />Buyer<small>SAS Antoniotti</small></span><b className="dashed" /><span className="you"><i />You</span></div><div className="landing-feature-copy"><span className="mono">02 · INVESTIGATES</span><h3>Finds who actually buys</h3><p>The company in the headline is often not the one placing the order. Northvaine follows the chain until it reaches the buyer.</p></div></article>
+          <article className="landing-feature reveal"><div className="landing-visual"><div className="landing-stream">{content.stream.map(([name, note, state], i) => <div className={state} key={i}>{name}<span className="mono">{note}</span></div>)}</div></div><div className="landing-feature-copy"><span className="mono">01 · FINDS</span><h3>Only companies with intent</h3><p>Every company is checked first: would it buy from you, or does it sell what you sell? Competitors and noise never reach you.</p></div></article>
+          <article className="landing-feature reveal"><div className="landing-visual"><ResolveTile /></div><div className="landing-feature-copy"><span className="mono">02 · INVESTIGATES</span><h3>Finds who actually buys</h3><p>The company in the headline is often not the one placing the order. Northvaine follows the chain until it reaches the buyer.</p></div></article>
           <article className="landing-feature reveal"><div className="landing-visual"><div className="landing-proof">Winner: <mark>SAS ANTONIOTTI</mark>; RAFFALLI TRAVAUX PUBLICS; COMPAGNIE DE DIFFUSION DE PANNEAUX DE SIGNALISATION ET ACCESSOIRES<span><i />found word for word in the original record</span></div></div><div className="landing-feature-copy"><span className="mono">03 · PROVES</span><h3>Proves every lead</h3><p>Every fact is checked against its original record before you see it. What is inferred says so. What is unknown stays unknown.</p></div></article>
         </div>
       </div></section>
@@ -176,11 +265,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
         <div className="landing-who reveal"><span className="mono">WHO IT’S FOR</span><div className="lm-stagger landing-who-grid">{content.audiences.map(([title, description]) => <div key={title}><b>{title}</b><span>{description}</span></div>)}</div></div>
       </div></section>
 
-      <section className="landing-industries" id="industries"><div className="landing-wrap"><div className="landing-industries-head"><div><div className="landing-eyebrow">One lead for every industry</div><h2>Whatever you sell, <em>someone is about to buy it.</em></h2></div><span className="mono">6 real leads · three industries</span></div></div>
-        <div className="landing-track lm-stagger reveal">{industryLeads.map((lead) => <article className="landing-industry-card" key={lead[1]}><div className="landing-industry"><span>{lead[0]}</span><span className="landing-seal"><i />Verified</span></div><h3>{lead[1]}</h3><span className="landing-place">{lead[2]}</span><div className="landing-industry-intent"><span><span className="landing-k">Intent</span><b>{lead[3]}</b></span><span className="mono">{lead[8]}</span></div><div className="landing-lead-grid"><div><span className="landing-k">Why now</span>{lead[4]}</div><div><span className="landing-k">Who decides</span>{lead[5]}</div></div><div className="landing-quote">{lead[6]}</div><div className="landing-actions"><span className="landing-act">{lead[7]}</span><span className="landing-ghost-button">Assign</span></div></article>)}
-          <article className="landing-industry-card end"><h3>Your industry next.</h3><p>Give it your website and see the companies with a reason to buy from you.</p><WebsiteCta label="Find my buyers →" /></article>
-        </div>
-      </section>
+      <Industries />
 
       <section className="landing-section" id="how"><div className="landing-wrap"><div className="landing-eyebrow reveal">How it works</div><h2 className="reveal">Give it your website. <em>Get your buyers.</em></h2><div className="lm-stagger landing-steps reveal">
         <article><span className="mono">01</span><h3>It learns what you sell</h3><p>From your own website. You see what it understood, each point with a quote from your site, and correct anything.</p><div className="landing-mini">{content.learnRows.map(([label, value, note]) => <div key={label}><span>{label}</span>{label === "From" ? <em>{value}</em> : value}{note && <b>{note}</b>}</div>)}</div></article>
@@ -193,6 +278,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
       <section className="landing-section" id="trust"><div className="landing-wrap"><div className="landing-eyebrow reveal">Trust</div><h2 className="reveal">It watches markets, <em>never people.</em></h2><div className="lm-stagger landing-rules reveal"><div><b>No source, no claim.</b><p>A fact without a verified quote is never shown, scored or used.</p></div><div><b>Companies only.</b><p>It follows organisations and public records. It never profiles individuals.</p></div><div><b>A person decides.</b><p>Northvaine prepares the decision. Prices, terms and outreach stay yours.</p></div><div><b>Nothing sent for you.</b><p>It recommends. It never contacts anyone on your behalf.</p></div></div></div></section>
 
       <section className="landing-final" id="start"><div className="landing-wrap"><div className="landing-say lm-stagger reveal"><span>Give</span><span>me</span><span>your</span><span>website</span></div><i className="landing-tri" /><div className="landing-final-actions"><WebsiteCta label="Build my radar →" /><a className="landing-btn line" href={link("app", "coldchain_maker", "latest")}>See a live example</a></div><div className="landing-fine mono"><span>Free first radar</span><span>No card</span><span>Set up in minutes</span></div></div></section>
+      <Thread rebuildKey={heroIn} />
       <footer className="landing-footer"><div className="landing-wrap mono"><span>NORTHVAINE · reasoning by NVIDIA Nemotron on Nebius Token Factory · search by Tavily</span><span>Open source · Apache 2.0</span></div></footer>
     </div>
   );
