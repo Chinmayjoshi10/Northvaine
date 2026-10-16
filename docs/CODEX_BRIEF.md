@@ -96,3 +96,29 @@ Result:
 - Done: the files exist and are consistent with `docs/DEPLOY.md`; note any assumption.
 
 Result:
+
+---
+
+## Card G: `landing-motion` (frontend only)
+**Goal:** the landing page feels premium through quiet, deliberate motion. Calm and editorial
+(think a well-made print magazine or a luxury brand site), never flashy.
+- Add a few refined animations to `LandingPage.tsx`:
+  - sections and headings fade and rise gently into view on scroll (IntersectionObserver, once
+    each, about 600-900 ms, ease-out, small offsets of 12-24 px, light stagger for lists);
+  - the hero headline reveals line by line on first load;
+  - buttons and links: subtle hover (underline drawing in, slight lift or tone shift);
+  - numbers or counts in the page, if any, count up once when visible;
+  - an optional very slow ambient movement in the hero background (barely noticeable).
+- Keep the locked design: no change to copy, layout, fonts, colours or the `#intro` replay.
+- No new dependencies; CSS transitions and keyframes plus a small React hook only. Animate only
+  `opacity` and `transform` (no layout jank); nothing blocks reading or clicking.
+- **`prefers-reduced-motion: reduce` turns every new animation off** (content shows at once).
+- Nothing may stay hidden if JavaScript fails or the observer is unsupported (start visible,
+  hide only after the hook confirms support).
+- Allowed files: `frontend/src/pages/LandingPage.tsx`, `frontend/src/pages/landing.css` (new
+  classes only, prefixed `lm-`; do not change existing `.contact*` or `.onb*` rules), and one
+  new hook file `frontend/src/pages/useReveal.ts`.
+- Done: typecheck and build pass; the page looks identical with reduced motion on; the onboarding
+  and contact pages are unchanged; describe each animation in one line under Result.
+
+Result:
