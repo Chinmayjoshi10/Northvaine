@@ -390,6 +390,33 @@ def _project(value: Any, shape: dict[str, Any]) -> Any:
     return value
 
 
+# Persons with significant control: only companies are named (sensors/companies_house). For a
+# person the recording keeps the kind and dates the parser reads, never a name, birth date,
+# nationality or address.
+_PSC_PERSON_KEYS = ("kind", "notified_on", "ceased_on", "ceased")
+
+
+def _strip_register_people(ex: Any, register_prefix: str) -> Any:
+    body = ex.body_json
+    if not ex.url.startswith(register_prefix) or not isinstance(body, dict):
+        return ex
+    items = body.get("items")
+    if "persons-with-significant-control" not in ex.url or not isinstance(items, list):
+        return ex
+    kept = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        kind = str(item.get("kind") or "")
+        if kind.startswith(("corporate-entity", "legal-person")):
+            kept.append(
+                {k: item[k] for k in ("kind", "name", "notified_on", "ceased_on") if k in item}
+            )
+        else:
+            kept.append({k: item[k] for k in _PSC_PERSON_KEYS if k in item})
+    return ex.model_copy(update={"body_json": {"items": kept}})
+
+
 def _strip_fts_unread(ex: Any) -> Any:
     """FTS releases reduced to the fields the sensor reads: nothing else is ever saved."""
     body = ex.body_json
@@ -431,6 +458,8 @@ def redact_recording(recording: Recording, settings: Settings) -> Recording:
     ]
     exchanges = [_strip_search_contacts(ex, tavily_prefix) for ex in exchanges]
     exchanges = [_strip_fts_unread(ex) for ex in exchanges]
+    register_prefix = settings.companies_house_api_url.rstrip("/")
+    exchanges = [_strip_register_people(ex, register_prefix) for ex in exchanges]
     exchanges = [_withhold_ted_persons(ex, tavily_prefix, settings) for ex in exchanges]
     problems = sensors.find_pii([e.model_dump(mode="json") for e in exchanges], "http")
     problems += sensors.find_pii([p.model_dump(mode="json") for p in recording.pages], "pages")

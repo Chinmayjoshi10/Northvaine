@@ -34,6 +34,7 @@ from northvaine.radar.bidders import likely_bidders
 from northvaine.radar.brief import main_selection, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
+from northvaine.radar.edition import label_entries
 from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
@@ -48,6 +49,7 @@ from northvaine.radar.models import (
     RejectedEntry,
     SkepticFinding,
 )
+from northvaine.radar.register import register_check
 
 __all__ = ["run_radar", "seeded_concepts"]
 
@@ -195,6 +197,14 @@ async def run_radar(
         if before > len(candidates):
             notes.append(f"{before - len(candidates)} existing customer(s) left out as not new")
 
+    # 3b. the register check (D103): UK companies looked up before any model call; dissolved
+    # companies and the client's non-buyer activities are rejected by code
+    candidates, register_rejected, register_notes = await register_check(
+        candidates, spec, http=http, as_of=as_of, settings=settings
+    )
+    rejected.extend(register_rejected)
+    notes.extend(register_notes)
+
     # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
     ordered = _gate_order(candidates, as_of.date())
     limit = settings.radar_max_gate_candidates
@@ -307,6 +317,9 @@ async def run_radar(
         evidence_out=evidence_out,
     )
     notes.extend(fit_notes)
+
+    # 8. the daily edition labels (D103, code only)
+    entries = label_entries(entries, as_of.date(), settings)
     return RadarRun(
         client_id=spec.id,
         offer=spec.offer,

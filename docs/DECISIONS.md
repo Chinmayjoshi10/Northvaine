@@ -1010,3 +1010,30 @@ brief with Claude's five corrections (docs/COLLAB.md).
     July 2026 was public by 14 Oct). An estimate for the time machine, not an official calendar.
   - **Existing customers** (`ClientSpec.existing_customers`) are left out of the candidates
     before the gate; the run notes only a count.
+- **D103 — The register check and the daily edition (16 Oct).** Step 1b of D101.
+  - **Register check:** before the gate, UK candidates (proven importers first, at most
+    `radar_register_max_lookups`) are looked up at Companies House by **exact** name (legal form
+    and spacing ignored; no fuzzy matches). Their register lines become verified claims:
+    - status;
+    - incorporation date;
+    - activity codes with official SIC 2007 descriptions (shipped as `core/data/sic2007.json`);
+    - previous names;
+    - controlling companies.
+  - **Code rejections, before any model call:** a company that is not active, or whose
+    activities are all in the client's `not_buyer_codes` (data per client, e.g. `sic:49410`).
+    A code that is never a buyer for one client can be another client's customer.
+  - **Company-level only:**
+    - a controller is named only when it is a company;
+    - for a person, only the date control was notified;
+    - recordings strip individuals' details before they are saved.
+  - **Runs only when the client has a buyer model and a key is set**, so other clients replay
+    unchanged.
+  - **Labels** (code only), on every entry:
+    - *act now*: status "bid now" or "contact now";
+    - *just changed*: set up within 18 months, or renamed or control changed within 12 months,
+      or started importing this year;
+    - *account to work*: a proven buyer with no fresh change.
+  - **The daily edition:** up to 5 labelled entries in rank order, at most 1 act now,
+    2 just changed and 2 accounts to work, never padded. Station's "To decide" shows it when
+    present.
+  - **HMRC lag lowered to 45 days:** August data was public on 15 Oct.

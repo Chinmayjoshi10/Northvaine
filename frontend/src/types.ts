@@ -11,6 +11,9 @@ export interface ClientSummary {
 
 export interface Row {
   rank: number;
+  /** D103: act_now | just_changed | account_to_work, and the fact behind it */
+  label?: string | null;
+  label_reason?: string | null;
   status: string;
   company: string;
   country: string;
@@ -63,6 +66,8 @@ export interface BriefView {
   notes: string[];
   funnel?: Funnel | null;
   log?: LogItem[];
+  /** D103: today's few checked targets; empty on a thin day */
+  edition?: Row[];
 }
 
 /** One thing the run saw, newest first: when its source made it public, what, and about whom. */

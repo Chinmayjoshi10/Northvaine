@@ -69,11 +69,11 @@ def test_codes_and_params() -> None:
 
 
 def test_availability_is_after_the_month_and_lag() -> None:
-    # July data was public by mid October (field test, 14 Oct)
-    assert hmrc.month_published_on(202607, SETTINGS) == date(2026, 10, 9)
-    assert hmrc.month_available_at(202607, SETTINGS) == datetime(2026, 10, 10, tzinfo=UTC)
+    # August data was public by 15 Oct 2026, about six weeks after the month ended
+    assert hmrc.month_published_on(202608, SETTINGS) == date(2026, 10, 15)
+    assert hmrc.month_available_at(202608, SETTINGS) == datetime(2026, 10, 16, tzinfo=UTC)
     first, last = hmrc.window(query(), as_of=datetime(2026, 10, 5, tzinfo=UTC), settings=SETTINGS)
-    assert (first, last) == (202605, 202606)
+    assert (first, last) == (202605, 202607)
 
 
 async def test_replay_lists_company_importers_ranked() -> None:
@@ -119,7 +119,7 @@ async def test_as_of_bounds_the_request_and_drops_late_months() -> None:
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
         sensor = HmrcSensor(client=client, settings=SETTINGS, sleep=no_sleep)
         result = await sensor.search(
-            query(codes=["cn:12345678"]), as_of=datetime(2026, 10, 5, tzinfo=UTC)
+            query(codes=["cn:12345678"]), as_of=datetime(2026, 9, 10, tzinfo=UTC)
         )
     assert "MonthId+le+202606" in urls[0]
     (doc,) = result.documents

@@ -78,12 +78,17 @@ class Settings(BaseSettings):
         "EIRL",
         "Entreprise individuelle",
     )
+    # UK company register (step 1b, D103): free REST key, HTTP Basic auth with the key as the user
+    # name; 600 requests per 5 minutes.
+    companies_house_api_key: SecretStr | None = None
+    companies_house_api_url: str = "https://api.company-information.service.gov.uk"
+    companies_house_min_interval_seconds: float = Field(default=0.6, ge=0)
     # UK HMRC trade data (D102): open, keyless OData, 60 requests a minute.
     hmrc_api_url: str = "https://api.uktradeinfo.com"
     hmrc_min_interval_seconds: float = Field(default=1.0, ge=0)
-    # A month's importer list is published about ten weeks after the month ends (mid October
-    # showed July). A conservative estimate for the time machine, not an official calendar.
-    hmrc_availability_lag_days: int = Field(default=70, ge=0)
+    # A month's importer list is published about six weeks after the month ends (on 15 Oct 2026
+    # August was already out). An estimate for the time machine, not an official calendar.
+    hmrc_availability_lag_days: int = Field(default=45, ge=0)
     # HMRC lists non-UK sellers that import through it at its own Aberdeen address.
     hmrc_overseas_postcodes: tuple[str, ...] = ("AB10 1ZP",)
     # Share of a query's documents kept for importers new this year: they are still building
@@ -182,6 +187,17 @@ class Settings(BaseSettings):
     radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
     # Company fit from the company's own site (D96): code-first, capped per run.
     radar_fit_max_accounts: int = Field(default=5, ge=0)
+    # Register check (D103): UK candidates looked up before the gate, at most this many a run.
+    radar_register_max_lookups: int = Field(default=40, ge=0)
+    # "Just changed" (D103): a new owner or a rename within this many days, or a company set up
+    # within radar_new_company_days, marks a company that is setting up or reviewing its supply.
+    radar_just_changed_days: int = Field(default=365, ge=1)
+    radar_new_company_days: int = Field(default=548, ge=1)
+    # The daily edition (D103): how many entries, and how many of each label at most.
+    radar_daily_quota: int = Field(default=5, ge=1)
+    radar_daily_mix: dict[str, int] = Field(
+        default_factory=lambda: {"act_now": 1, "just_changed": 2, "account_to_work": 2}
+    )
     radar_fit_pages: int = Field(default=2, ge=1)
     radar_fit_quotes: int = Field(default=3, ge=1)
     radar_fit_min_token: int = Field(default=4, ge=2)

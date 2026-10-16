@@ -433,3 +433,6 @@
     padding-right: 16px;
   }
 }
+
+/* D103: the daily edition label on a decision */
+.d .label { margin: 0 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--signal); }

@@ -110,6 +110,12 @@ function sentence(s: string): string {
   return t ? t.charAt(0).toUpperCase() + t.slice(1).replace(/[.;]?$/, ".") : "";
 }
 
+const LABEL: Record<string, string> = {
+  act_now: "Act now",
+  just_changed: "Just changed",
+  account_to_work: "Account to work",
+};
+
 const VERB: Record<string, string> = {
   tender_published: "opened a tender",
   contract_awarded: "won a contract",
@@ -131,7 +137,13 @@ function Station(props: {
     () => [...brief.accounts, ...brief.tenders, ...brief.weaker],
     [brief],
   );
-  const decisions = useMemo(() => toDecide(rows, brief.as_of), [rows, brief.as_of]);
+  // The daily edition (D103) leads when the run made one; older runs keep the urgency order.
+  const decisions = useMemo(() => {
+    const picked = (brief.edition ?? [])
+      .map((e) => rows.find((r) => r.rank === e.rank))
+      .filter((r): r is Row => r !== undefined);
+    return picked.length > 0 ? picked : toDecide(rows, brief.as_of);
+  }, [rows, brief.edition, brief.as_of]);
   const { decided, decide, followed, follow, learning, lesson, dismiss } =
     useDecisions(client, brief);
   const [open, setOpen] = useState<Row | null>(null);
@@ -365,6 +377,12 @@ function Station(props: {
                     {question(r)}
                   </button>
                 </h2>
+                {r.label && (
+                  <p className="label mono">
+                    {LABEL[r.label] ?? r.label}
+                    {r.label_reason ? ` · ${r.label_reason}` : ""}
+                  </p>
+                )}
                 <p className="why">
                   <b>{projectOf(r)}.</b> {sentence(r.caution)}
                   {missing.length > 0 && ` Not yet known: ${missing.join(", ")}.`}

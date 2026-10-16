@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict
 
 from northvaine.core.settings import Settings
 from northvaine.radar import brief
+from northvaine.radar.edition import daily_edition
 from northvaine.radar.models import (
     Candidate,
     CandidateClaim,
@@ -49,6 +50,9 @@ class Row(BaseModel):
     contract_nature: str | None = None
     company_key: str = ""
     chain: list[Link] = []
+    # D103: act_now | just_changed | account_to_work, and the fact behind it
+    label: str | None = None
+    label_reason: str | None = None
 
 
 class Funnel(BaseModel):
@@ -81,6 +85,8 @@ class BriefView(BaseModel):
     notes: list[str]
     funnel: Funnel | None = None
     log: list[LogItem] = []
+    # D103: today's few checked targets, labelled; empty on a thin day (never padded)
+    edition: list[Row] = []
 
 
 class Claim(BaseModel):
@@ -181,6 +187,8 @@ def _row(entry: RankedEntry, today: date) -> Row:
         contract_nature=entry.contract_nature,
         company_key=c.key,
         chain=chain(entry),
+        label=entry.label,
+        label_reason=entry.label_reason,
     )
 
 
@@ -203,6 +211,7 @@ def brief_view(run: RadarRun, settings: Settings) -> BriefView:
         notes=[brief._inline(n) for n in run.notes],
         funnel=_funnel(run),
         log=_log(run),
+        edition=[_row(e, today) for e in daily_edition(ordered, settings)],
     )
 
 

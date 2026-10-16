@@ -31,6 +31,7 @@ __all__ = [
     "RadarRun",
     "RadarStream",
     "RankedEntry",
+    "RegisterFacts",
     "RejectedAs",
     "RejectedEntry",
     "SkepticFinding",
@@ -90,6 +91,10 @@ class ClientSpec(NorthvaineModel):
     # The client's current customers: never shown as new, used as routes. Real lists live only
     # in specs outside the repo.
     existing_customers: list[str] = Field(default_factory=list)
+    # Registered activities that are never buyers for this client (D103), scheme-prefixed, e.g.
+    # "sic:49410". Data per client: a code that is never a buyer for one client can be the very
+    # customer of another.
+    not_buyer_codes: list[str] = Field(default_factory=list)
 
 
 def load_client_spec(client_id: str, clients_dir: Path | None = None) -> ClientSpec:
@@ -127,6 +132,19 @@ class CandidateEvent(NorthvaineModel):
     fingerprint: str
 
 
+class RegisterFacts(NorthvaineModel):
+    """Company-level facts from a business register (D103), for labels and the brief. Each one
+    is also a verified claim on the candidate."""
+
+    number: str
+    status: str
+    incorporated: date | None = None
+    sic_codes: list[str] = Field(default_factory=list)
+    renamed_on: date | None = None
+    controlled_by: list[str] = Field(default_factory=list)  # companies only
+    control_changed_on: date | None = None
+
+
 class Candidate(NorthvaineModel):
     key: str
     name: str
@@ -141,6 +159,7 @@ class Candidate(NorthvaineModel):
     window_end: date | None
     window_estimated: bool
     window_note: str
+    company_register: RegisterFacts | None = None
 
 
 class GateDecision(NorthvaineModel):
@@ -229,6 +248,9 @@ class RankedEntry(NorthvaineModel):
     company_site: str | None = None
     company_fit: list[FitEvidence] = Field(default_factory=list)
     fit_level: Literal["stated", "related"] | None = None
+    # The daily edition (D103): act now / just changed / account to work, and why.
+    label: Literal["act_now", "just_changed", "account_to_work"] | None = None
+    label_reason: str | None = None
 
 
 class RejectedEntry(NorthvaineModel):
