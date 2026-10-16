@@ -153,6 +153,7 @@ async def test_labels_and_daily_edition() -> None:
     assert labelled["New Imports Ltd"].label_reason == "set up on 2025-06-01"
     assert labelled["Old Imports Ltd"].label == "just_changed"
     assert "NEW OWNER GROUP LIMITED" in (labelled["Old Imports Ltd"].label_reason or "")
+    assert labelled["Old Imports Ltd"].label_strength == 1
     assert labelled["Plain Imports Ltd"].label == "account_to_work"
 
     edition = daily_edition(list(labelled.values()), SETTINGS)

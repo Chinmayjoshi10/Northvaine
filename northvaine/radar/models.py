@@ -251,6 +251,7 @@ class RankedEntry(NorthvaineModel):
     # The daily edition (D103): act now / just changed / account to work, and why.
     label: Literal["act_now", "just_changed", "account_to_work"] | None = None
     label_reason: str | None = None
+    label_strength: int = 0  # how many dated changes back a just_changed label
 
 
 class RejectedEntry(NorthvaineModel):

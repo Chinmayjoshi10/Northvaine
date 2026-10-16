@@ -378,3 +378,54 @@ def test_fts_free_text_and_contacts_are_dropped_and_the_parse_is_unchanged(
         parse_release(kept, fetched_at=fetched).meta
         == parse_release(release, fetched_at=fetched).meta
     )
+
+
+def test_register_people_are_stripped_and_the_parse_is_unchanged(radar: ModuleType) -> None:
+    from northvaine.sensors.companies_house import parse_record, render_register_text
+    from northvaine.sensors.replay import RecordedExchange
+
+    psc = {
+        "items": [
+            {
+                "kind": "corporate-entity-person-with-significant-control",
+                "name": "HOLDCO LIMITED",
+                "notified_on": "2025-12-16",
+                "address": {"premises": "1"},
+            },
+            {
+                "kind": "corporate-entity-person-with-significant-control",
+                "name": "OLD HOLDCO LIMITED",
+                "notified_on": "2020-01-01",
+                "ceased": True,
+            },
+            {
+                "kind": "individual-person-with-significant-control",
+                "name": "A PERSON",
+                "notified_on": "2026-07-10",
+                "date_of_birth": {"month": 1, "year": 1970},
+                "nationality": "X",
+                "address": {"premises": "2"},
+            },
+        ]
+    }
+    url = "https://api.company-information.service.gov.uk/company/00000001/persons-with-significant-control"
+    ex = RecordedExchange.model_validate(
+        {
+            "method": "GET",
+            "url": url,
+            "status": 200,
+            "body_json": psc,
+            "recorded_at": "2026-10-16T00:00:00Z",
+        }
+    )
+    cleaned = radar._strip_register_people(ex, "https://api.company-information.service.gov.uk")
+    dumped = json.dumps(cleaned.body_json)
+    assert "A PERSON" not in dumped and "1970" not in dumped and "nationality" not in dumped
+    profile = {
+        "company_number": "00000001",
+        "company_name": "X LIMITED",
+        "company_status": "active",
+    }
+    before = render_register_text(parse_record(profile, psc))
+    after = render_register_text(parse_record(profile, cleaned.body_json))
+    assert before == after

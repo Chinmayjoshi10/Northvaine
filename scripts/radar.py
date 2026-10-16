@@ -214,8 +214,17 @@ async def run_replay(
     as_of = recording.meta.as_of
     with replay_environment(recording.llm):
         # Inside the pinned environment, so the query focus settings are the recorded ones.
+        base = Settings(_env_file=None)
+        # The register check runs on replay only when the live run made register lookups, so
+        # recordings from before it (D103) replay exactly as they were made.
+        register_url = base.companies_house_api_url.rstrip("/")
+        had_register = any(ex.url.startswith(register_url) for ex in recording.exchanges)
         settings = Settings(
-            _env_file=None, ted_min_interval_seconds=0, tavily_api_key=SecretStr("replay-only")
+            _env_file=None,
+            ted_min_interval_seconds=0,
+            companies_house_min_interval_seconds=0,
+            tavily_api_key=SecretStr("replay-only"),
+            companies_house_api_key=SecretStr("replay-only") if had_register else None,
         )
         if prepare_queries(spec.sensors, as_of.date(), settings) != recording.meta.queries:
             raise Refused(
@@ -409,9 +418,7 @@ def _strip_register_people(ex: Any, register_prefix: str) -> Any:
             continue
         kind = str(item.get("kind") or "")
         if kind.startswith(("corporate-entity", "legal-person")):
-            kept.append(
-                {k: item[k] for k in ("kind", "name", "notified_on", "ceased_on") if k in item}
-            )
+            kept.append({k: item[k] for k in (*_PSC_PERSON_KEYS, "name") if k in item})
         else:
             kept.append({k: item[k] for k in _PSC_PERSON_KEYS if k in item})
     return ex.model_copy(update={"body_json": {"items": kept}})
