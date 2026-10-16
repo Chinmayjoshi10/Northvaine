@@ -323,6 +323,7 @@ async def run_radar(
     return RadarRun(
         client_id=spec.id,
         offer=spec.offer,
+        client_name=spec.name,
         as_of=as_of,
         queries=queries,
         documents_by_kind=dict(sorted(kinds.items())),

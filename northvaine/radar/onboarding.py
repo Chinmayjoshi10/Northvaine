@@ -250,6 +250,7 @@ def build_client_spec(
     return ClientSpec.model_validate(
         {
             "id": client_id,
+            "name": answers.company,
             "offer": answers.offer,
             "markets": markets,
             "sensors": sensors,

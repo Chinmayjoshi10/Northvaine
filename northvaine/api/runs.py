@@ -47,9 +47,12 @@ def list_clients(base: Base) -> list[ClientSummary]:
 
 @router.get("/clients/{client}/runs/{day}")
 def get_run(client: str, day: str, base: Base) -> views.BriefView:
-    """`day` is a date, or `latest`."""
-    run, _ = store.load_run(base, client, store.resolve_day(base, client, day))
-    return views.brief_view(run, Settings(_env_file=None))
+    """`day` is a date, or `latest`. Rows say whether the previous run briefed them too."""
+    resolved = store.resolve_day(base, client, day)
+    run, _ = store.load_run(base, client, resolved)
+    earlier = [d for d in store.run_days(base, client) if d < resolved]
+    previous = store.load_run(base, client, max(earlier))[0] if earlier else None
+    return views.brief_view(run, Settings(_env_file=None), previous)
 
 
 @router.get("/clients/{client}/runs/{day}/entries/{rank}")

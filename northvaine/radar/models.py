@@ -71,6 +71,8 @@ class RejectedAs(StrEnum):
 class ClientSpec(NorthvaineModel):
     id: str
     offer: str
+    # The client's company name as they gave it (onboarding); shown in the app header.
+    name: str | None = None
     markets: list[Iso2]
     sensors: dict[str, list[SensorQuery]]
     # What the client sells, as words a source would use, in any language (D82). Data, set at
@@ -282,6 +284,7 @@ class DiscoverResult(NorthvaineModel):
 class RadarRun(NorthvaineModel):
     client_id: str
     offer: str
+    client_name: str | None = None
     as_of: datetime
     queries: dict[str, list[SensorQuery]]
     documents_by_kind: dict[str, int]

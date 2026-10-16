@@ -208,3 +208,27 @@ async def test_feedback_for_unknown_entry_or_client(client: AsyncClient, base: P
     bad = await client.post("/api/feedback", json=feedback_body(client="../x"))
     assert bad.status_code == 404
     assert not (base.parent / "feedback").exists()
+
+
+async def test_brief_marks_rows_seen_in_the_previous_run(client: AsyncClient, base: Path) -> None:
+    from datetime import timedelta
+
+    first = store.load_run(base, "acme", "2026-10-05")[0]
+    fresh = candidate("Fresh Buyer", [claim("C9", "Fresh Buyer opens a site")], country="GB")
+    new = brief.rank([(fresh, gate(), UNKNOWN)], as_of=NOW, offer="Invented offer")
+    entries = [first.entries[0], *new]
+    entries = [e.model_copy(update={"rank": i + 1}) for i, e in enumerate(entries)]
+    later = first.model_copy(
+        update={"as_of": NOW + timedelta(days=1), "entries": entries, "client_name": "Acme Works"}
+    )
+    brief.write_reports(later, base)
+
+    data = (await client.get("/api/clients/acme/runs/latest")).json()
+    assert data["client_name"] == "Acme Works" and data["previous"] == "2026-10-05"
+    rows = {
+        r["company"]: r["returning"] for r in data["accounts"] + data["tenders"] + data["weaker"]
+    }
+    assert rows["Fresh Buyer"] is False
+    assert rows[first.entries[0].candidate.name] is True
+    older = (await client.get("/api/clients/acme/runs/2026-10-05")).json()
+    assert older["previous"] is None and older["client_name"] is None

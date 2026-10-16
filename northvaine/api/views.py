@@ -53,6 +53,8 @@ class Row(BaseModel):
     # D103: act_now | just_changed | account_to_work, and the fact behind it
     label: str | None = None
     label_reason: str | None = None
+    # also briefed in the client's previous run (False when there is no previous run)
+    returning: bool = False
 
 
 class Funnel(BaseModel):
@@ -77,6 +79,9 @@ class LogItem(BaseModel):
 class BriefView(BaseModel):
     client_id: str
     offer: str
+    client_name: str | None = None
+    # the client's previous run date, when there is one; `Row.returning` compares with it
+    previous: str | None = None
     as_of: str
     accounts: list[Row]
     tenders: list[Row]
@@ -192,8 +197,14 @@ def _row(entry: RankedEntry, today: date) -> Row:
     )
 
 
-def brief_view(run: RadarRun, settings: Settings) -> BriefView:
+def brief_view(run: RadarRun, settings: Settings, previous: RadarRun | None = None) -> BriefView:
     today = run.as_of.date()
+    seen = {e.candidate.key for e in previous.entries} if previous else set()
+
+    def row(e: RankedEntry) -> Row:
+        out = _row(e, today)
+        return out.model_copy(update={"returning": e.candidate.key in seen}) if seen else out
+
     cap = settings.radar_brief_main_entries
     ordered = sorted(run.entries, key=lambda e: e.rank)
     accounts = [e for e in ordered if e.candidate.stream != RadarStream.TENDER][:cap]
@@ -203,15 +214,17 @@ def brief_view(run: RadarRun, settings: Settings) -> BriefView:
     return BriefView(
         client_id=run.client_id,
         offer=brief._inline(run.offer),
+        client_name=run.client_name,
+        previous=brief._day(previous.as_of) if previous else None,
         as_of=brief._day(run.as_of),
-        accounts=[_row(e, today) for e in accounts],
-        tenders=[_row(e, today) for e in tenders],
-        weaker=[_row(e, today) for e in weaker],
+        accounts=[row(e) for e in accounts],
+        tenders=[row(e) for e in tenders],
+        weaker=[row(e) for e in weaker],
         thin=len(accounts) + len(tenders) < brief._THIN_BELOW,
         notes=[brief._inline(n) for n in run.notes],
         funnel=_funnel(run),
         log=_log(run),
-        edition=[_row(e, today) for e in daily_edition(ordered, settings)],
+        edition=[row(e) for e in daily_edition(ordered, settings)],
     )
 
 

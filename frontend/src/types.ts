@@ -14,6 +14,8 @@ export interface Row {
   /** D103: act_now | just_changed | account_to_work, and the fact behind it */
   label?: string | null;
   label_reason?: string | null;
+  /** also briefed in the client's previous run */
+  returning?: boolean;
   status: string;
   company: string;
   country: string;
@@ -58,6 +60,10 @@ export interface Funnel {
 export interface BriefView {
   client_id: string;
   offer: string;
+  /** the client's company name, when onboarding gave one */
+  client_name?: string | null;
+  /** the previous run's date; null on a client's first run */
+  previous?: string | null;
   as_of: string;
   accounts: Row[];
   tenders: Row[];
