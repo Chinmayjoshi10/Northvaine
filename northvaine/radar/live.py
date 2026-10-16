@@ -10,17 +10,16 @@ from northvaine.core.settings import Settings
 from northvaine.radar.discover import LivePageFetcher
 from northvaine.radar.models import ClientSpec, RadarRun
 from northvaine.radar.run import run_radar, seeded_concepts
+from northvaine.sensors.http import new_client
 
 __all__ = ["run_live"]
 
 
 async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> RadarRun:
-    import httpx  # lazy: importing the radar needs no network library
-
     from northvaine.core.db import session_scope
 
     async with (
-        httpx.AsyncClient(timeout=60.0) as client,
+        new_client(60.0) as client,
         session_scope() as session,
     ):
         return await run_radar(

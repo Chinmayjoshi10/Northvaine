@@ -37,6 +37,7 @@ from northvaine.radar.onboarding import (
     propose,
     read_catalogue,
 )
+from northvaine.sensors.http import new_client
 
 router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
 
@@ -117,15 +118,13 @@ def _homepage(website: str) -> tuple[str, str]:
 
 async def _read_site(base: Path, sid: str, website: str) -> None:
     """The homepage plus up to four pages of the same site found by search, via Tavily."""
-    import httpx
-
     from northvaine.sensors.base import SensorQuery
     from northvaine.sensors.tavily import TavilySensor
 
     settings = get_settings()
     home, domain = _homepage(website)
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with new_client(60.0) as client:
             sensor = TavilySensor(client=client, settings=settings)
             found = await sensor.search(
                 SensorQuery(text="products services about us", domains=[domain], max_results=5)
@@ -152,8 +151,6 @@ async def _read_site(base: Path, sid: str, website: str) -> None:
 
 
 async def _propose(base: Path, sid: str) -> None:
-    import httpx
-
     from northvaine.sensors.hmrc import hs6_descriptions
 
     for _ in range(120):  # wait for the website read (at most about two minutes)
@@ -173,7 +170,7 @@ async def _propose(base: Path, sid: str) -> None:
         proposal = await propose(
             site or "(the website could not be read)", catalogue, run=RunContext()
         )
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with new_client(30.0) as client:
             known = await hs6_descriptions(proposal.hs_codes, client=client)
         unknown = [c for c in proposal.hs_codes if c not in known]
         proposal = proposal.model_copy(
