@@ -153,12 +153,14 @@ class TavilySensor:
 
         return httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds)
 
-    async def _post(self, client: httpx.AsyncClient, body: dict[str, Any], key: str) -> Any:
+    async def _post(
+        self, client: httpx.AsyncClient, body: dict[str, Any], key: str, endpoint: str = "/search"
+    ) -> Any:
         limit = self._settings.tavily_max_calls_per_run
         if self._calls >= limit:
             raise TavilyBudgetStopError(f"Tavily call cap reached ({limit} per run)")
         self._calls += 1
-        url = self._settings.tavily_api_url.rstrip("/") + "/search"
+        url = self._settings.tavily_api_url.rstrip("/") + endpoint
         response = await client.post(url, json=body, headers={"Authorization": f"Bearer {key}"})
         status = response.status_code
         if status == 429:
@@ -221,3 +223,28 @@ class TavilySensor:
         return SensorResult(
             documents=docs, truncated=False, enumerable=self.enumerable, notes=notes
         )
+
+    async def extract(self, urls: list[str]) -> list[tuple[str, str]]:
+        """(url, page text) for each URL Tavily could read: one /extract call, basic depth,
+        markdown. URLs on the deny list are never sent. Failed URLs are left out (a 200
+        response can carry `failed_results`)."""
+        allowed = [
+            u
+            for u in urls[:20]
+            if not host_denied(urlsplit(u).hostname or "", self._settings.fetch_deny_hosts)
+        ]
+        if not allowed:
+            return []
+        key = self._api_key()
+        client = self._client or self._new_client()
+        body = {"urls": allowed, "extract_depth": "basic", "format": "markdown"}
+        try:
+            data = await self._post(client, body, key, endpoint="/extract")
+        finally:
+            if self._client is None:
+                await client.aclose()
+        pages: list[tuple[str, str]] = []
+        for item in data.get("results") or []:
+            if isinstance(item, dict) and item.get("url") and item.get("raw_content"):
+                pages.append((str(item["url"]), str(item["raw_content"])))
+        return pages

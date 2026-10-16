@@ -187,6 +187,14 @@ class Settings(BaseSettings):
     radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
     # Company fit from the company's own site (D96): code-first, capped per run.
     radar_fit_max_accounts: int = Field(default=5, ge=0)
+    # Onboarding (D105): countries whose public tenders TED publishes (EU, EEA, Switzerland).
+    onboarding_ted_countries: tuple[str, ...] = (
+        "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT",
+        "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "IS", "LI", "NO",
+        "CH",
+    )  # fmt: skip
+    # Where onboarded clients' specs are written (never committed).
+    onboarding_clients_dir: str = "reports/clients"
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
     radar_register_max_lookups: int = Field(default=40, ge=0)
     # "Just changed" (D103): a new owner or a rename within this many days, or a company set up

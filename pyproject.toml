@@ -18,6 +18,7 @@ dependencies = [
     "pydantic-settings>=2.15,<3",
     "httpx>=0.28,<1",  # sensors (TED, Tavily, safe fetch) call APIs directly (D43)
     "openai>=1.60,<2",  # Token Factory is OpenAI-compatible; no Nebius-specific SDK exists (M2)
+    "pypdf>=5",
 ]
 
 [dependency-groups]
