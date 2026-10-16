@@ -174,6 +174,7 @@
 .landing-stats b { display: block; margin-bottom: 8px; color: #ede9e0; font: 300 56px/1 var(--serif); }
 .landing-stats .signal b { color: #ea5629; }
 .landing-stats span { color: #a9a499; font-size: 13.5px; }
+.landing-stats b span { color: inherit; font: inherit; }
 .landing-product > .landing-wrap > .landing-btn { background: #ea5629; color: #fff; }
 
 .landing-final { padding: 150px 0 70px; text-align: center; }
@@ -243,3 +244,85 @@
 .onb-more summary { cursor: pointer; font: 500 13.5px var(--sans); }
 .onb-more[open] { display: grid; gap: 8px; }
 .onb-more ul { margin: 6px 0 0; padding-left: 18px; color: var(--dim); font-size: 13px; }
+
+/* ---- Card G: quiet, editorial motion. Only under .lm (JS confirmed, motion allowed). ---- */
+.landing { --lm-ease: cubic-bezier(.16, 1, .3, 1); }
+
+/* Hero: the headline rises word by word from behind a mask, then the rest follows. */
+.lm-word { display: inline-block; overflow: hidden; padding: 0 .12em .08em 0; margin: 0 -.12em -.08em 0; vertical-align: top; }
+.lm-word > span { display: inline-block; }
+.lm .lm-word > span { transform: translateY(105%); transition: transform 1.1s var(--lm-ease); }
+.lm.lm-hero-in .lm-word > span { transform: none; }
+.lm .lm-h { opacity: 0; transform: translateY(14px); transition: opacity .9s ease, transform 1.1s var(--lm-ease); }
+.lm.lm-hero-in .lm-h { opacity: 1; transform: none; }
+.lm .lm-h1 { transition-delay: 0ms; }
+.lm .lm-h2 { transition-delay: 620ms; }
+.lm .lm-h3 { transition-delay: 760ms; }
+.lm .lm-h4 { transition-delay: 880ms; }
+.lm .lm-h5 { transition-delay: 420ms; transform: translateY(26px) scale(.985); transition-duration: 1.2s, 1.4s; }
+
+/* Hero: a barely-there warm light drifting behind the lead card. */
+.landing-hero { position: relative; overflow: hidden; }
+.landing-hero > .landing-wrap { position: relative; }
+.lm-glow { position: absolute; top: -10%; right: -8%; width: 62vw; max-width: 900px; aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(234, 86, 41, .075), rgba(234, 86, 41, 0) 70%); opacity: 0; transition: opacity 2.4s ease 1s; }
+.lm.lm-hero-in .lm-glow { opacity: 1; animation: lm-drift 38s ease-in-out infinite alternate; }
+@keyframes lm-drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(-6%, 8%) scale(1.12); } }
+
+/* Lead card: tilts slightly toward the pointer; cases change with a soft focus pull. */
+.lm-tilt { transition: transform .6s var(--lm-ease); transform-style: preserve-3d; will-change: transform; }
+.lm .landing-lead-card { animation: lm-card-in .9s var(--lm-ease) both; }
+@keyframes lm-card-in { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Cards: a gentle lift and a soft light sweep on hover. */
+.landing-feature, .landing-industry-card, .landing-lead-card { position: relative; isolation: isolate; }
+.landing-feature, .landing-industry-card { transition: transform .7s var(--lm-ease), box-shadow .7s var(--lm-ease), border-color .5s ease; }
+.landing-feature:hover, .landing .landing-feature.reveal.in:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: 0 30px 70px rgba(60,50,30,.1); }
+.landing-industry-card:hover, .lm .lm-stagger.reveal.in > .landing-industry-card:hover { transform: translateY(-6px); box-shadow: 0 44px 100px rgba(60,50,30,.16); }
+.landing-feature .landing-visual { transition: transform 1.2s var(--lm-ease); }
+.landing-feature:hover .landing-visual { transform: scale(1.02); }
+.landing-feature::after, .landing-industry-card::after, .landing-lead-card::after { content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%); background-size: 260% 100%; background-position: 130% 0; opacity: 0; }
+.landing-feature:hover::after, .landing-industry-card:hover::after, .landing-lead-card:hover::after { opacity: 1; background-position: -30% 0; transition: background-position 1.3s var(--lm-ease), opacity .2s ease; }
+
+/* The "Verified" seal glints once when its card appears. */
+.lm .landing-lead-card .landing-seal, .lm .reveal.in .landing-seal { position: relative; overflow: hidden; }
+.lm .landing-lead-card .landing-seal::after, .lm .reveal.in .landing-seal::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.9) 50%, transparent 70%); transform: translateX(-120%); animation: lm-glint 1.4s var(--lm-ease) .9s 1 both; }
+@keyframes lm-glint { to { transform: translateX(120%); } }
+
+/* Groups arrive one item after another instead of as one block. */
+.lm .reveal .lm-stagger > *, .lm .lm-stagger.reveal > * { opacity: 0; transform: translateY(18px); transition: opacity .9s ease, transform 1.1s var(--lm-ease), box-shadow .7s var(--lm-ease); }
+.lm .reveal.in .lm-stagger > *, .lm .lm-stagger.reveal.in > * { opacity: 1; transform: none; }
+.lm .lm-stagger > .reveal { transition: opacity .9s ease, transform 1.1s var(--lm-ease), box-shadow .7s var(--lm-ease), border-color .5s ease; }
+.lm .lm-stagger > :nth-child(2) { transition-delay: 90ms; }
+.lm .lm-stagger > :nth-child(3) { transition-delay: 180ms; }
+.lm .lm-stagger > :nth-child(4) { transition-delay: 270ms; }
+.lm .lm-stagger > :nth-child(5) { transition-delay: 360ms; }
+.lm .lm-stagger > :nth-child(6) { transition-delay: 450ms; }
+.lm .lm-stagger > :nth-child(n+7) { transition-delay: 540ms; }
+/* After arriving, hover moves must not wait for the stagger delay. */
+.lm .landing-track.in > .landing-industry-card:hover, .lm .landing-three > .landing-feature.in:hover { transition-delay: 0ms; }
+
+/* Small lines that draw in: eyebrows and nav links. */
+.lm .landing-eyebrow.reveal::before { width: 0; transition: width 1s var(--lm-ease) .15s; }
+.lm .landing-eyebrow.reveal.in::before, .lm .landing-eyebrow.lm-h::before { width: 24px; }
+.landing-nav-link { position: relative; transition: color .3s ease; }
+.landing-nav-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--lm-ease); }
+.landing-nav-link:hover { color: var(--ink); }
+.landing-nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+.landing-nav { transition: box-shadow .5s ease, background-color .5s ease; }
+.landing-nav.lm-scrolled { box-shadow: 0 10px 30px rgba(60,50,30,.06); }
+
+/* Buttons: a calm lift; the arrow slides on hover. */
+.landing-btn { transition: transform .5s var(--lm-ease), box-shadow .5s var(--lm-ease), background-color .3s ease, border-color .3s ease; }
+.landing-btn:hover { transform: translateY(-1px); }
+.landing-btn.line:hover { border-color: var(--ink); }
+.lm-arrow { display: inline-block; transition: transform .5s var(--lm-ease); }
+.landing-btn:hover .lm-arrow { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lm-word > span, .landing .lm-h, .landing .lm-stagger > * { transform: none !important; opacity: 1 !important; }
+  .lm-glow, .landing-feature::after, .landing-industry-card::after, .landing-lead-card::after, .landing-seal::after { display: none; }
+  .landing-feature:hover, .landing-industry-card:hover, .landing-btn:hover, .lm-tilt { transform: none !important; }
+}

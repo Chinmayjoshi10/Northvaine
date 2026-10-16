@@ -99,7 +99,7 @@ Result:
 
 ---
 
-## Card G: `landing-motion` (frontend only)
+## Card G: `landing-motion` (frontend only) - TAKEN BY CLAUDE (founder, 17 Oct): do not start
 **Goal:** the landing page feels premium through quiet, deliberate motion. Calm and editorial
 (think a well-made print magazine or a luxury brand site), never flashy.
 - Add a few refined animations to `LandingPage.tsx`:
