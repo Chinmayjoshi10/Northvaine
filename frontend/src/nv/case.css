@@ -1,0 +1,366 @@
+/* The full case page. Tokens come from nv.css; the shapes follow docs/design/final/case.html. */
+.nv-case {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  min-height: 100%;
+}
+.nv-case .art {
+  padding: 28px 44px 48px 44px;
+  min-width: 0;
+}
+.nv-case .back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--soft);
+  text-decoration: none;
+}
+.nv-case .back:hover {
+  color: var(--ink);
+}
+.nv-case .top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+.nv-case .stage {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nv-case .stage li {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0 12px;
+  border-left: 1px solid var(--hair2);
+}
+.nv-case .stage li:first-child {
+  border-left: none;
+}
+.nv-case .stage li.past {
+  color: var(--soft);
+}
+.nv-case .stage li.on {
+  color: var(--signal);
+}
+.nv-case .hl {
+  font-size: 38px;
+  line-height: 1.1;
+  margin: 12px 0;
+  max-width: 19em;
+}
+.nv-case .lede {
+  font-size: 19px;
+  line-height: 1.45;
+  max-width: 36em;
+}
+.nv-case .pull {
+  margin-top: 24px;
+  max-width: 40em;
+}
+.nv-case .pull cite a {
+  color: var(--soft);
+  text-underline-offset: 3px;
+}
+
+.nv-case .chain {
+  display: grid;
+  list-style: none;
+  padding: 0;
+  margin: 36px 0 0;
+}
+.nv-case .link {
+  position: relative;
+  padding: 24px 14px 0 0;
+  min-width: 0;
+}
+.nv-case .link::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 0;
+  border-top: 1px solid var(--ink);
+}
+.nv-case .link.inferred::before {
+  border-top: 1px dashed var(--soft);
+}
+.nv-case .link.unknown::before {
+  border-top: 1px dashed var(--faint);
+}
+.nv-case .link.you::before {
+  display: none;
+}
+.nv-case .node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 13px;
+  height: 13px;
+  background: var(--bg);
+}
+.nv-case .link.stated .node {
+  border: 1.4px solid var(--ink);
+}
+.nv-case .link.stated .node::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: var(--ink);
+}
+.nv-case .link.inferred .node {
+  border: 1.4px solid var(--soft);
+}
+.nv-case .link.unknown .node {
+  border: 1px dashed var(--dim);
+}
+.nv-case .link.you .node {
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 6px var(--signal-wash);
+}
+.nv-case .link .caps {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.nv-case .link.you .caps {
+  color: var(--signal);
+}
+.nv-case .link .l {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.nv-case .link.inferred .l {
+  color: var(--soft);
+}
+.nv-case .link.unknown .l {
+  color: var(--dim);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+}
+.nv-case .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.nv-case .kiu {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 28px;
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hair);
+}
+.nv-case .kiu .caps {
+  display: block;
+  margin-bottom: 10px;
+}
+.nv-case .r {
+  display: flex;
+  gap: 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  padding: 3px 0;
+}
+.nv-case .r .m {
+  margin-top: 5px;
+}
+.nv-case .r.h {
+  color: var(--soft);
+}
+.nv-case .r.u {
+  color: var(--dim);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+}
+.nv-case .r sup {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  margin-left: 3px;
+}
+
+.nv-case .side {
+  border-left: 1px solid var(--hair);
+  padding: 28px 26px 48px;
+  background: linear-gradient(180deg, var(--surface), transparent 45%);
+  min-width: 0;
+}
+.nv-case .sec {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--hair);
+}
+.nv-case .sec:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+.nv-case .sec > .caps {
+  display: block;
+  margin-bottom: 12px;
+}
+.nv-case .ask2 {
+  font-family: var(--serif);
+  font-size: 21px;
+  margin: 0 0 14px;
+}
+.nv-case .opts {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.nv-case .btn {
+  min-height: 44px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+}
+.nv-case .why {
+  margin-top: 12px;
+}
+.nv-case .why .caps {
+  display: block;
+  margin-bottom: 8px;
+}
+.nv-case .thanks {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: 12px;
+}
+.nv-case .err {
+  font-size: 12.5px;
+  color: var(--signal);
+  margin-top: 10px;
+}
+.nv-case .fine {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--dim);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.nv-case .kv {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  row-gap: 9px;
+  font-size: 12.5px;
+}
+.nv-case .kv .caps {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.nv-case .dash {
+  color: var(--dim);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  margin: 0;
+}
+.nv-case .against {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--soft);
+  margin: 0;
+}
+.nv-case .tl {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 18px;
+}
+.nv-case .tl::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  bottom: 6px;
+  border-left: 1px solid var(--hair2);
+}
+.nv-case .ev {
+  position: relative;
+  padding: 0 0 12px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.nv-case .ev::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 5px;
+  width: 7px;
+  height: 7px;
+  background: var(--ink);
+}
+.nv-case .ev.f {
+  color: var(--dim);
+}
+.nv-case .ev.f::before {
+  background: var(--bg);
+  border: 1px dashed var(--dim);
+}
+.nv-case .ev .mono {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 1px;
+}
+
+@media (max-width: 1100px) {
+  .nv-case {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nv-case .side {
+    border-left: none;
+    border-top: 1px solid var(--hair);
+  }
+}
+@media (max-width: 860px) {
+  .nv-case .art {
+    padding: 16px 16px 32px;
+  }
+  .nv-case .side {
+    padding: 24px 16px 40px;
+  }
+  .nv-case .hl {
+    font-size: 28px;
+  }
+  .nv-case .lede {
+    font-size: 17px;
+  }
+  .nv-case .chain {
+    grid-template-columns: minmax(0, 1fr) !important;
+    row-gap: 6px;
+  }
+  .nv-case .link {
+    padding-bottom: 14px;
+  }
+  .nv-case .link::before {
+    display: none;
+  }
+  .nv-case .link {
+    padding-left: 24px;
+  }
+  .nv-case .kiu {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

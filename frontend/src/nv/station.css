@@ -254,11 +254,17 @@
   margin: 6px 0 5px;
   letter-spacing: -0.008em;
 }
-.st .d .q button {
+.st .d .q button,
+.st .d .q a {
   all: unset;
   cursor: pointer;
 }
-.st .d .q button:hover {
+.st .d .q a:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+.st .d .q button:hover,
+.st .d .q a:hover {
   color: var(--bright);
 }
 .st .d .why {

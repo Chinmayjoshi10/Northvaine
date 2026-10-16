@@ -49,6 +49,121 @@ export function optionsFor(
   ];
 }
 
+function notSaved(e: unknown): string {
+  return e instanceof Error ? `Not saved: ${e.message} Try again.` : "Not saved. Try again.";
+}
+
+/** The decision and its follow-ups, shared by the sheet and the full case page. */
+export function DecisionBox(props: {
+  row: Row;
+  question: string;
+  decided: string | null;
+  onDecide: (d: Decision) => Promise<void>;
+  followed?: string[];
+  onFollow?: (f: FollowUp) => Promise<void>;
+}) {
+  const { row, question, decided, onDecide, followed = [], onFollow } = props;
+  const [askWhy, setAskWhy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setAskWhy(false);
+    setError(null);
+  }, [row.rank]);
+
+  const save = async (act: () => Promise<void>) => {
+    setSaving(true);
+    setError(null);
+    try {
+      await act();
+      setAskWhy(false);
+    } catch (e) {
+      setError(notSaved(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+  const decide = (d: Decision) => save(() => onDecide(d));
+  const follow = (f: FollowUp) => (onFollow ? save(() => onFollow(f)) : undefined);
+  const took = decided !== null && optionsFor(row)[0].label === decided;
+  const happened = followed
+    .filter((n) => n.startsWith(HAPPENED))
+    .map((n) => n.slice(HAPPENED.length))
+    .pop();
+
+  return (
+    <div className="sec">
+      <span className="caps">Your decision</span>
+      <p className="ask2">{question}</p>
+      <div className="opts">
+        {optionsFor(row).map((o, i) => (
+          <button
+            key={o.kind}
+            type="button"
+            className={`btn${(decided ? decided === o.label : i === 0) ? " rec" : ""}`}
+            disabled={saving}
+            onClick={() =>
+              o.kind === "drop"
+                ? setAskWhy(true)
+                : decide({ kind: o.kind, label: o.label })
+            }
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+      {askWhy && (
+        <div className="why">
+          <span className="caps">Why not?</span>
+          <div className="opts">
+            {FAILURE_CHIPS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                className="btn"
+                disabled={saving}
+                onClick={() =>
+                  decide({ kind: "drop", label: "Not for us", reason: c })
+                }
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {decided && !askWhy && !took && <div className="thanks">Noted.</div>}
+      {took && onFollow && (
+        <div className="why">
+          <span className="caps">What happened?</span>
+          <div className="opts">
+            {OUTCOMES.map((o) => (
+              <button
+                key={o}
+                type="button"
+                className={`btn${happened === o ? " rec" : ""}`}
+                disabled={saving}
+                onClick={() => follow({ kind: "outcome", outcome: o })}
+              >
+                {o === "none" ? "no reply yet" : o}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {error && (
+        <div className="err" role="alert">
+          {error}
+        </div>
+      )}
+      <div className="fine">
+        Your answer teaches Northvaine. Nothing is ever sent for you.
+      </div>
+    </div>
+  );
+}
+
 export function CaseSheet(props: {
   row: Row | null;
   decided: string | null;
@@ -56,17 +171,17 @@ export function CaseSheet(props: {
   /** Notes of the follow-ups already given ("What happened: …", "Wrong fact: …"). */
   followed?: string[];
   onFollow?: (f: FollowUp) => Promise<void>;
+  /** The full case page for this lead, when the caller has a route for it. */
+  fullHref?: string;
   onClose: () => void;
 }) {
-  const { row, decided, onDecide, followed = [], onFollow, onClose } = props;
+  const { row, decided, onDecide, followed = [], onFollow, fullHref, onClose } = props;
   const [picked, setPicked] = useState<number | null>(null);
-  const [askWhy, setAskWhy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setPicked(null);
-    setAskWhy(false);
     setError(null);
   }, [row?.rank]);
 
@@ -89,24 +204,13 @@ export function CaseSheet(props: {
     setError(null);
     try {
       await act();
-      setAskWhy(false);
     } catch (e) {
-      setError(
-        e instanceof Error
-          ? `Not saved: ${e.message} Try again.`
-          : "Not saved. Try again.",
-      );
+      setError(notSaved(e));
     } finally {
       setSaving(false);
     }
   };
-  const decide = (d: Decision) => save(() => onDecide(d));
   const follow = (f: FollowUp) => (onFollow ? save(() => onFollow(f)) : undefined);
-  const took = decided !== null && optionsFor(row)[0].label === decided;
-  const happened = followed
-    .filter((n) => n.startsWith(HAPPENED))
-    .map((n) => n.slice(HAPPENED.length))
-    .pop();
   const flagged = (slot: Link["slot"]) => followed.includes(`${WRONG}${SLOT[slot]}`);
 
   return (
@@ -120,6 +224,11 @@ export function CaseSheet(props: {
         <span className="dateline">
           <b>{row.country}</b> · {typeOf(row).toLowerCase()} · {row.why_now}
         </span>
+        {fullHref && (
+          <a className="full" href={fullHref}>
+            Open full case →
+          </a>
+        )}
         <span className="keys mono">
           <span>
             <kbd>↑</kbd>
@@ -275,74 +384,19 @@ export function CaseSheet(props: {
 
       <aside className="sside">
         <div className="content" data-content>
-          <div className="sec">
-            <span className="caps">Your decision</span>
-            <p className="ask2">Is this one for you?</p>
-            <div className="opts">
-              {optionsFor(row).map((o, i) => (
-                <button
-                  key={o.kind}
-                  type="button"
-                  className={`btn${(decided ? decided === o.label : i === 0) ? " rec" : ""}`}
-                  disabled={saving}
-                  onClick={() =>
-                    o.kind === "drop"
-                      ? setAskWhy(true)
-                      : decide({ kind: o.kind, label: o.label })
-                  }
-                >
-                  {o.label}
-                </button>
-              ))}
+          <DecisionBox
+            row={row}
+            question="Is this one for you?"
+            decided={decided}
+            onDecide={onDecide}
+            followed={followed}
+            onFollow={onFollow}
+          />
+          {error && (
+            <div className="err" role="alert">
+              {error}
             </div>
-            {askWhy && (
-              <div className="why">
-                <span className="caps">Why not?</span>
-                <div className="opts">
-                  {FAILURE_CHIPS.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      className="btn"
-                      disabled={saving}
-                      onClick={() =>
-                        decide({ kind: "drop", label: "Not for us", reason: c })
-                      }
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {decided && !askWhy && !took && <div className="thanks">Noted.</div>}
-            {took && onFollow && (
-              <div className="why">
-                <span className="caps">What happened?</span>
-                <div className="opts">
-                  {OUTCOMES.map((o) => (
-                    <button
-                      key={o}
-                      type="button"
-                      className={`btn${happened === o ? " rec" : ""}`}
-                      disabled={saving}
-                      onClick={() => follow({ kind: "outcome", outcome: o })}
-                    >
-                      {o === "none" ? "no reply yet" : o}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {error && (
-              <div className="err" role="alert">
-                {error}
-              </div>
-            )}
-            <div className="fine">
-              Your answer teaches Northvaine. Nothing is ever sent for you.
-            </div>
-          </div>
+          )}
           <div className="sec">
             <span className="caps">Source</span>
             <div className="kv">

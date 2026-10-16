@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { api } from "../api";
 import type { BriefView, Row } from "../types";
+import { link } from "../routes";
 import { useLoad } from "../useLoad";
 import { CaseSheet, optionsFor } from "./CaseSheet";
 import { useDecisions } from "./decide";
@@ -73,7 +74,7 @@ function urgency(r: Row): string | null {
 }
 
 /** A caution that only points at a section of the brief says nothing here. */
-function readable(caution: string): boolean {
+export function readable(caution: string): boolean {
   return !/\bsections?\s*\d|read section/i.test(caution);
 }
 
@@ -321,6 +322,7 @@ function Station(props: {
             onDecide={(d) => (open ? decide(open, d) : Promise.resolve())}
             followed={open ? (followed[open.rank] ?? []) : []}
             onFollow={(f) => (open ? follow(open, f) : Promise.resolve())}
+            fullHref={open ? link("app", client, day, "case", open.rank) : undefined}
             onClose={() => setOpen(null)}
           />
           <LessonNote lesson={lesson} learning={learning} onClose={dismiss} />
@@ -428,9 +430,7 @@ function Station(props: {
                   )}
                 </div>
                 <h2 className="q">
-                  <button type="button" onClick={() => setOpen(r)}>
-                    {question(r)}
-                  </button>
+                  <a href={link("app", client, day, "case", r.rank)}>{question(r)}</a>
                 </h2>
                 {r.label && (
                   <p className="edlabel">

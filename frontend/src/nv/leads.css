@@ -529,3 +529,21 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.nv-sheet .full {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--soft);
+  text-underline-offset: 3px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+.nv-sheet .full:hover {
+  color: var(--ink);
+}
+.nv-sheet .full + .keys {
+  margin-left: 0;
+}

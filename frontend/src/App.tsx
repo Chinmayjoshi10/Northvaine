@@ -4,6 +4,7 @@ import { ClientsPage } from "./pages/ClientsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { LeadsPage } from "./nv/LeadsPage";
+import { CasePage } from "./nv/CasePage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
 
@@ -13,6 +14,7 @@ import { link } from "./routes";
 //   #/contact[/used]             talk to us (D104); "used" after the free radar
 //   #/app/<client>/<day>         Station, the edition (day may be "latest")
 //   #/app/<client>/<day>/leads   Leads, with the case as a sheet
+//   #/app/<client>/<day>/case/<rank>   the full case page
 // Older links (#/c/..., #/m/...) open Station for the same client and day.
 function currentPath(): string[] {
   return window.location.hash
@@ -34,6 +36,8 @@ export function App() {
   }, []);
 
   if (path[0] === "app" && path.length >= 3) {
+    if (path[3] === "case" && /^\d+$/.test(path[4] ?? ""))
+      return <CasePage client={path[1]} day={path[2]} rank={Number(path[4])} />;
     return path[3] === "leads" ? (
       <LeadsPage client={path[1]} day={path[2]} />
     ) : (
