@@ -91,6 +91,16 @@ async def test_the_run_cap_trips_next(money: Caps) -> None:
 
 
 @pytest.mark.asyncio
+async def test_a_run_with_its_own_cap_uses_it(money: Caps) -> None:
+    run = RunContext(spent_usd=Decimal("0.19"), budget_usd=Decimal("1.00"))
+    await check_budget(run, Decimal("0.02"), session=FakeSession())  # under its own cap
+    run.spent_usd = Decimal("0.99")
+    with pytest.raises(BudgetExceeded) as caught:
+        await check_budget(run, Decimal("0.02"), session=FakeSession())
+    assert caught.value.kind is BudgetKind.RUN and caught.value.cap == Decimal("1.00")
+
+
+@pytest.mark.asyncio
 async def test_the_day_cap_trips_next(money: Caps) -> None:
     with pytest.raises(BudgetExceeded) as caught:
         await check_budget(RunContext(), Decimal("0.01"), session=FakeSession(day="9.995"))
@@ -212,9 +222,7 @@ async def test_a_successful_call_records_one_row(money: Caps) -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("reason", ["transport failure", "timeout", "invalid JSON"])
-async def test_every_failed_attempt_records_a_row_with_zero_cost(
-    money: Caps, reason: str
-) -> None:
+async def test_every_failed_attempt_records_a_row_with_zero_cost(money: Caps, reason: str) -> None:
     """D4: retries are paid for, so they must be visible. A failure never records a guess."""
     session = FakeSession()
     run = RunContext()

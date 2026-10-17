@@ -128,6 +128,8 @@ async def run_radar(
     caller can save the run (`radar.persist`, D86)."""
     settings = settings or get_settings()
     cap = settings.radar_run_budget_usd
+    if run.budget_usd is None:  # the model calls are held to the radar's cap, not the default
+        run.budget_usd = cap
     notes: list[str] = []
     llm_calls = 0
 

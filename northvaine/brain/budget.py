@@ -65,6 +65,9 @@ class RunContext:
     # for the whole run was dropped by the database after some minutes, losing every row. Tests
     # that roll back for isolation leave this off.
     commit_each_call: bool = False
+    # The run's own cap, when its caller sets one (a radar run uses `radar_run_budget_usd`);
+    # otherwise `run_budget_usd` applies (D107).
+    budget_usd: Decimal | None = None
 
     @property
     def spent(self) -> Decimal:
@@ -143,8 +146,9 @@ async def check_budget(
             BudgetKind.CALL, settings.max_call_cost_usd, Decimal("0"), estimated_cost
         )
 
-    if run.spent_usd + estimated_cost > settings.run_budget_usd:
-        raise BudgetExceeded(BudgetKind.RUN, settings.run_budget_usd, run.spent_usd, estimated_cost)
+    run_cap = run.budget_usd if run.budget_usd is not None else settings.run_budget_usd
+    if run.spent_usd + estimated_cost > run_cap:
+        raise BudgetExceeded(BudgetKind.RUN, run_cap, run.spent_usd, estimated_cost)
 
     if session is None:
         return  # the two shared caps need the ledger; callers without one get the local checks
