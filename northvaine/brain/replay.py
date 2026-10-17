@@ -301,6 +301,15 @@ def _clear_settings_caches() -> None:
     settings_module.get_settings.cache_clear()
 
 
+# Settings that widened after older recordings were made (D107). A recording that does not name
+# one was made with the value here, so replay pins that value and asks for what was recorded.
+LEGACY_SETTINGS: dict[str, object] = {
+    "hmrc_min_kept": 0,
+    "radar_max_gate_candidates": 40,
+    "radar_register_max_lookups": 40,
+}
+
+
 @contextmanager
 def _pinned_environment(recording: LlmRecording) -> Iterator[None]:
     pins: dict[str, str] = {}
@@ -310,7 +319,7 @@ def _pinned_environment(recording: LlmRecording) -> Iterator[None]:
             pins[variable] = str(model)
     for name in BUDGET_VARIABLES:
         pins[name] = REPLAY_BUDGET_USD
-    for name, value in recording.settings.items():
+    for name, value in {**LEGACY_SETTINGS, **recording.settings}.items():
         if value is not None and name in settings_module.Settings.model_fields:
             pins[name.upper()] = str(value)
     previous = {name: os.environ.get(name) for name in pins}

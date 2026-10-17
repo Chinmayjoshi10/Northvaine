@@ -98,6 +98,9 @@ SHAPING_SETTINGS = (
     "radar_fit_pages",
     "radar_fit_quotes",
     "radar_fit_min_token",
+    "hmrc_min_kept",  # how many importers were kept, gated and looked up (D107)
+    "radar_max_gate_candidates",
+    "radar_register_max_lookups",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.
 GATE_TOKENS = (2000, 300)

@@ -94,6 +94,10 @@ class Settings(BaseSettings):
     # Share of a query's documents kept for importers new this year: they are still building
     # their supplier list, and established importers would otherwise fill every slot.
     hmrc_new_importer_share: float = Field(default=0.5, ge=0, le=1)
+    # Importers kept per query at least, whatever the query asks: an import record is the
+    # strongest buying evidence there is, and these documents need no model call (D107). The
+    # WOS scoreboard showed hand-found buyers ranked 5th to 49th, below a cap of 8 to 16.
+    hmrc_min_kept: int = Field(default=100, ge=0)
     # Company-level only: a trader name without one of these legal forms may be a person (a sole
     # trader) and is never stored. Matched as whole words, case-insensitive. Legal terms only.
     hmrc_company_markers: tuple[str, ...] = (
@@ -150,7 +154,9 @@ class Settings(BaseSettings):
     radar_reports_dir: str = "reports/radar"
     radar_fixtures_dir: str = "tests/fixtures/radar"
     radar_max_lead_upgrades: int = Field(default=15, ge=1)
-    radar_max_gate_candidates: int = Field(default=40, ge=1)
+    radar_max_gate_candidates: int = Field(default=200, ge=1)
+    # Gate calls in flight at once (D107): a wide import net is gated in minutes, not an hour.
+    radar_gate_concurrency: int = Field(default=8, ge=1)
     radar_brief_entries: int = Field(default=10, ge=1)
     radar_tender_window_days: int = Field(default=30, ge=1)  # D27
     radar_tender_lookback_days: int = Field(default=45, ge=1)  # D71
@@ -196,7 +202,7 @@ class Settings(BaseSettings):
     # Where onboarded clients' specs are written (never committed).
     onboarding_clients_dir: str = "reports/clients"
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
-    radar_register_max_lookups: int = Field(default=40, ge=0)
+    radar_register_max_lookups: int = Field(default=200, ge=0)
     # "Just changed" (D103): a new owner or a rename within this many days, or a company set up
     # within radar_new_company_days, marks a company that is setting up or reviewing its supply.
     radar_just_changed_days: int = Field(default=365, ge=1)

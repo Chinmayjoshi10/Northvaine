@@ -1083,3 +1083,18 @@ brief with Claude's five corrections (docs/COLLAB.md).
     keeps companies that sell the client's kind of product without making it, as candidate
     partners ranked by evidence of size; the owner decides partner or competitor. After A and B;
     cut after C, D and E.
+
+- **D107 — A wider import net, gated in parallel (18 Oct).** Replaying the WOS run showed that 7
+  of the 12 UK buyers it missed were in the import records it had already downloaded (ranked 5th
+  to 191st among 400 to 1,100 importers), but each search kept only its top 8 to 16. Import
+  records are the strongest buying evidence and are read by code, so the fix comes before
+  lead-quality A:
+  - each import search keeps at least `hmrc_min_kept` (100) importers, half new this year;
+  - the gate and the register check take up to 200 candidates (were 40);
+  - candidates are gated `radar_gate_concurrency` (8) at a time; the budget check and the cost
+    ledger take turns under a lock on the run, and outcomes keep the gate order, so the record is
+    the same as a one-at-a-time run (tested). A run can overshoot its cap by at most the calls
+    already in flight;
+  - recordings made before this pin the old limits on replay (`LEGACY_SETTINGS`).
+  Cost: about $0.0005 a gate call, so roughly $0.15 to $0.25 a run instead of $0.07.
+

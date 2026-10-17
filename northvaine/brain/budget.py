@@ -22,6 +22,7 @@ Two limitations you should know about before trusting a number here:
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -57,6 +58,9 @@ class RunContext:
     workspace_id: UUID | None = None
     run_id: UUID = field(default_factory=uuid4)
     spent_usd: Decimal = Decimal("0")
+    # Calls of one run may run concurrently (the gate does); the budget check and the ledger
+    # write share one database session, so they take turns under this lock.
+    lock: asyncio.Lock = field(default_factory=asyncio.Lock, repr=False, compare=False)
 
     @property
     def spent(self) -> Decimal:

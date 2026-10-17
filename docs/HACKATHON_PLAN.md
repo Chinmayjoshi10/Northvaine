@@ -74,6 +74,7 @@ the WOS hand research. About 12-13 sessions remain for 17-26 Oct, so about 1.5 s
 | 4 | Station to the locked design: company name, headline paragraph, new and returning, legend, urgency tags, Overnight timeline, sidebar with "Soon" | 1 | React to it |
 | 5 | Full case page: stage bar, chain, on record / inferred / not yet known, history, Tavily trace | 1 | React to it |
 | 6 | Merge Connections; "Your business" page | 0.5 | - |
+| 6b | **Wider import net, gated in parallel** (D107): 7 of 12 missed WOS buyers were in the downloaded import records but cut by a cap of 8-16 | 0.5 | - |
 | 7 | **Lead quality A: company fit and contact.** Tavily reads each shortlisted company's own site: does it buy this kind of product (not a competitor or haulier), and the company email and phone from its contact page (company only) | 1 | - |
 | 8 | **Lead quality B: customers like yours.** From the client's best customers, find companies with the same activity codes, the same imports and similar words on their site | 1 | Name 3-5 best customers for the test client |
 | 8b | **Lead quality F: distributors.** Onboarding asks "direct buyers, distributors, or both?"; with distributors chosen, a company that sells the client's kind of product (but does not make it) becomes a candidate partner instead of a rejection; "big" is ranked by evidence (import volume and years, accounts, branches and brands read with Tavily, recent growth); the owner decides partner or competitor | 1 | - |

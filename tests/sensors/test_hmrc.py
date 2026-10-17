@@ -23,7 +23,8 @@ from northvaine.sensors.replay import load_exchanges, replay_transport
 FIXTURE = (
     Path(__file__).parent.parent / "fixtures" / "sensors" / "hmrc" / "refrigerated_cases_1.json"
 )
-SETTINGS = Settings(_env_file=None)
+# The floor of kept importers is off here, so the query's own cap is what the tests exercise.
+SETTINGS = Settings(_env_file=None, hmrc_min_kept=0)
 IMPORTS = [EventType.IMPORTS_RECORDED]
 
 
@@ -43,10 +44,10 @@ def query(**kw: Any) -> SensorQuery:
     return SensorQuery(**base)
 
 
-async def replay(q: SensorQuery, *, as_of: datetime | None = None):
+async def replay(q: SensorQuery, *, as_of: datetime | None = None, settings=SETTINGS):
     transport = replay_transport(load_exchanges(FIXTURE))
     async with httpx.AsyncClient(transport=transport) as client:
-        sensor = HmrcSensor(client=client, settings=SETTINGS, sleep=no_sleep)
+        sensor = HmrcSensor(client=client, settings=settings, sleep=no_sleep)
         return await sensor.search(q, as_of=as_of)
 
 
@@ -135,6 +136,13 @@ async def test_cap_keeps_the_best() -> None:
     old = [d.external_id for d in full.documents if not d.meta["new_this_year"]]
     # half the slots (rounded) for new importers, the best of each group
     assert [d.external_id for d in top.documents] == new[:2] + old[:1]
+
+
+async def test_min_kept_overrides_a_smaller_query_cap() -> None:
+    full = await replay(query())
+    floor = Settings(_env_file=None, hmrc_min_kept=len(full.documents))
+    widened = await replay(query(max_results=3), settings=floor)
+    assert len(widened.documents) == len(full.documents) and widened.truncated is False
 
 
 def test_split_legal_form_still_counts_as_a_company() -> None:

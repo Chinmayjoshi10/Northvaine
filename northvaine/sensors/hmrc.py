@@ -20,8 +20,8 @@ What this sensor does and does not do:
   the postcode are never rendered or stored.
 - Traders at HMRC's own address for non-UK sellers (`hmrc_overseas_postcodes`) are dropped.
 - Documents are ranked (most requested codes, then most months active) and capped at
-  `max_results`, with `hmrc_new_importer_share` of the slots kept for importers new this year;
-  new importers come first.
+  `max_results` or `hmrc_min_kept`, whichever is larger (D107), with `hmrc_new_importer_share`
+  of the slots kept for importers new this year; new importers come first.
 """
 
 from __future__ import annotations
@@ -420,8 +420,9 @@ class HmrcSensor:
                         if isinstance(tid, int) and tid in traders:
                             traders[tid].seen_last_year = True
 
-        ranked = select(list(traders.values()), query.max_results, settings.hmrc_new_importer_share)
-        truncated = len(traders) > query.max_results
+        keep = max(query.max_results, settings.hmrc_min_kept)
+        ranked = select(list(traders.values()), keep, settings.hmrc_new_importer_share)
+        truncated = len(traders) > keep
         docs = [
             trader_document(
                 t,

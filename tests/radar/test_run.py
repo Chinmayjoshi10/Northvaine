@@ -9,6 +9,8 @@ recording (D53): these are code tests, the real recordings come from Recording R
 
 from __future__ import annotations
 
+import asyncio
+import contextvars
 import hashlib
 import json
 from datetime import UTC, datetime
@@ -307,6 +309,48 @@ def test_run_module_names_no_client_and_no_industry() -> None:
 
 
 # --- budget ----------------------------------------------------------------------------------
+
+
+async def test_gates_run_concurrently_and_the_record_keeps_the_gate_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    working_on: contextvars.ContextVar[str] = contextvars.ContextVar("working_on", default="")
+
+    class PerTask(FakeLlm):
+        """Answers follow the candidate of the calling task, so concurrent calls cannot swap
+        answers (a shared `key` would be overwritten by the next gate)."""
+
+        async def _create(self, **body: Any) -> Any:
+            self.key = working_on.get()
+            return await super()._create(**body)
+
+    async def outcome(concurrency: int) -> tuple[int, list[str], list[str]]:
+        fake = PerTask()
+        real_gate, real_skeptic = run_module.gate_candidate, run_module.skeptic
+        flight = {"now": 0, "most": 0}
+
+        async def gate(candidate: Any, *args: Any, **kwargs: Any) -> Any:
+            working_on.set(candidate.key)  # each gate runs in its own task
+            flight["now"] += 1
+            flight["most"] = max(flight["most"], flight["now"])
+            await asyncio.sleep(0.01)  # a network call: the other gates get their turn
+            flight["now"] -= 1
+            return await real_gate(candidate, *args, **kwargs)
+
+        monkeypatch.setattr(run_module, "gate_candidate", gate)
+        monkeypatch.setattr(run_module, "skeptic", real_skeptic)
+        settings = SETTINGS.model_copy(update={"radar_gate_concurrency": concurrency})
+        result = await radar("stone_supplier", fake, settings=settings)
+        return (
+            flight["most"],
+            [e.candidate.key for e in result.entries],
+            [r.candidate.key for r in result.rejected],
+        )
+
+    one = await outcome(1)
+    many = await outcome(4)
+    assert one[0] == 1 and many[0] > 1
+    assert many[1:] == one[1:]
 
 
 async def test_a_run_over_budget_after_the_first_gate_stops_with_a_note_and_a_brief(

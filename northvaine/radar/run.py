@@ -7,6 +7,7 @@ module knows about a client or an industry: everything comes from the `ClientSpe
 
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 import math
 import random
@@ -211,46 +212,65 @@ async def run_radar(
     if len(ordered) > limit:
         notes.append(f"{len(ordered) - limit} candidate(s) not gated: cap of {limit} reached")
         ordered = ordered[:limit]
+    # Candidates are gated several at a time (radar_gate_concurrency): the calls are independent,
+    # and each outcome is kept in its slot so the run record keeps the gate order.
+    gate_slots = asyncio.Semaphore(settings.radar_gate_concurrency)
+    outcomes: list[tuple[str, Any]] = [("skipped", None)] * len(ordered)
+    gate_calls = [0] * len(ordered)
+
+    async def gate_one(i: int, candidate: Candidate) -> None:
+        nonlocal stopped
+        async with gate_slots:
+            if stopped or over_budget():
+                if not stopped:
+                    notes.append(f"run budget of ${cap} reached: remaining candidates not gated")
+                    stopped = True
+                outcomes[i] = ("not_gated", None)
+                return
+            decision: GateDecision | None = None
+            try:
+                decision = await gate_candidate(
+                    candidate, spec, run=run, session=session, settings=settings
+                )
+                if candidate.claims:
+                    gate_calls[i] += 1  # a candidate with no claim is rejected by code, no call
+                if not decision.passed:
+                    outcomes[i] = ("rejected", RejectedEntry(candidate=candidate, gate=decision))
+                    return
+                if over_budget():
+                    outcomes[i] = ("not_investigated", candidate.name)
+                    stopped = True
+                    return
+                finding = await skeptic(
+                    candidate, decision, spec, run=run, session=session, settings=settings
+                )
+                gate_calls[i] += 1
+            except BudgetExceeded as exc:
+                if not stopped:
+                    notes.append(f"stopped: {exc}")
+                stopped = True
+                passed_gate = decision is not None and decision.passed
+                outcomes[i] = ("not_investigated" if passed_gate else "not_gated", candidate.name)
+                return
+            except _ITEM_FAILURES as exc:
+                notes.append(f"candidate skipped ({type(exc).__name__}): {candidate.name}")
+                return
+            outcomes[i] = ("passed", (candidate, decision, finding))
+
+    await asyncio.gather(*(gate_one(i, c) for i, c in enumerate(ordered)))
+    llm_calls += sum(gate_calls)
     passed: list[tuple[Candidate, GateDecision, SkepticFinding]] = []
     not_gated = 0
     not_investigated: list[str] = []
-    for candidate in ordered:
-        if stopped or over_budget():
-            if not stopped:
-                notes.append(f"run budget of ${cap} reached: remaining candidates not gated")
-                stopped = True
+    for kind, value in outcomes:
+        if kind == "passed":
+            passed.append(value)
+        elif kind == "rejected":
+            rejected.append(value)
+        elif kind == "not_gated":
             not_gated += 1
-            continue
-        decision: GateDecision | None = None
-        try:
-            decision = await gate_candidate(
-                candidate, spec, run=run, session=session, settings=settings
-            )
-            if candidate.claims:
-                llm_calls += 1  # a candidate with no claim is rejected by code, no call
-            if not decision.passed:
-                rejected.append(RejectedEntry(candidate=candidate, gate=decision))
-                continue
-            if over_budget():
-                not_investigated.append(candidate.name)
-                stopped = True
-                continue
-            finding = await skeptic(
-                candidate, decision, spec, run=run, session=session, settings=settings
-            )
-            llm_calls += 1
-        except BudgetExceeded as exc:
-            notes.append(f"stopped: {exc}")
-            stopped = True
-            if decision is not None and decision.passed:
-                not_investigated.append(candidate.name)
-            else:
-                not_gated += 1
-            continue
-        except _ITEM_FAILURES as exc:
-            notes.append(f"candidate skipped ({type(exc).__name__}): {candidate.name}")
-            continue
-        passed.append((candidate, decision, finding))
+        elif kind == "not_investigated":
+            not_investigated.append(value)
     if not_gated:
         notes.append(f"{not_gated} candidate(s) not gated: run budget reached")
     if not_investigated:

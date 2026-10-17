@@ -213,7 +213,8 @@ async def _guarded_call(
     Every attempt is guarded and recorded, so a retry is both paid for and visible (D4). A second
     attempt is refused if the first one's recorded cost pushed the run over its cap.
     """
-    await budget_module.check_budget(run, estimated_cost, session=session)
+    async with run.lock:
+        await budget_module.check_budget(run, estimated_cost, session=session)
 
     loop = asyncio.get_running_loop()
     started = loop.time()
@@ -221,41 +222,43 @@ async def _guarded_call(
         raw = await operation()
     except Exception as error:  # recorded, classified, then re-raised
         latency_ms = int((loop.time() - started) * 1000)
+        async with run.lock:
+            await budget_module.record_call(
+                run,
+                session=session,
+                model=model,
+                purpose=purpose,
+                usage=None,
+                cost_usd=Decimal("0"),
+                ok=False,
+                error=type(error).__name__ + ": " + str(error),
+                latency_ms=latency_ms,
+                workspace_id=workspace_id,
+                case_id=case_id,
+                prompt_version=prompt_version,
+                provider=PROVIDER,
+            )
+        raise
+
+    latency_ms = int((loop.time() - started) * 1000)
+    usage = _usage_from(raw)
+    cost = pricing.estimate_cost(model, usage.input_tokens, usage.output_tokens)
+    async with run.lock:
         await budget_module.record_call(
             run,
             session=session,
             model=model,
             purpose=purpose,
-            usage=None,
-            cost_usd=Decimal("0"),
-            ok=False,
-            error=type(error).__name__ + ": " + str(error),
+            usage=usage,
+            cost_usd=cost,
+            ok=True,
+            error=None,
             latency_ms=latency_ms,
             workspace_id=workspace_id,
             case_id=case_id,
             prompt_version=prompt_version,
             provider=PROVIDER,
         )
-        raise
-
-    latency_ms = int((loop.time() - started) * 1000)
-    usage = _usage_from(raw)
-    cost = pricing.estimate_cost(model, usage.input_tokens, usage.output_tokens)
-    await budget_module.record_call(
-        run,
-        session=session,
-        model=model,
-        purpose=purpose,
-        usage=usage,
-        cost_usd=cost,
-        ok=True,
-        error=None,
-        latency_ms=latency_ms,
-        workspace_id=workspace_id,
-        case_id=case_id,
-        prompt_version=prompt_version,
-        provider=PROVIDER,
-    )
     return raw, usage, cost
 
 
