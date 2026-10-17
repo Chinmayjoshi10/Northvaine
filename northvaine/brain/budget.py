@@ -61,6 +61,10 @@ class RunContext:
     # Calls of one run may run concurrently (the gate does); the budget check and the ledger
     # write share one database session, so they take turns under this lock.
     lock: asyncio.Lock = field(default_factory=asyncio.Lock, repr=False, compare=False)
+    # A long live run commits each ledger row as it is written (D107): one transaction held open
+    # for the whole run was dropped by the database after some minutes, losing every row. Tests
+    # that roll back for isolation leave this off.
+    commit_each_call: bool = False
 
     @property
     def spent(self) -> Decimal:

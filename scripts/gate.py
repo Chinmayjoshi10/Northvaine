@@ -28,10 +28,12 @@ def steps() -> list[tuple[str, list[str]]]:
         # Offline render: catches a broken migration with no database.
         plan.append((RENDER_STEP, [py, "-m", "alembic", "upgrade", "head", "--sql"]))
     if has_tests(ROOT / "tests"):
-        plan.append((
-            "unit tests",
-            [py, "-m", "pytest", "-q", "-m", "not live and not db", "--ignore=tests/golden"],
-        ))
+        plan.append(
+            (
+                "unit tests",
+                [py, "-m", "pytest", "-q", "-m", "not live and not db", "--ignore=tests/golden"],
+            )
+        )
     if has_tests(ROOT / "tests" / "golden"):
         plan.append(("golden set", [py, "-m", "pytest", "-q", "tests/golden"]))
     if (ROOT / "frontend" / "package.json").exists():

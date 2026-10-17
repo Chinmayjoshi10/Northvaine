@@ -238,6 +238,8 @@ async def _guarded_call(
                 prompt_version=prompt_version,
                 provider=PROVIDER,
             )
+            if run.commit_each_call and session is not None:
+                await session.commit()
         raise
 
     latency_ms = int((loop.time() - started) * 1000)
@@ -259,6 +261,8 @@ async def _guarded_call(
             prompt_version=prompt_version,
             provider=PROVIDER,
         )
+        if run.commit_each_call and session is not None:
+            await session.commit()
     return raw, usage, cost
 
 

@@ -505,6 +505,7 @@ async def run_record(
     fetcher = RecordingPageFetcher(
         (fetcher_factory or (lambda s: LivePageFetcher(settings=s)))(settings)
     )
+    commit_each_call = session_factory is None  # the live ledger commits row by row (D107)
     if session_factory is None:
         # A live run writes an llm_calls row per call and is held to the daily and lifetime
         # caps, like every other live model call (CLAUDE.md #8).
@@ -522,7 +523,7 @@ async def run_record(
                 http=client,
                 fetcher=fetcher,
                 concepts=seeded_concepts(),
-                run=RunContext(),
+                run=RunContext(commit_each_call=commit_each_call),
                 settings=settings,
                 session=session,
                 evidence_out=evidence,

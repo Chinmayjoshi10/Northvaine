@@ -289,14 +289,10 @@ async def run_smoke(settings: Any, url: str, session: Any) -> int:
                 },
             }
         )
-    write_fixture(
-        "complete_json", {"recorded_at": datetime.now(UTC), "exchanges": recorded}
-    )
+    write_fixture("complete_json", {"recorded_at": datetime.now(UTC), "exchanges": recorded})
 
     print(f"\n[3/4] embed() on {settings.model_embed}")
-    embedding = await llm.embed(
-        text="three word input", purpose="smoke", run=run, session=session
-    )
+    embedding = await llm.embed(text="three word input", purpose="smoke", run=run, session=session)
     dimension = len(embedding.value)
     print(f"      returned {dimension} floats (EMBED_DIM_EXPECTED = {EMBED_DIM_EXPECTED})")
     if dimension != EMBED_DIM_EXPECTED:
@@ -353,14 +349,18 @@ async def run_smoke(settings: Any, url: str, session: Any) -> int:
 
 async def report(settings: Any, session: Any, run_started: datetime) -> None:
     rows = (
-        await session.execute(
-            text(
-                "SELECT created_at, model, purpose, input_tokens, output_tokens, cost_usd, "
-                "ok, latency_ms, provider FROM llm_calls WHERE created_at >= :since ORDER BY id"
-            ),
-            {"since": run_started},
+        (
+            await session.execute(
+                text(
+                    "SELECT created_at, model, purpose, input_tokens, output_tokens, cost_usd, "
+                    "ok, latency_ms, provider FROM llm_calls WHERE created_at >= :since ORDER BY id"
+                ),
+                {"since": run_started},
+            )
         )
-    ).mappings().all()
+        .mappings()
+        .all()
+    )
 
     print("\n" + "=" * 72)
     print("llm_calls rows written by this run (read back from the database):")

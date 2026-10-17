@@ -407,3 +407,32 @@ def test_input_token_estimate_is_an_over_estimate() -> None:
 def test_the_shipped_prompt_renders_through_this_module() -> None:
     rendered = load_prompt("smoke_ping").render(snippet=Untrusted("Bonjour tout le monde"))
     assert "BEGIN SNIPPET DATA" in rendered
+
+
+class LedgerSession:
+    """A session that answers the budget sums with zero and counts commits."""
+
+    def __init__(self) -> None:
+        self.commits = 0
+
+    async def execute(self, *_args: Any, **_kwargs: Any) -> Any:
+        return SimpleNamespace(scalar_one=lambda: Decimal("0"))
+
+    async def commit(self) -> None:
+        self.commits += 1
+
+
+@pytest.mark.parametrize("each", [True, False])
+async def test_a_live_run_commits_each_ledger_row(wired, each: bool) -> None:
+    wired(FakeClient([completion('{"city": "P", "country": "F"}')]))
+    session = LedgerSession()
+    await llm_module.complete_json(
+        tier=ModelTier.FAST,
+        prompt=a_prompt(),
+        variables={"snippet": Untrusted("Bonjour")},
+        output_model=Capital,
+        purpose="test",
+        run=RunContext(commit_each_call=each),
+        session=session,
+    )
+    assert session.commits == (1 if each else 0)

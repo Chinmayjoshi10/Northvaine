@@ -28,7 +28,7 @@ async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> 
             http=client,
             fetcher=LivePageFetcher(settings=settings),
             concepts=seeded_concepts(),
-            run=RunContext(),
+            run=RunContext(commit_each_call=True),
             settings=settings,
             session=session,
         )
