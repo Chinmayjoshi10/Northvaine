@@ -142,6 +142,8 @@ export interface Dossier {
   rank_reasons: string[];
   likely_bidders: Bidder[];
   decision_line: string;
+  company_site: string | null;
+  company_contact: { email: string | null; phone: string | null; url: string } | null;
 }
 
 export const FAILURE_CHIPS = [

@@ -279,6 +279,41 @@ function Case(props: {
                   <span>{d.who_roles.join(", ")}</span>
                 </>
               )}
+              {d.company_site && (
+                <>
+                  <span className="caps">Site</span>
+                  <span>
+                    <a href={`https://${d.company_site}`} target="_blank" rel="noreferrer">
+                      {d.company_site}
+                    </a>
+                  </span>
+                </>
+              )}
+              {d.company_contact?.email && (
+                <>
+                  <span className="caps">Email</span>
+                  <span>
+                    <a href={`mailto:${d.company_contact.email}`}>{d.company_contact.email}</a>
+                  </span>
+                </>
+              )}
+              {d.company_contact?.phone && (
+                <>
+                  <span className="caps">Phone</span>
+                  <span>{d.company_contact.phone}</span>
+                </>
+              )}
+              {d.company_contact && (
+                <>
+                  <span className="caps">Source</span>
+                  <span>
+                    from{" "}
+                    <a href={d.company_contact.url} target="_blank" rel="noreferrer">
+                      {new URL(d.company_contact.url).host}
+                    </a>
+                  </span>
+                </>
+              )}
               {d.opening_question && (
                 <>
                   <span className="caps">Ask</span>

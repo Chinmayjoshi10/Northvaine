@@ -307,6 +307,8 @@ LEGACY_SETTINGS: dict[str, object] = {
     "hmrc_min_kept": 0,
     "radar_max_gate_candidates": 40,
     "radar_register_max_lookups": 40,
+    "radar_fit_max_accounts": 5,  # D108
+    "radar_fit_single_search": False,  # D108: two searches a company, rank order
 }
 
 

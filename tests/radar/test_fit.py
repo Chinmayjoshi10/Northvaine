@@ -19,7 +19,8 @@ from northvaine.radar.models import (
 )
 from northvaine.sensors.base import SensorDocument, SensorResult, SourceTier, content_hash
 
-SETTINGS = Settings(_env_file=None)
+SETTINGS = Settings(_env_file=None, radar_fit_single_search=False)  # the D96 two-search flow
+SINGLE = Settings(_env_file=None)
 NOW = datetime(2026, 10, 9, tzinfo=UTC)
 
 

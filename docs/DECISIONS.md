@@ -1098,3 +1098,17 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - recordings made before this pin the old limits on replay (`LEGACY_SETTINGS`).
   Cost: about $0.0005 a gate call, so roughly $0.15 to $0.25 a run instead of $0.07.
 
+- **D108 — Company fit moves the ranking, and the company's own contact (18 Oct).** On the WOS
+  run, real buyers ranked 86th to 134th of 170 because proven importers fell back to recency.
+  - Company fit is one Tavily search a company (its name plus up to 3 offer terms), not two; the
+    pages read are the results on the company's own domain, plus its home page if needed.
+  - 15 companies are checked (was 5): trade importers by import depth (product-code families,
+    then months imported), then the other eligible entries by rank. Discovery uses about 4 Tavily
+    calls and fit 15, so 19 of the 20 (`tavily_max_calls_per_run`).
+  - Within an evidence level, stated fit now ranks first, related fit second, unchecked third,
+    and "its site does not name what you sell" last; the reason is added to `rank_reasons`.
+  - The company's own contact (company only, never a person): a role address (`info`, `sales`,
+    ...) on its own domain and its first phone number, verbatim from its pages or `/contact`
+    (one extra fetch). Shown on the case page with the page it came from.
+  - Recordings made before this replay unchanged (`radar_fit_single_search` False, 5 accounts).
+

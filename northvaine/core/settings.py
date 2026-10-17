@@ -192,7 +192,15 @@ class Settings(BaseSettings):
     # (docs/research/learning_loop_design.md 4.2-4.7).
     radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
     # Company fit from the company's own site (D96): code-first, capped per run.
-    radar_fit_max_accounts: int = Field(default=5, ge=0)
+    # D108: discovery (about 4 Tavily calls) plus fit (1 per company) must stay within
+    # `tavily_max_calls_per_run`: 4 + 15 = 19 of 20.
+    radar_fit_max_accounts: int = Field(default=15, ge=0)
+    radar_fit_single_search: bool = True  # False: the two-search flow of recordings before D108
+    # The company's own address is kept only when its local part is one of these role words.
+    fit_contact_role_words: tuple[str, ...] = (
+        "info", "sales", "enquiries", "enquiry", "hello", "contact", "office", "orders",
+        "trade", "mail", "admin",
+    )  # fmt: skip
     # Onboarding (D105): countries whose public tenders TED publishes (EU, EEA, Switzerland).
     onboarding_ted_countries: tuple[str, ...] = (
         "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT",

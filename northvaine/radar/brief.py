@@ -405,6 +405,41 @@ def rank(
     ]
 
 
+def _fit_group(entry: RankedEntry) -> int:
+    """0 stated fit, 1 related fit, 2 not checked, 3 checked but its site names nothing."""
+    if entry.fit_level == "stated":
+        return 0
+    if entry.fit_level == "related":
+        return 1
+    return 3 if entry.company_site is not None else 2
+
+
+def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
+    """Company fit moves the ranking (D108), but only within an evidence level.
+
+    Each evidence level keeps the positions it already holds; inside those positions the entries
+    are put in a stable order: stated fit, related fit, not checked, checked but not naming what
+    the client sells. Then `rank` is renumbered 1..n and the reason is added to `rank_reasons`."""
+    ordered = sorted(entries, key=lambda e: e.rank)
+    slots: dict[str | None, list[int]] = {}
+    for i, e in enumerate(ordered):
+        slots.setdefault(e.evidence_level, []).append(i)
+    result = list(ordered)
+    for positions in slots.values():
+        members = sorted((ordered[i] for i in positions), key=_fit_group)  # stable
+        for i, e in zip(positions, members, strict=True):
+            result[i] = e
+    out: list[RankedEntry] = []
+    for n, e in enumerate(result, start=1):
+        reasons = list(e.rank_reasons)
+        if e.fit_level is not None and e.company_fit:
+            reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
+        elif e.company_site is not None:
+            reasons.append("Company fit: its own site does not name what you sell")
+        out.append(e.model_copy(update={"rank": n, "rank_reasons": reasons}))
+    return out
+
+
 # ----------------------------------------------------------------------------- helpers
 
 

@@ -222,6 +222,15 @@ class FitEvidence(NorthvaineModel):
     fingerprint: str
 
 
+class CompanyContact(NorthvaineModel):
+    """The company's own role address and phone, verbatim from its own site (D108). Company
+    only: never a person."""
+
+    email: str | None = None
+    phone: str | None = None
+    url: str
+
+
 class RankedEntry(NorthvaineModel):
     rank: int = Field(ge=1)
     candidate: Candidate
@@ -250,6 +259,7 @@ class RankedEntry(NorthvaineModel):
     company_site: str | None = None
     company_fit: list[FitEvidence] = Field(default_factory=list)
     fit_level: Literal["stated", "related"] | None = None
+    company_contact: CompanyContact | None = None  # D108
     # The daily edition (D103): act now / just changed / account to work, and why.
     label: Literal["act_now", "just_changed", "account_to_work"] | None = None
     label_reason: str | None = None

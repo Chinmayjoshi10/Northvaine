@@ -38,14 +38,27 @@ from northvaine.core.models import (
     SubjectMention,
 )
 from northvaine.core.settings import Settings, get_settings
-from northvaine.radar.brief import names_term
+from northvaine.radar.brief import _trade_slots, names_term
 from northvaine.radar.discover import PageFetcher, neutralise_steering, strip_contacts
-from northvaine.radar.models import ClientSpec, FitEvidence, RadarStream, RankedEntry
+from northvaine.radar.models import (
+    ClientSpec,
+    CompanyContact,
+    FitEvidence,
+    RadarStream,
+    RankedEntry,
+)
 from northvaine.radar.verify import claim_fingerprint
 from northvaine.sensors.base import SensorError, SensorQuery, content_hash
 from northvaine.sensors.registry import get_sensor
 
-__all__ = ["FitEvidence", "company_fit", "domain_matches", "fit_sentences", "registrable"]
+__all__ = [
+    "FitEvidence",
+    "company_fit",
+    "domain_matches",
+    "find_company_contact",
+    "fit_sentences",
+    "registrable",
+]
 
 _SECOND_LEVEL = {"co", "com", "org", "net", "gov", "ac", "edu"}
 _SENTENCE = re.compile(r"[^.!?\n]{12,400}[.!?]?")
@@ -113,6 +126,61 @@ def _eligible(entry: RankedEntry) -> bool:
     )
 
 
+_EMAIL = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)+")
+_PHONE = re.compile(r"(?<![\w+])\+?\(?\d[\d\s().\-]{7,22}\d(?![\w])")
+_DATE_LIKE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+
+
+def find_company_contact(
+    pages: list[tuple[str, str]], domain: str, role_words: set[str]
+) -> CompanyContact | None:
+    """The company's own role address and phone, verbatim from the first page that has one.
+
+    `pages` are (url, text) as fetched, before `strip_contacts`. An email counts only on the
+    company's own registrable domain and only when its local part is a role word (a person's
+    address is never kept). A phone is the first number with 9 to 15 digits. Company only."""
+    for url, text in pages:
+        email = next(
+            (
+                m.group(0)
+                for m in _EMAIL.finditer(text)
+                if registrable(f"https://{m.group(0).rsplit('@', 1)[1]}") == domain
+                and m.group(0).split("@", 1)[0].casefold() in role_words
+            ),
+            None,
+        )
+        phone = next(
+            (
+                m.group(0).strip()
+                for m in _PHONE.finditer(text)
+                if 9 <= sum(ch.isdigit() for ch in m.group(0)) <= 15
+                and not _DATE_LIKE.match(m.group(0))
+            ),
+            None,
+        )
+        if email or phone:
+            return CompanyContact(email=email, phone=phone, url=url)
+    return None
+
+
+def _import_depth(entry: RankedEntry) -> tuple[int, int]:
+    """(product-code families, months imported) from the import record; (0, 0) when none."""
+    slots = _trade_slots(entry.candidate)
+    codes = len([c for c in str(slots.get("codes") or "").split(",") if c.strip()])
+    months = slots.get("months_active")
+    return codes, months if isinstance(months, int) else 0
+
+
+def _fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
+    """Which eligible entries are checked first: trade importers by import depth (a free
+    signal), then the other eligible entries by rank (D108)."""
+    eligible = [e for e in sorted(entries, key=lambda e: e.rank) if _eligible(e)]
+    importers = [e for e in eligible if e.account_role == "importer_of_record"]
+    importers.sort(key=lambda e: tuple(-n for n in _import_depth(e)))  # stable: ties keep rank
+    others = [e for e in eligible if e.account_role != "importer_of_record"]
+    return importers + others
+
+
 async def company_fit(
     entries: list[RankedEntry],
     spec: ClientSpec,
@@ -135,7 +203,11 @@ async def company_fit(
     except Exception as exc:
         return entries, [f"company fit skipped: {exc}"]
 
-    shortlisted = [e for e in sorted(entries, key=lambda e: e.rank) if _eligible(e)]
+    if cfg.radar_fit_single_search:
+        shortlisted = _fit_order(entries)
+    else:  # recordings made before D108: rank order
+        shortlisted = [e for e in sorted(entries, key=lambda e: e.rank) if _eligible(e)]
+    role_words = {w.casefold() for w in cfg.fit_contact_role_words}
     chosen = {id(e) for e in shortlisted[: cfg.radar_fit_max_accounts]}
     out: list[RankedEntry] = []
     for entry in entries:
@@ -144,40 +216,70 @@ async def company_fit(
             continue
         c = entry.candidate
         try:
-            found = await sensor.search(
-                SensorQuery(text=c.name, countries=[c.country] if c.country else [], max_results=5)
-            )
-            site = next(
-                (d.url for d in found.documents if domain_matches(c.name, d.url, cfg)), None
-            )
-            if site is None:
-                notes.append(f"company fit: no official site found for {c.name}")
-                out.append(entry)
-                continue
-            domain = registrable(site)
-            pages = await sensor.search(
-                SensorQuery(
-                    text=" ".join(sorted(terms)[:4]),
-                    domains=[domain],
-                    max_results=cfg.radar_fit_pages,
+            if cfg.radar_fit_single_search:
+                # D108: one search (name + what the client sells); the site is the first result
+                # on a domain that carries the name, its pages are the results on that domain.
+                found = await sensor.search(
+                    SensorQuery(
+                        text=" ".join([c.name, *spec.offer_terms[:3]]),
+                        countries=[c.country] if c.country else [],
+                        max_results=5,
+                    )
                 )
-            )
+                site = next(
+                    (d.url for d in found.documents if domain_matches(c.name, d.url, cfg)), None
+                )
+                if site is None:
+                    notes.append(f"company fit: no official site found for {c.name}")
+                    out.append(entry)
+                    continue
+                domain = registrable(site)
+                lead_urls = [d.url for d in found.documents if registrable(d.url) == domain]
+                if len(lead_urls) < 2:
+                    lead_urls.append(f"https://{urlsplit(site).hostname}/")  # read the home page
+                lead_urls = list(dict.fromkeys(lead_urls))[: cfg.radar_fit_pages]
+            else:
+                found = await sensor.search(
+                    SensorQuery(
+                        text=c.name, countries=[c.country] if c.country else [], max_results=5
+                    )
+                )
+                site = next(
+                    (d.url for d in found.documents if domain_matches(c.name, d.url, cfg)), None
+                )
+                if site is None:
+                    notes.append(f"company fit: no official site found for {c.name}")
+                    out.append(entry)
+                    continue
+                domain = registrable(site)
+                pages = await sensor.search(
+                    SensorQuery(
+                        text=" ".join(sorted(terms)[:4]),
+                        domains=[domain],
+                        max_results=cfg.radar_fit_pages,
+                    )
+                )
+                lead_urls = [
+                    d.url
+                    for d in pages.documents[: cfg.radar_fit_pages]
+                    if registrable(d.url) == domain
+                ]
         except SensorError as exc:
             notes.append(f"company fit: search failed for {c.name}: {exc}")
             out.append(entry)
             continue
+        raw_pages: list[tuple[str, str]] = []  # (url, text) before strip_contacts
         fits: list[FitEvidence] = []
-        for lead in pages.documents[: cfg.radar_fit_pages]:
-            if registrable(lead.url) != domain:
-                continue
-            page = await fetcher.fetch(lead.url)
+        for lead_url in lead_urls:
+            page = await fetcher.fetch(lead_url)
             if page.refused is not None or not page.text:
                 continue
+            raw_pages.append((page.final_url or lead_url, page.text))
             text, _ = neutralise_steering(strip_contacts(page.text), cfg)
             doc = EvidenceDocument(
                 id=uuid5(NAMESPACE_URL, content_hash(text)),
                 source_name="website",
-                url=page.final_url or lead.url,
+                url=page.final_url or lead_url,
                 title=page.title,
                 text=text,
                 available_at=min(page.fetched_at or as_of, as_of),
@@ -220,12 +322,23 @@ async def company_fit(
                         ),
                     )
                 )
+        contact: CompanyContact | None = None
+        if cfg.radar_fit_single_search:
+            contact = find_company_contact(raw_pages, domain, role_words)
+            if contact is None or not (contact.email and contact.phone):
+                # at most one extra fetch: the company's own contact page
+                page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
+                if page.refused is None and page.text:
+                    raw_pages.append((page.final_url or page.lead_url, page.text))
+                    contact = find_company_contact(raw_pages, domain, role_words)
         if not fits:
             notes.append(f"company fit: {domain} does not name what you sell on the pages read")
         level = (
             "stated" if any(f.level == "stated" for f in fits) else ("related" if fits else None)
         )
         update: dict[str, Any] = {"company_site": domain, "company_fit": fits, "fit_level": level}
+        if contact is not None:
+            update["company_contact"] = contact
         if level == "stated" and entry.evidence_level in ("generic_mention", "no_evidence"):
             update["evidence_level"] = "company_fit"  # it handles the category; no purchase yet
         out.append(entry.model_copy(update=update))

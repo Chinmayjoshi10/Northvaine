@@ -32,7 +32,7 @@ from northvaine.core.models import (
 )
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.bidders import likely_bidders
-from northvaine.radar.brief import main_selection, rank
+from northvaine.radar.brief import apply_fit_order, main_selection, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.edition import label_entries
@@ -339,6 +339,8 @@ async def run_radar(
         evidence_out=evidence_out,
     )
     notes.extend(fit_notes)
+    if settings.radar_fit_single_search:  # D108: fit moves the ranking within an evidence level
+        entries = apply_fit_order(entries)
 
     # 8. the daily edition labels (D103, code only)
     entries = label_entries(entries, as_of.date(), settings)
