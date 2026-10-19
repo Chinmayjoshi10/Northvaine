@@ -406,20 +406,22 @@ def rank(
 
 
 def _fit_group(entry: RankedEntry) -> int:
-    """0 stated fit, 1 related fit, 2 not checked, 3 checked but its site names nothing."""
+    """0 stated fit, 1 related fit, 2 anything else. A site whose few pages read do not name what
+    the client sells is not evidence against the company (a live run sank a hand-found buyer to
+    the bottom that way), so it ranks with the entries not checked."""
     if entry.fit_level == "stated":
         return 0
     if entry.fit_level == "related":
         return 1
-    return 3 if entry.company_site is not None else 2
+    return 2
 
 
 def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
     """Company fit moves the ranking (D108), but only within an evidence level.
 
     Each evidence level keeps the positions it already holds; inside those positions the entries
-    are put in a stable order: stated fit, related fit, not checked, checked but not naming what
-    the client sells. Then `rank` is renumbered 1..n and the reason is added to `rank_reasons`."""
+    are put in a stable order: stated fit, related fit, then the rest in their earlier order.
+    Then `rank` is renumbered 1..n and the reason is added to `rank_reasons`."""
     ordered = sorted(entries, key=lambda e: e.rank)
     slots: dict[str | None, list[int]] = {}
     for i, e in enumerate(ordered):

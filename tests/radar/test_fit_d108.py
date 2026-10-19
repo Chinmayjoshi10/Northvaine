@@ -158,19 +158,20 @@ def _ranked(rank: int, level: str, fit: str | None, site: bool) -> RankedEntry:
 
 def test_fit_order_works_within_an_evidence_level_and_renumbers() -> None:
     entries = [
-        _ranked(1, "project_requirement", None, False),  # not checked
-        _ranked(2, "project_requirement", None, True),  # site does not name it
+        _ranked(1, "project_requirement", None, True),  # site does not name it
+        _ranked(2, "project_requirement", None, False),  # not checked
         _ranked(3, "no_evidence", None, False),
         _ranked(4, "project_requirement", "stated", True),
         _ranked(5, "project_requirement", "related", True),
     ]
     out = apply_fit_order(entries)
-    # the project_requirement slots (1, 2, 4, 5) are refilled: stated, related, unchecked, no fit
+    # the project_requirement slots (1, 2, 4, 5) are refilled: stated, related, then the rest in
+    # their earlier order: a site that does not name it is not pushed below an unchecked one
     assert [e.candidate.key for e in out] == ["k4", "k5", "k3", "k1", "k2"]
     assert [e.rank for e in out] == [1, 2, 3, 4, 5]
     assert "Company fit: its own site names granite" in out[0].rank_reasons
-    assert "Company fit: its own site does not name what you sell" in out[4].rank_reasons
-    assert out[3].rank_reasons == []  # not checked: no reason added
+    assert "Company fit: its own site does not name what you sell" in out[3].rank_reasons
+    assert out[4].rank_reasons == []  # not checked: no reason added
 
 
 def test_contact_text_never_reaches_a_recording() -> None:
