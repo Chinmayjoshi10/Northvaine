@@ -335,7 +335,10 @@ function Station(props: {
       day={day}
       screen="station"
       crumb={crumb}
-      counts={{ leads: rows.length }}
+      counts={{
+        leads: rows.length,
+        motion: rows.filter((r) => r.back_in_motion).length,
+      }}
       peek={open !== null}
       overlay={
         <>
@@ -477,12 +480,17 @@ function Station(props: {
                     {question(r)}
                   </a>
                 </h2>
-                {r.label && (
+                {(r.label || r.back_in_motion) && (
                   <p className="edlabel">
-                    <span className="mono lab-chip">
-                      {LABEL[r.label] ?? r.label}
-                    </span>
-                    {r.label_reason && (
+                    {r.back_in_motion && (
+                      <span className="mono lab-chip">Back in motion</span>
+                    )}
+                    {r.label && (
+                      <span className="mono lab-chip">
+                        {LABEL[r.label] ?? r.label}
+                      </span>
+                    )}
+                    {r.label && r.label_reason && (
                       <span className="lab-why">{r.label_reason}</span>
                     )}
                   </p>

@@ -7,7 +7,7 @@ import "./nv.css";
 // so nothing in the product is a button that does nothing.
 
 export type Theme = "dark" | "light";
-export type Screen = "leads" | "station" | "connections" | "business";
+export type Screen = "leads" | "station" | "connections" | "business" | "motion";
 
 const KEY = "nv-theme";
 
@@ -18,7 +18,7 @@ const RAIL: (readonly [string, Screen | null] | "sep")[] = [
   ["Leads", "leads"],
   ["Decisions", null],
   ["Situations", null],
-  ["Back in motion", null],
+  ["Back in motion", "motion"],
   ["Accounts", null],
   ["Territory", null],
   ["Connections", "connections"],

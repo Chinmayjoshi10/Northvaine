@@ -16,6 +16,11 @@ export interface Row {
   label_reason?: string | null;
   /** also briefed in the client's previous run */
   returning?: boolean;
+  /** D110: watching over time, against all earlier runs */
+  first_seen?: string | null;
+  seen_runs?: number;
+  developments?: string[];
+  back_in_motion?: boolean;
   status: string;
   company: string;
   country: string;

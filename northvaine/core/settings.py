@@ -222,6 +222,9 @@ class Settings(BaseSettings):
     radar_daily_mix: dict[str, int] = Field(
         default_factory=lambda: {"act_now": 1, "just_changed": 2, "account_to_work": 2}
     )
+    # Watching over time (D110): how far back earlier runs count, and how many the API loads.
+    radar_watch_days: int = Field(default=90, ge=1)
+    radar_watch_runs: int = Field(default=30, ge=1)
     radar_fit_pages: int = Field(default=2, ge=1)
     radar_fit_quotes: int = Field(default=3, ge=1)
     radar_fit_min_token: int = Field(default=4, ge=2)

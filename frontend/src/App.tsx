@@ -7,6 +7,7 @@ import { LeadsPage } from "./nv/LeadsPage";
 import { CasePage } from "./nv/CasePage";
 import { ConnectionsPage } from "./nv/ConnectionsPage";
 import { BusinessPage } from "./nv/BusinessPage";
+import { MotionPage } from "./nv/MotionPage";
 import { StationPage } from "./nv/StationPage";
 import { link } from "./routes";
 
@@ -18,6 +19,7 @@ import { link } from "./routes";
 //   #/app/<client>/<day>/leads   Leads, with the case as a sheet
 //   #/app/<client>/<day>/case/<rank>   the full case page
 //   #/app/<client>/<day>/connections[/<rank>]   one lead's chain (default: the most urgent)
+//   #/app/<client>/<day>/motion     Back in motion: companies seen before with something new
 //   #/app/<client>/<day>/business   Your business: what the radar was told about the client
 // Older links (#/c/..., #/m/...) open Station for the same client and day.
 function currentPath(): string[] {
@@ -50,6 +52,7 @@ export function App() {
         />
       );
     }
+    if (path[3] === "motion") return <MotionPage client={path[1]} day={path[2]} />;
     if (path[3] === "business") return <BusinessPage client={path[1]} day={path[2]} />;
     if (path[3] === "case" && /^\d+$/.test(path[4] ?? ""))
       return <CasePage client={path[1]} day={path[2]} rank={Number(path[4])} />;

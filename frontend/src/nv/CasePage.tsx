@@ -134,7 +134,10 @@ function Case(props: {
   const against = readable(d.caution) ? sentenceOf(d.caution).replace(/[.;]?$/, ".") : "";
 
   return (
-    <Shell client={client} day={day} screen="station" crumb={crumb} counts={{ leads: rows.length }}>
+    <Shell client={client} day={day} screen="station" crumb={crumb} counts={{
+        leads: rows.length,
+        motion: rows.filter((r) => r.back_in_motion).length,
+      }}>
       <div className="nv-case">
         <article className="art">
           <a className="back mono" href={link("app", client, day)}>
@@ -331,7 +334,7 @@ function Case(props: {
 
           <div className="sec">
             <span className="caps">History</span>
-            {history.length === 0 && !d.stage_action ? (
+            {history.length === 0 && !d.stage_action && !row?.developments?.length ? (
               <p className="dash">nothing recorded yet</p>
             ) : (
               <ol className="tl">
@@ -339,6 +342,12 @@ function Case(props: {
                   <li className="ev" key={i}>
                     <span className="mono">{l.at ? shortDate(l.at) : "—"}</span>
                     {plain(l.text, 140)}
+                  </li>
+                ))}
+                {(row?.developments ?? []).map((t, i) => (
+                  <li className="ev" key={`dev${i}`}>
+                    <span className="mono">{shortDate(brief.as_of)}</span>
+                    {t}
                   </li>
                 ))}
                 {d.stage_action && (

@@ -1123,3 +1123,8 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - The approved names a run used are recorded in the recording's meta, so replay is the same.
     Older recordings replay with no seed lookups (`radar_seed_max_lookups` pinned to 0).
   - No Tavily search and no model call is added.
+
+- **D110 — Back in motion (20 Oct).** A company seen in an earlier run that now shows something new is the most actionable lead, so the brief compares a run with all the client's earlier runs (`radar/watch.py`, code only).
+  - A change is: an event fingerprint no earlier entry had, a better evidence level than any earlier one, company fit that was absent before, or a daily-edition label it did not have. The API also adds "Now on record: {slot}" when a chain slot was unknown or inferred on the latest earlier entry and is stated now.
+  - Only earlier runs strictly before this run's day and within `radar_watch_days` (90) count; at most `radar_watch_runs` (30) are loaded. A later run is never read, so the time machine stays honest.
+  - Seen before with no change is only `returning`, which works as before. No model call, no search, no database.

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, timedelta
 
 from pydantic import BaseModel, ConfigDict
 
@@ -18,6 +18,7 @@ from northvaine.radar.models import (
     RadarStream,
     RankedEntry,
 )
+from northvaine.radar.watch import developments
 
 
 class Link(BaseModel):
@@ -55,6 +56,11 @@ class Row(BaseModel):
     label_reason: str | None = None
     # also briefed in the client's previous run (False when there is no previous run)
     returning: bool = False
+    # D110: watching over time, against all the client's earlier runs
+    first_seen: str | None = None
+    seen_runs: int = 0
+    developments: list[str] = []
+    back_in_motion: bool = False
 
 
 class Funnel(BaseModel):
@@ -206,13 +212,51 @@ def _row(entry: RankedEntry, today: date) -> Row:
     )
 
 
-def brief_view(run: RadarRun, settings: Settings, previous: RadarRun | None = None) -> BriefView:
+def _now_on_record(entry: RankedEntry, earlier: list[RankedEntry]) -> list[str]:
+    """Chain slots that were unknown or inferred on the latest earlier entry and are stated now."""
+    if not earlier:
+        return []
+    before = {link.slot: link.state for link in chain(earlier[-1])}
+    return [
+        f"Now on record: {link.slot}"
+        for link in chain(entry)
+        if link.state == "stated" and before.get(link.slot) in ("unknown", "inferred")
+    ]
+
+
+def brief_view(
+    run: RadarRun,
+    settings: Settings,
+    previous: RadarRun | None = None,
+    earlier: list[RadarRun] | None = None,
+) -> BriefView:
+    """`earlier`: the client's runs before this one (any order), for the D110 watch fields."""
     today = run.as_of.date()
     seen = {e.candidate.key for e in previous.entries} if previous else set()
+    watch = developments(run, earlier or [], settings)
+    oldest = run.as_of.date() - timedelta(days=settings.radar_watch_days)
+    window = sorted(
+        (r for r in earlier or [] if oldest <= r.as_of.date() < today), key=lambda r: r.as_of
+    )
 
     def row(e: RankedEntry) -> Row:
         out = _row(e, today)
-        return out.model_copy(update={"returning": e.candidate.key in seen}) if seen else out
+        if seen:
+            out = out.model_copy(update={"returning": e.candidate.key in seen})
+        w = watch.get(e.candidate.key)
+        if w is None:
+            return out
+        key = e.candidate.key
+        prior = [x for r in window for x in r.entries if x.candidate.key == key]
+        changes = [*w.changes, *_now_on_record(e, prior)]
+        return out.model_copy(
+            update={
+                "first_seen": w.first_seen.isoformat(),
+                "seen_runs": w.seen_runs,
+                "developments": changes,
+                "back_in_motion": bool(changes),
+            }
+        )
 
     cap = settings.radar_brief_main_entries
     ordered = sorted(run.entries, key=lambda e: e.rank)

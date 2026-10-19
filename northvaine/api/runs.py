@@ -11,7 +11,7 @@ from northvaine.api import store, views
 from northvaine.api.feedback import Base
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.graph import GraphView, run_graph
-from northvaine.radar.models import REPO_ROOT, load_client_spec
+from northvaine.radar.models import REPO_ROOT, RadarRun, load_client_spec
 
 router = APIRouter(prefix="/api", tags=["runs"])
 
@@ -55,7 +55,14 @@ def get_run(client: str, day: str, base: Base) -> views.BriefView:
     run, _ = store.load_run(base, client, resolved)
     earlier = [d for d in store.run_days(base, client) if d < resolved]
     previous = store.load_run(base, client, max(earlier))[0] if earlier else None
-    return views.brief_view(run, Settings(_env_file=None), previous)
+    settings = Settings(_env_file=None)
+    history: list[RadarRun] = []
+    for d in earlier[: settings.radar_watch_runs]:  # run_days is newest first
+        try:
+            history.append(store.load_run(base, client, d)[0])
+        except (HTTPException, ValueError):  # unreadable or unfit for this build: skipped
+            continue
+    return views.brief_view(run, settings, previous, history)
 
 
 @router.get("/clients/{client}/runs/{day}/entries/{rank}")

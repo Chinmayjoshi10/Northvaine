@@ -259,3 +259,30 @@ async def test_business_shows_the_spec_without_customer_names(
     assert data["existing_customers"] == 1 and "Secret Customer" not in resp.text
     assert data["searches"] == [{"source": "tavily", "count": 2}]
     assert (await client.get("/api/clients/nobody/business")).status_code == 404
+
+
+async def test_brief_marks_a_row_back_in_motion(client: AsyncClient, base: Path) -> None:
+    from datetime import timedelta
+
+    first = store.load_run(base, "acme", "2026-10-05")[0]
+    moved = first.entries[0]
+    ev = moved.candidate.events[0].model_copy(
+        update={"fingerprint": "ev-brand-new", "event_type": "new_import"}
+    )
+    events = [*moved.candidate.events, ev]
+    moved = moved.model_copy(
+        update={"candidate": moved.candidate.model_copy(update={"events": events})}
+    )
+    still = first.entries[1]
+    later = first.model_copy(update={"as_of": NOW + timedelta(days=3), "entries": [moved, still]})
+    brief.write_reports(later, base)
+
+    data = (await client.get("/api/clients/acme/runs/latest")).json()
+    rows = {r["company"]: r for r in data["accounts"] + data["tenders"] + data["weaker"]}
+    hot = rows[moved.candidate.name]
+    assert hot["back_in_motion"] is True and hot["seen_runs"] == 1
+    assert hot["first_seen"] == "2026-10-05" and hot["developments"][0].startswith("New since")
+    quiet = rows[still.candidate.name]
+    assert quiet["returning"] is True and quiet["back_in_motion"] is False
+    first_day = (await client.get("/api/clients/acme/runs/2026-10-05")).json()
+    assert not any(r["back_in_motion"] for r in first_day["accounts"] + first_day["tenders"])
