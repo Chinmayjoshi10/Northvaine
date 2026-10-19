@@ -98,7 +98,10 @@ def domain_matches(
     # Stricter (D108 review): words of what the client sells are shared by most companies in
     # its market ("<word> direct" is someone else's shop), so they never identify a company,
     # plural or not. The site must carry the name's first distinctive word.
-    own = [t for t in tokens if not any(t.startswith(g) for g in generic)]
+    # Short initials count here ("MSI"), and words any business name may carry do not.
+    common = {_fold(w) for w in cfg.radar_fit_common_name_words}
+    words = [t for t in _fold(name).split() if len(t) >= 3 and t not in forms and t not in common]
+    own = [t for t in words if not any(t.startswith(g) for g in generic)]
     return bool(label) and bool(own) and own[0] in label
 
 

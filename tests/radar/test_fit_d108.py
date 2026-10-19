@@ -229,3 +229,15 @@ def test_market_words_never_identify_a_company() -> None:
     assert not domain_matches("Zorbo Widget Supplies Ltd", "https://supplies.com", SINGLE, market)
     # with only market words in the name, nothing matches
     assert not domain_matches("Widgets Ltd", "https://widgets.com", SINGLE, market)
+
+
+def test_common_business_words_never_identify_a_company() -> None:
+    from northvaine.radar.fit import domain_matches
+
+    market = frozenset({"widget"})
+    # a short acronym is the distinctive part; "solutions" is not
+    assert not domain_matches("MSI Solutions Ltd", "https://widget-solutions.co.uk", SINGLE, market)
+    assert domain_matches("MSI Solutions Ltd", "https://msisolutions.co.uk", SINGLE, market)
+    assert not domain_matches(
+        "Global Trading Group Ltd", "https://globaltrading.com", SINGLE, market
+    )
