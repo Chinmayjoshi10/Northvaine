@@ -32,6 +32,7 @@ from northvaine.core.models import (
     ClaimDraft,
     ClaimStatus,
     Eligibility,
+    EventType,
     EvidenceDocument,
     EvidenceKind,
     LedgerResult,
@@ -61,6 +62,7 @@ __all__ = [
 ]
 
 _SECOND_LEVEL = {"co", "com", "org", "net", "gov", "ac", "edu"}
+_COMMODITY = re.compile(r"commodity (\d{6,10})")
 _SENTENCE = re.compile(r"[^.!?\n]{12,400}[.!?]?")
 
 
@@ -166,7 +168,16 @@ def find_company_contact(
 def _import_depth(entry: RankedEntry) -> tuple[int, int]:
     """(product-code families, months imported) from the import record; (0, 0) when none."""
     slots = _trade_slots(entry.candidate)
-    codes = len([c for c in str(slots.get("codes") or "").split(",") if c.strip()])
+    # The import event carries no code list; each code is a "commodity <digits>" line of the
+    # record text that our own sensor writes, so the distinct ones are counted there.
+    codes = len(
+        {
+            m
+            for e in entry.candidate.events
+            if e.event_type == EventType.IMPORTS_RECORDED.value
+            for m in _COMMODITY.findall(e.description or "")
+        }
+    )
     months = slots.get("months_active")
     return codes, months if isinstance(months, int) else 0
 
@@ -222,15 +233,17 @@ async def company_fit(
             if cfg.radar_fit_single_search:
                 # D108: one search (name + what the client sells); the site is the first result
                 # on a domain that carries the name, its pages are the results on that domain.
+                # The register's spelling when known: trade records split names ("LIMIT ED").
+                name = (c.company_register.name if c.company_register else None) or c.name
                 found = await sensor.search(
                     SensorQuery(
-                        text=" ".join([c.name, *spec.offer_terms[:3]]),
+                        text=" ".join([name, *spec.offer_terms[:3]]),
                         countries=[c.country] if c.country else [],
                         max_results=5,
                     )
                 )
                 site = next(
-                    (d.url for d in found.documents if domain_matches(c.name, d.url, cfg)), None
+                    (d.url for d in found.documents if domain_matches(name, d.url, cfg)), None
                 )
                 if site is None:
                     notes.append(f"company fit: no official site found for {c.name}")

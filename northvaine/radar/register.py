@@ -68,6 +68,7 @@ def _facts(record: RegisterRecord) -> RegisterFacts:
     renamed = [until for _, until in record.previous_names if until is not None]
     return RegisterFacts(
         number=record.number,
+        name=record.name,
         status=record.status,
         incorporated=record.incorporated,
         sic_codes=list(record.sic_codes),

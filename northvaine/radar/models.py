@@ -139,6 +139,9 @@ class RegisterFacts(NorthvaineModel):
     is also a verified claim on the candidate."""
 
     number: str
+    # The registered name: trade records can split a name with stray spaces ("LIMIT ED"), so
+    # the register's spelling is the one to search the web with (D108 review).
+    name: str | None = None
     status: str
     incorporated: date | None = None
     sic_codes: list[str] = Field(default_factory=list)

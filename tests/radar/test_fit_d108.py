@@ -22,13 +22,15 @@ SINGLE = Settings(_env_file=None)
 ROLES = set(SINGLE.fit_contact_role_words)
 
 
-def named(key: str, slots: dict[str, Any] | None = None, rank: int = 1) -> RankedEntry:
+def named(
+    key: str, slots: dict[str, Any] | None = None, rank: int = 1, description: str = "d"
+) -> RankedEntry:
     e = entry("importer_of_record", RadarStream.TRADE)
     events = (
         [
             CandidateEvent(
                 event_type="imports_recorded",
-                description="d",
+                description=description,
                 occurred_on=None,
                 available_at=None,
                 claim_refs=[],
@@ -66,8 +68,17 @@ async def test_importers_are_chosen_by_import_depth(monkeypatch: Any) -> None:
     sensor = CountingSensor()
     monkeypatch.setattr(fit_module, "get_sensor", lambda *a, **k: sensor)
     cfg = Settings(_env_file=None, radar_fit_max_accounts=1)
-    shallow = named("GB:a", {"codes": "6801", "months_active": 9}, rank=1)
-    deep = named("GB:b", {"codes": "6801,6802,6803", "months_active": 2}, rank=2)
+    # the import event has no code list: codes are the record's "commodity <digits>" lines,
+    # exactly as the import sensor writes them (a live run showed every count at 0 otherwise)
+    line = "The official import record states commodity {} (an article)."
+    shallow = named("GB:a", {"months_active": 9}, rank=1, description=line.format("68010000"))
+    deep = named(
+        "GB:b",
+        {"months_active": 2},
+        rank=2,
+        description=" ".join(line.format(c) for c in ("68010000", "68021000", "68030010")),
+    )
+    assert fit_module._import_depth(deep) == (3, 2)
     # the shallow one is first by rank, but only the deep one is checked
     checked = fit_module._fit_order([shallow, deep])
     assert [e.candidate.key for e in checked] == ["GB:b", "GB:a"]
@@ -177,3 +188,28 @@ def test_contact_text_never_reaches_a_recording() -> None:
     )
     assert page.contact_text and "contact_text" not in page.model_dump()
     assert "info@" not in page.model_dump_json()
+
+
+async def test_the_search_uses_the_registered_name(monkeypatch: Any) -> None:
+    from northvaine.radar.models import RegisterFacts
+
+    sensor = CountingSensor()
+    monkeypatch.setattr(fit_module, "get_sensor", lambda *a, **k: sensor)
+    e = named("GB:x")
+    split = e.candidate.model_copy(
+        update={
+            "name": "EXAMPLE DISTRIBUTI ON LIMIT ED",
+            "company_register": RegisterFacts(
+                number="01234567", name="EXAMPLE DISTRIBUTION LIMITED", status="active"
+            ),
+        }
+    )
+    await company_fit(
+        [e.model_copy(update={"candidate": split})],
+        SPEC,
+        http=None,
+        fetcher=FakeFetcher({}),
+        as_of=NOW,
+        settings=SINGLE,
+    )
+    assert sensor.queries[0].text.startswith("EXAMPLE DISTRIBUTION LIMITED ")
