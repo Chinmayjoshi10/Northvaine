@@ -163,6 +163,7 @@ class Dossier(BaseModel):
     decision_line: str
     company_site: str | None = None
     company_contact: CompanyContactView | None = None
+    like_customers: list[str] = []
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -404,6 +405,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         likely_bidders=[Bidder.model_validate(b) for b in raw_bidders],
         decision_line=brief.DECISION_LINE,
         company_site=entry.company_site,
+        like_customers=list(entry.candidate.like_customers),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

@@ -144,6 +144,7 @@ export interface Dossier {
   decision_line: string;
   company_site: string | null;
   company_contact: { email: string | null; phone: string | null; url: string } | null;
+  like_customers: string[];
 }
 
 export const FAILURE_CHIPS = [

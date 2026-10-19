@@ -426,7 +426,10 @@ def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
         slots.setdefault(e.evidence_level, []).append(i)
     result = list(ordered)
     for positions in slots.values():
-        members = sorted((ordered[i] for i in positions), key=_fit_group)  # stable
+        members = sorted(  # stable; D109: looking like the client's customers breaks ties
+            (ordered[i] for i in positions),
+            key=lambda e: (_fit_group(e), not e.candidate.like_customers),
+        )
         for i, e in zip(positions, members, strict=True):
             result[i] = e
     out: list[RankedEntry] = []
@@ -436,6 +439,7 @@ def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
         elif e.company_site is not None:
             reasons.append("Company fit: its own site does not name what you sell")
+        reasons.extend(e.candidate.like_customers)
         out.append(e.model_copy(update={"rank": n, "rank_reasons": reasons}))
     return out
 

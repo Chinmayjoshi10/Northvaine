@@ -1112,3 +1112,14 @@ brief with Claude's five corrections (docs/COLLAB.md).
     (one extra fetch). Shown on the case page with the page it came from.
   - Recordings made before this replay unchanged (`radar_fit_single_search` False, 5 accounts).
 
+- **D109 — Customers like yours (19 Oct).** The client's current customers, and the leads it
+  marks "Approach them" (`accepted_for_contact`), show what a good buyer looks like.
+  - A candidate that shares a registered business activity (SIC code, from the free Companies
+    House lookup of up to `radar_seed_max_lookups` = 10 of those names) or the same imported
+    product families (from this run's import records) gets short `like_customers` reasons. An
+    existing customer is never named; an approved lead may be.
+  - Within an evidence level, likeness breaks ties after company fit, and it puts a candidate
+    first in the company-fit check order. The reasons show on the case page.
+  - The approved names a run used are recorded in the recording's meta, so replay is the same.
+    Older recordings replay with no seed lookups (`radar_seed_max_lookups` pinned to 0).
+  - No Tavily search and no model call is added.

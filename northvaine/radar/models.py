@@ -162,6 +162,8 @@ class Candidate(NorthvaineModel):
     window_estimated: bool
     window_note: str
     company_register: RegisterFacts | None = None
+    # D109: short reasons it looks like the client's customers (never an existing customer's name)
+    like_customers: list[str] = Field(default_factory=list)
 
 
 class GateDecision(NorthvaineModel):

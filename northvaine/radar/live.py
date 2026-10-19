@@ -16,7 +16,10 @@ __all__ = ["run_live"]
 
 
 async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> RadarRun:
+    from northvaine.api import store
     from northvaine.core.db import session_scope
+
+    seeds = store.approved_leads(store.reports_dir(), spec.id)  # D109
 
     async with (
         new_client(60.0) as client,
@@ -31,4 +34,5 @@ async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> 
             run=RunContext(commit_each_call=True),
             settings=settings,
             session=session,
+            seeds=seeds,
         )

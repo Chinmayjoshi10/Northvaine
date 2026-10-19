@@ -173,12 +173,15 @@ def _import_depth(entry: RankedEntry) -> tuple[int, int]:
 
 def _fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
     """Which eligible entries are checked first: trade importers by import depth (a free
-    signal), then the other eligible entries by rank (D108)."""
+    signal), then the other eligible entries by rank (D108). Entries that look like the
+    client's customers come first (D109)."""
     eligible = [e for e in sorted(entries, key=lambda e: e.rank) if _eligible(e)]
+    liked = [e for e in eligible if e.candidate.like_customers]  # D109
+    eligible = [e for e in eligible if not e.candidate.like_customers]
     importers = [e for e in eligible if e.account_role == "importer_of_record"]
     importers.sort(key=lambda e: tuple(-n for n in _import_depth(e)))  # stable: ties keep rank
     others = [e for e in eligible if e.account_role != "importer_of_record"]
-    return importers + others
+    return liked + importers + others
 
 
 async def company_fit(

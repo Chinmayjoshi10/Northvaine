@@ -29,7 +29,7 @@ from types import ModuleType
 from typing import Any
 
 import httpx
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:  # run as a plain script: make `northvaine` importable
@@ -101,6 +101,7 @@ SHAPING_SETTINGS = (
     "hmrc_min_kept",  # how many importers were kept, gated and looked up (D107)
     "radar_max_gate_candidates",
     "radar_register_max_lookups",
+    "radar_seed_max_lookups",  # D109
     "radar_fit_single_search",  # D108
     "fit_contact_role_words",
 )
@@ -122,6 +123,7 @@ class RadarMeta(NorthvaineModel):
     as_of: datetime
     recorded_at: str
     queries: dict[str, list[SensorQuery]]
+    seeds: list[str] = Field(default_factory=list)  # D109: approved leads seeding this run
 
 
 class RecordingPageFetcher:
@@ -248,6 +250,7 @@ async def run_replay(
                     run=RunContext(),
                     settings=settings,
                     evidence_out=evidence_out,
+                    seeds=recording.meta.seeds,
                 )
 
 
@@ -499,6 +502,7 @@ async def run_record(
     session_factory: Any = None,
     save: bool = False,
     strategy: Any = None,
+    seeds: list[str] | None = None,
 ) -> tuple[RadarRun, Recording]:
     """The live run, with every HTTP exchange and model exchange recorded (not yet redacted)."""
     evidence: list[Any] = []
@@ -530,6 +534,7 @@ async def run_record(
                 session=session,
                 evidence_out=evidence,
                 strategy=strategy,
+                seeds=seeds,
             )
         if save:
             from northvaine.radar.persist import persist_run
@@ -541,6 +546,7 @@ async def run_record(
         as_of=as_of,
         recorded_at=datetime.now(UTC).isoformat(timespec="seconds"),
         queries=run.queries,
+        seeds=list(seeds or []),
     )
     shaping = {name: getattr(settings, name) for name in SHAPING_SETTINGS}
     recording = Recording(
@@ -667,9 +673,10 @@ def main(
             return 1
         check_preconditions(spec, base)
         # The owner's saved answers choose this run's searches once there are enough (D100).
-        from northvaine.api.store import client_learning
+        from northvaine.api.store import approved_leads, client_learning
 
         learned = client_learning(out_dir, args.client, base)
+        seeds = approved_leads(out_dir, args.client)  # D109
         print(
             f"learning: {learned.labels:.0f} of {learned.needed:.0f} answers needed "
             + ("(the answers choose this run's searches)" if learned.active else "(not yet)")
@@ -685,6 +692,7 @@ def main(
                 session_factory=session_factory,
                 save=args.save,
                 strategy=learned.strategy,
+                seeds=seeds,
             )
         )
         clean = redact_recording(recording, base)

@@ -15,6 +15,7 @@ clients without one replay exactly as before. Company-level only (see sensors/co
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
@@ -40,7 +41,14 @@ from northvaine.sensors.companies_house import (
     sic_descriptions,
 )
 
-__all__ = ["register_check"]
+__all__ = [
+    "SeedProfile",
+    "mark_likeness",
+    "note_import_profile",
+    "product_families",
+    "register_check",
+    "seed_register_profiles",
+]
 
 SOURCE = "companies_house"
 REGISTER_COUNTRY = "GB"
@@ -183,3 +191,109 @@ async def register_check(
         f"by exact name, {len(rejected)} rejected by the register"
     )
     return kept, rejected, notes
+
+
+# --- customers like yours (D109): code only, no model call, no paid search ----------------------
+
+
+@dataclass
+class SeedProfile:
+    """What the client's customers (and leads it approved) look like, from free sources.
+    `private` seeds are the client's own customer list: their names are never shown."""
+
+    name: str
+    key: str
+    private: bool
+    families: set[str] = field(default_factory=set)
+    sics: set[str] = field(default_factory=set)
+
+
+def product_families(codes: str) -> set[str]:
+    """Product families from an import record's code list: a numeric code keeps its scheme and
+    first four digits (e.g. "hs:6907", or "6907" when bare); anything else is kept whole."""
+    out: set[str] = set()
+    for raw in str(codes or "").split(","):
+        code = raw.strip().casefold()
+        if not code:
+            continue
+        scheme, sep, value = code.rpartition(":")
+        if value.isdigit():
+            out.add(f"{scheme}{sep}{value[:4]}")
+        else:
+            out.add(code)
+    return out
+
+
+def note_import_profile(
+    profiles: dict[str, SeedProfile], candidates: list[Candidate], key_of: Any
+) -> None:
+    """Add the import families of every seed that appears among this run's trade candidates.
+    Call before existing customers are filtered out."""
+    from northvaine.radar.brief import _trade_slots  # late: brief imports the radar models
+
+    for c in candidates:
+        profile = profiles.get(key_of(c.name))
+        if profile is not None and c.stream == RadarStream.TRADE:
+            profile.families |= product_families(str(_trade_slots(c).get("codes") or ""))
+
+
+async def seed_register_profiles(
+    profiles: dict[str, SeedProfile],
+    candidates: list[Candidate],
+    spec: ClientSpec,
+    *,
+    http: Any,
+    key_of: Any,
+    settings: Settings,
+) -> list[str]:
+    """Look seeds up at Companies House (at most `radar_seed_max_lookups`) and keep their
+    activity codes. A seed whose import record names another country is skipped. Notes only
+    carry counts: a failed lookup is never an error."""
+    limit = settings.radar_seed_max_lookups
+    if limit <= 0 or not profiles or not _enabled(spec, settings):
+        return []
+    elsewhere = {key_of(c.name) for c in candidates if c.country not in (None, REGISTER_COUNTRY)}
+    chosen = [p for k, p in profiles.items() if k not in elsewhere][:limit]
+    client = CompaniesHouseClient(client=http, settings=settings)
+    found = failed = 0
+    for profile in chosen:
+        try:
+            record = await client.lookup(profile.name)
+        except SensorError:
+            failed += 1
+            continue
+        if record is not None:
+            found += 1
+            profile.sics |= {str(c) for c in record.sic_codes}
+    note = f"customers like yours: {found} of {len(chosen)} seed(s) found at Companies House"
+    return [note + (f", {failed} lookup(s) failed" if failed else "")]
+
+
+def mark_likeness(
+    candidates: list[Candidate], profiles: dict[str, SeedProfile], key_of: Any
+) -> list[Candidate]:
+    """Set `like_customers` on each candidate that shares a registered activity or imported
+    product families with a seed. A candidate is never compared with itself."""
+    seeds = list(profiles.values())
+    if not any(p.sics or p.families for p in seeds):
+        return candidates
+    from northvaine.radar.brief import _trade_slots  # late: brief imports the radar models
+
+    out: list[Candidate] = []
+    for c in candidates:
+        own = key_of(c.name)
+        sics = set(c.company_register.sic_codes) if c.company_register else set()
+        families = product_families(str(_trade_slots(c).get("codes") or ""))
+        reasons: list[str] = []
+        for p in seeds:
+            if p.key == own:
+                continue
+            who = "one of your customers" if p.private else f"{p.name}, a lead you approved"
+            shared = sorted(sics & p.sics)
+            if shared:
+                reasons.append(f"Same registered business activity (SIC {shared[0]}) as {who}")
+            if families & p.families:
+                reasons.append(f"Imports the same product families as {who}")
+        reasons = list(dict.fromkeys(reasons))[:3]
+        out.append(c.model_copy(update={"like_customers": reasons}) if reasons else c)
+    return out

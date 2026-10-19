@@ -314,6 +314,12 @@ function Case(props: {
                   </span>
                 </>
               )}
+              {d.like_customers.length > 0 && (
+                <>
+                  <span className="caps">Like your customers</span>
+                  <span>{d.like_customers.join(". ")}</span>
+                </>
+              )}
               {d.opening_question && (
                 <>
                   <span className="caps">Ask</span>
