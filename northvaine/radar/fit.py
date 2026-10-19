@@ -80,7 +80,12 @@ def _fold(text: str) -> str:
     return "".join(ch for ch in decomposed if ch.isalnum() or ch.isspace())
 
 
-def domain_matches(name: str, url: str, settings: Settings | None = None) -> bool:
+def domain_matches(
+    name: str,
+    url: str,
+    settings: Settings | None = None,
+    generic: frozenset[str] | None = None,
+) -> bool:
     """True when the URL's registrable domain contains a distinctive token of the company
     name: at least `radar_fit_min_token` letters, not a legal form."""
     cfg = settings or get_settings()
@@ -88,7 +93,13 @@ def domain_matches(name: str, url: str, settings: Settings | None = None) -> boo
     label = _fold(registrable(url).split(".")[0])
     tokens = [t for t in _fold(name).split() if len(t) >= cfg.radar_fit_min_token]
     tokens = [t for t in tokens if t not in forms]
-    return bool(label) and any(t in label for t in tokens)
+    if generic is None:
+        return bool(label) and any(t in label for t in tokens)
+    # Stricter (D108 review): words of what the client sells are shared by most companies in
+    # its market ("<word> direct" is someone else's shop), so they never identify a company,
+    # plural or not. The site must carry the name's first distinctive word.
+    own = [t for t in tokens if not any(t.startswith(g) for g in generic)]
+    return bool(label) and bool(own) and own[0] in label
 
 
 def _reads_like_prose(sentence: str) -> bool:
@@ -209,6 +220,13 @@ async def company_fit(
     cfg = settings or get_settings()
     terms = {t.casefold() for t in spec.offer_terms}
     related = {t.casefold() for t in spec.related_terms}
+    # the words of what the client sells: shared by its whole market, never a company's own name
+    market_words = frozenset(
+        w
+        for t in [*spec.offer_terms, *spec.related_terms]
+        for w in _fold(t).split()
+        if len(w) >= cfg.radar_fit_min_token
+    )
     notes: list[str] = []
     if not terms:
         return entries, ["company fit skipped: the client spec lists no offer_terms"]
@@ -243,7 +261,12 @@ async def company_fit(
                     )
                 )
                 site = next(
-                    (d.url for d in found.documents if domain_matches(name, d.url, cfg)), None
+                    (
+                        d.url
+                        for d in found.documents
+                        if domain_matches(name, d.url, cfg, generic=market_words)
+                    ),
+                    None,
                 )
                 if site is None:
                     notes.append(f"company fit: no official site found for {c.name}")

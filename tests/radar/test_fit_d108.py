@@ -213,3 +213,18 @@ async def test_the_search_uses_the_registered_name(monkeypatch: Any) -> None:
         settings=SINGLE,
     )
     assert sensor.queries[0].text.startswith("EXAMPLE DISTRIBUTION LIMITED ")
+
+
+def test_market_words_never_identify_a_company() -> None:
+    from northvaine.radar.fit import domain_matches
+
+    market = frozenset({"widget", "gadget"})
+    # a shop named after the product is not the company's site
+    assert not domain_matches("Acme Widgets Ltd", "https://widgetsdirect.co.uk", SINGLE, market)
+    assert not domain_matches("The Widget Arena Ltd", "https://britwidget.co.uk", SINGLE, market)
+    assert domain_matches("The Widget Arena Ltd", "https://widgetarena.co.uk", SINGLE, market)
+    # the first distinctive word must be there
+    assert domain_matches("Zorbo Widget Supplies Ltd", "https://zorbo.com", SINGLE, market)
+    assert not domain_matches("Zorbo Widget Supplies Ltd", "https://supplies.com", SINGLE, market)
+    # with only market words in the name, nothing matches
+    assert not domain_matches("Widgets Ltd", "https://widgets.com", SINGLE, market)
