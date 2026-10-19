@@ -150,6 +150,7 @@ export interface Dossier {
   likely_bidders: Bidder[];
   decision_line: string;
   company_site: string | null;
+  site_proof: string | null;
   company_contact: { email: string | null; phone: string | null; url: string } | null;
   like_customers: string[];
   timing_signals?: string[];

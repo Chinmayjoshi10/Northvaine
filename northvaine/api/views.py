@@ -169,6 +169,7 @@ class Dossier(BaseModel):
     likely_bidders: list[Bidder]
     decision_line: str
     company_site: str | None = None
+    site_proof: str | None = None
     company_contact: CompanyContactView | None = None
     like_customers: list[str] = []
     timing_signals: list[str] = []  # D111
@@ -453,6 +454,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         likely_bidders=[Bidder.model_validate(b) for b in raw_bidders],
         decision_line=brief.DECISION_LINE,
         company_site=entry.company_site,
+        site_proof=entry.site_proof,
         like_customers=list(entry.candidate.like_customers),
         timing_signals=list(entry.candidate.timing_signals),
         company_contact=(

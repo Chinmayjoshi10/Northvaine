@@ -297,6 +297,7 @@ function Case(props: {
                     <a href={`https://${d.company_site}`} target="_blank" rel="noreferrer">
                       {d.company_site}
                     </a>
+                    {d.site_proof && <> · Site confirmed by {d.site_proof}</>}
                   </span>
                 </>
               )}

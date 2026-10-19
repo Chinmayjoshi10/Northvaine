@@ -234,6 +234,9 @@ class Settings(BaseSettings):
     # D108: discovery (about 4 Tavily calls) plus fit (1 per company) must stay within
     # `tavily_max_calls_per_run`: 4 + 15 = 19 of 20.
     radar_fit_max_accounts: int = Field(default=15, ge=0)
+    # D113: guess the site from the registered name first (free fetches, no Tavily).
+    radar_site_guess_max_companies: int = Field(default=60, ge=0)
+    radar_site_guess_per_company: int = Field(default=6, ge=1)
     radar_fit_single_search: bool = True  # False: the two-search flow of recordings before D108
     # The company's own address is kept only when its local part is one of these role words.
     fit_contact_role_words: tuple[str, ...] = (

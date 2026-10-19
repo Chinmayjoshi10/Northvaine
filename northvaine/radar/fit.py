@@ -20,6 +20,7 @@ announcement), in rank order and capped:
 
 from __future__ import annotations
 
+import asyncio
 import re
 import unicodedata
 from datetime import datetime
@@ -57,6 +58,8 @@ __all__ = [
     "domain_matches",
     "find_company_contact",
     "fit_sentences",
+    "guess_hosts",
+    "guess_own_site",
     "registrable",
 ]
 
@@ -200,6 +203,73 @@ def _fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
     return liked + importers + others
 
 
+def _distinctive_words(name: str, cfg: Settings) -> list[str]:
+    forms = {_fold(f) for f in cfg.radar_legal_forms}
+    common = {_fold(w) for w in cfg.radar_fit_common_name_words}
+    return [t for t in _fold(name).split() if len(t) >= 3 and t not in forms and t not in common]
+
+
+def _register_name(c: Any) -> str:
+    return (c.company_register.name if c.company_register else None) or c.name
+
+
+def guess_hosts(c: Any, cfg: Settings, market_words: frozenset[str] = frozenset()) -> list[str]:
+    """Likely web hosts for a company, from its registered name only (D113). Pure, no network.
+
+    Order: all distinctive words joined, the first two joined, the first alone (5+ letters),
+    then the hyphenated forms; each with the country's top-level domains. Names made only of
+    words of the client's market, or of common business words, give no guess."""
+    words = _distinctive_words(_register_name(c), cfg)
+    if not words or all(any(w.startswith(m) for m in market_words) for w in words):
+        return []
+    stems = ["".join(words), "".join(words[:2])]
+    if len(words[0]) >= 5:
+        stems.append(words[0])
+    if len(words) >= 2:
+        stems += ["-".join(words), "-".join(words[:2])]
+    country = (c.country or "").lower()
+    if country == "gb":
+        tlds = [".co.uk", ".com", ".uk"]
+    elif country:
+        tlds = [".com", f".{country}"]
+    else:
+        tlds = [".com"]
+    hosts = [f"{stem}{tld}" for stem in dict.fromkeys(stems) for tld in tlds]
+    return list(dict.fromkeys(hosts))[: cfg.radar_site_guess_per_company]
+
+
+def _page_proof(c: Any, text: str, cfg: Settings) -> str | None:
+    """ "registration number" or "registered name" when the page text carries one, else None."""
+    reg = c.company_register
+    if reg is not None and reg.number:
+        for number in dict.fromkeys([reg.number, reg.number.lstrip("0")]):
+            if number and re.search(rf"(?<![0-9A-Za-z]){re.escape(number)}(?![0-9A-Za-z])", text):
+                return "registration number"
+    forms = {_fold(f) for f in cfg.radar_legal_forms}
+    phrase = " ".join(t for t in _fold(_register_name(c)).split() if t not in forms)
+    if phrase and f" {phrase} " in f" {' '.join(_fold(text).split())} ":
+        return "registered name"
+    return None
+
+
+async def guess_own_site(
+    c: Any, fetcher: PageFetcher, cfg: Settings, market_words: frozenset[str]
+) -> tuple[str, str] | None:
+    """(host, proof) for the first guessed host whose page proves it is this company's own."""
+    for host in guess_hosts(c, cfg, market_words):
+        home = await fetcher.fetch(f"https://{host}/")
+        if home.refused is not None or not (home.contact_text or home.text):
+            continue  # the host does not answer, or is not allowed
+        proof = _page_proof(c, home.contact_text or home.text or "", cfg)
+        if proof is None:
+            contact = await fetcher.fetch(f"https://{host}/contact")
+            if contact.refused is None:
+                proof = _page_proof(c, contact.contact_text or contact.text or "", cfg)
+        if proof is not None:
+            return host, proof
+    return None
+
+
 async def company_fit(
     entries: list[RankedEntry],
     spec: ClientSpec,
@@ -234,7 +304,27 @@ async def company_fit(
     else:  # recordings made before D108: rank order
         shortlisted = [e for e in sorted(entries, key=lambda e: e.rank) if _eligible(e)]
     role_words = {w.casefold() for w in cfg.fit_contact_role_words}
-    chosen = {id(e) for e in shortlisted[: cfg.radar_fit_max_accounts]}
+    # D113: guess the site from the registered name and check it, before spending a search.
+    guessed: dict[int, tuple[str, str]] = {}
+    guess_pool: list[RankedEntry] = []
+    if cfg.radar_fit_single_search and cfg.radar_site_guess_max_companies > 0:
+        guess_pool = shortlisted[: cfg.radar_site_guess_max_companies]
+        gate = asyncio.Semaphore(cfg.radar_gate_concurrency)
+
+        async def _guess(e: RankedEntry) -> tuple[str, str] | None:
+            async with gate:
+                return await guess_own_site(e.candidate, fetcher, cfg, market_words)
+
+        for e, found_site in zip(
+            guess_pool, await asyncio.gather(*(_guess(e) for e in guess_pool)), strict=True
+        ):
+            if found_site is not None:
+                guessed[id(e)] = found_site
+    searched = [e for e in shortlisted if id(e) not in guessed][: cfg.radar_fit_max_accounts]
+    chosen = {id(e) for e in searched} | set(guessed)
+    pool = {id(e) for e in guess_pool} | {id(e) for e in searched}
+    by_search = 0
+    proof_for: dict[int, str] = {}
     out: list[RankedEntry] = []
     for entry in entries:
         if id(entry) not in chosen:
@@ -242,7 +332,12 @@ async def company_fit(
             continue
         c = entry.candidate
         try:
-            if cfg.radar_fit_single_search:
+            if id(entry) in guessed:
+                host, proof_for[id(entry)] = guessed[id(entry)]
+                site = f"https://{host}/"
+                domain = registrable(site)
+                lead_urls = [site]
+            elif cfg.radar_fit_single_search:
                 # D108: one search (name + what the client sells); the site is the first result
                 # on a domain that carries the name, its pages are the results on that domain.
                 # The register's spelling when known: trade records split names ("LIMIT ED").
@@ -263,9 +358,9 @@ async def company_fit(
                     None,
                 )
                 if site is None:
-                    notes.append(f"company fit: no official site found for {c.name}")
                     out.append(entry)
                     continue
+                by_search += 1
                 domain = registrable(site)
                 lead_urls = [d.url for d in found.documents if registrable(d.url) == domain]
                 if len(lead_urls) < 2:
@@ -370,9 +465,16 @@ async def company_fit(
             "stated" if any(f.level == "stated" for f in fits) else ("related" if fits else None)
         )
         update: dict[str, Any] = {"company_site": domain, "company_fit": fits, "fit_level": level}
+        if id(entry) in proof_for:
+            update["site_proof"] = proof_for[id(entry)]
         if contact is not None:
             update["company_contact"] = contact
         if level == "stated" and entry.evidence_level in ("generic_mention", "no_evidence"):
             update["evidence_level"] = "company_fit"  # it handles the category; no purchase yet
         out.append(entry.model_copy(update=update))
+    if cfg.radar_fit_single_search:
+        notes.append(
+            f"company fit: {len(guessed)} sites found free, {by_search} by search, "
+            f"{len(pool) - len(guessed) - by_search} not found"
+        )
     return out, notes

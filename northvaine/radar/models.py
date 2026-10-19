@@ -268,6 +268,7 @@ class RankedEntry(NorthvaineModel):
     company_fit: list[FitEvidence] = Field(default_factory=list)
     fit_level: Literal["stated", "related"] | None = None
     company_contact: CompanyContact | None = None  # D108
+    site_proof: str | None = None  # D113: "registration number" / "registered name"
     # The daily edition (D103): act now / just changed / account to work, and why.
     label: Literal["act_now", "just_changed", "account_to_work"] | None = None
     label_reason: str | None = None

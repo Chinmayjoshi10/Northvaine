@@ -46,6 +46,7 @@ SETTINGS = Settings(
     radar_enumerable_max_results=10,  # the M3 recordings hold one page of 10 per query
     radar_bidder_max_queries=0,  # the M3 recordings hold no award searches (D81)
     radar_fit_max_accounts=0,  # nor company-fit searches (D96)
+    radar_site_guess_max_companies=0,  # nor guessed-site fetches (D113)
 )
 
 

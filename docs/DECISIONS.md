@@ -1143,3 +1143,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   still leads one of the same breadth. Also: the site check always reads the company's contact
   page once its own site is found, so a replay matches the live run (the text that decided it is
   never recorded); and common business words ("solutions", "group") never identify a site.
+
+- **D113 — Find a company's own site for free first (20 Oct).** One Tavily search per company, capped at 15, missed most sites (10 of 15 on the latest live run), and a confirmed own site is what lifts a proven buyer into the top 5.
+  - Before searching, code guesses up to `radar_site_guess_per_company` (6) hosts from the registered name (distinctive words joined, first two, first alone, hyphenated; `.co.uk`/`.com`/`.uk` for GB, else `.com` and the country code) and fetches them through the run's PageFetcher (free, robots respected). It never guesses from words of the client's market or common business words.
+  - A host is accepted only when its home page, or its `/contact` page, carries the company's registration number or its full registered name. The proof is kept (`site_proof`) and shown on the case page.
+  - Up to `radar_site_guess_max_companies` (60) companies are tried, `radar_gate_concurrency` at a time. Tavily covers only the companies still without a site, within its cap. Run notes give counts only. No model call.
+  - Older recordings replay unchanged: `radar_site_guess_max_companies` is pinned to 0.
