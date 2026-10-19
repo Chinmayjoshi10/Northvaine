@@ -279,6 +279,9 @@ class UpgradedPage(NorthvaineModel):
     title: str | None
     text: str | None
     refused: str | None  # robots | denied | http_<n> | content_type | error
+    # The page text before contacts were stripped, kept in memory for the company-contact check
+    # only (D108). Excluded from every dump, so recordings and reports never store contacts.
+    contact_text: str | None = Field(default=None, exclude=True)
 
 
 class DiscoverResult(NorthvaineModel):

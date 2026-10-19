@@ -274,7 +274,7 @@ async def company_fit(
             page = await fetcher.fetch(lead_url)
             if page.refused is not None or not page.text:
                 continue
-            raw_pages.append((page.final_url or lead_url, page.text))
+            raw_pages.append((page.final_url or lead_url, page.contact_text or page.text))
             text, _ = neutralise_steering(strip_contacts(page.text), cfg)
             doc = EvidenceDocument(
                 id=uuid5(NAMESPACE_URL, content_hash(text)),
@@ -329,7 +329,9 @@ async def company_fit(
                 # at most one extra fetch: the company's own contact page
                 page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
                 if page.refused is None and page.text:
-                    raw_pages.append((page.final_url or page.lead_url, page.text))
+                    raw_pages.append(
+                        (page.final_url or page.lead_url, page.contact_text or page.text)
+                    )
                     contact = find_company_contact(raw_pages, domain, role_words)
         if not fits:
             notes.append(f"company fit: {domain} does not name what you sell on the pages read")

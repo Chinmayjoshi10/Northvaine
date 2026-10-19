@@ -323,7 +323,10 @@ def _pinned_environment(recording: LlmRecording) -> Iterator[None]:
         pins[name] = REPLAY_BUDGET_USD
     for name, value in {**LEGACY_SETTINGS, **recording.settings}.items():
         if value is not None and name in settings_module.Settings.model_fields:
-            pins[name.upper()] = str(value)
+            # lists and tuples go in as JSON, the form the settings parser reads back
+            pins[name.upper()] = (
+                json.dumps(list(value)) if isinstance(value, list | tuple) else str(value)
+            )
     previous = {name: os.environ.get(name) for name in pins}
     os.environ.update(pins)
     _clear_settings_caches()

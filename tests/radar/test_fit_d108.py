@@ -160,3 +160,20 @@ def test_fit_order_works_within_an_evidence_level_and_renumbers() -> None:
     assert "Company fit: its own site names granite" in out[0].rank_reasons
     assert "Company fit: its own site does not name what you sell" in out[4].rank_reasons
     assert out[3].rank_reasons == []  # not checked: no reason added
+
+
+def test_contact_text_never_reaches_a_recording() -> None:
+    from northvaine.radar.models import UpgradedPage
+
+    page = UpgradedPage(
+        lead_url="https://example.test/",
+        final_url=None,
+        status=200,
+        fetched_at=None,
+        title=None,
+        text="stripped",
+        refused=None,
+        contact_text="write to info@example.test",
+    )
+    assert page.contact_text and "contact_text" not in page.model_dump()
+    assert "info@" not in page.model_dump_json()

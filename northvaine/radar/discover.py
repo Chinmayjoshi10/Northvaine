@@ -229,6 +229,7 @@ class LivePageFetcher:
             title=title,
             text=strip_contacts(text),
             refused=None,
+            contact_text=text,
         )
 
 
