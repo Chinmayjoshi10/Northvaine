@@ -32,14 +32,13 @@ from northvaine.core.models import (
     ClaimDraft,
     ClaimStatus,
     Eligibility,
-    EventType,
     EvidenceDocument,
     EvidenceKind,
     LedgerResult,
     SubjectMention,
 )
 from northvaine.core.settings import Settings, get_settings
-from northvaine.radar.brief import _trade_slots, names_term
+from northvaine.radar.brief import _trade_slots, import_codes, names_term
 from northvaine.radar.discover import PageFetcher, neutralise_steering, strip_contacts
 from northvaine.radar.models import (
     ClientSpec,
@@ -62,7 +61,6 @@ __all__ = [
 ]
 
 _SECOND_LEVEL = {"co", "com", "org", "net", "gov", "ac", "edu"}
-_COMMODITY = re.compile(r"commodity (\d{6,10})")
 _SENTENCE = re.compile(r"[^.!?\n]{12,400}[.!?]?")
 
 
@@ -184,14 +182,7 @@ def _import_depth(entry: RankedEntry) -> tuple[int, int]:
     slots = _trade_slots(entry.candidate)
     # The import event carries no code list; each code is a "commodity <digits>" line of the
     # record text that our own sensor writes, so the distinct ones are counted there.
-    codes = len(
-        {
-            m
-            for e in entry.candidate.events
-            if e.event_type == EventType.IMPORTS_RECORDED.value
-            for m in _COMMODITY.findall(e.description or "")
-        }
-    )
+    codes = len(import_codes(entry.candidate))
     months = slots.get("months_active")
     return codes, months if isinstance(months, int) else 0
 
@@ -366,15 +357,13 @@ async def company_fit(
                 )
         contact: CompanyContact | None = None
         if cfg.radar_fit_single_search:
+            # One extra fetch, always: the company's own contact page. Fetching it only when the
+            # pages read had no contact made a replay diverge, since the unstripped text that
+            # decided it is never recorded.
+            page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
+            if page.refused is None and page.text:
+                raw_pages.append((page.final_url or page.lead_url, page.contact_text or page.text))
             contact = find_company_contact(raw_pages, domain, role_words)
-            if contact is None or not (contact.email and contact.phone):
-                # at most one extra fetch: the company's own contact page
-                page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
-                if page.refused is None and page.text:
-                    raw_pages.append(
-                        (page.final_url or page.lead_url, page.contact_text or page.text)
-                    )
-                    contact = find_company_contact(raw_pages, domain, role_words)
         if not fits:
             notes.append(f"company fit: {domain} does not name what you sell on the pages read")
         level = (

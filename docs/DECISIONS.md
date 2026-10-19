@@ -1134,3 +1134,12 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - `radar/timing.py` (code only) lists signals dated within `radar_timing_days` (180) of the run day: charge registered, office moved, control changed, renamed, incorporated, started importing this year. Each is a short line with its date, on the candidate and shown on the case page.
   - Within an evidence level the order is fit group, then two or more signals before fewer, then likeness (D109). No model call, no Tavily search.
   - Older recordings replay unchanged: `radar_timing_max_lookups` is pinned to 0, which also leaves signals off.
+
+- **D112 — Importers ranked by breadth, not by newness alone (20 Oct).** Among proven importers,
+  every company new this year used to outrank every regular one, and a product-code count read an
+  empty field, so a regular stockist importing five of the client's codes every month sat at
+  117th (WOS live run). Now importers are ordered by how many of the client's own product codes
+  they import, then months active; being new this year counts as two more codes. A new importer
+  still leads one of the same breadth. Also: the site check always reads the company's contact
+  page once its own site is found, so a replay matches the live run (the text that decided it is
+  never recorded); and common business words ("solutions", "group") never identify a site.

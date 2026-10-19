@@ -241,3 +241,22 @@ def test_common_business_words_never_identify_a_company() -> None:
     assert not domain_matches(
         "Global Trading Group Ltd", "https://globaltrading.com", SINGLE, market
     )
+
+
+def test_breadth_ranks_a_regular_importer_above_a_narrow_new_one() -> None:
+    from northvaine.radar.brief import _trade_urgency
+
+    line = "The official import record states commodity {} (an article)."
+    five = " ".join(
+        line.format(c) for c in ("68010000", "68021000", "68022100", "68029100", "68030010")
+    )
+    regular = named("GB:r", {"months_active": 8, "new_this_year": False}, description=five)
+    narrow_new = named(
+        "GB:n", {"months_active": 1, "new_this_year": True}, description=line.format("68010000")
+    )
+    broad_new = named("GB:b", {"months_active": 2, "new_this_year": True}, description=five)
+    pos = {
+        e.candidate.key: _trade_urgency(e.candidate)[1] for e in (regular, narrow_new, broad_new)
+    }
+    # lower position ranks first: a new importer of the same breadth leads, a narrow one does not
+    assert pos["GB:b"] < pos["GB:r"] < pos["GB:n"]

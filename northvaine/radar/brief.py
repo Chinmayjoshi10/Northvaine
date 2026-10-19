@@ -246,13 +246,32 @@ def _trade_urgency(candidate: Candidate) -> tuple[int, int, str]:
     last, first = slots.get("last_month"), slots.get("first_month")
     months = slots.get("months_active")
     span = f"imported in {months} month(s) from {first} to {last}" if last else "imports recorded"
-    # new importers first, then more months, then more product codes
+    # D112: breadth first (how many of the client's own product codes it imports), then months
+    # active, and being new this year is worth as much as two more codes: a new importer is still
+    # choosing suppliers, but it no longer outranks one that buys five of the client's products
+    # every month (a live run put such hand-found buyers at 117th and 144th).
     active = months if isinstance(months, int) else 0
-    codes = len([c for c in str(slots.get("codes") or "").split(",") if c.strip()])
-    position = -(active * 100 + codes)
-    if slots.get("new_this_year"):
+    codes = import_codes(candidate)
+    new = bool(slots.get("new_this_year"))
+    position = -((len(codes) + (2 if new else 0)) * 100 + active)
+    if new:
         return _TIER_RECENT, position, f"Timing: started importing this year; {span}"
-    return _TIER_RECENT, 10_000 + position, f"Timing: a regular importer; {span}"
+    return _TIER_RECENT, position, f"Timing: a regular importer; {span}"
+
+
+# the commodity lines our own import sensor writes into the record text
+_COMMODITY = re.compile(r"commodity (\d{6,10})")
+
+
+def import_codes(candidate: Candidate) -> set[str]:
+    """The distinct product codes in the candidate's import records (the event carries no code
+    list; each code is a commodity line of the record text)."""
+    return {
+        code
+        for e in candidate.events
+        if e.event_type == EventType.IMPORTS_RECORDED.value
+        for code in _COMMODITY.findall(e.description or "")
+    }
 
 
 def _trade_requirement(candidate: Candidate) -> CandidateClaim | None:
