@@ -1128,3 +1128,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - A change is: an event fingerprint no earlier entry had, a better evidence level than any earlier one, company fit that was absent before, or a daily-edition label it did not have. The API also adds "Now on record: {slot}" when a chain slot was unknown or inferred on the latest earlier entry and is stated now.
   - Only earlier runs strictly before this run's day and within `radar_watch_days` (90) count; at most `radar_watch_runs` (30) are loaded. A later run is never read, so the time machine stays honest.
   - Seen before with no change is only `returning`, which works as before. No model call, no search, no database.
+
+- **D111 — Timing signals from free official records (20 Oct).** A proven buyer that is also changing right now is the one to call this week; two signals close together beat one.
+  - New Companies House reads for UK companies already found, at most `radar_timing_max_lookups` (60) a run, trade importers first: `/charges` (only each charge's date and status) and the address filing history (only the date of the latest registered-office change). Never a name, an address or `persons_entitled`. A 404 means none; any other error is a note.
+  - `radar/timing.py` (code only) lists signals dated within `radar_timing_days` (180) of the run day: charge registered, office moved, control changed, renamed, incorporated, started importing this year. Each is a short line with its date, on the candidate and shown on the case page.
+  - Within an evidence level the order is fit group, then two or more signals before fewer, then likeness (D109). No model call, no Tavily search.
+  - Older recordings replay unchanged: `radar_timing_max_lookups` is pinned to 0, which also leaves signals off.

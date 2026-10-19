@@ -6,10 +6,17 @@ Confirmed shapes (used in the 14-15 Oct field tests): `/search/companies?q=` lis
 significant-control` lists controllers with `kind`, `name`, `notified_on` and `ceased_on`.
 Auth is HTTP Basic with the API key as the user name and an empty password.
 
+Timing reads (D111), for a company already found: `/company/{n}/charges` (per charge only
+`created_on` and `status` are read; `items[].created_on`, `items[].status`) and
+`/company/{n}/filing-history?category=address` (`items[].date`, `items[].type`; only the date of
+the latest `AD01` registered-office change is kept, never the address). `persons_entitled` and any
+other name are never read or stored.
+
 Company-level only:
 - a controller is named only when it is a company (a `corporate-entity-...` or `legal-person-...`
   kind); for a person, only the date a control change was notified is kept, never a name;
-- officers, addresses of people and filing documents are never requested.
+- officers, addresses of people and filing documents are never requested; the two timing reads
+  above return only dates.
 
 A lookup accepts only an exact match of the normalised name (legal form and spacing ignored), so a
 similarly named company is never attached to a candidate.
@@ -73,6 +80,8 @@ class RegisterRecord(NorthvaineModel):
     previous_names: list[tuple[str, date | None]] = Field(default_factory=list)
     controllers: list[Controller] = Field(default_factory=list)  # companies only
     control_changed_on: date | None = None  # latest notification of any active controller
+    charge_created_on: date | None = None  # D111: latest charge registered
+    office_moved_on: date | None = None  # D111: latest registered-office change filed
 
     @property
     def url(self) -> str:
@@ -115,6 +124,30 @@ def parse_record(profile: dict[str, Any], psc: dict[str, Any] | None) -> Registe
     )
 
 
+def parse_charges(data: dict[str, Any] | None) -> list[tuple[date, str]]:
+    """(created_on, status) per charge. Nothing else is read: never `persons_entitled`."""
+    out: list[tuple[date, str]] = []
+    for item in (data or {}).get("items") or []:
+        if not isinstance(item, dict):
+            continue
+        when = _date(item.get("created_on"))
+        if when is not None:
+            out.append((when, str(item.get("status") or "unknown")))
+    return out
+
+
+def parse_office_moves(data: dict[str, Any] | None) -> date | None:
+    """The date of the latest registered-office change filing (type AD01); no address."""
+    dates = [
+        d
+        for item in (data or {}).get("items") or []
+        if isinstance(item, dict) and str(item.get("type") or "").upper() == "AD01"
+        for d in [_date(item.get("date"))]
+        if d is not None
+    ]
+    return max(dates) if dates else None
+
+
 def render_register_text(record: RegisterRecord) -> str:
     """Deterministic lines (D39): what claims quote. Company-level facts only."""
     sic = sic_descriptions()
@@ -132,6 +165,10 @@ def render_register_text(record: RegisterRecord) -> str:
         )
     if record.control_changed_on:
         lines.append(f"Control last notified: {record.control_changed_on.isoformat()}")
+    if record.charge_created_on:
+        lines.append(f"Charge registered: {record.charge_created_on.isoformat()}")
+    if record.office_moved_on:
+        lines.append(f"Registered office changed: {record.office_moved_on.isoformat()}")
     return "\n".join(lines)
 
 
@@ -177,6 +214,39 @@ class CompaniesHouseClient:
         except ValueError:
             raise SensorError("Companies House returned a response that is not JSON") from None
         return data if isinstance(data, dict) else None
+
+    async def timing(self, record: RegisterRecord) -> tuple[RegisterRecord, list[str]]:
+        """The record with `charge_created_on` and `office_moved_on` read (D111). A 404 means
+        none; any other error is a note and leaves that field empty."""
+        import httpx  # lazy: importing this module needs no network library
+
+        client = self._client or httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds)
+        notes: list[str] = []
+        charge: date | None = None
+        moved: date | None = None
+        try:
+            try:
+                charges = parse_charges(
+                    await self._get(client, f"/company/{record.number}/charges")
+                )
+                charge = max((d for d, _ in charges), default=None)
+            except SensorError as exc:
+                notes.append(f"charges not read for {record.number}: {exc}")
+            try:
+                history = await self._get(
+                    client,
+                    f"/company/{record.number}/filing-history",
+                    {"category": "address", "items_per_page": "10"},
+                )
+                moved = parse_office_moves(history)
+            except SensorError as exc:
+                notes.append(f"address history not read for {record.number}: {exc}")
+        finally:
+            if self._client is None:
+                await client.aclose()
+        return record.model_copy(
+            update={"charge_created_on": charge, "office_moved_on": moved}
+        ), notes
 
     async def lookup(self, name: str) -> RegisterRecord | None:
         """The register record whose name matches `name` exactly once normalised, else None."""

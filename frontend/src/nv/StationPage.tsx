@@ -480,8 +480,13 @@ function Station(props: {
                     {question(r)}
                   </a>
                 </h2>
-                {(r.label || r.back_in_motion) && (
+                {((r.timing_signals ?? []).length >= 2 || r.label || r.back_in_motion) && (
                   <p className="edlabel">
+                    {(r.timing_signals ?? []).length >= 2 && (
+                      <span className="mono lab-chip">
+                        {(r.timing_signals ?? []).length} SIGNALS
+                      </span>
+                    )}
                     {r.back_in_motion && (
                       <span className="mono lab-chip">Back in motion</span>
                     )}

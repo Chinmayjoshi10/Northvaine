@@ -148,6 +148,8 @@ class RegisterFacts(NorthvaineModel):
     renamed_on: date | None = None
     controlled_by: list[str] = Field(default_factory=list)  # companies only
     control_changed_on: date | None = None
+    charge_created_on: date | None = None  # D111
+    office_moved_on: date | None = None  # D111
 
 
 class Candidate(NorthvaineModel):
@@ -167,6 +169,7 @@ class Candidate(NorthvaineModel):
     company_register: RegisterFacts | None = None
     # D109: short reasons it looks like the client's customers (never an existing customer's name)
     like_customers: list[str] = Field(default_factory=list)
+    timing_signals: list[str] = Field(default_factory=list)  # D111
 
 
 class GateDecision(NorthvaineModel):

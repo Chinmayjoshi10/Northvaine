@@ -32,6 +32,7 @@ from northvaine.radar.models import (
     RejectedAs,
     RejectedEntry,
 )
+from northvaine.radar.timing import timing_signals
 from northvaine.radar.verify import claim_fingerprint
 from northvaine.sensors.base import SensorError, content_hash
 from northvaine.sensors.companies_house import (
@@ -44,6 +45,7 @@ from northvaine.sensors.companies_house import (
 __all__ = [
     "SeedProfile",
     "mark_likeness",
+    "mark_timing",
     "note_import_profile",
     "product_families",
     "register_check",
@@ -75,6 +77,8 @@ def _facts(record: RegisterRecord) -> RegisterFacts:
         renamed_on=max(renamed) if renamed else None,
         controlled_by=[c.name for c in record.controllers],
         control_changed_on=record.control_changed_on,
+        charge_created_on=record.charge_created_on,
+        office_moved_on=record.office_moved_on,
     )
 
 
@@ -146,6 +150,21 @@ def _code_rejection(candidate: Candidate, spec: ClientSpec) -> GateDecision | No
     return None
 
 
+def mark_timing(
+    candidates: list[Candidate], as_of: datetime, settings: Settings
+) -> list[Candidate]:
+    """Set `timing_signals` (D111). Off when `radar_timing_max_lookups` is 0, so older recordings
+    replay with no signals."""
+    if settings.radar_timing_max_lookups <= 0:
+        return candidates
+    days = settings.radar_timing_days
+    out: list[Candidate] = []
+    for c in candidates:
+        signals = timing_signals(c, as_of.date(), days)
+        out.append(c.model_copy(update={"timing_signals": signals}) if signals else c)
+    return out
+
+
 async def register_check(
     candidates: list[Candidate],
     spec: ClientSpec,
@@ -154,7 +173,22 @@ async def register_check(
     as_of: datetime,
     settings: Settings,
 ) -> tuple[list[Candidate], list[RejectedEntry], list[str]]:
-    """(candidates kept, rejected by the register, notes). A no-op unless enabled."""
+    """(candidates kept, rejected by the register, notes). Register lookups run only when
+    enabled; timing signals (D111) are then marked on what is kept."""
+    kept, rejected, notes = await _register_lookups(
+        candidates, spec, http=http, as_of=as_of, settings=settings
+    )
+    return mark_timing(kept, as_of, settings), rejected, notes
+
+
+async def _register_lookups(
+    candidates: list[Candidate],
+    spec: ClientSpec,
+    *,
+    http: Any,
+    as_of: datetime,
+    settings: Settings,
+) -> tuple[list[Candidate], list[RejectedEntry], list[str]]:
     if not _enabled(spec, settings):
         return candidates, [], []
     client = CompaniesHouseClient(client=http, settings=settings)
@@ -162,6 +196,7 @@ async def register_check(
     # Proven buyers from trade records first: the register matters most for them.
     uk.sort(key=lambda c: (c.stream != RadarStream.TRADE, c.key))
     chosen = {c.key for c in uk[: settings.radar_register_max_lookups]}
+    timed = {c.key for c in uk[: settings.radar_timing_max_lookups]}  # D111, same order
     kept: list[Candidate] = []
     rejected: list[RejectedEntry] = []
     found = missing = 0
@@ -181,6 +216,9 @@ async def register_check(
             kept.append(candidate)
             continue
         found += 1
+        if candidate.key in timed:
+            record, timing_notes = await client.timing(record)
+            notes.extend(f"register check: {n}" for n in timing_notes)
         checked = _with_register(candidate, record, as_of)
         decision = _code_rejection(checked, spec)
         if decision is not None:

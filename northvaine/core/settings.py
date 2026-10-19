@@ -213,6 +213,10 @@ class Settings(BaseSettings):
     radar_register_max_lookups: int = Field(default=200, ge=0)
     # D109: customers and approved leads looked up at the register, at most this many.
     radar_seed_max_lookups: int = Field(default=10, ge=0)
+    # D111: timing signals from free official records, read for at most this many UK companies,
+    # counted when dated within radar_timing_days of the run day.
+    radar_timing_max_lookups: int = Field(default=60, ge=0)
+    radar_timing_days: int = Field(default=180, ge=1)
     # "Just changed" (D103): a new owner or a rename within this many days, or a company set up
     # within radar_new_company_days, marks a company that is setting up or reviewing its supply.
     radar_just_changed_days: int = Field(default=365, ge=1)

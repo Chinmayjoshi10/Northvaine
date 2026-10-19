@@ -102,6 +102,7 @@ SHAPING_SETTINGS = (
     "radar_max_gate_candidates",
     "radar_register_max_lookups",
     "radar_seed_max_lookups",  # D109
+    "radar_timing_max_lookups",  # D111
     "radar_fit_single_search",  # D108
     "fit_contact_role_words",
 )

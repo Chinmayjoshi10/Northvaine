@@ -416,12 +416,15 @@ def _fit_group(entry: RankedEntry) -> int:
     return 2
 
 
-def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
+def apply_fit_order(
+    entries: list[RankedEntry], timing_days: int | None = None
+) -> list[RankedEntry]:
     """Company fit moves the ranking (D108), but only within an evidence level.
 
     Each evidence level keeps the positions it already holds; inside those positions the entries
     are put in a stable order: stated fit, related fit, then the rest in their earlier order.
     Then `rank` is renumbered 1..n and the reason is added to `rank_reasons`."""
+    days = timing_days if timing_days is not None else get_settings().radar_timing_days
     ordered = sorted(entries, key=lambda e: e.rank)
     slots: dict[str | None, list[int]] = {}
     for i, e in enumerate(ordered):
@@ -430,7 +433,11 @@ def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
     for positions in slots.values():
         members = sorted(  # stable; D109: looking like the client's customers breaks ties
             (ordered[i] for i in positions),
-            key=lambda e: (_fit_group(e), not e.candidate.like_customers),
+            key=lambda e: (
+                _fit_group(e),
+                len(e.candidate.timing_signals) < 2,  # D111: two or more signals first
+                not e.candidate.like_customers,
+            ),
         )
         for i, e in zip(positions, members, strict=True):
             result[i] = e
@@ -442,6 +449,10 @@ def apply_fit_order(entries: list[RankedEntry]) -> list[RankedEntry]:
         elif e.company_site is not None:
             reasons.append("Company fit: its own site does not name what you sell")
         reasons.extend(e.candidate.like_customers)
+        if e.candidate.timing_signals:
+            reasons.append(
+                f"Timing: {len(e.candidate.timing_signals)} signals in the last {days} days"
+            )
         out.append(e.model_copy(update={"rank": n, "rank_reasons": reasons}))
     return out
 

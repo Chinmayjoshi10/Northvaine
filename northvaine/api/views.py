@@ -61,6 +61,7 @@ class Row(BaseModel):
     seen_runs: int = 0
     developments: list[str] = []
     back_in_motion: bool = False
+    timing_signals: list[str] = []  # D111
 
 
 class Funnel(BaseModel):
@@ -170,6 +171,7 @@ class Dossier(BaseModel):
     company_site: str | None = None
     company_contact: CompanyContactView | None = None
     like_customers: list[str] = []
+    timing_signals: list[str] = []  # D111
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -209,6 +211,7 @@ def _row(entry: RankedEntry, today: date) -> Row:
         chain=chain(entry),
         label=entry.label,
         label_reason=entry.label_reason,
+        timing_signals=list(c.timing_signals),
     )
 
 
@@ -451,6 +454,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         decision_line=brief.DECISION_LINE,
         company_site=entry.company_site,
         like_customers=list(entry.candidate.like_customers),
+        timing_signals=list(entry.candidate.timing_signals),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

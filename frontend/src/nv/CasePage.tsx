@@ -226,7 +226,15 @@ function Case(props: {
                   </span>
                 </div>
               ))}
-              {stated.length === 0 && <div className="r u">nothing yet</div>}
+              {(d.timing_signals ?? []).map((t) => (
+                <div className="r" key={t}>
+                  <i className="m s" />
+                  <span>{t}</span>
+                </div>
+              ))}
+              {stated.length === 0 && (d.timing_signals ?? []).length === 0 && (
+                <div className="r u">nothing yet</div>
+              )}
             </section>
             <section aria-label="Inferred">
               <span className="caps">Inferred</span>
