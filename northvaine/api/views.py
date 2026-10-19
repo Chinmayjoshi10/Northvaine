@@ -248,13 +248,14 @@ def brief_view(
             return out
         key = e.candidate.key
         prior = [x for r in window for x in r.entries if x.candidate.key == key]
+        # a slot now on record is listed, but on its own it is what we learned, not a move
         changes = [*w.changes, *_now_on_record(e, prior)]
         return out.model_copy(
             update={
                 "first_seen": w.first_seen.isoformat(),
                 "seen_runs": w.seen_runs,
                 "developments": changes,
-                "back_in_motion": bool(changes),
+                "back_in_motion": w.back_in_motion,
             }
         )
 

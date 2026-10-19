@@ -267,7 +267,12 @@ async def test_brief_marks_a_row_back_in_motion(client: AsyncClient, base: Path)
     first = store.load_run(base, "acme", "2026-10-05")[0]
     moved = first.entries[0]
     ev = moved.candidate.events[0].model_copy(
-        update={"fingerprint": "ev-brand-new", "event_type": "new_import"}
+        # dated after the first run: the company moved (an older date is only newly found)
+        update={
+            "fingerprint": "ev-brand-new",
+            "event_type": "new_import",
+            "occurred_on": (NOW + timedelta(days=1)).date(),
+        }
     )
     events = [*moved.candidate.events, ev]
     moved = moved.model_copy(

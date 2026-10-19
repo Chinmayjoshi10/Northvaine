@@ -4,15 +4,21 @@ replay of an old day never sees the future."""
 
 from __future__ import annotations
 
+import re
 from datetime import date, timedelta
 
 from pydantic import BaseModel, Field
 
+from northvaine.core.models import EventType
 from northvaine.core.settings import Settings
 from northvaine.radar.account import LEVEL_ORDER
 from northvaine.radar.models import RadarRun, RankedEntry
 
 __all__ = ["Watch", "developments"]
+
+_IMPORTS = EventType.IMPORTS_RECORDED.value
+# the commodity lines our own import sensor writes (as in fit.py)
+_COMMODITY = re.compile(r"commodity (\d{6,10})")
 
 
 class Watch(BaseModel):
@@ -30,31 +36,59 @@ def _entries_by_key(run: RadarRun) -> dict[str, RankedEntry]:
     return {e.candidate.key: e for e in run.entries}
 
 
-def _changes(current: RankedEntry, earlier: list[RankedEntry], latest_day: date) -> list[str]:
+def _codes(entries: list[RankedEntry]) -> set[str]:
+    """Product codes in the import records of these entries (the record's commodity lines)."""
+    return {
+        code
+        for e in entries
+        for ev in e.candidate.events
+        if ev.event_type == _IMPORTS
+        for code in _COMMODITY.findall(ev.description or "")
+    }
+
+
+def _changes(
+    current: RankedEntry, earlier: list[RankedEntry], latest_day: date
+) -> tuple[list[str], list[str]]:
+    """(moves, notes): what the company did since the last look, and what we only learned."""
     out: list[str] = []
+    info: list[str] = []
+    # An import record is a standing record: a new month of the same imports gives it a new
+    # fingerprint, but importing again is not news. A product code not imported before is.
+    new_codes = sorted(_codes([current]) - _codes(earlier)) if _codes(earlier) else []
+    if new_codes:
+        out.append(
+            f"New since {latest_day.isoformat()}: imports a product code it did not before "
+            f"({', '.join(new_codes[:3])})"
+        )
     known = {ev.fingerprint for e in earlier for ev in e.candidate.events}
     for ev in current.candidate.events:
-        if ev.fingerprint in known:
+        if ev.event_type == _IMPORTS or ev.fingerprint in known:
+            continue
+        known.add(ev.fingerprint)
+        # An event dated before the last look is one we only found now: worth listing, but the
+        # company did not move. Undated events count as new.
+        if ev.occurred_on is not None and ev.occurred_on < latest_day:
+            info.append(f"Newly found: {_words(ev.event_type)}, on {ev.occurred_on.isoformat()}")
             continue
         line = f"New since {latest_day.isoformat()}: {_words(ev.event_type)}"
         if ev.occurred_on:
             line += f", on {ev.occurred_on.isoformat()}"
         out.append(line)
-        known.add(ev.fingerprint)
 
     levels = [e.evidence_level for e in earlier if e.evidence_level in LEVEL_ORDER]
     now = current.evidence_level
     if levels and now in LEVEL_ORDER:
         best = min(levels, key=lambda lv: LEVEL_ORDER[lv])
-        if LEVEL_ORDER[now] < LEVEL_ORDER[best]:
+        # rising to company fit only means our site check reached it this time (see below)
+        if LEVEL_ORDER[now] < LEVEL_ORDER[best] and now != "company_fit":
             out.append(f"Evidence rose from {_words(best)} to {_words(now)}")
 
-    if current.fit_level and not any(e.fit_level for e in earlier):
-        out.append("Its own site now names what you sell")
-
+    # Company fit is not listed: which sites get read changes night to night (D108 caps it), so
+    # a fit appearing says more about our checks than about the company moving.
     if current.label and current.label not in {e.label for e in earlier if e.label}:
         out.append(f"Now labelled {_words(current.label)}")
-    return out
+    return out, info
 
 
 def developments(
@@ -72,11 +106,11 @@ def developments(
         seen = [(day, m[key]) for day, m in maps if key in m]
         if not seen:
             continue
-        changes = _changes(entry, [e for _, e in seen], seen[-1][0])
+        moves, notes = _changes(entry, [e for _, e in seen], seen[-1][0])
         out[key] = Watch(
             first_seen=seen[0][0],
             seen_runs=len(seen),
-            changes=changes,
-            back_in_motion=bool(changes),
+            changes=[*moves, *notes],
+            back_in_motion=bool(moves),
         )
     return out
