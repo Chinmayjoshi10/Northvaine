@@ -260,3 +260,22 @@ def test_breadth_ranks_a_regular_importer_above_a_narrow_new_one() -> None:
     }
     # lower position ranks first: a new importer of the same breadth leads, a narrow one does not
     assert pos["GB:b"] < pos["GB:r"] < pos["GB:n"]
+
+
+def test_only_real_sentences_count_as_proof() -> None:
+    from northvaine.radar.fit import _reads_like_prose
+
+    # web forms, menus, shouted headers and fragments cut mid-word are not statements
+    assert not _reads_like_prose("Your Name Your Phone No Your Email Address Request a Quote now.")
+    assert not _reads_like_prose("CONTACT US BE THE FIRST TO KNOW about our latest offers today.")
+    assert not _reads_like_prose("seful information about our showroom and the products we offer.")
+    assert not _reads_like_prose("We supply widgets to builders across the region")  # no full stop
+    assert _reads_like_prose("We supply widgets to builders and installers across the region.")
+
+
+def test_invisible_padding_is_stripped_from_a_quote() -> None:
+    from northvaine.radar.fit import fit_sentences
+
+    text = "​ We supply widgets to builders and installers across the region."
+    ((sentence, _term, level),) = fit_sentences(text, {"widget"}, set(), limit=3)
+    assert sentence.startswith("We supply") and sentence in text and level == "stated"

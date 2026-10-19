@@ -64,6 +64,7 @@ __all__ = [
 ]
 
 _SECOND_LEVEL = {"co", "com", "org", "net", "gov", "ac", "edu"}
+_INVISIBLE = "\u200b\u200c\u200d\u2060\ufeff"
 _SENTENCE = re.compile(r"[^.!?\n]{12,400}[.!?]?")
 
 
@@ -107,13 +108,22 @@ def domain_matches(
 
 
 def _reads_like_prose(sentence: str) -> bool:
-    """At least 6 words, and at most half of them capitalised (a menu or a list of page links
-    is mostly capitalised words)."""
+    """A real sentence: it starts with a capital or a digit, ends with . ! or ?, has at least 6
+    words, and at most 40% of them capitalised. Menus, link lists and web forms ("Your Name Your
+    Phone ... Request a Quote") fail; a live run showed both as "proof" before."""
     words = [w for w in sentence.split() if any(ch.isalpha() for ch in w)]
-    if len(words) < 6:
+    if len(words) < 6 or not sentence or sentence[-1] not in ".!?":
+        return False
+    if not (sentence[0].isupper() or sentence[0].isdigit()):
+        return False  # a fragment cut from the middle of the page
+    caps_run = longest = 0
+    for w in words:  # "CONTACT US BE THE FIRST": a shouted header, not a statement
+        caps_run = caps_run + 1 if w.isupper() and len(w) > 1 else 0
+        longest = max(longest, caps_run)
+    if longest >= 3:
         return False
     capitalised = sum(1 for w in words if w[0].isupper())
-    return capitalised <= len(words) / 2
+    return capitalised <= len(words) * 0.4
 
 
 def fit_sentences(
@@ -122,7 +132,9 @@ def fit_sentences(
     """(sentence, term, level) for sentences naming an offer term (stated) or a related term."""
     found: list[tuple[str, str, Literal["stated", "related"]]] = []
     for match in _SENTENCE.finditer(text):
-        sentence = match.group(0).strip()
+        # zero-width characters are invisible padding some sites put before a sentence; the
+        # stripped text is still a verbatim part of the page
+        sentence = match.group(0).strip().lstrip(_INVISIBLE).strip()
         if not _reads_like_prose(sentence):
             continue  # menus and lists of links are not statements about the company
         for level, pool in (("stated", terms), ("related", related)):
