@@ -50,7 +50,13 @@ from northvaine.radar.models import (
     RejectedEntry,
     SkepticFinding,
 )
-from northvaine.radar.register import register_check
+from northvaine.radar.register import (
+    SeedProfile,
+    mark_likeness,
+    note_import_profile,
+    register_check,
+    seed_register_profiles,
+)
 
 __all__ = ["run_radar", "seeded_concepts"]
 
@@ -122,6 +128,7 @@ async def run_radar(
     session: Any = None,
     evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
     strategy: Any = None,  # radar.strategy.Strategy; Any keeps the database layer out
+    seeds: list[str] | None = None,  # D109: names of leads the client approved
 ) -> RadarRun:
     """Run the whole radar pipeline for one client and return the run record (D61).
     `evidence_out`, when given, receives every document read with its ledger result, so the
@@ -191,6 +198,19 @@ async def run_radar(
         evidence_out.extend(results)
     candidates, rejected = build_candidates(results, settings=settings)
     rejected = list(rejected)
+
+    def name_key(name: str) -> str:
+        return company_key(name, None, settings)
+
+    # Customers like yours (D109): the client's customers and approved leads are seeds. An import
+    # record is read before existing customers are filtered out; their names are never shown.
+    profiles: dict[str, SeedProfile] = {}
+    private = {name_key(n) for n in spec.existing_customers}
+    for name in [*spec.existing_customers, *(seeds or [])]:
+        key = name_key(name)
+        if key and key not in profiles:
+            profiles[key] = SeedProfile(name=name, key=key, private=key in private)
+    note_import_profile(profiles, candidates, name_key)
     # The client's current customers are never shown as new (D101). Matched on the name key
     # without country; only a count is noted, since the list is the client's own data.
     if spec.existing_customers:
@@ -207,6 +227,12 @@ async def run_radar(
     )
     rejected.extend(register_rejected)
     notes.extend(register_notes)
+    notes.extend(
+        await seed_register_profiles(
+            profiles, candidates, spec, http=http, key_of=name_key, settings=settings
+        )
+    )
+    candidates = mark_likeness(candidates, profiles, name_key)
 
     # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
     ordered = _gate_order(candidates, as_of.date())

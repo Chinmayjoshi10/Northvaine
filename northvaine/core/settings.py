@@ -211,6 +211,8 @@ class Settings(BaseSettings):
     onboarding_clients_dir: str = "reports/clients"
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
     radar_register_max_lookups: int = Field(default=200, ge=0)
+    # D109: customers and approved leads looked up at the register, at most this many.
+    radar_seed_max_lookups: int = Field(default=10, ge=0)
     # "Just changed" (D103): a new owner or a rename within this many days, or a company set up
     # within radar_new_company_days, marks a company that is setting up or reviewing its supply.
     radar_just_changed_days: int = Field(default=365, ge=1)

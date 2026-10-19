@@ -117,6 +117,18 @@ def read_feedback(base: Path, client: str) -> list[dict]:
     return rows
 
 
+def approved_leads(base: Path, client: str) -> list[str]:
+    """Company names the client marked "Approach them" (`accepted_for_contact`), judged by the
+    latest answer for each company (D109)."""
+    latest: dict[str, tuple[str, bool]] = {}
+    for row in read_feedback(base, client):
+        name = str(row.get("company") or "").strip()
+        answer = row.get("accepted_for_contact")
+        if name and isinstance(answer, bool):
+            latest[name.casefold()] = (name, answer)
+    return [name for name, accepted in latest.values() if accepted]
+
+
 def client_learning(base: Path, client: str, settings: Settings | None = None) -> Learning:
     """What a client's saved answers taught (D100), from the feedback file and the runs it
     answers. A run that is no longer on file is skipped, never guessed."""

@@ -308,6 +308,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_max_gate_candidates": 40,
     "radar_register_max_lookups": 40,
     "radar_fit_max_accounts": 5,  # D108
+    "radar_seed_max_lookups": 0,  # D109: no customer lookups
     "radar_fit_single_search": False,  # D108: two searches a company, rank order
 }
 
