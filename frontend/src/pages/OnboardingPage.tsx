@@ -61,6 +61,12 @@ function Field(props: {
   );
 }
 
+const CHANNELS: { value: OnboardingAnswers["channel"]; label: string }[] = [
+  { value: "direct", label: "End buyers (they use or install it)" },
+  { value: "distributors", label: "Distributors and stockists (they resell it)" },
+  { value: "both", label: "Both" },
+];
+
 function Answers({
   session,
   onDone,
@@ -78,6 +84,7 @@ function Answers({
   const [roleKeys, setRoleKeys] = useState<string[]>(roles.map((r) => r.key));
   const toggleRole = (key: string) =>
     setRoleKeys((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
+  const [channel, setChannel] = useState<OnboardingAnswers["channel"]>("both");
   const [customers, setCustomers] = useState("");
   const [hs, setHs] = useState(p.hs_codes.join(", "));
   const [cpv, setCpv] = useState(p.cpv_codes.join(", "));
@@ -98,6 +105,7 @@ function Answers({
       cpv_codes: lines(cpv),
       search_phrases: lines(phrases),
       existing_customers: lines(customers),
+      channel,
     });
   };
   return (
@@ -143,6 +151,20 @@ function Answers({
         rows={4}
         required
       />
+      <fieldset className="onb-roles">
+        <legend>Who do you sell to?</legend>
+        {CHANNELS.map((c) => (
+          <label key={c.value} className="onb-check">
+            <input
+              type="radio"
+              name="o-channel"
+              checked={channel === c.value}
+              onChange={() => setChannel(c.value)}
+            />
+            <span>{c.label}</span>
+          </label>
+        ))}
+      </fieldset>
       <Field
         id="o-not"
         label="Who is competition, not a buyer?"

@@ -154,7 +154,8 @@ async def gate_candidate(
 
     if out.verdict == "not_an_organisation":
         return _reject(RejectedAs.NOT_AN_ORGANISATION, NOT_AN_ORGANISATION_REASON, "llm")
-    if out.verdict != "buyer":
+    partner = out.verdict == "reseller" and spec.channel in ("distributors", "both")
+    if out.verdict != "buyer" and not partner:
         # A rejection's reason may lean on any claim, so it is checked against all of them.
         if not reason or not numbers_grounded(reason, [c.source_quote for c in candidate.claims]):
             reason = UNGROUNDED_REASON
@@ -176,4 +177,5 @@ async def gate_candidate(
         demand_reason=_guard(out.demand_reason, quotes),
         suggested_action=_guard(out.suggested_action, quotes),
         cited_refs=refs,
+        partner=partner,
     )

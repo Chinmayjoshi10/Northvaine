@@ -311,6 +311,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_seed_max_lookups": 0,  # D109: no customer lookups
     "radar_timing_max_lookups": 0,  # D111: no charge or address reads
     "radar_site_guess_max_companies": 0,  # D113: no guessed-site fetches
+    "radar_register_accounts_type": False,  # D116: no accounts-type claim
     "radar_link_by_register": False,  # D115: no merge by registration number, no reorder
     "radar_fit_single_search": False,  # D108: two searches a company, rank order
 }

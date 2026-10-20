@@ -256,6 +256,8 @@ class Settings(BaseSettings):
     # D115: candidates with the same company registration number are one company; non-trade
     # candidates are looked up first. Off replays older recordings unchanged.
     radar_link_by_register: bool = True
+    # D116: the type of the last filed accounts becomes a register claim (a size signal).
+    radar_register_accounts_type: bool = True
     # D109: customers and approved leads looked up at the register, at most this many.
     radar_seed_max_lookups: int = Field(default=10, ge=0)
     # D111: timing signals from free official records, read for at most this many UK companies,

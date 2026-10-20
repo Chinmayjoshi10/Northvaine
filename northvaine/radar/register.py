@@ -69,7 +69,7 @@ def _statement(line: str) -> str:
     return f"The company register states {label.lower()}: {value}" if value else line
 
 
-def _facts(record: RegisterRecord) -> RegisterFacts:
+def _facts(record: RegisterRecord, settings: Settings) -> RegisterFacts:
     renamed = [until for _, until in record.previous_names if until is not None]
     return RegisterFacts(
         number=record.number,
@@ -82,10 +82,15 @@ def _facts(record: RegisterRecord) -> RegisterFacts:
         control_changed_on=record.control_changed_on,
         charge_created_on=record.charge_created_on,
         office_moved_on=record.office_moved_on,
+        accounts_type=record.accounts_type if settings.radar_register_accounts_type else None,
     )
 
 
-def _with_register(candidate: Candidate, record: RegisterRecord, as_of: datetime) -> Candidate:
+def _with_register(
+    candidate: Candidate, record: RegisterRecord, as_of: datetime, settings: Settings
+) -> Candidate:
+    if not settings.radar_register_accounts_type:  # legacy replays: no accounts-type line
+        record = record.model_copy(update={"accounts_type": None})
     text = render_register_text(record)
     doc_id = uuid5(NAMESPACE_URL, f"{SOURCE}:{content_hash(text)}")
     claims = list(candidate.claims)
@@ -106,7 +111,9 @@ def _with_register(candidate: Candidate, record: RegisterRecord, as_of: datetime
                 upgraded_from=None,
             )
         )
-    return candidate.model_copy(update={"claims": claims, "company_register": _facts(record)})
+    return candidate.model_copy(
+        update={"claims": claims, "company_register": _facts(record, settings)}
+    )
 
 
 def _refs_starting(candidate: Candidate, prefix: str) -> list[str]:
@@ -307,7 +314,7 @@ async def _register_lookups(
         if candidate.key in timed:
             record, timing_notes = await client.timing(record)
             notes.extend(f"register check: {n}" for n in timing_notes)
-        checked = _with_register(candidate, record, as_of)
+        checked = _with_register(candidate, record, as_of, settings)
         decision = _code_rejection(checked, spec)
         if decision is not None:
             rejected.append(RejectedEntry(candidate=checked, gate=decision))

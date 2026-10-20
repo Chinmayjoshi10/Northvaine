@@ -34,6 +34,7 @@ __all__ = [
     "account_role",
     "contract_nature",
     "evidence_level",
+    "size_rank",
 ]
 
 AccountRole = Literal[
@@ -99,6 +100,27 @@ def contract_nature(
                 derived.add(nature)
                 break
     return _one(derived), True
+
+
+_SIZE_RANK = {
+    "dormant": 0,
+    "micro-entity": 1,
+    "small": 2,
+    "total-exemption-small": 2,
+    "total-exemption-full": 2,
+    "unaudited-abridged": 2,
+    "audited-abridged": 2,
+    "partial-exemption": 2,
+    "medium": 3,
+    "full": 3,
+    "group": 3,
+}
+
+
+def size_rank(accounts_type: str | None) -> int:
+    """Company size from the type of its last filed accounts (D116): dormant 0, micro 1, small
+    or exempt 2, medium, full or group 3. Not stated or unknown counts as micro (1)."""
+    return _SIZE_RANK.get((accounts_type or "").strip().lower(), 1)
 
 
 def account_role(candidate: Candidate, nature: str | None) -> AccountRole:

@@ -17,7 +17,13 @@ from typing import Any
 from northvaine.core.models import EventType, EvidenceKind
 from northvaine.core.settings import Settings, get_settings
 from northvaine.core.standards import iso2_to_name
-from northvaine.radar.account import LEVEL_ORDER, account_role, contract_nature, evidence_level
+from northvaine.radar.account import (
+    LEVEL_ORDER,
+    account_role,
+    contract_nature,
+    evidence_level,
+    size_rank,
+)
 from northvaine.radar.learning import Posteriors, learned_score
 from northvaine.radar.models import (
     Candidate,
@@ -448,6 +454,11 @@ def stream_words(candidate: Candidate) -> list[str]:
     return [STREAM_WORDS[s] for s in candidate.streams if s in STREAM_WORDS]
 
 
+def _partner_size(entry: RankedEntry) -> int:
+    facts = entry.candidate.company_register
+    return size_rank(facts.accounts_type if facts else None) if entry.gate.partner else 0
+
+
 def apply_fit_order(
     entries: list[RankedEntry],
     timing_days: int | None = None,
@@ -474,6 +485,7 @@ def apply_fit_order(
                 link and len(e.candidate.streams) < 2,  # D115: seen in 2+ kinds of source first
                 len(e.candidate.timing_signals) < 2,  # D111: two or more signals first
                 not e.candidate.like_customers,
+                -_partner_size(e),  # D116: possible distributors, larger first
             ),
         )
         for i, e in zip(positions, members, strict=True):
@@ -488,6 +500,10 @@ def apply_fit_order(
         if link and len(e.candidate.streams) >= 2:
             reasons.append(f"Sources: seen in {', '.join(stream_words(e.candidate))}")
         reasons.extend(e.candidate.like_customers)
+        if e.gate.partner:
+            facts = e.candidate.company_register
+            size = facts.accounts_type if facts and facts.accounts_type else "not stated"
+            reasons.append(f"Possible distributor: sells your kind of product; size: {size}")
         if e.candidate.timing_signals:
             reasons.append(
                 f"Timing: {len(e.candidate.timing_signals)} signals in the last {days} days"

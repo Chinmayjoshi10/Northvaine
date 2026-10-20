@@ -25,6 +25,9 @@ export interface Row {
   timing_signals?: string[];
   /** D115: kinds of source it was seen in, in plain words */
   sources_seen?: string[];
+  /** D116: sells your kind of product; may be a distributor for you */
+  possible_distributor?: boolean;
+  accounts_type?: string | null;
   status: string;
   company: string;
   country: string;
@@ -157,6 +160,8 @@ export interface Dossier {
   like_customers: string[];
   timing_signals?: string[];
   sources_seen?: string[];
+  possible_distributor?: boolean;
+  accounts_type?: string | null;
 }
 
 export const FAILURE_CHIPS = [
@@ -270,6 +275,8 @@ export interface OnboardingAnswers {
   cpv_codes: string[];
   search_phrases: string[];
   existing_customers: string[];
+  /** D116: who the client sells to */
+  channel: "direct" | "distributors" | "both";
 }
 
 /** Your business: what the radar was told about the client (read-only). */

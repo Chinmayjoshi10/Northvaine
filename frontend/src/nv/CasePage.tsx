@@ -281,6 +281,15 @@ function Case(props: {
 
           <div className="sec">
             <span className="caps">How to reach them · company only</span>
+            {d.possible_distributor && (
+              <p className="edlabel">
+                <span className="mono lab-chip">Possible distributor</span>
+                <span className="lab-why">
+                  A possible partner: it sells your kind of product. Decide whether it is a
+                  distributor for you or a competitor.
+                </span>
+              </p>
+            )}
             <div className="kv">
               <span className="caps">Buyer</span>
               <span>{d.who_buys ?? <span className="dash">not stated yet</span>}</span>

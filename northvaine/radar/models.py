@@ -97,6 +97,9 @@ class ClientSpec(NorthvaineModel):
     # "sic:49410". Data per client: a code that is never a buyer for one client can be the very
     # customer of another.
     not_buyer_codes: list[str] = Field(default_factory=list)
+    # Who the client sells to (D116): "direct" end buyers only (resellers are rejected, as before),
+    # "distributors" or "both" (a reseller of the offer passes as a possible distributor).
+    channel: Literal["direct", "distributors", "both"] = "direct"
 
 
 def load_client_spec(client_id: str, clients_dir: Path | None = None) -> ClientSpec:
@@ -150,6 +153,7 @@ class RegisterFacts(NorthvaineModel):
     control_changed_on: date | None = None
     charge_created_on: date | None = None  # D111
     office_moved_on: date | None = None  # D111
+    accounts_type: str | None = None  # D116: type of the last filed accounts, no figures
 
 
 class Candidate(NorthvaineModel):
@@ -182,6 +186,9 @@ class GateDecision(NorthvaineModel):
     demand_reason: str | None
     suggested_action: str | None
     cited_refs: list[str]
+    # D116: passed as a possible distributor (a reseller of the offer, for a client that sells
+    # through distributors). Set by code only.
+    partner: bool = False
 
     @model_validator(mode="after")
     def _passed_iff_not_rejected(self) -> GateDecision:

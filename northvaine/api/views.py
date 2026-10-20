@@ -63,6 +63,8 @@ class Row(BaseModel):
     back_in_motion: bool = False
     timing_signals: list[str] = []  # D111
     sources_seen: list[str] = []  # D115: plain words for the kinds of source
+    possible_distributor: bool = False  # D116
+    accounts_type: str | None = None  # D116: type of the last filed accounts
 
 
 class Funnel(BaseModel):
@@ -175,6 +177,8 @@ class Dossier(BaseModel):
     like_customers: list[str] = []
     timing_signals: list[str] = []  # D111
     sources_seen: list[str] = []  # D115
+    possible_distributor: bool = False  # D116
+    accounts_type: str | None = None  # D116
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -192,6 +196,11 @@ def _plain_name(candidate: Candidate) -> str:
 
 def _plain_what(candidate: Candidate) -> str:
     return _plain(brief._what(candidate))
+
+
+def _accounts_type(entry: RankedEntry) -> str | None:
+    facts = entry.candidate.company_register
+    return facts.accounts_type if facts else None
 
 
 def _row(entry: RankedEntry, today: date) -> Row:
@@ -216,6 +225,8 @@ def _row(entry: RankedEntry, today: date) -> Row:
         label_reason=entry.label_reason,
         timing_signals=list(c.timing_signals),
         sources_seen=brief.stream_words(c),
+        possible_distributor=entry.gate.partner,
+        accounts_type=_accounts_type(entry),
     )
 
 
@@ -461,6 +472,8 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         like_customers=list(entry.candidate.like_customers),
         timing_signals=list(entry.candidate.timing_signals),
         sources_seen=brief.stream_words(entry.candidate),
+        possible_distributor=gate.partner,
+        accounts_type=_accounts_type(entry),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

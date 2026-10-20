@@ -20,7 +20,7 @@ import re
 from datetime import date, timedelta
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlsplit
 
 from pydantic import Field, field_validator
@@ -107,6 +107,8 @@ class OnboardingAnswers(NorthvaineModel):
     cpv_codes: list[str] = Field(default_factory=list, max_length=10)
     search_phrases: list[str] = Field(default_factory=list, max_length=6)
     existing_customers: list[str] = Field(default_factory=list, max_length=200)
+    # D116: who the client sells to; new onboarding defaults to both end buyers and distributors
+    channel: Literal["direct", "distributors", "both"] = "both"
 
     @field_validator("not_buyer_roles")
     @classmethod
@@ -298,5 +300,6 @@ def build_client_spec(
             "not_buyer_codes": not_buyer_codes,
             "product_codes": [*hs, *cpv],
             "existing_customers": answers.existing_customers,
+            "channel": answers.channel,
         }
     )

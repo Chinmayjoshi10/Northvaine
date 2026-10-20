@@ -2,8 +2,10 @@
 
 Confirmed shapes (used in the 14-15 Oct field tests): `/search/companies?q=` lists matches with
 `company_number` and `title`; `/company/{n}` gives `company_name`, `company_status`,
-`date_of_creation`, `sic_codes` and `previous_company_names`; `/company/{n}/persons-with-
-significant-control` lists controllers with `kind`, `name`, `notified_on` and `ceased_on`.
+`date_of_creation`, `sic_codes` and `previous_company_names`, plus (D116)
+`accounts.last_accounts.type` (the kind of the last filed accounts, e.g. "micro-entity", "small",
+"full"; never a figure); `/company/{n}/persons-with-significant-control` lists controllers with
+`kind`, `name`, `notified_on` and `ceased_on`.
 Auth is HTTP Basic with the API key as the user name and an empty password.
 
 Timing reads (D111), for a company already found: `/company/{n}/charges` (per charge only
@@ -82,6 +84,7 @@ class RegisterRecord(NorthvaineModel):
     control_changed_on: date | None = None  # latest notification of any active controller
     charge_created_on: date | None = None  # D111: latest charge registered
     office_moved_on: date | None = None  # D111: latest registered-office change filed
+    accounts_type: str | None = None  # D116: type of the last filed accounts, nothing else
 
     @property
     def url(self) -> str:
@@ -112,6 +115,9 @@ def parse_record(profile: dict[str, Any], psc: dict[str, Any] | None) -> Registe
         kind = str(item.get("kind") or "")
         if kind.startswith(("corporate-entity", "legal-person")) and item.get("name"):
             controllers.append(Controller(name=str(item["name"]), since=when))
+    accounts = profile.get("accounts")
+    last = accounts.get("last_accounts") if isinstance(accounts, dict) else None
+    accounts_type = last.get("type") if isinstance(last, dict) else None
     return RegisterRecord(
         number=str(profile.get("company_number") or ""),
         name=str(profile.get("company_name") or ""),
@@ -121,6 +127,7 @@ def parse_record(profile: dict[str, Any], psc: dict[str, Any] | None) -> Registe
         previous_names=previous,
         controllers=controllers,
         control_changed_on=max(notified) if notified else None,
+        accounts_type=str(accounts_type) if accounts_type else None,
     )
 
 
@@ -165,6 +172,8 @@ def render_register_text(record: RegisterRecord) -> str:
         )
     if record.control_changed_on:
         lines.append(f"Control last notified: {record.control_changed_on.isoformat()}")
+    if record.accounts_type:
+        lines.append(f"Accounts type: {record.accounts_type}")
     if record.charge_created_on:
         lines.append(f"Charge registered: {record.charge_created_on.isoformat()}")
     if record.office_moved_on:
