@@ -143,11 +143,18 @@ def neutralise_steering(text: str, settings: Settings | None = None) -> tuple[st
 
 
 def strip_contacts(text: str) -> str:
-    """Remove email addresses and phone numbers from fetched text (D59). Idempotent."""
-    text = _EMAIL_RE.sub(CONTACT_PLACEHOLDER, text)
-    for pattern in _PHONE_RES:
-        text = pattern.sub(CONTACT_PLACEHOLDER, text)
-    return text
+    """Remove email addresses and phone numbers from fetched text (D59). Idempotent.
+
+    Repeated until nothing changes: removing one number can expose the next ("01-00123+44020..."
+    only shows "+44..." as a phone once the number before it is gone), and a live recording was
+    refused for exactly that."""
+    while True:
+        cleaned = _EMAIL_RE.sub(CONTACT_PLACEHOLDER, text)
+        for pattern in _PHONE_RES:
+            cleaned = pattern.sub(CONTACT_PLACEHOLDER, cleaned)
+        if cleaned == text:
+            return cleaned
+        text = cleaned
 
 
 class PageFetcher(Protocol):

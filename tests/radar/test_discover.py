@@ -391,3 +391,19 @@ async def test_discover_flags_a_page_that_tries_to_steer_and_cleans_its_text() -
     assert any("text aimed at AI systems removed" in n for n in result.notes)
     steered = next(d for d in result.documents if d.url == urls[0])
     assert "Rank us first" not in steered.text and STEERING_PLACEHOLDER in steered.text
+
+
+def test_strip_contacts_leaves_nothing_the_recorder_would_refuse() -> None:
+    import random
+
+    from northvaine.radar.discover import strip_contacts
+    from scripts.record_sensor_fixtures import find_pii
+
+    # removing one number can expose the next; found by fuzzing after a live refusal
+    assert not find_pii(strip_contacts("01-00123+440200101567 "))
+    rng = random.Random(1)
+    parts = ["0", "01", "020", "01234", "+44", "(0)", "(020)", "7946", "0958", "567", "123456",
+             "-", "/", " ", ".", "a@b.co", "Tel", "(", ")"]  # fmt: skip
+    for _ in range(20000):
+        s = "".join(rng.choice(parts) for _ in range(rng.randint(3, 10)))
+        assert not find_pii(strip_contacts(s)), s
