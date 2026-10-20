@@ -23,6 +23,8 @@ export interface Row {
   back_in_motion?: boolean;
   /** D111: timing signals dated in the last months */
   timing_signals?: string[];
+  /** D115: kinds of source it was seen in, in plain words */
+  sources_seen?: string[];
   status: string;
   company: string;
   country: string;
@@ -154,6 +156,7 @@ export interface Dossier {
   company_contact: { email: string | null; phone: string | null; url: string } | null;
   like_customers: string[];
   timing_signals?: string[];
+  sources_seen?: string[];
 }
 
 export const FAILURE_CHIPS = [

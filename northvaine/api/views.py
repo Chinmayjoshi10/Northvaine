@@ -62,6 +62,7 @@ class Row(BaseModel):
     developments: list[str] = []
     back_in_motion: bool = False
     timing_signals: list[str] = []  # D111
+    sources_seen: list[str] = []  # D115: plain words for the kinds of source
 
 
 class Funnel(BaseModel):
@@ -173,6 +174,7 @@ class Dossier(BaseModel):
     company_contact: CompanyContactView | None = None
     like_customers: list[str] = []
     timing_signals: list[str] = []  # D111
+    sources_seen: list[str] = []  # D115
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -213,6 +215,7 @@ def _row(entry: RankedEntry, today: date) -> Row:
         label=entry.label,
         label_reason=entry.label_reason,
         timing_signals=list(c.timing_signals),
+        sources_seen=brief.stream_words(c),
     )
 
 
@@ -457,6 +460,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         site_proof=entry.site_proof,
         like_customers=list(entry.candidate.like_customers),
         timing_signals=list(entry.candidate.timing_signals),
+        sources_seen=brief.stream_words(entry.candidate),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

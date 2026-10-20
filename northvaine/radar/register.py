@@ -22,9 +22,11 @@ from uuid import NAMESPACE_URL, uuid5
 
 from northvaine.core.models import EvidenceKind
 from northvaine.core.settings import Settings
+from northvaine.radar.entities import _PRIMARY_ORDER
 from northvaine.radar.models import (
     Candidate,
     CandidateClaim,
+    CandidateEvent,
     ClientSpec,
     GateDecision,
     RadarStream,
@@ -46,6 +48,7 @@ __all__ = [
     "SeedProfile",
     "mark_likeness",
     "mark_timing",
+    "merge_by_register",
     "note_import_profile",
     "product_families",
     "register_check",
@@ -178,7 +181,87 @@ async def register_check(
     kept, rejected, notes = await _register_lookups(
         candidates, spec, http=http, as_of=as_of, settings=settings
     )
+    if settings.radar_link_by_register:
+        kept, absorbed = merge_by_register(kept)
+        if absorbed:
+            notes.append(f"linked {absorbed} companies across sources by registration number")
     return mark_timing(kept, as_of, settings), rejected, notes
+
+
+def _renumbered(
+    merged: list[CandidateClaim], group: list[Candidate]
+) -> tuple[list[CandidateClaim], list[CandidateEvent]]:
+    """The primary's claims then the others', refs continuing (C1..) and event refs remapped. A
+    claim already present (same fingerprint, e.g. the shared register lines) is not repeated."""
+    by_fp = {k.fingerprint: k.ref for k in merged}
+    events = list(group[0].events)
+    seen_events = {e.fingerprint for e in events}
+    for other in group[1:]:
+        remap: dict[str, str] = {}
+        for k in other.claims:
+            existing = by_fp.get(k.fingerprint)
+            if existing is None:
+                existing = f"C{len(merged) + 1}"
+                merged.append(k.model_copy(update={"ref": existing}))
+                by_fp[k.fingerprint] = existing
+            remap[k.ref] = existing
+        for e in other.events:
+            if e.fingerprint in seen_events:
+                continue
+            seen_events.add(e.fingerprint)
+            refs = [remap.get(r, r) for r in e.claim_refs]
+            events.append(e.model_copy(update={"claim_refs": list(dict.fromkeys(refs))}))
+    return merged, events
+
+
+def _union(*lists: list[str]) -> list[str]:
+    return list(dict.fromkeys(x for items in lists for x in items))
+
+
+def _merge_group(group: list[Candidate]) -> Candidate:
+    trade = [c for c in group if c.stream == RadarStream.TRADE]
+    primary = trade[0] if trade else max(group, key=lambda c: len(c.claims))
+    ordered = [primary] + [c for c in group if c is not primary]
+    claims, events = _renumbered(list(primary.claims), ordered)
+    starts = [c.window_start for c in ordered if c.window_start is not None]
+    ends = [c.window_end for c in ordered if c.window_end is not None]
+    streams = {s for c in ordered for s in c.streams}
+    return primary.model_copy(
+        update={
+            "aliases": _union(primary.aliases, *([c.name, *c.aliases] for c in ordered[1:])),
+            "claims": claims,
+            "events": events,
+            "streams": [s for s in _PRIMARY_ORDER if s in streams],
+            "window_start": min(starts) if starts else None,
+            "window_end": max(ends) if ends else None,
+            "like_customers": _union(*(c.like_customers for c in ordered)),
+            "timing_signals": _union(*(c.timing_signals for c in ordered)),
+        }
+    )
+
+
+def merge_by_register(candidates: list[Candidate]) -> tuple[list[Candidate], int]:
+    """D115: candidates with the same registration number are one company. (candidates, how many
+    were merged into another). The merged one takes the first member's place; every claim keeps
+    its own document and verified quote. Code only."""
+    groups: dict[str, list[Candidate]] = {}
+    for c in candidates:
+        if c.company_register is not None and c.company_register.number:
+            groups.setdefault(c.company_register.number, []).append(c)
+    merged_for: dict[int, Candidate | None] = {}
+    absorbed = 0
+    for group in groups.values():
+        if len(group) < 2:
+            continue
+        merged = _merge_group(group)
+        merged_for[id(group[0])] = merged
+        for c in group[1:]:
+            merged_for[id(c)] = None
+        absorbed += len(group) - 1
+    if not absorbed:
+        return candidates, 0
+    out = [merged_for.get(id(c), c) for c in candidates]
+    return [c for c in out if c is not None], absorbed
 
 
 async def _register_lookups(
@@ -193,8 +276,13 @@ async def _register_lookups(
         return candidates, [], []
     client = CompaniesHouseClient(client=http, settings=settings)
     uk = [c for c in candidates if c.country == REGISTER_COUNTRY]
-    # Proven buyers from trade records first: the register matters most for them.
-    uk.sort(key=lambda c: (c.stream != RadarStream.TRADE, c.key))
+    if settings.radar_link_by_register:
+        # D115: awards, tenders and announcements are few and are looked up first, so a trade
+        # list cannot use up the cap before a contract winner is reached.
+        uk.sort(key=lambda c: (c.stream == RadarStream.TRADE, c.key))
+    else:
+        # Proven buyers from trade records first: the register matters most for them.
+        uk.sort(key=lambda c: (c.stream != RadarStream.TRADE, c.key))
     chosen = {c.key for c in uk[: settings.radar_register_max_lookups]}
     timed = {c.key for c in uk[: settings.radar_timing_max_lookups]}  # D111, same order
     kept: list[Candidate] = []

@@ -253,6 +253,9 @@ class Settings(BaseSettings):
     onboarding_clients_dir: str = "reports/clients"
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
     radar_register_max_lookups: int = Field(default=200, ge=0)
+    # D115: candidates with the same company registration number are one company; non-trade
+    # candidates are looked up first. Off replays older recordings unchanged.
+    radar_link_by_register: bool = True
     # D109: customers and approved leads looked up at the register, at most this many.
     radar_seed_max_lookups: int = Field(default=10, ge=0)
     # D111: timing signals from free official records, read for at most this many UK companies,

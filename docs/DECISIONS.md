@@ -1149,3 +1149,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - A host is accepted only when its home page, or its `/contact` page, carries the company's registration number or its full registered name. The proof is kept (`site_proof`) and shown on the case page.
   - Up to `radar_site_guess_max_companies` (60) companies are tried, `radar_gate_concurrency` at a time. Tavily covers only the companies still without a site, within its cap. Run notes give counts only. No model call.
   - Older recordings replay unchanged: `radar_site_guess_max_companies` is pinned to 0.
+
+- **D115 — Link the same company across sources by its registration number (21 Oct).** The same company appears under different spellings in customs records, contract awards and news, so its events never met.
+  - After the register lookups and before the gate, candidates with the same Companies House number become one (`merge_by_register`, code only): the trade candidate is primary (else the one with most claims), the others' names become aliases, their claims follow the primary's (refs renumbered, event refs remapped, shared register lines not repeated), events, streams, likeness and timing signals are unioned, and the window spans both. Every claim keeps its own document and verified quote.
+  - Awards, tenders and announcements are looked up before trade importers under the lookup cap, so a contract winner is not left out by a long importer list.
+  - Within an evidence level the order is fit group, then seen in two or more kinds of source, then timing (D111), then likeness (D109). The API gives `sources_seen`; the app shows a "2 SOURCES" tag and "Seen in" on the case page.
+  - Older recordings replay unchanged: `radar_link_by_register` is pinned to False (no reorder, no merge, no ranking change). No model call, no search.

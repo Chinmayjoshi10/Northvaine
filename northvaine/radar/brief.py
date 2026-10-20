@@ -435,15 +435,32 @@ def _fit_group(entry: RankedEntry) -> int:
     return 2
 
 
+STREAM_WORDS = {
+    RadarStream.TRADE: "import records",
+    RadarStream.AWARD: "contract award",
+    RadarStream.TENDER: "tender",
+    RadarStream.ANNOUNCEMENT: "news",
+}
+
+
+def stream_words(candidate: Candidate) -> list[str]:
+    """Plain words for the kinds of source a company was seen in (D115)."""
+    return [STREAM_WORDS[s] for s in candidate.streams if s in STREAM_WORDS]
+
+
 def apply_fit_order(
-    entries: list[RankedEntry], timing_days: int | None = None
+    entries: list[RankedEntry],
+    timing_days: int | None = None,
+    link_sources: bool | None = None,
 ) -> list[RankedEntry]:
     """Company fit moves the ranking (D108), but only within an evidence level.
 
     Each evidence level keeps the positions it already holds; inside those positions the entries
     are put in a stable order: stated fit, related fit, then the rest in their earlier order.
     Then `rank` is renumbered 1..n and the reason is added to `rank_reasons`."""
-    days = timing_days if timing_days is not None else get_settings().radar_timing_days
+    settings = get_settings()
+    days = timing_days if timing_days is not None else settings.radar_timing_days
+    link = link_sources if link_sources is not None else settings.radar_link_by_register
     ordered = sorted(entries, key=lambda e: e.rank)
     slots: dict[str | None, list[int]] = {}
     for i, e in enumerate(ordered):
@@ -454,6 +471,7 @@ def apply_fit_order(
             (ordered[i] for i in positions),
             key=lambda e: (
                 _fit_group(e),
+                link and len(e.candidate.streams) < 2,  # D115: seen in 2+ kinds of source first
                 len(e.candidate.timing_signals) < 2,  # D111: two or more signals first
                 not e.candidate.like_customers,
             ),
@@ -467,6 +485,8 @@ def apply_fit_order(
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
         elif e.company_site is not None:
             reasons.append("Company fit: its own site does not name what you sell")
+        if link and len(e.candidate.streams) >= 2:
+            reasons.append(f"Sources: seen in {', '.join(stream_words(e.candidate))}")
         reasons.extend(e.candidate.like_customers)
         if e.candidate.timing_signals:
             reasons.append(
