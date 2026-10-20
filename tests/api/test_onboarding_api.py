@@ -122,3 +122,10 @@ async def test_answers_write_the_spec_and_run(
     body = await wait_for(client, sid, "failed")
     assert ran == ["example_test"] and "stopped" in body["error"]
     get_settings.cache_clear()
+
+
+async def test_session_offers_the_not_buyer_roles(client: AsyncClient) -> None:
+    body = (await client.post("/api/onboarding", json=START)).json()
+    roles = body["not_buyer_roles"]
+    assert [r["key"] for r in roles] == ["haulage_forwarding", "warehousing", "cargo_handling"]
+    assert all(r["label"] for r in roles)

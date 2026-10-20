@@ -15,12 +15,15 @@ Trust rules:
 from __future__ import annotations
 
 import io
+import json
 import re
 from datetime import date, timedelta
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from northvaine.brain.budget import RunContext
 from northvaine.brain.fencing import Untrusted
@@ -34,11 +37,13 @@ from northvaine.radar.models import ClientSpec
 
 __all__ = [
     "CatalogueRead",
+    "IntermediaryRole",
     "OnboardingAnswers",
     "Proposal",
     "build_client_spec",
     "clean_text",
     "client_id_for",
+    "intermediary_roles",
     "propose",
     "read_catalogue",
     "verify_proposal",
@@ -46,6 +51,22 @@ __all__ = [
 
 _HS = re.compile(r"^\d{6}$")
 _CPV = re.compile(r"^\d{8}$")
+_ROLES_FILE = Path(__file__).resolve().parent.parent / "data" / "intermediary_roles.json"
+
+
+class IntermediaryRole(NorthvaineModel):
+    """A kind of firm that moves, clears or stores other people's goods, with its official
+    activity codes (UK SIC 2007). Offered as a pre-ticked "not a buyer" option (D114)."""
+
+    key: str
+    label: str
+    sic: list[str]
+
+
+@lru_cache(maxsize=1)
+def intermediary_roles() -> tuple[IntermediaryRole, ...]:
+    raw = json.loads(_ROLES_FILE.read_text(encoding="utf-8"))
+    return tuple(IntermediaryRole.model_validate(r) for r in raw)
 
 
 class ProposalOut(NorthvaineModel):
@@ -79,10 +100,22 @@ class OnboardingAnswers(NorthvaineModel):
     markets: list[str] = Field(min_length=1, max_length=30)
     buyer_roles: list[str] = Field(min_length=1, max_length=12)
     not_buyers: list[str] = Field(default_factory=list, max_length=8)
+    not_buyer_roles: list[str] = Field(
+        default_factory=lambda: [r.key for r in intermediary_roles()], max_length=10
+    )
     hs_codes: list[str] = Field(default_factory=list, max_length=12)
     cpv_codes: list[str] = Field(default_factory=list, max_length=10)
     search_phrases: list[str] = Field(default_factory=list, max_length=6)
     existing_customers: list[str] = Field(default_factory=list, max_length=200)
+
+    @field_validator("not_buyer_roles")
+    @classmethod
+    def _known_roles(cls, keys: list[str]) -> list[str]:
+        known = {r.key for r in intermediary_roles()}
+        bad = [k for k in keys if k not in known]
+        if bad:
+            raise ValueError(f"unknown not_buyer_roles: {', '.join(bad)}")
+        return list(dict.fromkeys(keys))
 
 
 class CatalogueRead(NorthvaineModel):
@@ -247,6 +280,10 @@ def build_client_spec(
             for phrase in answers.search_phrases[:3]
             for market in markets[:2]
         ][:6]
+    chosen = set(answers.not_buyer_roles)
+    not_buyer_codes = sorted(
+        {f"sic:{code}" for role in intermediary_roles() if role.key in chosen for code in role.sic}
+    )
     return ClientSpec.model_validate(
         {
             "id": client_id,
@@ -258,6 +295,7 @@ def build_client_spec(
             "related_terms": answers.related_terms,
             "buyer_roles": answers.buyer_roles,
             "not_buyers": answers.not_buyers,
+            "not_buyer_codes": not_buyer_codes,
             "product_codes": [*hs, *cpv],
             "existing_customers": answers.existing_customers,
         }

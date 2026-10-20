@@ -4,7 +4,12 @@ from confirmed answers. Invented business; no network, no model."""
 from __future__ import annotations
 
 import io
+import json
 from datetime import date
+from pathlib import Path
+
+import pytest
+from pydantic import ValidationError
 
 from northvaine.core.settings import Settings
 from northvaine.radar.onboarding import (
@@ -13,6 +18,7 @@ from northvaine.radar.onboarding import (
     build_client_spec,
     clean_text,
     client_id_for,
+    intermediary_roles,
     read_catalogue,
     verify_proposal,
 )
@@ -115,3 +121,40 @@ def test_catalogue_text_is_read_and_short_text_is_flagged() -> None:
     read = read_catalogue(_pdf("Cast iron garden benches"), SETTINGS)
     assert read.pages == 1 and "garden benches" in read.text
     assert read.readable is False  # far under 200 characters per page: mostly images
+
+
+def test_intermediary_roles_file_is_well_formed() -> None:
+    import northvaine.radar.onboarding as mod
+
+    raw = json.loads(Path(mod._ROLES_FILE).read_text(encoding="utf-8"))
+    keys = [r["key"] for r in raw]
+    assert len(keys) == len(set(keys)) == 3
+    for role in raw:
+        assert role["label"] and role["sic"]
+        assert all(len(c) == 5 and c.isdigit() for c in role["sic"])
+    assert [r.key for r in intermediary_roles()] == keys
+
+
+def test_default_roles_fill_not_buyer_codes() -> None:
+    spec = build_client_spec(ANSWERS, client_id="example_test", today=date(2026, 10, 16))
+    expected = sorted(f"sic:{c}" for r in intermediary_roles() for c in r.sic)
+    assert spec.not_buyer_codes == expected
+    assert "sic:52101" in spec.not_buyer_codes and "sic:49410" in spec.not_buyer_codes
+
+
+def test_unticking_a_role_removes_its_codes() -> None:
+    answers = ANSWERS.model_copy(
+        update={"not_buyer_roles": ["haulage_forwarding", "cargo_handling"]}
+    )
+    spec = build_client_spec(answers, client_id="example_test", today=date(2026, 10, 16))
+    assert "sic:52101" not in spec.not_buyer_codes
+    assert "sic:49410" in spec.not_buyer_codes and "sic:52241" in spec.not_buyer_codes
+    none = ANSWERS.model_copy(update={"not_buyer_roles": []})
+    assert build_client_spec(none, client_id="x", today=date(2026, 10, 16)).not_buyer_codes == []
+
+
+def test_unknown_role_key_is_rejected() -> None:
+    data = ANSWERS.model_dump()
+    data["not_buyer_roles"] = ["warehousing", "made_up"]
+    with pytest.raises(ValidationError):
+        OnboardingAnswers.model_validate(data)

@@ -249,6 +249,8 @@ export interface OnboardingSession {
   client_id: string | null;
   error: string | null;
   notes: string[];
+  /** D114: kinds of firm that only move, clear or store goods; offered pre-ticked */
+  not_buyer_roles: { key: string; label: string }[];
 }
 
 export interface OnboardingAnswers {
@@ -260,6 +262,7 @@ export interface OnboardingAnswers {
   markets: string[];
   buyer_roles: string[];
   not_buyers: string[];
+  not_buyer_roles: string[];
   hs_codes: string[];
   cpv_codes: string[];
   search_phrases: string[];

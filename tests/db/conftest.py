@@ -105,9 +105,7 @@ async def _capture_seed(url: str) -> None:
                 )
             )
             for (table,) in rows.all():
-                present = (
-                    await conn.execute(text(f'SELECT * FROM "{table}"'))
-                ).mappings().all()
+                present = (await conn.execute(text(f'SELECT * FROM "{table}"'))).mappings().all()
                 if present:
                     _SEED[table] = [dict(row) for row in present]
     finally:
@@ -147,9 +145,7 @@ async def _truncate_all(url: str) -> None:
             )
             tables = [f'"{r[0]}"' for r in rows]
             if tables:
-                await conn.execute(
-                    text(f"TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE")
-                )
+                await conn.execute(text(f"TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE"))
             await _restore_seed(conn)
     finally:
         await engine.dispose()

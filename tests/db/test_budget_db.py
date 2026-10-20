@@ -73,13 +73,17 @@ def test_record_call_writes_a_real_row(migrated_url: str) -> None:
             prompt_version="smoke_ping.v1",
         )
         row = (
-            await conn.execute(
-                text(
-                    "SELECT model, purpose, input_tokens, output_tokens, cost_usd, ok, "
-                    "run_id, prompt_version, latency_ms, error, provider FROM llm_calls"
+            (
+                await conn.execute(
+                    text(
+                        "SELECT model, purpose, input_tokens, output_tokens, cost_usd, ok, "
+                        "run_id, prompt_version, latency_ms, error, provider FROM llm_calls"
+                    )
                 )
             )
-        ).mappings().one()
+            .mappings()
+            .one()
+        )
         return dict(row)
 
     row = run(migrated_url, work)
@@ -107,10 +111,10 @@ def test_a_failed_attempt_records_zero_cost_and_null_tokens(migrated_url: str) -
             latency_ms=30_000,
         )
         row = (
-            await conn.execute(
-                text("SELECT cost_usd, ok, input_tokens, error FROM llm_calls")
-            )
-        ).mappings().one()
+            (await conn.execute(text("SELECT cost_usd, ok, input_tokens, error FROM llm_calls")))
+            .mappings()
+            .one()
+        )
         return dict(row)
 
     row = run(migrated_url, work)
@@ -178,9 +182,7 @@ def test_the_sums_are_zero_not_null_on_an_empty_table(migrated_url: str) -> None
 
     async def work(conn: AsyncConnection) -> tuple[object, object]:
         start, end = utc_day_bounds(datetime.now(UTC))
-        day = await conn.execute(
-            text(DAY_SUM), {"start": start, "end": end, "workspace_id": None}
-        )
+        day = await conn.execute(text(DAY_SUM), {"start": start, "end": end, "workspace_id": None})
         total = await conn.execute(text(TOTAL_SUM))
         return day.scalar_one(), total.scalar_one()
 

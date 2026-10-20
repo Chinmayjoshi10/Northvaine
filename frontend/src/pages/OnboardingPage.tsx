@@ -74,6 +74,10 @@ function Answers({
   const [markets, setMarkets] = useState(p.markets.join(", "));
   const [buyers, setBuyers] = useState(p.buyer_roles.join("\n"));
   const [notBuyers, setNotBuyers] = useState(p.not_buyers.join("\n"));
+  const roles = session.not_buyer_roles ?? [];
+  const [roleKeys, setRoleKeys] = useState<string[]>(roles.map((r) => r.key));
+  const toggleRole = (key: string) =>
+    setRoleKeys((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
   const [customers, setCustomers] = useState("");
   const [hs, setHs] = useState(p.hs_codes.join(", "));
   const [cpv, setCpv] = useState(p.cpv_codes.join(", "));
@@ -89,6 +93,7 @@ function Answers({
       markets: lines(markets).map((m) => m.toUpperCase()),
       buyer_roles: lines(buyers),
       not_buyers: lines(notBuyers),
+      not_buyer_roles: roleKeys,
       hs_codes: lines(hs),
       cpv_codes: lines(cpv),
       search_phrases: lines(phrases),
@@ -146,6 +151,24 @@ function Answers({
         onChange={setNotBuyers}
         rows={2}
       />
+      {roles.length > 0 && (
+        <fieldset className="onb-roles">
+          <legend>Firms that only handle goods for others</legend>
+          <p className="onb-hint">
+            Companies that only move, clear or store goods for others. Untick if they buy from you.
+          </p>
+          {roles.map((r) => (
+            <label key={r.key} className="onb-check">
+              <input
+                type="checkbox"
+                checked={roleKeys.includes(r.key)}
+                onChange={() => toggleRole(r.key)}
+              />
+              <span>{r.label}</span>
+            </label>
+          ))}
+        </fieldset>
+      )}
       <Field
         id="o-customers"
         label="Current customers to leave out (optional)"

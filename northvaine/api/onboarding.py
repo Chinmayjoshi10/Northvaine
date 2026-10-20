@@ -34,6 +34,7 @@ from northvaine.radar.onboarding import (
     build_client_spec,
     clean_text,
     client_id_for,
+    intermediary_roles,
     propose,
     read_catalogue,
 )
@@ -66,6 +67,15 @@ class Catalogue(NorthvaineModel):
     readable: bool
 
 
+class RoleOption(NorthvaineModel):
+    key: str
+    label: str
+
+
+def _role_options() -> list[RoleOption]:
+    return [RoleOption(key=r.key, label=r.label) for r in intermediary_roles()]
+
+
 class Session(NorthvaineModel):
     id: str
     company: str
@@ -77,6 +87,7 @@ class Session(NorthvaineModel):
     client_id: str | None = None
     error: str | None = None
     notes: list[str] = Field(default_factory=list)
+    not_buyer_roles: list[RoleOption] = Field(default_factory=_role_options)
     created_at: str
 
 

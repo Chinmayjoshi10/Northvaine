@@ -1,0 +1,17 @@
+[
+  {
+    "key": "haulage_forwarding",
+    "label": "Hauliers and freight forwarders (including customs agents)",
+    "sic": ["49410", "52211", "52219", "52290"]
+  },
+  {
+    "key": "warehousing",
+    "label": "Warehousing and storage firms",
+    "sic": ["52101", "52102", "52103"]
+  },
+  {
+    "key": "cargo_handling",
+    "label": "Cargo handling and port services",
+    "sic": ["52241", "52242", "52243"]
+  }
+]

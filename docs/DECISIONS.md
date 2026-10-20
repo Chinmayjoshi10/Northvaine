@@ -1149,3 +1149,7 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - A host is accepted only when its home page, or its `/contact` page, carries the company's registration number or its full registered name. The proof is kept (`site_proof`) and shown on the case page.
   - Up to `radar_site_guess_max_companies` (60) companies are tried, `radar_gate_concurrency` at a time. Tavily covers only the companies still without a site, within its cap. Run notes give counts only. No model call.
   - Older recordings replay unchanged: `radar_site_guess_max_companies` is pinned to 0.
+
+- **D114 — Onboarding fills the client's non-buyer activity codes (21 Oct).** The register check (D103) was off for every client because nothing filled `not_buyer_codes`; a warehousing firm reached a test client's #7.
+  - Onboarding offers three pre-ticked logistics roles (hauliers and forwarders including customs agents; warehousing and storage; cargo handling and port services). Each is a list of UK SIC 2007 codes in `northvaine/data/intermediary_roles.json`. The person unticks a role if those firms buy from them; the spec gets the codes of the ticked roles as `sic:<code>`. No model call.
+  - Lead quality F (distributors, row 8b) and E (investigating agent, row 13) move to after the hackathon. WOS already counts distributors, and E enriches leads but does not find new ones. 21-22 Oct go to this, to linking companies across sources by registration number, and to lead quality on a second, non-stone client.

@@ -286,6 +286,10 @@
 .onb-hint { margin: -2px 0 2px; color: var(--dim); font-size: 13px; line-height: 1.45; }
 .onb-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 .onb-row .landing-btn { margin-top: 0; }
+.onb-roles { border: 0; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; }
+.onb-roles legend { font: 500 13px var(--sans); color: var(--ink); padding: 0; margin-bottom: 4px; }
+.contact-form label.onb-check { display: flex; align-items: center; gap: 10px; min-height: 44px; margin: 0; font: 15px var(--sans); cursor: pointer; }
+.onb-check input { width: 22px; height: 22px; flex: none; margin: 0; padding: 0; }
 .onb-more { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 14px; margin-top: 10px; background: var(--raised); }
 .onb-more summary { cursor: pointer; font: 500 13.5px var(--sans); }
 .onb-more[open] { display: grid; gap: 8px; }
