@@ -310,6 +310,14 @@ function Case(props: {
                   </span>
                 </>
               )}
+              {(d.matched_lines ?? []).length > 0 && (
+                <>
+                  <span className="caps">Catalogue</span>
+                  <span>
+                    Matches your catalogue lines: {(d.matched_lines ?? []).join(", ")}
+                  </span>
+                </>
+              )}
               {d.company_contact?.email && (
                 <>
                   <span className="caps">Email</span>

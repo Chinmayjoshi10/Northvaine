@@ -14,6 +14,8 @@ export interface Row {
   /** D103: act_now | just_changed | account_to_work, and the fact behind it */
   label?: string | null;
   label_reason?: string | null;
+  /** D118: the client's catalogue lines this account matches, most important first */
+  matched_lines?: string[];
   /** also briefed in the client's previous run */
   returning?: boolean;
   /** D110: watching over time, against all earlier runs */
@@ -156,6 +158,7 @@ export interface Dossier {
   decision_line: string;
   company_site: string | null;
   site_proof: string | null;
+  matched_lines?: string[];
   company_contact: { email: string | null; phone: string | null; url: string } | null;
   like_customers: string[];
   timing_signals?: string[];

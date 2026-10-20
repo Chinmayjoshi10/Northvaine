@@ -110,6 +110,8 @@ SHAPING_SETTINGS = (
     "radar_link_by_register",  # D115
     "radar_register_accounts_type",  # D116
     "radar_investigate_top",  # D117
+    "radar_fit_distinctive",  # D118
+    "radar_fit_common_share",
     "radar_investigate_max_searches",
     "fit_contact_role_words",
 )

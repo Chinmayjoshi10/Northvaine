@@ -284,6 +284,12 @@ class Settings(BaseSettings):
     # Also read the company's own about pages (/about-us, /about): free fetches (D113 review).
     radar_fit_about_pages: bool = True
     radar_fit_quotes: int = Field(default=3, ge=1)
+    # D118: an offer term named on the sites of more than this share of the companies with a fit
+    # is common in the run; the others are distinctive and their quotes are kept first.
+    radar_fit_common_share: float = Field(default=0.3, gt=0, le=1)
+    radar_fit_distinctive: bool = (
+        True  # False: the quote choice and order of recordings before D118
+    )
     radar_fit_min_token: int = Field(default=4, ge=2)
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).

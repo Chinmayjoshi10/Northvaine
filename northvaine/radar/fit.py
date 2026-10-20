@@ -126,10 +126,28 @@ def _reads_like_prose(sentence: str) -> bool:
     return capitalised <= len(words) * 0.4
 
 
+def named_terms(text: str, terms: set[str]) -> set[str]:
+    """The offer terms named by at least one prose sentence of `text` (D118)."""
+    named: set[str] = set()
+    for match in _SENTENCE.finditer(text):
+        sentence = match.group(0).strip().lstrip(_INVISIBLE).strip()
+        if _reads_like_prose(sentence):
+            named |= {t for t in terms if names_term(sentence, {t}, prefix=True)}
+    return named
+
+
 def fit_sentences(
-    text: str, terms: set[str], related: set[str], *, limit: int
+    text: str,
+    terms: set[str],
+    related: set[str],
+    *,
+    limit: int,
+    prefer: set[str] | None = None,
 ) -> list[tuple[str, str, Literal["stated", "related"]]]:
-    """(sentence, term, level) for sentences naming an offer term (stated) or a related term."""
+    """(sentence, term, level) for sentences naming an offer term (stated) or a related term.
+
+    With `prefer` (D118: the distinctive terms of the run), sentences naming one of them are kept
+    before the others, still at most `limit`."""
     found: list[tuple[str, str, Literal["stated", "related"]]] = []
     for match in _SENTENCE.finditer(text):
         # zero-width characters are invisible padding some sites put before a sentence; the
@@ -138,13 +156,17 @@ def fit_sentences(
         if not _reads_like_prose(sentence):
             continue  # menus and lists of links are not statements about the company
         for level, pool in (("stated", terms), ("related", related)):
-            hit = next((t for t in sorted(pool) if names_term(sentence, {t}, prefix=True)), None)
-            if hit is not None:
-                found.append((sentence, hit, level))  # type: ignore[arg-type]
+            hits = [t for t in sorted(pool) if names_term(sentence, {t}, prefix=True)]
+            if prefer and level == "stated":
+                hits.sort(key=lambda t: t not in prefer)  # stable: a preferred term first
+            if hits:
+                found.append((sentence, hits[0], level))  # type: ignore[arg-type]
                 break
-        if len(found) >= limit:
+        if not prefer and len(found) >= limit:
             break
-    return found
+    if prefer:
+        found.sort(key=lambda f: not (f[2] == "stated" and f[1] in prefer))  # stable
+    return found[:limit]
 
 
 def _eligible(entry: RankedEntry) -> bool:
@@ -338,6 +360,7 @@ async def company_fit(
     by_search = 0
     proof_for: dict[int, str] = {}
     out: list[RankedEntry] = []
+    pending: list[tuple[int, RankedEntry, str, list[tuple[EvidenceDocument, str]], Any]] = []
     for entry in entries:
         if id(entry) not in chosen:
             out.append(entry)
@@ -414,7 +437,7 @@ async def company_fit(
             root = f"https://{urlsplit(site).hostname}"
             lead_urls = list(dict.fromkeys([*lead_urls, f"{root}/about-us", f"{root}/about"]))
         raw_pages: list[tuple[str, str]] = []  # (url, text) before strip_contacts
-        fits: list[FitEvidence] = []
+        read: list[tuple[EvidenceDocument, str]] = []
         for lead_url in lead_urls:
             page = await fetcher.fetch(lead_url)
             if page.refused is not None or not page.text:
@@ -430,9 +453,37 @@ async def company_fit(
                 available_at=min(page.fetched_at or as_of, as_of),
                 meta={"fit_for": c.key},
             )
+            read.append((doc, text))
+        contact: CompanyContact | None = None
+        if cfg.radar_fit_single_search:
+            # One extra fetch, always: the company's own contact page. Fetching it only when the
+            # pages read had no contact made a replay diverge, since the unstripped text that
+            # decided it is never recorded.
+            page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
+            if page.refused is None and page.text:
+                raw_pages.append((page.final_url or page.lead_url, page.contact_text or page.text))
+            contact = find_company_contact(raw_pages, domain, role_words)
+        pending.append((len(out), entry, domain, read, contact))
+        out.append(entry)  # replaced below, once the whole run's words are known (D118)
+
+    # D118: which offer terms are common in this run. Only after every site is read.
+    prefer: set[str] | None = None
+    if cfg.radar_fit_distinctive:
+        named = [set().union(*(named_terms(t, terms) for _, t in rd)) for _, _, _, rd, _ in pending]
+        with_fit = [n for n in named if n]
+        common = {
+            t
+            for t in terms
+            if sum(t in n for n in with_fit) > cfg.radar_fit_common_share * len(with_fit)
+        }
+        prefer = set().union(*with_fit) - common if with_fit else set()
+    for index, entry, domain, read, contact in pending:
+        c = entry.candidate
+        fits: list[FitEvidence] = []
+        for doc, text in read:
             checks: list[ClaimCheck] = []
             for sentence, term, level in fit_sentences(
-                text, terms, related, limit=cfg.radar_fit_quotes
+                text, terms, related, limit=cfg.radar_fit_quotes, prefer=prefer
             ):
                 statement = f"{c.name}'s own website names {term}."
                 fingerprint = claim_fingerprint(doc.id, statement, sentence)
@@ -467,28 +518,23 @@ async def company_fit(
                         ),
                     )
                 )
-        contact: CompanyContact | None = None
-        if cfg.radar_fit_single_search:
-            # One extra fetch, always: the company's own contact page. Fetching it only when the
-            # pages read had no contact made a replay diverge, since the unstripped text that
-            # decided it is never recorded.
-            page = await fetcher.fetch(f"https://{urlsplit(site).hostname}/contact")
-            if page.refused is None and page.text:
-                raw_pages.append((page.final_url or page.lead_url, page.contact_text or page.text))
-            contact = find_company_contact(raw_pages, domain, role_words)
         if not fits:
             notes.append(f"company fit: {domain} does not name what you sell on the pages read")
         level = (
             "stated" if any(f.level == "stated" for f in fits) else ("related" if fits else None)
         )
         update: dict[str, Any] = {"company_site": domain, "company_fit": fits, "fit_level": level}
+        if prefer:
+            update["fit_distinctive"] = any(
+                f.level == "stated" and names_term(f.quote, prefer, prefix=True) for f in fits
+            )
         if id(entry) in proof_for:
             update["site_proof"] = proof_for[id(entry)]
         if contact is not None:
             update["company_contact"] = contact
         if level == "stated" and entry.evidence_level in ("generic_mention", "no_evidence"):
             update["evidence_level"] = "company_fit"  # it handles the category; no purchase yet
-        out.append(entry.model_copy(update=update))
+        out[index] = entry.model_copy(update=update)
     if cfg.radar_fit_single_search:
         notes.append(
             f"company fit: {len(guessed)} sites found free, {by_search} by search, "
