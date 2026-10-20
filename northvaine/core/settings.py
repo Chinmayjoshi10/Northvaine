@@ -277,6 +277,8 @@ class Settings(BaseSettings):
     radar_watch_days: int = Field(default=90, ge=1)
     radar_watch_runs: int = Field(default=30, ge=1)
     radar_fit_pages: int = Field(default=2, ge=1)
+    # Also read the company's own about pages (/about-us, /about): free fetches (D113 review).
+    radar_fit_about_pages: bool = True
     radar_fit_quotes: int = Field(default=3, ge=1)
     radar_fit_min_token: int = Field(default=4, ge=2)
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;

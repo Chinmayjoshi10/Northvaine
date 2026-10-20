@@ -304,6 +304,7 @@ def _clear_settings_caches() -> None:
 # Settings that widened after older recordings were made (D107). A recording that does not name
 # one was made with the value here, so replay pins that value and asks for what was recorded.
 LEGACY_SETTINGS: dict[str, object] = {
+    "radar_fit_about_pages": False,
     "hmrc_min_kept": 0,
     "radar_max_gate_candidates": 40,
     "radar_register_max_lookups": 40,

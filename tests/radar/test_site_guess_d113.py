@@ -143,3 +143,27 @@ async def test_legacy_zero_makes_no_guess_fetches(monkeypatch: Any) -> None:
         settings=cfg,
     )  # fmt: skip
     assert fetched == [] and len(sensor.queries) == 1
+
+
+async def test_the_about_page_can_prove_the_fit(monkeypatch: Any) -> None:
+    sensor = Names()
+    monkeypatch.setattr(fit_module, "get_sensor", lambda *a, **k: sensor)
+    fetcher = FakeFetcher(
+        {
+            # a home page that is only a menu, and an about page that says what it does
+            "https://bravoworks.co.uk/": "Registered number 123456. Home Products Contact Us",
+            "https://bravoworks.co.uk/about-us": (
+                "We cut granite worktops for builders and installers every working day."
+            ),
+        }
+    )
+    out, _ = await company_fit(
+        [company("Bravo Works Ltd")],
+        SPEC,
+        http=None,
+        fetcher=fetcher,
+        as_of=NOW,
+        settings=Settings(_env_file=None),
+    )
+    assert out[0].fit_level == "stated"
+    assert out[0].company_fit[0].url.endswith("/about-us")

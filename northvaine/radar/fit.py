@@ -408,6 +408,11 @@ async def company_fit(
             notes.append(f"company fit: search failed for {c.name}: {exc}")
             out.append(entry)
             continue
+        if cfg.radar_fit_about_pages and cfg.radar_fit_single_search:
+            # The "about" page says what a company does in sentences; a home page is often only a
+            # menu (a hand-found buyer's site was read as naming nothing). Free fetches.
+            root = f"https://{urlsplit(site).hostname}"
+            lead_urls = list(dict.fromkeys([*lead_urls, f"{root}/about-us", f"{root}/about"]))
         raw_pages: list[tuple[str, str]] = []  # (url, text) before strip_contacts
         fits: list[FitEvidence] = []
         for lead_url in lead_urls:

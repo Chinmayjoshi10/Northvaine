@@ -96,6 +96,7 @@ SHAPING_SETTINGS = (
     "radar_bidder_max_results",
     "radar_fit_max_accounts",  # company-fit searches and page fetches (D96) too
     "radar_fit_pages",
+    "radar_fit_about_pages",
     "radar_fit_quotes",
     "radar_fit_min_token",
     "hmrc_min_kept",  # how many importers were kept, gated and looked up (D107)
