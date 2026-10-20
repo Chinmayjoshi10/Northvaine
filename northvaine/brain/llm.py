@@ -437,19 +437,29 @@ async def embed(
     client = get_client()
     estimated = pricing.estimate_cost(model, estimate_input_tokens(text), 0)
 
-    raw, usage, cost = await _guarded_call(
-        run=run,
-        session=session,
-        model=model,
-        purpose=purpose,
-        estimated_cost=estimated,
-        prompt_version=None,
-        workspace_id=workspace_id,
-        case_id=None,
-        operation=lambda: client.embeddings.create(
-            model=model, input=text, dimensions=EMBED_DIM_EXPECTED
-        ),
-    )
+    # Retried and classified like a completion: a live run once died on one embed timeout
+    # because the raw SDK error was not one the run skips.
+    settings = get_settings()
+    for attempt in range(settings.llm_max_retries + 1):
+        try:
+            raw, usage, cost = await _guarded_call(
+                run=run,
+                session=session,
+                model=model,
+                purpose=purpose,
+                estimated_cost=estimated,
+                prompt_version=None,
+                workspace_id=workspace_id,
+                case_id=None,
+                operation=lambda: client.embeddings.create(
+                    model=model, input=text, dimensions=EMBED_DIM_EXPECTED
+                ),
+            )
+            break
+        except Exception as error:
+            if not _is_retryable(error) or attempt == settings.llm_max_retries:
+                raise _classify(error) from error
+            await asyncio.sleep(_backoff(attempt, error))
 
     vector = list(raw.data[0].embedding)
     if len(vector) != EMBED_DIM_EXPECTED:

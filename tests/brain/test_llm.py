@@ -436,3 +436,17 @@ async def test_a_live_run_commits_each_ledger_row(wired, each: bool) -> None:
         session=session,
     )
     assert session.commits == (1 if each else 0)
+
+
+async def test_an_embed_timeout_is_retried_then_classified(wired) -> None:
+    client = wired(FakeClient())
+    calls = {"n": 0}
+
+    async def slow(**_body: Any) -> Any:
+        calls["n"] += 1
+        raise openai.APITimeoutError(request=None)  # type: ignore[arg-type]
+
+    client.embeddings.create = slow
+    with pytest.raises(LlmTimeout):
+        await llm_module.embed(text="hello", purpose="test", run=RunContext())
+    assert calls["n"] == 3  # llm_max_retries=2 in the fixture: three attempts
