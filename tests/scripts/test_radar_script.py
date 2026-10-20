@@ -78,6 +78,7 @@ def record_settings(**extra: Any) -> Settings:
         "radar_enumerable_max_results": 10,
         "radar_bidder_max_queries": 0,  # no award searches in the M3 recordings (D81)
         "radar_fit_max_accounts": 0,  # nor company-fit searches (D96)
+        "radar_investigate_top": 0,  # nor investigation searches (D117)
         "radar_site_guess_max_companies": 0,  # nor guessed-site fetches (D113)
     }
     values.update(extra)

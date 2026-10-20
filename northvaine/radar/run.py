@@ -39,6 +39,7 @@ from northvaine.radar.edition import label_entries
 from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
+from northvaine.radar.investigate import investigate, rerank
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
 from northvaine.radar.models import (
@@ -367,6 +368,27 @@ async def run_radar(
     notes.extend(fit_notes)
     if settings.radar_fit_single_search:  # D108: fit moves the ranking within an evidence level
         entries = apply_fit_order(entries)
+
+    # 7b. a short, budgeted look at the top leads for a dated reason to call now (D117); a lead
+    # with new facts is ranked again, so a new dated event can lift it
+    before = entries
+    entries, investigate_notes = await investigate(
+        entries,
+        spec,
+        http=http,
+        fetcher=fetcher,
+        concepts=concepts,
+        run=run,
+        session=session,
+        as_of=as_of,
+        settings=settings,
+        evidence_out=evidence_out,
+    )
+    notes.extend(investigate_notes)
+    if any(a is not b for a, b in zip(before, entries, strict=True)):
+        entries = rerank(entries, spec, as_of=as_of, settings=settings)
+        if settings.radar_fit_single_search:
+            entries = apply_fit_order(entries)
 
     # 8. the daily edition labels (D103, code only)
     entries = label_entries(entries, as_of.date(), settings)
