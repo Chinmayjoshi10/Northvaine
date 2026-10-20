@@ -65,6 +65,7 @@ class Row(BaseModel):
     sources_seen: list[str] = []  # D115: plain words for the kinds of source
     possible_distributor: bool = False  # D116
     accounts_type: str | None = None  # D116: type of the last filed accounts
+    matched_lines: list[str] = []  # D118: the client's catalogue lines it matches
 
 
 class Funnel(BaseModel):
@@ -173,6 +174,7 @@ class Dossier(BaseModel):
     decision_line: str
     company_site: str | None = None
     site_proof: str | None = None
+    matched_lines: list[str] = []  # D118
     company_contact: CompanyContactView | None = None
     like_customers: list[str] = []
     timing_signals: list[str] = []  # D111
@@ -227,6 +229,7 @@ def _row(entry: RankedEntry, today: date) -> Row:
         sources_seen=brief.stream_words(c),
         possible_distributor=entry.gate.partner,
         accounts_type=_accounts_type(entry),
+        matched_lines=list(entry.matched_lines),
     )
 
 
@@ -469,6 +472,7 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         decision_line=brief.DECISION_LINE,
         company_site=entry.company_site,
         site_proof=entry.site_proof,
+        matched_lines=list(entry.matched_lines),
         like_customers=list(entry.candidate.like_customers),
         timing_signals=list(entry.candidate.timing_signals),
         sources_seen=brief.stream_words(entry.candidate),

@@ -367,7 +367,7 @@ async def run_radar(
     )
     notes.extend(fit_notes)
     if settings.radar_fit_single_search:  # D108: fit moves the ranking within an evidence level
-        entries = apply_fit_order(entries)
+        entries = apply_fit_order(entries, lines=spec.catalogue_lines)
 
     # 7b. a short, budgeted look at the top leads for a dated reason to call now (D117); a lead
     # with new facts is ranked again, so a new dated event can lift it
@@ -388,7 +388,7 @@ async def run_radar(
     if any(a is not b for a, b in zip(before, entries, strict=True)):
         entries = rerank(entries, spec, as_of=as_of, settings=settings)
         if settings.radar_fit_single_search:
-            entries = apply_fit_order(entries)
+            entries = apply_fit_order(entries, lines=spec.catalogue_lines)
 
     # 8. the daily edition labels (D103, code only)
     entries = label_entries(entries, as_of.date(), settings)

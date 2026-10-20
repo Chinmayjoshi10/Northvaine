@@ -68,6 +68,14 @@ class RejectedAs(StrEnum):
     NOT_AN_ORGANISATION = "not_an_organisation"
 
 
+class CatalogueLine(NorthvaineModel):
+    """One line of the client's catalogue (D118). Data, set at onboarding."""
+
+    name: str
+    terms: list[str] = Field(default_factory=list)
+    codes: list[str] = Field(default_factory=list)  # "hs:..." / "cpv:..." like product_codes
+
+
 class ClientSpec(NorthvaineModel):
     id: str
     offer: str
@@ -81,6 +89,8 @@ class ClientSpec(NorthvaineModel):
     # Words for related products: a quote naming one is "related", a possibility that needs a
     # specification check, never "stated" (D84).
     related_terms: list[str] = Field(default_factory=list)
+    # The client's catalogue lines, most important first (D118). Empty: every word counts alike.
+    catalogue_lines: list[CatalogueLine] = Field(default_factory=list)
     # The buyer model (D101): who buys from this client, as data. Empty means "as before": the
     # gate treats traders of the offer as resellers. A client whose customers are importers or
     # distributors lists those roles here, and the gate then counts them as buyers.
@@ -274,6 +284,8 @@ class RankedEntry(NorthvaineModel):
     company_site: str | None = None
     company_fit: list[FitEvidence] = Field(default_factory=list)
     fit_level: Literal["stated", "related"] | None = None
+    fit_distinctive: bool = False  # D118: a kept quote names a word few companies in the run use
+    matched_lines: list[str] = Field(default_factory=list)  # D118: catalogue lines it matches
     company_contact: CompanyContact | None = None  # D108
     site_proof: str | None = None  # D113: "registration number" / "registered name"
     # The daily edition (D103): act now / just changed / account to work, and why.

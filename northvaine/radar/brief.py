@@ -28,6 +28,7 @@ from northvaine.radar.learning import Posteriors, learned_score
 from northvaine.radar.models import (
     Candidate,
     CandidateClaim,
+    CatalogueLine,
     GateDecision,
     RadarRun,
     RadarStream,
@@ -459,10 +460,30 @@ def _partner_size(entry: RankedEntry) -> int:
     return size_rank(facts.accounts_type if facts else None) if entry.gate.partner else 0
 
 
+def match_lines(entry: RankedEntry, lines: list[CatalogueLine]) -> list[str]:
+    """Names of the catalogue lines this entry matches, in the client's priority order (D118).
+
+    A line matches when the import record has one of its `hs:` codes (prefix of the commodity
+    code) or a company-fit quote names one of its terms."""
+    commodity = import_codes(entry.candidate)
+    out: list[str] = []
+    for line in lines:
+        prefixes = [c.split(":", 1)[1] for c in line.codes if c.casefold().startswith("hs:")]
+        by_code = any(k.startswith(p) for p in prefixes if p for k in commodity)
+        terms = {t.casefold() for t in line.terms if t.strip()}
+        by_term = bool(terms) and any(
+            names_term(f.quote, terms, prefix=True) for f in entry.company_fit
+        )
+        if by_code or by_term:
+            out.append(line.name)
+    return out
+
+
 def apply_fit_order(
     entries: list[RankedEntry],
     timing_days: int | None = None,
     link_sources: bool | None = None,
+    lines: list[CatalogueLine] | None = None,
 ) -> list[RankedEntry]:
     """Company fit moves the ranking (D108), but only within an evidence level.
 
@@ -472,7 +493,15 @@ def apply_fit_order(
     settings = get_settings()
     days = timing_days if timing_days is not None else settings.radar_timing_days
     link = link_sources if link_sources is not None else settings.radar_link_by_register
+    lines = lines or []
     ordered = sorted(entries, key=lambda e: e.rank)
+    if lines:  # D118
+        ordered = [e.model_copy(update={"matched_lines": match_lines(e, lines)}) for e in ordered]
+    names = [ln.name for ln in lines]
+
+    def line_priority(e: RankedEntry) -> int:
+        return min((names.index(n) for n in e.matched_lines if n in names), default=len(names))
+
     slots: dict[str | None, list[int]] = {}
     for i, e in enumerate(ordered):
         slots.setdefault(e.evidence_level, []).append(i)
@@ -481,7 +510,8 @@ def apply_fit_order(
         members = sorted(  # stable; D109: looking like the client's customers breaks ties
             (ordered[i] for i in positions),
             key=lambda e: (
-                _fit_group(e),
+                _fit_group(e) * 2 + (0 if e.fit_distinctive else 1),  # D118
+                line_priority(e) if lines else 0,  # D118: the client's own line order
                 link and len(e.candidate.streams) < 2,  # D115: seen in 2+ kinds of source first
                 len(e.candidate.timing_signals) < 2,  # D111: two or more signals first
                 not e.candidate.like_customers,
@@ -497,6 +527,8 @@ def apply_fit_order(
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
         elif e.company_site is not None:
             reasons.append("Company fit: its own site does not name what you sell")
+        if e.matched_lines:
+            reasons.append(f"Matches your catalogue line: {e.matched_lines[0]}")
         if link and len(e.candidate.streams) >= 2:
             reasons.append(f"Sources: seen in {', '.join(stream_words(e.candidate))}")
         reasons.extend(e.candidate.like_customers)

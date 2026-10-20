@@ -499,6 +499,11 @@ function Station(props: {
                     {r.possible_distributor && (
                       <span className="mono lab-chip">Possible distributor</span>
                     )}
+                    {(r.matched_lines ?? []).length > 0 && (
+                      <span className="mono lab-chip">
+                        LINE: {(r.matched_lines ?? [])[0]}
+                      </span>
+                    )}
                     {r.back_in_motion && (
                       <span className="mono lab-chip">Back in motion</span>
                     )}
