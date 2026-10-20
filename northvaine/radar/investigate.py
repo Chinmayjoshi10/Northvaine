@@ -144,7 +144,15 @@ def _attach(
             added_events += 1
     if not added and not added_events:
         return entry, 0, 0
-    streams = {*candidate.streams, *(s for o in mine for s in o.streams)}
+    # A fact from the company's own website is not an independent second source: only findings
+    # with at least one claim on another site add their stream ("seen in 2+ sources", D115).
+    from northvaine.radar.fit import registrable  # late: fit imports radar modules
+
+    def independent(o: Candidate) -> bool:
+        own = entry.company_site
+        return any(own is None or registrable(k.url) != own for k in o.claims)
+
+    streams = {*candidate.streams, *(s for o in mine if independent(o) for s in o.streams)}
     new_candidate = candidate.model_copy(
         update={
             "claims": claims,

@@ -312,3 +312,23 @@ def inv_event(when: date) -> Any:
         slots={},
         fingerprint="ev-x",
     )
+
+
+def test_a_fact_from_its_own_site_is_not_a_second_source() -> None:
+    from northvaine.radar.investigate import _attach
+
+    base = lead("Acme Widgets Ltd", 1).model_copy(update={"company_site": "acmewidgets.co.uk"})
+
+    def finding(url: str) -> Any:
+        k = base.candidate.claims[0].model_copy(
+            update={"fingerprint": f"fp-{url}", "url": url, "statement": "Acme opens a site."}
+        )
+        return base.candidate.model_copy(
+            update={"claims": [k], "events": [], "streams": [RadarStream.ANNOUNCEMENT]}
+        )
+
+    own = {"acme widgets"}
+    on_own_site, _, _ = _attach(base, [finding("https://www.acmewidgets.co.uk/news")], own, CFG)
+    elsewhere, _, _ = _attach(base, [finding("https://news.example.org/acme")], own, CFG)
+    assert RadarStream.ANNOUNCEMENT not in on_own_site.candidate.streams
+    assert RadarStream.ANNOUNCEMENT in elsewhere.candidate.streams
