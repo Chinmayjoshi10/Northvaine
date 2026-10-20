@@ -106,6 +106,7 @@ SHAPING_SETTINGS = (
     "radar_site_guess_max_companies",  # D113
     "radar_site_guess_per_company",
     "radar_fit_single_search",  # D108
+    "radar_link_by_register",  # D115
     "fit_contact_role_words",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.

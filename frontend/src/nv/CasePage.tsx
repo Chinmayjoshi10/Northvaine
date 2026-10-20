@@ -326,6 +326,12 @@ function Case(props: {
                   </span>
                 </>
               )}
+              {(d.sources_seen ?? []).length >= 2 && (
+                <>
+                  <span className="caps">Seen in</span>
+                  <span>{(d.sources_seen ?? []).join(", ")}</span>
+                </>
+              )}
               {d.like_customers.length > 0 && (
                 <>
                   <span className="caps">Like your customers</span>
