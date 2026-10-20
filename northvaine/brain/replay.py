@@ -314,6 +314,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_register_accounts_type": False,  # D116: no accounts-type claim
     "radar_link_by_register": False,  # D115: no merge by registration number, no reorder
     "radar_fit_single_search": False,  # D108: two searches a company, rank order
+    "radar_investigate_top": 0,  # D117: no investigation of the top leads
 }
 
 

@@ -85,7 +85,7 @@ the WOS hand research. About 12-13 sessions remain for 17-26 Oct, so about 1.5 s
 | 10 | Nightly run; public hosting that stays up through December; secrets scan; contact, trial and onboarding files moved to the database. **Done by 23 Oct.** | 1-1.5 | GitHub repo, rotate Neon password, pick the host |
 | 11 | **Lead quality C: timing signals.** Expansion news, trade press, hiring for purchasing roles; two signals together beat one (step 3 of the buyer-intent plan) | 1 | - |
 | 12 | **Lead quality D: watching over time.** One case per company across nights; a case wakes up when its missing piece appears (step 2) | 1 | - |
-| 13 | **After the hackathon (D114).** Lead quality E: follow the trail. For the top 10, an investigating agent with a budget follows leads and rephrases weak searches; every fact still a checked quote | 1 | - |
+| 13 | **Done in the hackathon (D117), a budgeted version.** Lead quality E: follow the trail. For the top 3 leads, one or two searches each (6 per run, inside the 20-call Tavily cap), rephrased once when the first results never name the company; every fact still a checked quote | 1 | - |
 | 14 | Time-machine backtest: "it saw it coming" (real run, never staged) | 1 | - |
 | 15 | README with "How we use Nemotron, Token Factory and Tavily" and the feedback section | 0.5 | Read it |
 | 16 | Full demo walk-through and fixes | 1 | Walk it once |

@@ -54,12 +54,12 @@ class CountingSensor(FakeSensor):
         return SensorResult(documents=[], notes=[], enumerable=False)
 
 
-async def test_one_search_per_company_and_at_most_fifteen(monkeypatch: Any) -> None:
+async def test_one_search_per_company_and_at_most_ten(monkeypatch: Any) -> None:
     sensor = CountingSensor()
     monkeypatch.setattr(fit_module, "get_sensor", lambda *a, **k: sensor)
     entries = [named(f"GB:co{i}", rank=i + 1) for i in range(20)]
     await company_fit(entries, SPEC, http=None, fetcher=FakeFetcher({}), as_of=NOW, settings=SINGLE)
-    assert len(sensor.queries) == 15
+    assert len(sensor.queries) == 10
     assert sensor.queries[0].text == "Raffalli TP granite"
     assert sensor.queries[0].max_results == 5
 

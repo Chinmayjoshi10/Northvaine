@@ -231,9 +231,13 @@ class Settings(BaseSettings):
     # (docs/research/learning_loop_design.md 4.2-4.7).
     radar_exploration_slots: int = Field(default=1, ge=0)  # brief slots chosen at random
     # Company fit from the company's own site (D96): code-first, capped per run.
-    # D108: discovery (about 4 Tavily calls) plus fit (1 per company) must stay within
-    # `tavily_max_calls_per_run`: 4 + 15 = 19 of 20.
-    radar_fit_max_accounts: int = Field(default=15, ge=0)
+    # D117: discovery (about 4 Tavily calls) + fit (1 per company) + investigation must stay within
+    # `tavily_max_calls_per_run`: discovery 4 + fit 10 + investigation 6 = the 20-call cap.
+    radar_fit_max_accounts: int = Field(default=10, ge=0)
+    # D117: a short, budgeted look at the top leads for a dated reason to call now.
+    radar_investigate_top: int = Field(default=3, ge=0)
+    radar_investigate_max_searches: int = Field(default=6, ge=0)  # per run, both phrasings
+    radar_investigate_max_docs: int = Field(default=3, ge=1)  # documents read per lead
     # D113: guess the site from the registered name first (free fetches, no Tavily).
     radar_site_guess_max_companies: int = Field(default=60, ge=0)
     radar_site_guess_per_company: int = Field(default=6, ge=1)

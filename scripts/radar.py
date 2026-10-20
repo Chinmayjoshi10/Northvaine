@@ -108,6 +108,8 @@ SHAPING_SETTINGS = (
     "radar_fit_single_search",  # D108
     "radar_link_by_register",  # D115
     "radar_register_accounts_type",  # D116
+    "radar_investigate_top",  # D117
+    "radar_investigate_max_searches",
     "fit_contact_role_words",
 )
 # A plan estimate, not a measurement (PLAN.md cost table): tokens per call.
