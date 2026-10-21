@@ -524,7 +524,7 @@ def apply_fit_order(
         reasons = list(e.rank_reasons)
         if e.fit_level is not None and e.company_fit:
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
-        elif e.company_site is not None:
+        elif e.company_site is not None and not e.judged_lines:  # D119: a judged line says it does
             reasons.append("Company fit: its own site does not name what you sell")
         if e.matched_lines:
             reasons.append(f"Matches your catalogue line: {e.matched_lines[0]}")

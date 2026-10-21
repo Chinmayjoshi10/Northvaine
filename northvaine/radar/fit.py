@@ -645,6 +645,7 @@ async def company_fit(
         c = entry.candidate
         fits: list[FitEvidence] = []
         judged_here: list[JudgedLine] = []
+        seen_lines: set[str] = set()
         for doc, text in read:
             checks: list[ClaimCheck] = []
             for sentence, term, level in fit_sentences(
@@ -673,8 +674,9 @@ async def company_fit(
                     )
                 )
             for vl in judged.get(id(entry), []):
-                if vl.url != doc.url:
-                    continue
+                if vl.url != doc.url or vl.quote not in text or vl.line in seen_lines:
+                    continue  # two reads of one URL can differ; never index a missing quote
+                seen_lines.add(vl.line)
                 statement = f"{c.name}'s own website shows it sells your {vl.line} line."
                 fingerprint = claim_fingerprint(doc.id, statement, vl.quote)
                 checks.append(
