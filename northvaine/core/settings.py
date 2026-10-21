@@ -291,6 +291,16 @@ class Settings(BaseSettings):
         True  # False: the quote choice and order of recordings before D118
     )
     radar_fit_min_token: int = Field(default=4, ge=2)
+    # D119: deep reading (free product-page fetches) and the catalogue-line fit judge (fast model).
+    radar_fit_link_cap: int = Field(default=200, ge=0)
+    radar_fit_deep_pages: int = Field(default=3, ge=0)
+    radar_fit_deep_path_words: tuple[str, ...] = (
+        "product", "products", "collection", "collections", "range", "ranges",
+        "catalogue", "catalog", "shop",
+    )  # fmt: skip
+    radar_fit_judge_top: int = Field(default=30, ge=0)
+    radar_fit_judge_chars: int = Field(default=6000, ge=500)
+    radar_fit_judge_max_tokens: int = Field(default=400, ge=1)
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).
     radar_contract_nature_aliases: dict[str, str] = Field(

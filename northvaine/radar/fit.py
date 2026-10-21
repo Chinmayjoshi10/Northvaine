@@ -28,6 +28,8 @@ from typing import Any, Literal
 from urllib.parse import urlsplit
 from uuid import NAMESPACE_URL, uuid5
 
+from northvaine.brain.budget import RunContext
+from northvaine.brain.errors import BudgetExceeded, LlmInvalidOutput, LlmTimeout, LlmTransportError
 from northvaine.core.models import (
     ClaimCheck,
     ClaimDraft,
@@ -41,10 +43,12 @@ from northvaine.core.models import (
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.brief import _trade_slots, import_codes, names_term
 from northvaine.radar.discover import PageFetcher, neutralise_steering, strip_contacts
+from northvaine.radar.linefit import judge_lines
 from northvaine.radar.models import (
     ClientSpec,
     CompanyContact,
     FitEvidence,
+    JudgedLine,
     RadarStream,
     RankedEntry,
 )
@@ -55,6 +59,7 @@ from northvaine.sensors.registry import get_sensor
 __all__ = [
     "FitEvidence",
     "company_fit",
+    "deep_links",
     "domain_matches",
     "find_company_contact",
     "fit_sentences",
@@ -167,6 +172,59 @@ def fit_sentences(
     if prefer:
         found.sort(key=lambda f: not (f[2] == "stated" and f[1] in prefer))  # stable
     return found[:limit]
+
+
+_PATH_SPLIT = re.compile(r"[/\-_.]+")
+
+
+def deep_links(
+    links: list[str],
+    *,
+    read_urls: set[str],
+    domain: str,
+    spec: ClientSpec,
+    cfg: Settings,
+) -> list[str]:
+    """Product-page links worth reading (D119), best first, at most `radar_fit_deep_pages`.
+
+    Same registrable domain only, not already read. A link's URL path is scored: 0 when a path
+    word starts with a word of a catalogue line's terms (the client's first line first), then a
+    word of what the client sells, then a generic product-page word. Others are skipped.
+    Stable: equal scores keep page order. Pure, no network."""
+    if cfg.radar_fit_deep_pages <= 0:
+        return []
+    floor = cfg.radar_fit_min_token
+    line_words = [
+        {w for t in line.terms for w in _fold(t).split() if len(w) >= floor}
+        for line in spec.catalogue_lines
+    ]
+    market = {
+        w
+        for t in [*spec.offer_terms, *spec.related_terms]
+        for w in _fold(t).split()
+        if len(w) >= floor
+    }
+    generic = {w.casefold() for w in cfg.radar_fit_deep_path_words}
+    seen = {u.rstrip("/") for u in read_urls}
+    scored: list[tuple[tuple[int, int], int, str]] = []
+    for order, link in enumerate(links[: cfg.radar_fit_link_cap]):
+        if registrable(link) != domain or link.rstrip("/") in seen:
+            continue
+        words = [w for w in _PATH_SPLIT.split(urlsplit(link).path.casefold()) if w]
+        score: tuple[int, int] | None = None
+        for index, pool in enumerate(line_words):
+            if any(w.startswith(t) for w in words for t in pool):
+                score = (0, index)
+                break
+        if score is None and any(w.startswith(t) for w in words for t in market):
+            score = (1, 0)
+        if score is None and any(w in generic for w in words):
+            score = (2, 0)
+        if score is not None:
+            scored.append((score, order, link))
+            seen.add(link.rstrip("/"))
+    scored.sort(key=lambda item: (item[0], item[1]))
+    return [link for _, _, link in scored[: cfg.radar_fit_deep_pages]]
 
 
 def _eligible(entry: RankedEntry) -> bool:
@@ -304,6 +362,66 @@ async def guess_own_site(
     return None
 
 
+def _judge_order(read: list[tuple[EvidenceDocument, str]], deep: set[str]) -> list[tuple[str, str]]:
+    """(url, text) for the judge: deep product pages, search-hit pages, about, then home."""
+
+    def rank(url: str) -> int:
+        path = urlsplit(url).path.rstrip("/").casefold()
+        if url in deep:
+            return 0
+        if path.endswith("/about") or path.endswith("/about-us"):
+            return 2
+        return 3 if path == "" else 1
+
+    return [(d.url, t) for d, t in sorted(read, key=lambda item: rank(item[0].url))]  # stable
+
+
+async def _judge_all(
+    batch: list[Any],
+    deep_urls: dict[int, set[str]],
+    spec: ClientSpec,
+    cfg: Settings,
+    *,
+    run: RunContext,
+    session: Any,
+) -> tuple[list[str], dict[int, list[Any]]]:
+    """The fit judge over `batch` (D119), concurrently; never fails the run."""
+    gate = asyncio.Semaphore(cfg.radar_gate_concurrency)
+    stopped = False
+    failed = 0
+    results: dict[int, list[Any]] = {}
+    notes: list[str] = []
+
+    async def _one(item: Any) -> None:
+        nonlocal stopped, failed
+        _, entry, _, read, _ = item
+        async with gate:
+            if stopped:
+                return
+            try:
+                results[id(entry)] = await judge_lines(
+                    entry.candidate.name,
+                    _judge_order(read, deep_urls.get(id(entry), set())),
+                    spec,
+                    run=run,
+                    session=session,
+                    settings=cfg,
+                )
+            except BudgetExceeded as exc:
+                if not stopped:
+                    notes.append(f"line fit stopped: {exc}")
+                stopped = True
+            except (LlmInvalidOutput, LlmTimeout, LlmTransportError):
+                failed += 1
+
+    await asyncio.gather(*(_one(item) for item in batch))
+    notes.append(
+        f"line fit: {len(results)} judged, {sum(1 for v in results.values() if v)} with a line, "
+        f"{failed} failed"
+    )
+    return notes, results
+
+
 async def company_fit(
     entries: list[RankedEntry],
     spec: ClientSpec,
@@ -313,6 +431,8 @@ async def company_fit(
     as_of: datetime,
     settings: Settings | None = None,
     evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
+    run: RunContext | None = None,
+    session: Any = None,
 ) -> tuple[list[RankedEntry], list[str]]:
     """Each shortlisted entry with its company-fit evidence; notes for what was skipped."""
     cfg = settings or get_settings()
@@ -358,6 +478,7 @@ async def company_fit(
     chosen = {id(e) for e in searched} | set(guessed)
     pool = {id(e) for e in guess_pool} | {id(e) for e in searched}
     by_search = 0
+    deep_urls: dict[int, set[str]] = {}
     proof_for: dict[int, str] = {}
     out: list[RankedEntry] = []
     pending: list[tuple[int, RankedEntry, str, list[tuple[EvidenceDocument, str]], Any]] = []
@@ -438,11 +559,19 @@ async def company_fit(
             lead_urls = list(dict.fromkeys([*lead_urls, f"{root}/about-us", f"{root}/about"]))
         raw_pages: list[tuple[str, str]] = []  # (url, text) before strip_contacts
         read: list[tuple[EvidenceDocument, str]] = []
-        for lead_url in lead_urls:
-            page = await fetcher.fetch(lead_url)
-            if page.refused is not None or not page.text:
-                continue
-            raw_pages.append((page.final_url or lead_url, page.contact_text or page.text))
+        fetched: list[Any] = []
+
+        def _read_page(
+            page: Any,
+            lead_url: str,
+            *,
+            keep_raw: bool,
+            c: Any = c,
+            read: Any = read,
+            raw: Any = raw_pages,
+        ) -> None:
+            if keep_raw:
+                raw.append((page.final_url or lead_url, page.contact_text or page.text))
             text, _ = neutralise_steering(strip_contacts(page.text), cfg)
             doc = EvidenceDocument(
                 id=uuid5(NAMESPACE_URL, content_hash(text)),
@@ -454,6 +583,30 @@ async def company_fit(
                 meta={"fit_for": c.key},
             )
             read.append((doc, text))
+
+        for lead_url in lead_urls:
+            page = await fetcher.fetch(lead_url)
+            if page.refused is not None or not page.text:
+                continue
+            fetched.append(page)
+            _read_page(page, lead_url, keep_raw=True)
+        deep: set[str] = set()
+        if cfg.radar_fit_deep_pages > 0 and cfg.radar_fit_single_search:
+            # D119: a few product pages, found from the links of the pages just read. Free.
+            picks = deep_links(
+                [link for page in fetched for link in page.links],
+                read_urls={d.url for d, _ in read} | set(lead_urls),
+                domain=domain,
+                spec=spec,
+                cfg=cfg,
+            )
+            for lead_url in picks:
+                page = await fetcher.fetch(lead_url)
+                if page.refused is not None or not page.text:
+                    continue
+                _read_page(page, lead_url, keep_raw=False)
+                deep.add(read[-1][0].url)
+        deep_urls[id(entry)] = deep
         contact: CompanyContact | None = None
         if cfg.radar_fit_single_search:
             # One extra fetch, always: the company's own contact page. Fetching it only when the
@@ -477,9 +630,21 @@ async def company_fit(
             if sum(t in n for n in with_fit) > cfg.radar_fit_common_share * len(with_fit)
         }
         prefer = set().union(*with_fit) - common if with_fit else set()
+    judged: dict[int, list[Any]] = {}  # D119: id(entry) -> verified lines
+    if spec.catalogue_lines and cfg.radar_fit_judge_top > 0 and run is not None:
+        judge_notes, judged = await _judge_all(
+            [p for p in pending if p[3]][: cfg.radar_fit_judge_top],
+            deep_urls,
+            spec,
+            cfg,
+            run=run,
+            session=session,
+        )
+        notes.extend(judge_notes)
     for index, entry, domain, read, contact in pending:
         c = entry.candidate
         fits: list[FitEvidence] = []
+        judged_here: list[JudgedLine] = []
         for doc, text in read:
             checks: list[ClaimCheck] = []
             for sentence, term, level in fit_sentences(
@@ -507,6 +672,29 @@ async def company_fit(
                         url=doc.url, quote=sentence, term=term, level=level, fingerprint=fingerprint
                     )
                 )
+            for vl in judged.get(id(entry), []):
+                if vl.url != doc.url:
+                    continue
+                statement = f"{c.name}'s own website shows it sells your {vl.line} line."
+                fingerprint = claim_fingerprint(doc.id, statement, vl.quote)
+                checks.append(
+                    ClaimCheck(
+                        document_id=doc.id,
+                        draft=ClaimDraft(
+                            statement=statement,
+                            source_quote=vl.quote,
+                            subject=SubjectMention(name=c.name, country=c.country, role="fit"),
+                            extracted_by="llm",
+                        ),
+                        status=ClaimStatus.VERIFIED,
+                        quote_offset=text.index(vl.quote),
+                        verified_by="code",
+                        fingerprint=fingerprint,
+                    )
+                )
+                judged_here.append(
+                    JudgedLine(line=vl.line, url=doc.url, quote=vl.quote, fingerprint=fingerprint)
+                )
             if checks and evidence_out is not None:
                 evidence_out.append(
                     (
@@ -528,6 +716,8 @@ async def company_fit(
             update["fit_distinctive"] = any(
                 f.level == "stated" and names_term(f.quote, prefer, prefix=True) for f in fits
             )
+        if judged_here:
+            update["judged_lines"] = judged_here
         if id(entry) in proof_for:
             update["site_proof"] = proof_for[id(entry)]
         if contact is not None:
