@@ -233,7 +233,7 @@ class LivePageFetcher:
             final_url=page.final_url,
             status=page.status,
             fetched_at=page.fetched_at,
-            title=title,
+            title=strip_contacts(title) if title else title,  # titles carry phones too
             text=strip_contacts(text),
             refused=None,
             contact_text=text,

@@ -123,6 +123,17 @@ async def test_live_fetch_returns_text_without_contacts_and_keeps_instruction_as
     assert page.fetched_at is not None
 
 
+async def test_live_fetch_strips_contacts_from_the_title() -> None:
+    # a live run refused to record because a page title held a phone number
+    html = "<html><head><title>Call 0161 496 0000 or sales@acme.example</title></head></html>"
+    fetcher, _ = fetcher_for(
+        site(httpx.Response(200, text=html, headers={"content-type": "text/html"}))
+    )
+    page = await fetcher.fetch("https://acme.example/")
+    assert page.title is not None
+    assert "sales@acme.example" not in page.title and "496 0000" not in page.title
+
+
 async def test_live_fetch_robots_disallow_makes_no_page_request() -> None:
     fetcher, seen = fetcher_for(
         site(httpx.Response(200, text=PAGE), robots="User-agent: *\nDisallow: /")
