@@ -1,8 +1,9 @@
-"""Which of the client's catalogue lines a company sells (D119).
+"""Which of the client's catalogue lines a company sells, and what it is (D119, D120).
 
 Free page reading (see `fit.py`) gives each company a few product pages. The FAST model then says,
-per company, which catalogue lines the pages show, with a quote. Code checks the quote against the
-page text (rule 2): a "yes" without a verbatim quote is dropped to "unclear". Never fails a run.
+per company, which catalogue lines the pages show, with a quote, and (D120) whether the company
+makes, resells or uses this kind of product. Code checks every quote against the page text
+(rule 2): a "yes" without a verbatim quote is dropped to "unclear". Never fails a run.
 """
 
 from __future__ import annotations
@@ -19,9 +20,18 @@ from northvaine.core.models import ModelTier, NorthvaineModel
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.models import ClientSpec
 
-__all__ = ["LineFitOutput", "LineJudgement", "VerifiedLine", "judge_lines", "pages_for_judge"]
+__all__ = [
+    "JudgeResult",
+    "LineFitOutput",
+    "LineJudgement",
+    "VerifiedLine",
+    "judge_lines",
+    "pages_for_judge",
+]
 
 MIN_QUOTE = 12
+
+Role = Literal["makes", "resells", "uses", "other", "unclear"]
 
 
 class LineJudgement(NorthvaineModel):
@@ -32,6 +42,8 @@ class LineJudgement(NorthvaineModel):
 
 class LineFitOutput(NorthvaineModel):
     what_it_sells: str = ""
+    role: Role = "unclear"  # D120 (prompt v2)
+    role_quote: str = ""
     lines: list[LineJudgement] = Field(default_factory=list)
 
 
@@ -41,6 +53,15 @@ class VerifiedLine(NorthvaineModel):
     line: str
     url: str
     quote: str
+
+
+class JudgeResult(NorthvaineModel):
+    """Verified lines, and the company's role when its quote was found on the pages (D120)."""
+
+    lines: list[VerifiedLine] = Field(default_factory=list)
+    role: Role = "unclear"
+    role_url: str = ""
+    role_quote: str = ""
 
 
 def _collapse(text: str) -> str:
@@ -64,6 +85,20 @@ def pages_for_judge(pages: list[tuple[str, str]], limit: int) -> list[tuple[str,
     return sent
 
 
+def _find_quote(raw: str, sent: list[tuple[str, str]]) -> tuple[str, str] | None:
+    """(url, the page's own substring) when the quote is on a page sent, else None."""
+    quote = _collapse(raw)
+    if len(quote) < MIN_QUOTE:
+        return None
+    # whitespace-insensitive, but the kept quote is the page's own substring
+    pattern = re.compile(r"\s+".join(re.escape(w) for w in quote.split()))
+    for url, text in sent:
+        found = pattern.search(text)
+        if found is not None:
+            return url, found.group(0)
+    return None
+
+
 async def judge_lines(
     name: str,
     pages: list[tuple[str, str]],
@@ -72,26 +107,30 @@ async def judge_lines(
     run: RunContext,
     session: Any = None,
     settings: Settings | None = None,
-) -> list[VerifiedLine]:
-    """The verified lines for one company. Raises the model errors; the caller decides."""
+) -> JudgeResult:
+    """The verified lines and role for one company. Raises the model errors; the caller decides."""
     cfg = settings or get_settings()
     # Imported here: brain.llm pulls in the SDK (httpx), which module import must not do.
     from northvaine.brain.llm import complete_json
 
+    with_role = cfg.radar_fit_judge_role
     sent = pages_for_judge(pages, cfg.radar_fit_judge_chars)
-    if not sent or not spec.catalogue_lines:
-        return []
+    if not sent or not (spec.catalogue_lines or with_role):
+        return JudgeResult()
     lines_text = "\n".join(f"{ln.name}: {', '.join(ln.terms)}" for ln in spec.catalogue_lines)
     pages_text = "\n\n".join(f"URL: {url}\n{text}" for url, text in sent)
+    variables: dict[str, Any] = {
+        "offer": spec.offer,
+        "lines": lines_text or "none listed",
+        "company_name": Untrusted(name),
+        "pages": Untrusted(pages_text),
+    }
+    if with_role:
+        variables["not_buyers"] = "; ".join(spec.not_buyers) or "not stated"
     result = await complete_json(
         tier=ModelTier.FAST,
-        prompt=load_prompt("radar_line_fit", version=1),
-        variables={
-            "offer": spec.offer,
-            "lines": lines_text,
-            "company_name": Untrusted(name),
-            "pages": Untrusted(pages_text),
-        },
+        prompt=load_prompt("radar_line_fit", version=2 if with_role else 1),
+        variables=variables,
         output_model=LineFitOutput,
         purpose="radar_line_fit",
         run=run,
@@ -105,14 +144,14 @@ async def judge_lines(
         line = names.get(item.line.strip().casefold())
         if line is None or item.verdict != "yes" or line in out:
             continue
-        quote = _collapse(item.quote)
-        if len(quote) < MIN_QUOTE:
-            continue
-        # whitespace-insensitive, but the kept quote is the page's own substring
-        pattern = re.compile(r"\s+".join(re.escape(w) for w in quote.split()))
-        for url, text in sent:
-            found = pattern.search(text)
-            if found is not None:
-                out[line] = VerifiedLine(line=line, url=url, quote=found.group(0))
-                break
-    return [out[ln.name] for ln in spec.catalogue_lines if ln.name in out]
+        found = _find_quote(item.quote, sent)
+        if found is not None:
+            out[line] = VerifiedLine(line=line, url=found[0], quote=found[1])
+    verified = [out[ln.name] for ln in spec.catalogue_lines if ln.name in out]
+    role: Role = result.value.role if with_role else "unclear"
+    if role in ("makes", "resells", "uses"):
+        found = _find_quote(result.value.role_quote, sent)
+        if found is not None:
+            return JudgeResult(lines=verified, role=role, role_url=found[0], role_quote=found[1])
+        role = "unclear"
+    return JudgeResult(lines=verified, role=role)

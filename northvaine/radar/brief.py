@@ -526,6 +526,10 @@ def apply_fit_order(
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
         elif e.company_site is not None and not e.judged_lines:  # D119: a judged line says it does
             reasons.append("Company fit: its own site does not name what you sell")
+        if e.site_role == "resells":  # D120
+            reasons.append("Its own site: sells this kind of product")
+        elif e.site_role == "uses":
+            reasons.append("Its own site: uses this kind of product")
         if e.matched_lines:
             reasons.append(f"Matches your catalogue line: {e.matched_lines[0]}")
         if link and len(e.candidate.streams) >= 2:
