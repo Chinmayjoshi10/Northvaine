@@ -308,6 +308,30 @@ def _register_name(c: Any) -> str:
     return (c.company_register.name if c.company_register else None) or c.name
 
 
+def own_name_rule(
+    c: Any, verdict: JudgeResult, market_words: frozenset[str], cfg: Settings
+) -> JudgeResult:
+    """D121: a company whose pages sell mostly products under its own name is a maker's arm.
+
+    The company's name word is the first distinctive word of its name that is not a word of the
+    client's market. A verified brand is own-name when it contains that word. When own-name brands
+    are at least half of the verified brands, the role becomes `makes` (unless it already is):
+    the evidence is then the brand, which code found on the page. Pure, no network."""
+    if not verdict.brands or verdict.role == "makes":
+        return verdict
+    word = next(
+        (w for w in _distinctive_words(_register_name(c), cfg) if w not in market_words), None
+    )
+    if word is None:
+        return verdict
+    own = [b for b in verdict.brands if word in _fold(b).split()]
+    if not own or 2 * len(own) < len(verdict.brands):
+        return verdict
+    return verdict.model_copy(
+        update={"role": "makes", "role_url": "", "role_quote": "", "own_brand": own[0]}
+    )
+
+
 def guess_hosts(c: Any, cfg: Settings, market_words: frozenset[str] = frozenset()) -> list[str]:
     """Likely web hosts for a company, from its registered name only (D113). Pure, no network.
 
@@ -387,6 +411,7 @@ async def _judge_all(
     *,
     run: RunContext,
     session: Any,
+    market_words: frozenset[str] = frozenset(),
 ) -> tuple[list[str], dict[int, JudgeResult]]:
     """The fit judge over `batch` (D119), concurrently; never fails the run."""
     gate = asyncio.Semaphore(cfg.radar_gate_concurrency)
@@ -402,7 +427,7 @@ async def _judge_all(
             if stopped:
                 return
             try:
-                results[id(entry)] = await judge_lines(
+                judged = await judge_lines(
                     entry.candidate.name,
                     _judge_order(read, deep_urls.get(id(entry), set())),
                     spec,
@@ -410,6 +435,7 @@ async def _judge_all(
                     session=session,
                     settings=cfg,
                 )
+                results[id(entry)] = own_name_rule(entry.candidate, judged, market_words, cfg)
             except BudgetExceeded as exc:
                 if not stopped:
                     notes.append(f"line fit stopped: {exc}")
@@ -424,9 +450,11 @@ async def _judge_all(
         resells = sum(
             1 for v in results.values() if v.role == "resells" and spec.channel != "direct"
         )
+        own_makers = sum(1 for v in results.values() if v.own_brand)
+        extra = f", {own_makers} own-name makers" if cfg.radar_fit_judge_brands else ""
         notes.append(
             f"line fit: {len(results)} judged, {with_line} with a line, {makes} competitors "
-            f"removed, {resells} possible distributors, {failed} failed"
+            f"removed, {resells} possible distributors, {failed} failed{extra}"
         )
     else:
         notes.append(f"line fit: {len(results)} judged, {with_line} with a line, {failed} failed")
@@ -655,6 +683,7 @@ async def company_fit(
             cfg,
             run=run,
             session=session,
+            market_words=market_words,
         )
         notes.extend(judge_notes)
     removed: set[int] = set()
@@ -746,6 +775,28 @@ async def company_fit(
                 role_here = SiteRoleQuote(
                     url=doc.url, quote=verdict.role_quote, fingerprint=fingerprint
                 )
+            if verdict.own_brand and role_here is None and verdict.own_brand in text:
+                # D121: its own site sells under its own name; the brand is the page's substring
+                statement = f"{c.name}'s own website sells products under its own name."
+                fingerprint = claim_fingerprint(doc.id, statement, verdict.own_brand)
+                checks.append(
+                    ClaimCheck(
+                        document_id=doc.id,
+                        draft=ClaimDraft(
+                            statement=statement,
+                            source_quote=verdict.own_brand,
+                            subject=SubjectMention(name=c.name, country=c.country, role="fit"),
+                            extracted_by="llm",
+                        ),
+                        status=ClaimStatus.VERIFIED,
+                        quote_offset=text.index(verdict.own_brand),
+                        verified_by="code",
+                        fingerprint=fingerprint,
+                    )
+                )
+                role_here = SiteRoleQuote(
+                    url=doc.url, quote=verdict.own_brand, fingerprint=fingerprint
+                )
             if checks and evidence_out is not None:
                 evidence_out.append(
                     (
@@ -792,8 +843,13 @@ async def company_fit(
                             "passed": False,
                             "rejected_as": RejectedAs.COMPETITOR,
                             "by": "llm",
-                            "reason": "Its own site says it makes this kind of product: "
-                            f'"{verdict.role_quote}"',
+                            "reason": (
+                                "Its own site sells mainly its own-name brand: "
+                                f'"{verdict.own_brand}"'
+                                if verdict.own_brand
+                                else "Its own site says it makes this kind of product: "
+                                f'"{verdict.role_quote}"'
+                            ),
                             "partner": False,
                         }
                     ),
