@@ -463,18 +463,13 @@ def _partner_size(entry: RankedEntry) -> int:
 def match_lines(entry: RankedEntry, lines: list[CatalogueLine]) -> list[str]:
     """Names of the catalogue lines this entry matches, in the client's priority order (D118).
 
-    A line matches when the import record has one of its `hs:` codes (prefix of the commodity
-    code) or a company-fit quote names one of its terms."""
-    commodity = import_codes(entry.candidate)
+    A line matches when a company-fit quote from the company's own site names one of its terms.
+    Product codes are not used: a live run matched half the importers to the premium line through
+    codes that firms of every catalogue line both import, so a code cannot tell lines apart."""
     out: list[str] = []
     for line in lines:
-        prefixes = [c.split(":", 1)[1] for c in line.codes if c.casefold().startswith("hs:")]
-        by_code = any(k.startswith(p) for p in prefixes if p for k in commodity)
         terms = {t.casefold() for t in line.terms if t.strip()}
-        by_term = bool(terms) and any(
-            names_term(f.quote, terms, prefix=True) for f in entry.company_fit
-        )
-        if by_code or by_term:
+        if terms and any(names_term(f.quote, terms, prefix=True) for f in entry.company_fit):
             out.append(line.name)
     return out
 

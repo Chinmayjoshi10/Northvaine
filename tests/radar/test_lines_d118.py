@@ -41,11 +41,12 @@ def _entry(
     )
 
 
-def test_lines_match_by_import_code_prefix_and_by_fit_term() -> None:
-    assert match_lines(_entry("a", 1, code="68022100"), LINES) == ["Premium"]
+def test_lines_match_by_site_words_never_by_import_code() -> None:
+    # a code is imported by firms of every line, so it cannot place a company in one
+    assert match_lines(_entry("a", 1, code="68022100"), LINES) == []
     assert match_lines(_entry("b", 1, term="gravel"), LINES) == ["Basic"]
-    both = _entry("c", 1, code="25171000", term="marble")
-    assert match_lines(both, LINES) == ["Premium", "Basic"]  # the client's order
+    both = _entry("c", 1, code="68022100", term="marble")
+    assert match_lines(both, LINES) == ["Premium"]
     assert match_lines(_entry("d", 1, code="99999999"), LINES) == []
 
 
