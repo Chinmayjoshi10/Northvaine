@@ -301,6 +301,7 @@ class Settings(BaseSettings):
     radar_fit_judge_top: int = Field(default=30, ge=0)
     radar_fit_judge_chars: int = Field(default=6000, ge=500)
     radar_fit_judge_max_tokens: int = Field(default=400, ge=1)
+    radar_fit_judge_role: bool = True  # D120: the same call also says what the company is
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).
     radar_contract_nature_aliases: dict[str, str] = Field(

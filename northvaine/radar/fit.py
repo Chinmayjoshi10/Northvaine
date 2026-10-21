@@ -43,7 +43,7 @@ from northvaine.core.models import (
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.brief import _trade_slots, import_codes, names_term
 from northvaine.radar.discover import PageFetcher, neutralise_steering, strip_contacts
-from northvaine.radar.linefit import judge_lines
+from northvaine.radar.linefit import JudgeResult, judge_lines
 from northvaine.radar.models import (
     ClientSpec,
     CompanyContact,
@@ -51,6 +51,9 @@ from northvaine.radar.models import (
     JudgedLine,
     RadarStream,
     RankedEntry,
+    RejectedAs,
+    RejectedEntry,
+    SiteRoleQuote,
 )
 from northvaine.radar.verify import claim_fingerprint
 from northvaine.sensors.base import SensorError, SensorQuery, content_hash
@@ -384,12 +387,12 @@ async def _judge_all(
     *,
     run: RunContext,
     session: Any,
-) -> tuple[list[str], dict[int, list[Any]]]:
+) -> tuple[list[str], dict[int, JudgeResult]]:
     """The fit judge over `batch` (D119), concurrently; never fails the run."""
     gate = asyncio.Semaphore(cfg.radar_gate_concurrency)
     stopped = False
     failed = 0
-    results: dict[int, list[Any]] = {}
+    results: dict[int, JudgeResult] = {}
     notes: list[str] = []
 
     async def _one(item: Any) -> None:
@@ -415,10 +418,18 @@ async def _judge_all(
                 failed += 1
 
     await asyncio.gather(*(_one(item) for item in batch))
-    notes.append(
-        f"line fit: {len(results)} judged, {sum(1 for v in results.values() if v)} with a line, "
-        f"{failed} failed"
-    )
+    with_line = sum(1 for v in results.values() if v.lines)
+    if cfg.radar_fit_judge_role:  # D120: counts only, no names
+        makes = sum(1 for v in results.values() if v.role == "makes")
+        resells = sum(
+            1 for v in results.values() if v.role == "resells" and spec.channel != "direct"
+        )
+        notes.append(
+            f"line fit: {len(results)} judged, {with_line} with a line, {makes} competitors "
+            f"removed, {resells} possible distributors, {failed} failed"
+        )
+    else:
+        notes.append(f"line fit: {len(results)} judged, {with_line} with a line, {failed} failed")
     return notes, results
 
 
@@ -433,6 +444,7 @@ async def company_fit(
     evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
     run: RunContext | None = None,
     session: Any = None,
+    rejected_out: list[RejectedEntry] | None = None,
 ) -> tuple[list[RankedEntry], list[str]]:
     """Each shortlisted entry with its company-fit evidence; notes for what was skipped."""
     cfg = settings or get_settings()
@@ -630,8 +642,12 @@ async def company_fit(
             if sum(t in n for n in with_fit) > cfg.radar_fit_common_share * len(with_fit)
         }
         prefer = set().union(*with_fit) - common if with_fit else set()
-    judged: dict[int, list[Any]] = {}  # D119: id(entry) -> verified lines
-    if spec.catalogue_lines and cfg.radar_fit_judge_top > 0 and run is not None:
+    judged: dict[int, JudgeResult] = {}  # D119/D120: id(entry) -> verified lines and role
+    if (
+        cfg.radar_fit_judge_top > 0
+        and run is not None
+        and (spec.catalogue_lines or cfg.radar_fit_judge_role)
+    ):
         judge_notes, judged = await _judge_all(
             [p for p in pending if p[3]][: cfg.radar_fit_judge_top],
             deep_urls,
@@ -641,10 +657,13 @@ async def company_fit(
             session=session,
         )
         notes.extend(judge_notes)
+    removed: set[int] = set()
     for index, entry, domain, read, contact in pending:
         c = entry.candidate
         fits: list[FitEvidence] = []
         judged_here: list[JudgedLine] = []
+        verdict = judged.get(id(entry)) or JudgeResult()
+        role_here: SiteRoleQuote | None = None
         seen_lines: set[str] = set()
         for doc, text in read:
             checks: list[ClaimCheck] = []
@@ -673,7 +692,7 @@ async def company_fit(
                         url=doc.url, quote=sentence, term=term, level=level, fingerprint=fingerprint
                     )
                 )
-            for vl in judged.get(id(entry), []):
+            for vl in verdict.lines:
                 if vl.url != doc.url or vl.quote not in text or vl.line in seen_lines:
                     continue  # two reads of one URL can differ; never index a missing quote
                 seen_lines.add(vl.line)
@@ -696,6 +715,36 @@ async def company_fit(
                 )
                 judged_here.append(
                     JudgedLine(line=vl.line, url=doc.url, quote=vl.quote, fingerprint=fingerprint)
+                )
+            if (
+                verdict.role in ("makes", "resells", "uses")
+                and role_here is None
+                and verdict.role_url == doc.url
+                and verdict.role_quote in text
+            ):
+                statement = {
+                    "makes": f"{c.name}'s own website says it makes products like yours.",
+                    "resells": f"{c.name}'s own website says it sells products like yours.",
+                    "uses": f"{c.name}'s own website says it uses products like yours.",
+                }[verdict.role]
+                fingerprint = claim_fingerprint(doc.id, statement, verdict.role_quote)
+                checks.append(
+                    ClaimCheck(
+                        document_id=doc.id,
+                        draft=ClaimDraft(
+                            statement=statement,
+                            source_quote=verdict.role_quote,
+                            subject=SubjectMention(name=c.name, country=c.country, role="fit"),
+                            extracted_by="llm",
+                        ),
+                        status=ClaimStatus.VERIFIED,
+                        quote_offset=text.index(verdict.role_quote),
+                        verified_by="code",
+                        fingerprint=fingerprint,
+                    )
+                )
+                role_here = SiteRoleQuote(
+                    url=doc.url, quote=verdict.role_quote, fingerprint=fingerprint
                 )
             if checks and evidence_out is not None:
                 evidence_out.append(
@@ -720,6 +769,12 @@ async def company_fit(
             )
         if judged_here:
             update["judged_lines"] = judged_here
+        if verdict.role in ("makes", "resells", "uses"):
+            update["site_role"] = verdict.role
+            if role_here is not None:
+                update["site_role_quote"] = role_here
+            if verdict.role == "resells" and spec.channel in ("distributors", "both"):
+                update["gate"] = entry.gate.model_copy(update={"partner": True})
         if id(entry) in proof_for:
             update["site_proof"] = proof_for[id(entry)]
         if contact is not None:
@@ -727,6 +782,28 @@ async def company_fit(
         if level == "stated" and entry.evidence_level in ("generic_mention", "no_evidence"):
             update["evidence_level"] = "company_fit"  # it handles the category; no purchase yet
         out[index] = entry.model_copy(update=update)
+        if verdict.role == "makes" and rejected_out is not None:
+            # D120: its own site says it makes this kind of product: a competitor (rule 3)
+            rejected_out.append(
+                RejectedEntry(
+                    candidate=entry.candidate,
+                    gate=entry.gate.model_copy(
+                        update={
+                            "passed": False,
+                            "rejected_as": RejectedAs.COMPETITOR,
+                            "by": "llm",
+                            "reason": "Its own site says it makes this kind of product: "
+                            f'"{verdict.role_quote}"',
+                            "partner": False,
+                        }
+                    ),
+                )
+            )
+            removed.add(index)
+    if removed:
+        out = [e for i, e in enumerate(out) if i not in removed]
+        new_rank = {id(e): n for n, e in enumerate(sorted(out, key=lambda e: e.rank), start=1)}
+        out = [e.model_copy(update={"rank": new_rank[id(e)]}) for e in out]
     if cfg.radar_fit_single_search:
         notes.append(
             f"company fit: {len(guessed)} sites found free, {by_search} by search, "

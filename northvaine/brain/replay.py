@@ -319,6 +319,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_fit_distinctive": False,  # D118: no distinctive-word quote preference
     "radar_fit_deep_pages": 0,  # D119: no product-page fetches
     "radar_fit_judge_top": 0,  # D119: no catalogue-line fit judge
+    "radar_fit_judge_role": False,  # D120: v1 prompt, no role question
 }
 
 

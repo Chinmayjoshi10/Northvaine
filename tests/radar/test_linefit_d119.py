@@ -26,7 +26,7 @@ LINES = [
     CatalogueLine(name="Basic", terms=["gravel"]),
 ]
 SPEC_L = SPEC.model_copy(update={"catalogue_lines": LINES, "offer_terms": ["stone"]})
-CFG = Settings(_env_file=None)
+CFG = Settings(_env_file=None, radar_fit_judge_role=False)  # D119 behaviour
 
 
 def test_links_prefer_line_terms_then_market_then_generic() -> None:
@@ -99,9 +99,11 @@ def _fake(monkeypatch: pytest.MonkeyPatch, output: Any) -> None:
 
 async def _judge(output: Any, monkeypatch: pytest.MonkeyPatch) -> list[Any]:
     _fake(monkeypatch, output)
-    return await judge_lines(
-        "Acme", [("https://acme.com/p", PAGE)], SPEC_L, run=RunContext(), settings=CFG
-    )
+    return (
+        await judge_lines(
+            "Acme", [("https://acme.com/p", PAGE)], SPEC_L, run=RunContext(), settings=CFG
+        )
+    ).lines
 
 
 async def test_verified_yes_keeps_the_pages_own_substring(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -180,7 +182,9 @@ async def test_company_fit_reads_deep_pages_and_judges(monkeypatch: pytest.Monke
         http=None,
         fetcher=LinkFetcher(pages),
         as_of=NOW,
-        settings=Settings(_env_file=None, radar_site_guess_max_companies=0),
+        settings=Settings(
+            _env_file=None, radar_site_guess_max_companies=0, radar_fit_judge_role=False
+        ),
         evidence_out=evidence,
         run=RunContext(),
     )

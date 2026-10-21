@@ -257,6 +257,15 @@ class JudgedLine(NorthvaineModel):
     fingerprint: str
 
 
+class SiteRoleQuote(NorthvaineModel):
+    """What the company's own site shows it is to the client's kind of product (D120): the
+    quote is a verbatim part of the page, confirmed by code."""
+
+    url: str
+    quote: str
+    fingerprint: str
+
+
 class CompanyContact(NorthvaineModel):
     """The company's own role address and phone, verbatim from its own site (D108). Company
     only: never a person."""
@@ -297,6 +306,8 @@ class RankedEntry(NorthvaineModel):
     fit_distinctive: bool = False  # D118: a kept quote names a word few companies in the run use
     matched_lines: list[str] = Field(default_factory=list)  # D118: catalogue lines it matches
     judged_lines: list[JudgedLine] = Field(default_factory=list)  # D119
+    site_role: str | None = None  # D120: makes / resells / uses, verified by quote
+    site_role_quote: SiteRoleQuote | None = None
     company_contact: CompanyContact | None = None  # D108
     site_proof: str | None = None  # D113: "registration number" / "registered name"
     # The daily edition (D103): act now / just changed / account to work, and why.
