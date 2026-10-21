@@ -247,6 +247,16 @@ class FitEvidence(NorthvaineModel):
     fingerprint: str
 
 
+class JudgedLine(NorthvaineModel):
+    """A catalogue line the fit judge found on the company's own site (D119): the quote is a
+    verbatim part of the page, confirmed by code."""
+
+    line: str
+    url: str
+    quote: str
+    fingerprint: str
+
+
 class CompanyContact(NorthvaineModel):
     """The company's own role address and phone, verbatim from its own site (D108). Company
     only: never a person."""
@@ -286,6 +296,7 @@ class RankedEntry(NorthvaineModel):
     fit_level: Literal["stated", "related"] | None = None
     fit_distinctive: bool = False  # D118: a kept quote names a word few companies in the run use
     matched_lines: list[str] = Field(default_factory=list)  # D118: catalogue lines it matches
+    judged_lines: list[JudgedLine] = Field(default_factory=list)  # D119
     company_contact: CompanyContact | None = None  # D108
     site_proof: str | None = None  # D113: "registration number" / "registered name"
     # The daily edition (D103): act now / just changed / account to work, and why.
@@ -310,6 +321,9 @@ class UpgradedPage(NorthvaineModel):
     # The page text before contacts were stripped, kept in memory for the company-contact check
     # only (D108). Excluded from every dump, so recordings and reports never store contacts.
     contact_text: str | None = Field(default=None, exclude=True)
+    # D119: absolute links found on the page, in page order, for reading a few product pages.
+    # Old recordings have none.
+    links: list[str] = Field(default_factory=list)
 
 
 class DiscoverResult(NorthvaineModel):

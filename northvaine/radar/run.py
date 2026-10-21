@@ -364,6 +364,8 @@ async def run_radar(
         as_of=as_of,
         settings=settings,
         evidence_out=evidence_out,
+        run=run,
+        session=session,
     )
     notes.extend(fit_notes)
     if settings.radar_fit_single_search:  # D108: fit moves the ranking within an evidence level

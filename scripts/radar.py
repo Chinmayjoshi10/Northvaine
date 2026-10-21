@@ -112,6 +112,10 @@ SHAPING_SETTINGS = (
     "radar_investigate_top",  # D117
     "radar_fit_distinctive",  # D118
     "radar_fit_common_share",
+    "radar_fit_deep_pages",  # D119
+    "radar_fit_deep_path_words",
+    "radar_fit_judge_top",
+    "radar_fit_judge_chars",
     "radar_investigate_max_searches",
     "fit_contact_role_words",
 )

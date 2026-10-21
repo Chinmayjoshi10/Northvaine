@@ -26,7 +26,7 @@ from northvaine.sensors.base import (
     content_hash,
 )
 from northvaine.sensors.fetch import Resolver, RobotsCache, safe_fetch
-from northvaine.sensors.html_text import html_to_text
+from northvaine.sensors.html_text import extract_links, html_to_text
 from northvaine.sensors.registry import get_sensor
 from northvaine.sensors.replay import ReplayMismatch
 
@@ -237,6 +237,9 @@ class LivePageFetcher:
             text=strip_contacts(text),
             refused=None,
             contact_text=text,
+            links=extract_links(page.text, page.final_url or url)[
+                : self._settings.radar_fit_link_cap
+            ],
         )
 
 

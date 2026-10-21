@@ -463,13 +463,17 @@ def _partner_size(entry: RankedEntry) -> int:
 def match_lines(entry: RankedEntry, lines: list[CatalogueLine]) -> list[str]:
     """Names of the catalogue lines this entry matches, in the client's priority order (D118).
 
-    A line matches when a company-fit quote from the company's own site names one of its terms.
+    A line matches when a company-fit quote from the company's own site names one of its terms,
+    or the fit judge found it on the site with a verified quote (D119).
     Product codes are not used: a live run matched half the importers to the premium line through
     codes that firms of every catalogue line both import, so a code cannot tell lines apart."""
     out: list[str] = []
     for line in lines:
         terms = {t.casefold() for t in line.terms if t.strip()}
-        if terms and any(names_term(f.quote, terms, prefix=True) for f in entry.company_fit):
+        by_terms = bool(terms) and any(
+            names_term(f.quote, terms, prefix=True) for f in entry.company_fit
+        )
+        if by_terms or any(j.line == line.name for j in entry.judged_lines):
             out.append(line.name)
     return out
 
@@ -520,7 +524,7 @@ def apply_fit_order(
         reasons = list(e.rank_reasons)
         if e.fit_level is not None and e.company_fit:
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
-        elif e.company_site is not None:
+        elif e.company_site is not None and not e.judged_lines:  # D119: a judged line says it does
             reasons.append("Company fit: its own site does not name what you sell")
         if e.matched_lines:
             reasons.append(f"Matches your catalogue line: {e.matched_lines[0]}")
