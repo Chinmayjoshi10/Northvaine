@@ -155,7 +155,7 @@ async def judge_lines(
     if with_role:
         variables["not_buyers"] = "; ".join(spec.not_buyers) or "not stated"
     result = await complete_json(
-        tier=ModelTier.FAST,
+        tier=ModelTier(cfg.radar_fit_judge_tier),
         prompt=load_prompt("radar_line_fit", version=3 if with_brands else (2 if with_role else 1)),
         variables=variables,
         output_model=LineFitOutput,
