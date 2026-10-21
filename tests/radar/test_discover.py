@@ -134,6 +134,19 @@ async def test_live_fetch_strips_contacts_from_the_title() -> None:
     assert "sales@acme.example" not in page.title and "496 0000" not in page.title
 
 
+async def test_live_fetch_drops_links_that_carry_contacts() -> None:
+    html = (
+        '<a href="/products/cabinets">Cabinets</a>'
+        '<a href="/share?to=sales@acme.example">Mail</a>'
+        '<a href="https://acme.example/call/+447700900123">Call</a>'
+    )
+    fetcher, _ = fetcher_for(
+        site(httpx.Response(200, text=html, headers={"content-type": "text/html"}))
+    )
+    page = await fetcher.fetch("https://acme.example/")
+    assert page.links == ["https://acme.example/products/cabinets"]
+
+
 async def test_live_fetch_robots_disallow_makes_no_page_request() -> None:
     fetcher, seen = fetcher_for(
         site(httpx.Response(200, text=PAGE), robots="User-agent: *\nDisallow: /")

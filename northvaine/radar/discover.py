@@ -237,9 +237,11 @@ class LivePageFetcher:
             text=strip_contacts(text),
             refused=None,
             contact_text=text,
-            links=extract_links(page.text, page.final_url or url)[
-                : self._settings.radar_fit_link_cap
-            ],
+            links=[  # a link carrying an email or phone is dropped, never stored
+                link
+                for link in extract_links(page.text, page.final_url or url)
+                if strip_contacts(link) == link
+            ][: self._settings.radar_fit_link_cap],
         )
 
 
