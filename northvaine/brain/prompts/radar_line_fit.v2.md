@@ -38,9 +38,11 @@ Answer in this order:
    as listed), "verdict" and "quote". If the lines read "none listed", return an empty list.
 
 Roles:
-- makes: the company makes, manufactures or owns the brand of products of the same kind as the
-  client's offer. A manufacturer or brand owner, including a local sales arm of one.
+- makes: the company manufactures products of the same kind as the client's offer, or is the
+  local sales arm of a manufacturer of them, and sells mainly its own products.
 - resells: it sells, distributes, supplies or installs other companies' products of this kind.
+  A distributor or dealer that carries other companies' brands is resells, even when it also
+  has an own-brand range.
 - uses: it uses such products in its own business, or rents them out.
 - other: none of these.
 - unclear: the pages do not show it. Unclear is a good answer.
