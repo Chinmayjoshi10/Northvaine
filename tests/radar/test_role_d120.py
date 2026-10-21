@@ -61,7 +61,10 @@ async def _fit(
         fetcher=FakeFetcher(PAGES),
         as_of=NOW,
         settings=Settings(
-            _env_file=None, radar_site_guess_max_companies=0, radar_fit_judge_role=judge_role
+            _env_file=None,
+            radar_site_guess_max_companies=0,
+            radar_fit_judge_role=judge_role,
+            radar_fit_judge_brands=False,  # D121 has its own tests
         ),
         evidence_out=evidence,
         run=RunContext(),

@@ -320,6 +320,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_fit_deep_pages": 0,  # D119: no product-page fetches
     "radar_fit_judge_top": 0,  # D119: no catalogue-line fit judge
     "radar_fit_judge_role": False,  # D120: v1 prompt, no role question
+    "radar_fit_judge_brands": False,  # D121: v2 prompt, no brands, no own-name rule
 }
 
 
