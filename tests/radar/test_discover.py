@@ -431,3 +431,21 @@ def test_strip_contacts_leaves_nothing_the_recorder_would_refuse() -> None:
     for _ in range(20000):
         s = "".join(rng.choice(parts) for _ in range(rng.randint(3, 10)))
         assert not find_pii(strip_contacts(s)), s
+
+
+async def test_discover_turns_a_transport_timeout_into_a_note() -> None:
+    # a live run crashed when one tender service timed out
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ReadTimeout("slow", request=request)
+
+    http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    spec = load_client_spec("packaging_supplier", CLIENTS)
+    result = await discover(
+        spec,
+        {"tavily": [spec.sensors["tavily"][0]]},
+        http=http,
+        fetcher=RecordedPageFetcher([]),
+        settings=SETTINGS,
+    )
+    assert result.documents == []
+    assert any("ReadTimeout" in n for n in result.notes)

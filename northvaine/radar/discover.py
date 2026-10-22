@@ -311,6 +311,11 @@ async def discover(
             except (SensorError, ConfigError) as exc:
                 notes.append(f"sensor {sensor_name} query {i + 1}: {type(exc).__name__}: {exc}")
                 continue
+            except ReplayMismatch:
+                raise  # a replay that asks for something unrecorded is a bug, never a note
+            except Exception as exc:  # a timeout or a dropped connection never stops a run
+                notes.append(f"sensor {sensor_name} query {i + 1}: {type(exc).__name__}")
+                continue
             collected.extend(result.documents)
             for sdoc in result.documents:
                 refs = refs_by_hash.setdefault(sdoc.content_hash, [])
