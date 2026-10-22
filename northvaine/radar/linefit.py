@@ -90,13 +90,18 @@ def pages_for_judge(pages: list[tuple[str, str]], limit: int) -> list[tuple[str,
     return sent
 
 
-def _find_quote(raw: str, sent: list[tuple[str, str]]) -> tuple[str, str] | None:
-    """(url, the page's own substring) when the quote is on a page sent, else None."""
+def _find_quote(
+    raw: str, sent: list[tuple[str, str]], *, any_case: bool = False
+) -> tuple[str, str] | None:
+    """(url, the page's own substring) when the quote is on a page sent, else None. `any_case`
+    (D123): a heading in capitals still matches; the kept quote is still the page's own text."""
     quote = _collapse(raw)
     if len(quote) < MIN_QUOTE:
         return None
     # whitespace-insensitive, but the kept quote is the page's own substring
-    pattern = re.compile(r"\s+".join(re.escape(w) for w in quote.split()))
+    pattern = re.compile(
+        r"\s+".join(re.escape(w) for w in quote.split()), re.IGNORECASE if any_case else 0
+    )
     for url, text in sent:
         found = pattern.search(text)
         if found is not None:
@@ -141,6 +146,7 @@ async def judge_lines(
 
     with_role = cfg.radar_fit_judge_role
     with_brands = with_role and cfg.radar_fit_judge_brands  # D121
+    with_buyers = with_brands and cfg.radar_fit_judge_buyer_roles  # D123
     sent = pages_for_judge(pages, cfg.radar_fit_judge_chars)
     if not sent or not (spec.catalogue_lines or with_role):
         return JudgeResult()
@@ -154,9 +160,12 @@ async def judge_lines(
     }
     if with_role:
         variables["not_buyers"] = "; ".join(spec.not_buyers) or "not stated"
+    if with_buyers:
+        variables["buyer_roles"] = "; ".join(spec.buyer_roles) or "not stated"
+    version = 4 if with_buyers else 3 if with_brands else 2 if with_role else 1
     result = await complete_json(
         tier=ModelTier(cfg.radar_fit_judge_tier),
-        prompt=load_prompt("radar_line_fit", version=3 if with_brands else (2 if with_role else 1)),
+        prompt=load_prompt("radar_line_fit", version=version),
         variables=variables,
         output_model=LineFitOutput,
         purpose="radar_line_fit",
@@ -171,14 +180,14 @@ async def judge_lines(
         line = names.get(item.line.strip().casefold())
         if line is None or item.verdict != "yes" or line in out:
             continue
-        found = _find_quote(item.quote, sent)
+        found = _find_quote(item.quote, sent, any_case=with_buyers)
         if found is not None:
             out[line] = VerifiedLine(line=line, url=found[0], quote=found[1])
     verified = [out[ln.name] for ln in spec.catalogue_lines if ln.name in out]
     brands = _verified_brands(result.value.brands, sent) if with_brands else []
     role: Role = result.value.role if with_role else "unclear"
     if role in ("makes", "resells", "uses"):
-        found = _find_quote(result.value.role_quote, sent)
+        found = _find_quote(result.value.role_quote, sent, any_case=with_buyers)
         if found is not None:
             return JudgeResult(
                 lines=verified, role=role, role_url=found[0], role_quote=found[1], brands=brands

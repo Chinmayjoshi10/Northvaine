@@ -319,6 +319,8 @@ def own_name_rule(
     the evidence is then the brand, which code found on the page. Pure, no network."""
     if not verdict.brands or verdict.role == "makes":
         return verdict
+    if cfg.radar_fit_judge_buyer_roles and verdict.role in ("resells", "uses"):
+        return verdict  # D123: a distributor's own-label range never overrides the judge
     word = next(
         (w for w in _distinctive_words(_register_name(c), cfg) if w not in market_words), None
     )

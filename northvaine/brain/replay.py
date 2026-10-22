@@ -322,6 +322,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_fit_judge_role": False,  # D120: v1 prompt, no role question
     "radar_fit_judge_brands": False,  # D121: v2 prompt, no brands, no own-name rule
     "radar_fit_judge_tier": "fast",  # D122: the fit judge ran on the fast model
+    "radar_fit_judge_buyer_roles": False,  # D123: prompt v3, case-sensitive quotes
 }
 
 

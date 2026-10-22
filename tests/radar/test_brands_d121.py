@@ -21,7 +21,7 @@ from tests.radar.test_fit import NOW, SPEC, FakeFetcher, FakeSensor, entry
 SELLS = "We supply and install Acme cabinets and Bolt shelving for shops"
 PAGE_TEXT = f"Acme Cooling UK. {SELLS}. Crest lighting too. OwnName range."
 URL = "https://www.acme.com/"
-CFG = Settings(_env_file=None)
+CFG = Settings(_env_file=None, radar_fit_judge_buyer_roles=False)  # the D121 rule as built
 MARKET = frozenset({"granite", "kerb"})
 
 
@@ -64,6 +64,7 @@ async def _fit(
             _env_file=None,
             radar_site_guess_max_companies=0,
             radar_fit_judge_brands=brands_on,
+            radar_fit_judge_buyer_roles=False,
         ),
         evidence_out=evidence,
         run=RunContext(),
