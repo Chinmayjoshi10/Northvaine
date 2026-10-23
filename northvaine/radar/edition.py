@@ -42,6 +42,15 @@ def _changes(entry: RankedEntry, today: date, settings: Settings) -> list[str]:
     return found
 
 
+# D125: an assessed entry's label follows its opportunity, so the edition and the ranking agree.
+_FROM_OPPORTUNITY = {
+    "connected": "act_now",
+    "approach_now": "act_now",
+    "relationship": "just_changed",
+    "looking": "just_changed",
+}
+
+
 def label_entries(entries: list[RankedEntry], today: date, settings: Settings) -> list[RankedEntry]:
     out: list[RankedEntry] = []
     for entry in entries:
@@ -49,7 +58,18 @@ def label_entries(entries: list[RankedEntry], today: date, settings: Settings) -
         reason: str | None = None
         strength = 0
         status = action_status(entry)
-        if status in ("bid now", "contact now"):
+        opportunity = entry.opportunity
+        if opportunity is not None:
+            # Ranked by opportunity already: no strength, so the edition keeps that order.
+            label = _FROM_OPPORTUNITY.get(opportunity.label)
+            if label is not None:
+                reason = opportunity.why_now or opportunity.words
+            elif (
+                entry.candidate.stream == RadarStream.TRADE
+                and entry.evidence_level == "proven_buyer"
+            ):
+                label, reason = "account_to_work", "a proven buyer of your product codes"
+        elif status in ("bid now", "contact now"):
             label, reason = "act_now", status
         elif changes := _changes(entry, today, settings):
             label, reason, strength = "just_changed", "; ".join(changes), len(changes)

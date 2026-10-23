@@ -32,7 +32,7 @@ from northvaine.core.models import (
 )
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.bidders import likely_bidders
-from northvaine.radar.brief import apply_fit_order, main_selection, rank
+from northvaine.radar.brief import apply_fit_order, main_selection, off_target, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.edition import label_entries
@@ -51,6 +51,7 @@ from northvaine.radar.models import (
     RejectedEntry,
     SkepticFinding,
 )
+from northvaine.radar.opportunity import order_opportunities
 from northvaine.radar.register import (
     SeedProfile,
     mark_likeness,
@@ -235,6 +236,16 @@ async def run_radar(
     )
     candidates = mark_likeness(candidates, profiles, name_key)
 
+    # 3c. off target, by code before any model call (D125): outside the client's markets, or a
+    # contract or news item that never names what the client sells
+    if settings.radar_off_target_filter:
+        candidates, off = off_target(candidates, spec)
+        rejected.extend(off)
+        if off:
+            notes.append(
+                f"off target: {len(off)} lead(s) outside your markets or not about your product"
+            )
+
     # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
     ordered = _gate_order(candidates, as_of.date())
     limit = settings.radar_max_gate_candidates
@@ -392,6 +403,11 @@ async def run_radar(
         entries = rerank(entries, spec, as_of=as_of, settings=settings)
         if settings.radar_fit_single_search:
             entries = apply_fit_order(entries, lines=spec.catalogue_lines)
+
+    # 7c. opportunities (D125): every entry gets a play, intent, fit and confidence, and the run is
+    # ordered by them, so the top holds the best reasons to call now
+    if settings.radar_rank_by_opportunity:
+        entries = order_opportunities(entries, as_of.date(), spec)
 
     # 8. the daily edition labels (D103, code only)
     entries = label_entries(entries, as_of.date(), settings)

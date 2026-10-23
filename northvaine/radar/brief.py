@@ -34,6 +34,7 @@ from northvaine.radar.models import (
     RadarStream,
     RankedEntry,
     RejectedAs,
+    RejectedEntry,
     SkepticFinding,
 )
 
@@ -197,6 +198,71 @@ def requirement_of(
             if _names_term(claim.source_quote, terms, prefix):
                 return "stated", claim.ref
     return "inferred", None
+
+
+_PROJECT_STREAMS = (RadarStream.TENDER, RadarStream.AWARD, RadarStream.ANNOUNCEMENT)
+_CPV_LINE = re.compile(r"\bcpv:\s*([\d,\s-]+)", re.IGNORECASE)
+
+
+def _carries_code(candidate: Candidate, codes: list[str]) -> bool:
+    """True when a verified record line classifies it under one of the client's contract codes
+    (a code matches when it starts with the client's code, so a division covers its classes)."""
+    if not codes:
+        return False
+    for claim in candidate.claims:
+        for found in _CPV_LINE.finditer(claim.source_quote):
+            for code in re.findall(r"\d{8}", found.group(1)):
+                if any(code.startswith(c.rstrip("0") or c) for c in codes):
+                    return True
+    return False
+
+
+def off_target(
+    candidates: list[Candidate], spec: Any
+) -> tuple[list[Candidate], list[RejectedEntry]]:
+    """Candidates the client can act on, and the rest rejected by code before any model call (D125).
+
+    Off target: a company located outside the client's markets (a record without a country is
+    kept), or a contract, tender or news item whose own title or quotes, and whose company name,
+    never name what the client sells or a related product. A record classified under one of the
+    client's own contract codes is about the product in any language (a German tender is titled
+    in German, not in the client's English words), like an import record of its product codes, so
+    it is kept."""
+    markets = {m.upper() for m in spec.markets}
+    terms = {t.casefold() for t in [*spec.offer_terms, *spec.related_terms] if t.strip()}
+    searched = [code for queries in spec.sensors.values() for q in queries for code in q.codes]
+    codes = [*spec.product_codes, *searched]  # the codes the client searches with are its own
+    cpv = list(dict.fromkeys(c.split(":", 1)[1] for c in codes if c.casefold().startswith("cpv:")))
+    kept: list[Candidate] = []
+    out: list[RejectedEntry] = []
+    for c in candidates:
+        reason = None
+        if markets and c.country and c.country.upper() not in markets:
+            reason = "outside your markets"
+        elif c.stream in _PROJECT_STREAMS and terms and not _carries_code(c, cpv):
+            named = requirement_of(c, terms, prefix=True)[0] == "stated"
+            if not named and not _names_term(c.name, terms, prefix=True):
+                reason = "the contract or news never names what you sell"
+        if reason is None:
+            kept.append(c)
+            continue
+        out.append(
+            RejectedEntry(
+                candidate=c,
+                gate=GateDecision(
+                    passed=False,
+                    rejected_as=RejectedAs.NOT_A_BUYER,
+                    by="code",
+                    reason=f"Off target: {reason}",
+                    direct_buyer=None,
+                    buyer_reason=None,
+                    demand_reason=None,
+                    suggested_action=None,
+                    cited_refs=[],
+                ),
+            )
+        )
+    return kept, out
 
 
 def _urgency(

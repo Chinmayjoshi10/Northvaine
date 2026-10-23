@@ -275,6 +275,19 @@ class CompanyContact(NorthvaineModel):
     url: str
 
 
+class Opportunity(NorthvaineModel):
+    """Why to talk to the company now, and how strongly (D125): set by radar/opportunity.py."""
+
+    label: Literal["connected", "approach_now", "relationship", "looking", "watch"]
+    play: Literal["project", "partner", "account"]
+    intent: int  # 0 none, 1 weak, 2 clear, 3 strong
+    fit: int  # 0 unknown, 1 some, 2 good, 3 strong
+    confidence: int  # independent kinds of source that agree
+    latest: date | None  # the newest dated signal
+    why_now: str  # the strongest signal, in our words, with its date
+    words: str  # "Strong intent · Good fit · 3 sources agree"
+
+
 class RankedEntry(NorthvaineModel):
     rank: int = Field(ge=1)
     candidate: Candidate
@@ -308,6 +321,7 @@ class RankedEntry(NorthvaineModel):
     judged_lines: list[JudgedLine] = Field(default_factory=list)  # D119
     site_role: str | None = None  # D120: makes / resells / uses, verified by quote
     site_role_quote: SiteRoleQuote | None = None
+    opportunity: Opportunity | None = None  # D125
     company_contact: CompanyContact | None = None  # D108
     site_proof: str | None = None  # D113: "registration number" / "registered name"
     # The daily edition (D103): act now / just changed / account to work, and why.

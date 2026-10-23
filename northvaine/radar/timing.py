@@ -10,11 +10,20 @@ from typing import Any
 
 from northvaine.radar.models import Candidate
 
-__all__ = ["timing_signals"]
+__all__ = ["dated_changes", "timing_signals"]
 
 
 def timing_signals(candidate: Candidate, as_of: date, days: int) -> list[str]:
     """Short lines in our own words, each with its date, newest first."""
+    earliest = as_of - timedelta(days=days)
+    inside = sorted(
+        ((w, t) for w, t in dated_changes(candidate) if earliest <= w <= as_of), reverse=True
+    )
+    return [t for _, t in inside]
+
+
+def dated_changes(candidate: Candidate) -> list[tuple[date, str]]:
+    """Every dated change the register and the trade record show, any age, unordered (D125)."""
     from northvaine.radar.brief import _trade_slots  # late: brief imports the radar models
 
     facts = candidate.company_register
@@ -40,6 +49,4 @@ def timing_signals(candidate: Candidate, as_of: date, days: int) -> list[str]:
             first = None
         if first is not None:
             dated.append((first, f"It started importing (first record {raw[:7]})"))
-    earliest = as_of - timedelta(days=days)
-    inside = sorted(((w, t) for w, t in dated if earliest <= w <= as_of), reverse=True)
-    return [t for _, t in inside]
+    return dated
