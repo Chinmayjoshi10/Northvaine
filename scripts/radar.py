@@ -123,6 +123,10 @@ SHAPING_SETTINGS = (
     "radar_fit_remove_makers",  # D124
     "radar_off_target_filter",  # D125
     "radar_rank_by_opportunity",
+    "radar_intent_search",  # D126
+    "radar_intent_days",
+    "radar_intent_per_market",
+    "radar_review_top",  # D127
     "radar_investigate_max_searches",
     "fit_contact_role_words",
 )

@@ -237,10 +237,10 @@ class Settings(BaseSettings):
     # Company fit from the company's own site (D96): code-first, capped per run.
     # D117: discovery (about 4 Tavily calls) + fit (1 per company) + investigation must stay within
     # `tavily_max_calls_per_run`: discovery 4 + fit 10 + investigation 6 = the 20-call cap.
-    radar_fit_max_accounts: int = Field(default=10, ge=0)
+    radar_fit_max_accounts: int = Field(default=6, ge=0)  # D126: intent 8 + fit 6 + investigate 4
     # D117: a short, budgeted look at the top leads for a dated reason to call now.
     radar_investigate_top: int = Field(default=3, ge=0)
-    radar_investigate_max_searches: int = Field(default=6, ge=0)  # per run, both phrasings
+    radar_investigate_max_searches: int = Field(default=4, ge=0)  # per run, both phrasings
     radar_investigate_max_docs: int = Field(default=3, ge=1)  # documents read per lead
     # D113: guess the site from the registered name first (free fetches, no Tavily).
     radar_site_guess_max_companies: int = Field(default=60, ge=0)
@@ -314,6 +314,12 @@ class Settings(BaseSettings):
     radar_fit_remove_makers: bool = False  # D124: a "makes" reading tags and demotes, never removes
     radar_off_target_filter: bool = True  # D125: drop out-of-market and off-product leads by code
     radar_rank_by_opportunity: bool = True  # D125: order by label, intent, fit, confidence
+    radar_intent_search: bool = True  # D126: project and partner-change searches per market
+    radar_intent_days: int = Field(default=90, ge=1)  # how far back the intent searches look
+    # Searches per market per run: 1 alternates project and partner by day, to stay inside the
+    # free web-search month (D126).
+    radar_intent_per_market: int = Field(default=1, ge=1, le=2)
+    radar_review_top: int = Field(default=10, ge=0)  # D127: top opportunities the deep model checks
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).
     radar_contract_nature_aliases: dict[str, str] = Field(

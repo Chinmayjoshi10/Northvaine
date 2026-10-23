@@ -4,8 +4,9 @@ name: Nightly demo
 # frontend in static mode and deploys it to Pages. If any step fails, nothing deploys and
 # yesterday's site stays live. See docs/HOSTING.md.
 on:
-  schedule:
-    - cron: "30 2 * * *"
+  # Paused until the free web-search month resets (founder, 24 Oct): run by hand only.
+  # schedule:
+  #   - cron: "30 2 * * *"
   workflow_dispatch:
 
 permissions:

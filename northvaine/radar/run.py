@@ -39,6 +39,7 @@ from northvaine.radar.edition import label_entries
 from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
+from northvaine.radar.intent import intent_queries
 from northvaine.radar.investigate import investigate, rerank
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
@@ -59,6 +60,7 @@ from northvaine.radar.register import (
     register_check,
     seed_register_profiles,
 )
+from northvaine.radar.review import review_top
 
 __all__ = ["run_radar", "seeded_concepts"]
 
@@ -147,6 +149,13 @@ async def run_radar(
 
     # 1. discover (sensors with queries shifted to the run date, then lead upgrade)
     queries = prepare_queries(spec.sensors, as_of.date(), settings)
+    if settings.radar_intent_search:  # D126: projects and partner changes, every market
+        written = intent_queries(
+            spec, as_of.date(), settings.radar_intent_days, settings.radar_intent_per_market
+        )
+        if written:
+            queries = {**queries, "tavily": [*queries.get("tavily", []), *written]}
+            notes.append(f"intent search: {len(written)} search(es) written from your answers")
     rng = random.Random(f"{spec.id}|{as_of.isoformat()}")  # seeded: a run is reproducible
     query_propensity: dict[str, float] = {}
     if strategy is not None and strategy.labels >= settings.learning_min_labels:
@@ -408,6 +417,18 @@ async def run_radar(
     # ordered by them, so the top holds the best reasons to call now
     if settings.radar_rank_by_opportunity:
         entries = order_opportunities(entries, as_of.date(), spec)
+        # 7d. the senior review (D127): the deep model's last check on the top opportunities;
+        # what it would not call is held back to the watch list with its reason
+        if settings.radar_review_top > 0:
+            entries, review_notes = await review_top(
+                entries,
+                spec,
+                top=settings.radar_review_top,
+                run=run,
+                session=session,
+                concurrency=settings.radar_gate_concurrency,
+            )
+            notes.extend(review_notes)
 
     # 8. the daily edition labels (D103, code only)
     entries = label_entries(entries, as_of.date(), settings)

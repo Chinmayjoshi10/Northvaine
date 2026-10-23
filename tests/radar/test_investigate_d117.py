@@ -183,9 +183,10 @@ async def test_at_most_two_searches_per_lead_and_the_run_cap(monkeypatch: Any) -
     fake_ledger(monkeypatch, {})
     entries = [lead(f"Alpha{i} Ltd", i + 1) for i in range(5)]
     out, notes = await go(entries, sensor, monkeypatch, {})
-    assert len(sensor.queries) == 6  # 3 leads (radar_investigate_top) x 2 searches
+    cap = Settings(_env_file=None).radar_investigate_max_searches  # the run cap (D126: 4)
+    assert len(sensor.queries) == cap  # top 3 leads, two searches each, cut by the run cap
     assert out == entries
-    assert notes[-1] == "investigated 3 lead(s): 6 search(es), 0 new fact(s)"
+    assert notes[-1].startswith("investigated ") and f"{cap} search(es)" in notes[-1]
     tight = Settings(_env_file=None, radar_investigate_top=5, radar_investigate_max_searches=3)
     sensor = FakeSensor([])
     await go(entries, sensor, monkeypatch, {}, tight)

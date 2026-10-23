@@ -28,7 +28,7 @@ def static_file(api_path: str) -> str:
     """
     path, _, query = api_path.partition("?")
     if query.startswith("as_of="):
-        path = f"{path}/{query[len('as_of='):]}"
+        path = f"{path}/{query[len('as_of=') :]}"
     return path.lstrip("/") + ".json"
 
 
@@ -43,9 +43,7 @@ def endpoints(base: Path, client: str) -> list[str]:
         paths.append(f"/api/clients/{client}/feedback?as_of={day}")
         for alias in (day, "latest") if day == days[0] else (day,):
             paths.append(f"/api/clients/{client}/runs/{alias}")
-            paths += [
-                f"/api/clients/{client}/runs/{alias}/entries/{e.rank}" for e in run.entries
-            ]
+            paths += [f"/api/clients/{client}/runs/{alias}/entries/{e.rank}" for e in run.entries]
     return paths
 
 

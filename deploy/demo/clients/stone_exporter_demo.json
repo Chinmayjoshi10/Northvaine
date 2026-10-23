@@ -3,7 +3,13 @@
   "offer": "Indian manufacturer, exporter and quarry owner of natural stone (sandstone, limestone, marble, granite, slate, quartzite) selling its 2026-27 design catalogue: sculpted, carved, mosaic and metal-leaf stone wall coverings, textured and inlaid stone flooring, stone fireplaces, screens, basins, bathtubs, consoles and tables, facade cladding, and landscaping paving and setts, to the UK and USA for hotels, luxury homes, offices and public buildings.",
   "markets": [
     "GB",
-    "US"
+    "US",
+    "DE",
+    "FR",
+    "IT",
+    "AE",
+    "SA",
+    "QA"
   ],
   "offer_terms": [
     "natural stone",
@@ -163,55 +169,48 @@
         "max_results": 10
       }
     ],
-    "tavily": [
+    "ted": [
       {
-        "text": "luxury hotel interior fit-out contractor appointed 2026 UK natural stone marble",
-        "languages": [
-          "en"
+        "kinds": [
+          "tender_published"
+        ],
+        "codes": [
+          "cpv:45431200",
+          "cpv:45431100",
+          "cpv:45443000",
+          "cpv:44911000",
+          "cpv:44912000",
+          "cpv:44113120"
         ],
         "countries": [
-          "GB"
+          "DE",
+          "FR",
+          "IT"
         ],
         "published_from": "2026-08-01",
-        "published_to": "2026-10-15",
-        "max_results": 5
+        "published_to": "2026-10-24",
+        "max_results": 10
       },
       {
-        "text": "new luxury hotel opening 2027 United States interior design stone feature wall",
-        "languages": [
-          "en"
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:45431200",
+          "cpv:45431100",
+          "cpv:45443000",
+          "cpv:44911000",
+          "cpv:44912000",
+          "cpv:44113120"
         ],
         "countries": [
-          "US"
+          "DE",
+          "FR",
+          "IT"
         ],
         "published_from": "2026-08-01",
-        "published_to": "2026-10-15",
-        "max_results": 5
-      },
-      {
-        "text": "stone cladding facade contractor wins contract 2026 UK",
-        "languages": [
-          "en"
-        ],
-        "countries": [
-          "GB"
-        ],
-        "published_from": "2026-08-01",
-        "published_to": "2026-10-15",
-        "max_results": 5
-      },
-      {
-        "text": "tile and stone showroom opens new branch 2026",
-        "languages": [
-          "en"
-        ],
-        "countries": [
-          "GB",
-          "US"
-        ],
-        "published_from": "2026-08-01",
-        "published_to": "2026-10-15",
-        "max_results": 5
+        "published_to": "2026-10-24",
+        "max_results": 10
       }
     ]
   },
@@ -296,5 +295,11 @@
       ]
     }
   ],
-  "name": "An Indian natural-stone exporter"
+  "name": "An Indian natural-stone exporter",
+  "need_triggers": [
+    "new luxury hotel opening",
+    "luxury villa or residential project",
+    "office, retail or restaurant fit-out",
+    "hotel or heritage building renovation"
+  ]
 }

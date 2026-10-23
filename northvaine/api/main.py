@@ -20,7 +20,6 @@ app = FastAPI(
 )
 
 
-
 def add_cors(target: FastAPI, extra_origins: list[str]) -> None:
     """Dev server plus the configured origins (settings.cors_origins); GET and POST, no cookies."""
     target.add_middleware(
