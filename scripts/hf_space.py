@@ -62,6 +62,9 @@ def load_env(env_path: Path | None = None) -> dict[str, str]:
     for name in (*SECRET_NAMES, "HF_TOKEN", "DAILY_BUDGET_USD"):
         if os.environ.get(name):
             values[name] = os.environ[name]
+    if values.get("DEMO_DATABASE_URL"):
+        # the public Space never gets the production database: the demo one stands in for it
+        values["DATABASE_URL"] = values["DEMO_DATABASE_URL"]
     return values
 
 

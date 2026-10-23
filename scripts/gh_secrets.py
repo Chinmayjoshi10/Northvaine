@@ -64,6 +64,11 @@ def main(argv: list[str] | None = None, *, env_path: Path | None = None) -> int:
         print("(Windows: winget install GitHub.cli), then run: gh auth login")
         return 1
     env = read_env(env_path or ROOT / ".env")
+    if not env.get("DEMO_DATABASE_URL"):
+        print("DEMO_DATABASE_URL is missing from .env: the public nightly job must never get the")
+        print("production DATABASE_URL. Create a separate demo database and add it first.")
+        return 1
+    env["DATABASE_URL"] = env["DEMO_DATABASE_URL"]  # the public job uses the demo database
     chosen = {n: env[n] for n in SECRET_NAMES if env.get(n)}
     missing = [n for n in SECRET_NAMES if n not in chosen]
     if not chosen:

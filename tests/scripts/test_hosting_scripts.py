@@ -75,6 +75,8 @@ def test_gh_secrets_temp_file_has_only_listed_names_and_is_deleted(tmp_path, cap
     env = tmp_path / ".env"
     env.write_text(
         "NEBIUS_API_KEY=fakevalue-one\n"
+        "DATABASE_URL=postgresql://prod-db\n"
+        "DEMO_DATABASE_URL=postgresql://demo-db\n"
         "UNRELATED_KEY=do-not-copy\n"
         "HF_TOKEN='fakevalue-three'\n"
         "MODEL_FAST=some/model # comment\n"
@@ -94,20 +96,22 @@ def test_gh_secrets_temp_file_has_only_listed_names_and_is_deleted(tmp_path, cap
     monkeypatch.setattr(module.subprocess, "run", fake_run)
     assert module.main(["--repo", "o/r"], env_path=env) == 0
     names = {line.split("=", 1)[0] for line in seen["text"].splitlines()}
-    assert names == {"NEBIUS_API_KEY", "HF_TOKEN", "MODEL_FAST"}
+    assert names == {"DATABASE_URL", "NEBIUS_API_KEY", "HF_TOKEN", "MODEL_FAST"}
+    assert "DATABASE_URL=postgresql://demo-db\n" in seen["text"]  # never production
+    assert "prod-db" not in seen["text"]
     assert "MODEL_FAST=some/model\n" in seen["text"]
     assert not seen["path"].exists()
     assert seen["cmd"][-2:] == ["--repo", "o/r"]
     out = capsys.readouterr().out
     assert "set: NEBIUS_API_KEY" in out
-    for value in ("fakevalue-one", "fakevalue-three", "some/model", "do-not-copy"):
+    for value in ("fakevalue-one", "fakevalue-three", "some/model", "do-not-copy", "demo-db"):
         assert value not in out
 
 
 def test_gh_secrets_deletes_temp_file_even_when_gh_fails(tmp_path, monkeypatch):
     module = _load("gh_secrets")
     env = tmp_path / ".env"
-    env.write_text("NEBIUS_API_KEY=abc\n", encoding="utf-8")
+    env.write_text("NEBIUS_API_KEY=abc\nDEMO_DATABASE_URL=postgresql://demo\n", encoding="utf-8")
     seen: dict[str, Path] = {}
 
     def fake_run(cmd, **kwargs):
@@ -187,3 +191,20 @@ def test_hf_requires_token_without_api(monkeypatch):
     module = _load("hf_space")
     with pytest.raises(SystemExit):
         module.main(["restart", "--space", "u/n"], env={})
+
+
+def test_gh_secrets_refuses_without_a_demo_database(tmp_path, capsys, monkeypatch):
+    module = _load("gh_secrets")
+    env = tmp_path / ".env"
+    env.write_text("DATABASE_URL=postgresql://prod-db\nNEBIUS_API_KEY=abc\n", encoding="utf-8")
+    monkeypatch.setattr(module.shutil, "which", lambda name: "/usr/bin/gh")
+    monkeypatch.setattr(module.subprocess, "run", lambda *a, **k: pytest.fail("gh must not run"))
+    assert module.main(["--repo", "o/r"], env_path=env) == 1
+    assert "prod-db" not in capsys.readouterr().out
+
+
+def test_hf_load_env_puts_the_demo_database_in_place_of_production(tmp_path):
+    module = _load("hf_space")
+    env = tmp_path / ".env"
+    env.write_text("DATABASE_URL=postgresql://prod\nDEMO_DATABASE_URL=postgresql://demo\n", "utf-8")
+    assert module.load_env(env)["DATABASE_URL"] == "postgresql://demo"
