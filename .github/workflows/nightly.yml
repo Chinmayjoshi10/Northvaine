@@ -57,6 +57,13 @@ jobs:
       - name: Check the report was written
         run: test -n "$(find demo_reports/radar -name run.json | head -n 1)"
 
+      # The client is anonymised: drop its own group and customers (private list in a secret),
+      # remove company contacts, and stop if anything identifying is left (nothing deploys).
+      - name: Make the report safe to publish
+        env:
+          DEMO_FORBID: ${{ secrets.DEMO_FORBID }}
+        run: uv run python scripts/sanitize_demo_report.py demo_reports/radar
+
       - name: Export the demo pages as static JSON
         run: >
           uv run python scripts/export_static.py --reports demo_reports/radar --out site_data
