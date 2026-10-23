@@ -9,6 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from northvaine.api import accounts, feedback, onboarding, runs
+from northvaine.core.settings import get_settings
+
+_DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]  # Vite dev server
 
 app = FastAPI(
     title="Northvaine",
@@ -16,13 +19,20 @@ app = FastAPI(
     version="0.1.0",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # Vite dev server
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+
+def add_cors(target: FastAPI, extra_origins: list[str]) -> None:
+    """Dev server plus the configured origins (settings.cors_origins); GET and POST, no cookies."""
+    target.add_middleware(
+        CORSMiddleware,
+        allow_origins=[*_DEV_ORIGINS, *extra_origins],
+        allow_credentials=False,
+        allow_methods=["GET", "POST"],
+        allow_headers=["*"],
+    )
+
+
+add_cors(app, get_settings().cors_origins)
 
 
 @app.get("/health")

@@ -149,6 +149,10 @@ class Settings(BaseSettings):
         }
     )
 
+    # Browser origins allowed to call the API (static demo site on GitHub Pages). JSON list in
+    # CORS_ORIGINS; empty means only the local Vite dev server.
+    cors_origins: list[str] = Field(default_factory=list)
+
     # radar (M5, D57-D66). Paths, caps, windows and the legal-form list are data, not literals.
     radar_clients_dir: str = "tests/fixtures/clients"
     radar_reports_dir: str = "reports/radar"
