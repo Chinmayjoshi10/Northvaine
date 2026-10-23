@@ -217,6 +217,48 @@ def _carries_code(candidate: Candidate, codes: list[str]) -> bool:
     return False
 
 
+# Words too general to say what kind of project a client means (any industry).
+_GENERIC_TRIGGER_WORDS = frozenset(
+    [
+        "new",
+        "project",
+        "projects",
+        "building",
+        "buildings",
+        "opening",
+        "openings",
+        "work",
+        "works",
+        "contract",
+        "contracts",
+        "company",
+        "companies",
+        "other",
+        "large",
+        "small",
+        "major",
+    ]
+)
+
+
+def trigger_words(spec: Any) -> set[str]:
+    """The distinctive words of the client's own need triggers (D126 onboarding answers)."""
+    words = {
+        w
+        for t in getattr(spec, "need_triggers", [])
+        for w in re.findall(r"[^\W\d_][\w-]*", t.casefold())
+        if len(w) >= 4
+    }
+    return words - _GENERIC_TRIGGER_WORDS
+
+
+def names_trigger(candidate: Candidate, spec: Any) -> bool:
+    """True when the candidate's own stating quotes describe a project of a kind the client said
+    makes customers need it (D128)."""
+    words = trigger_words(spec)
+    return bool(words) and requirement_of(candidate, words, prefix=True)[0] == "stated"
+
+
 def off_target(
     candidates: list[Candidate], spec: Any
 ) -> tuple[list[Candidate], list[RejectedEntry]]:
@@ -241,7 +283,10 @@ def off_target(
             reason = "outside your markets"
         elif c.stream in _PROJECT_STREAMS and terms and not _carries_code(c, cpv):
             named = requirement_of(c, terms, prefix=True)[0] == "stated"
-            if not named and not _names_term(c.name, terms, prefix=True):
+            # News or a named winner may describe the kind of project the client said makes a
+            # customer need it ("luxury villa", "hotel opening") without naming the product.
+            kind = c.stream != RadarStream.TENDER and names_trigger(c, spec)
+            if not named and not kind and not _names_term(c.name, terms, prefix=True):
                 reason = "the contract or news never names what you sell"
         if reason is None:
             kept.append(c)

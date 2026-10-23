@@ -19,7 +19,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 from typing import Any, Literal
 
-from northvaine.radar.brief import names_term
+from northvaine.radar.brief import names_term, names_trigger
 from northvaine.radar.models import Opportunity, RadarStream, RankedEntry
 from northvaine.radar.timing import dated_changes
 
@@ -102,6 +102,12 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     named = bool(terms) and names_term(c.name, terms, prefix=True)
     on_site = entry.fit_level == "stated" or bool(entry.judged_lines)
     on_record = c.stream in _PROJECT_STREAMS and (entry.requirement == "stated" or named)
+    # A named company's project of the kind the client said needs it fits too; a tender does not
+    # (no contractor yet, and general works say nothing about the product) (D128).
+    kind = (
+        c.stream != RadarStream.TENDER and c.stream in _PROJECT_STREAMS and names_trigger(c, spec)
+    )
+    on_record = on_record or kind
     some = (
         c.stream == RadarStream.TRADE
         or entry.fit_level == "related"
@@ -130,8 +136,12 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     else:
         play = "account"
 
-    if intent == 0 or entry.site_role == "makes" or (intent == 1 and fit < 2):
-        label: Label = "watch"  # nothing new, a competitor, or only a hint at a weak fit
+    # A project is worth a call only when its record or the company's own site names what the
+    # client sells: a fresh tender for general works is a project to watch, not a lead (a live
+    # run filled the top with public works tenders that never named the product).
+    weak_project = play == "project" and fit < 2
+    if intent == 0 or entry.site_role == "makes" or (intent == 1 and fit < 2) or weak_project:
+        label: Label = "watch"  # nothing new, a competitor, a hint at a weak fit, a vague project
     elif intent >= 2 and confidence >= 3 and fit >= 2:
         label = "connected"
     else:

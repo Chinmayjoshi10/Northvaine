@@ -32,7 +32,7 @@ SPEC = ClientSpec.model_validate(
 )
 
 
-def _claim(quote: str, ref: str = "C1") -> CandidateClaim:
+def _claim(quote: str, ref: str = "C1", kind: str = "structured") -> CandidateClaim:
     return CandidateClaim.model_validate(
         {
             "ref": ref,
@@ -43,7 +43,7 @@ def _claim(quote: str, ref: str = "C1") -> CandidateClaim:
             "url": "https://example.org/record",
             "source_name": "ted",
             "available_at": None,
-            "evidence_kind": "structured",
+            "evidence_kind": kind,
             "verified_by": "code",
             "upgraded_from": None,
         }
@@ -178,3 +178,32 @@ def test_the_edition_is_the_top_five_non_watch_opportunities() -> None:
     assert len(picked) == 5
     assert all(e.opportunity.label != "watch" for e in picked)
     assert [e.rank for e in picked] == [1, 2, 3, 4, 5]
+
+
+def test_d128_news_of_the_clients_kind_of_project_counts_but_a_vague_tender_does_not() -> None:
+    spec = SPEC.model_copy(update={"need_triggers": ["luxury villa project", "hotel opening"]})
+    villa = _with(
+        entry("awarded_contractor", RadarStream.ANNOUNCEMENT),
+        key="AE:dev",
+        country=None,
+        name="Gulf Developer",
+        claims=[
+            _claim(
+                "Gulf Developer launches a luxury villa community on the coast", kind="full_text"
+            )
+        ],
+        events=[_event("facility_opened", date(2026, 10, 10))],
+    )
+    tender = _with(
+        entry("awarded_contractor", RadarStream.TENDER),
+        key="DE:t",
+        country="DE",
+        name="Stadt Beispiel",
+        claims=[_claim("Title [deu]: Fassadensanierung Schule")],
+        events=[_event("tender_published", date(2026, 10, 10))],
+    )
+    kept, _ = off_target([villa.candidate, tender.candidate], spec)
+    assert [c.name for c in kept] == ["Gulf Developer"]  # the tender names neither product nor code
+    assert assess(villa, TODAY, spec).label == "approach_now"
+    tender = tender.model_copy(update={"requirement": "inferred"})  # its title names no product
+    assert assess(tender, TODAY, spec).label == "watch"  # a vague tender is a project to watch
