@@ -1,0 +1,300 @@
+{
+  "id": "stone_exporter_demo",
+  "offer": "Indian manufacturer, exporter and quarry owner of natural stone (sandstone, limestone, marble, granite, slate, quartzite) selling its 2026-27 design catalogue: sculpted, carved, mosaic and metal-leaf stone wall coverings, textured and inlaid stone flooring, stone fireplaces, screens, basins, bathtubs, consoles and tables, facade cladding, and landscaping paving and setts, to the UK and USA for hotels, luxury homes, offices and public buildings.",
+  "markets": [
+    "GB",
+    "US"
+  ],
+  "offer_terms": [
+    "natural stone",
+    "stone cladding",
+    "stone wall cladding",
+    "stone facade",
+    "stone veneer",
+    "marble",
+    "sandstone",
+    "limestone",
+    "granite",
+    "slate",
+    "quartzite",
+    "travertine",
+    "stone mosaic",
+    "carved stone",
+    "sculpted stone",
+    "stone wall panel",
+    "feature wall",
+    "stone flooring",
+    "stone tiles",
+    "stone basin",
+    "stone bathtub",
+    "stone fireplace",
+    "stone screen",
+    "pietra dura",
+    "inlay",
+    "stone paving",
+    "setts"
+  ],
+  "related_terms": [
+    "porcelain",
+    "ceramic tiles",
+    "terrazzo",
+    "wall tiling",
+    "floor tiling",
+    "tiling",
+    "masonry",
+    "fit-out",
+    "interior fit out",
+    "bathroom fit-out",
+    "hard landscaping"
+  ],
+  "buyer_roles": [
+    "stone importer",
+    "stone and tile distributor",
+    "tile and stone showroom",
+    "kitchen and bathroom retailer or distributor",
+    "interior fit-out contractor",
+    "facade and cladding contractor",
+    "stonemason or stone installer",
+    "tiling contractor",
+    "hotel developer or operator",
+    "luxury residential developer",
+    "builders' merchant",
+    "landscape contractor"
+  ],
+  "not_buyers": [
+    "other manufacturers, exporters or quarries of natural stone",
+    "porcelain or ceramic tile factories",
+    "hauliers, freight forwarders and customs agents clearing goods for others"
+  ],
+  "product_codes": [
+    "hs:680100",
+    "hs:680210",
+    "hs:680221",
+    "hs:680223",
+    "hs:680229",
+    "hs:680291",
+    "hs:680292",
+    "hs:680293",
+    "hs:680299",
+    "hs:680300",
+    "hs:690721",
+    "cpv:45431200",
+    "cpv:45431100",
+    "cpv:45443000",
+    "cpv:44911000",
+    "cpv:44912000",
+    "cpv:44113120",
+    "naics:238340",
+    "naics:238140"
+  ],
+  "existing_customers": [],
+  "sensors": {
+    "hmrc": [
+      {
+        "kinds": [
+          "imports_recorded"
+        ],
+        "codes": [
+          "hs:680210",
+          "hs:680221",
+          "hs:680291",
+          "hs:680299",
+          "hs:680300"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-01-01",
+        "max_results": 16
+      },
+      {
+        "kinds": [
+          "imports_recorded"
+        ],
+        "codes": [
+          "hs:680100",
+          "hs:680292",
+          "hs:680293",
+          "hs:690721"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-01-01",
+        "max_results": 8
+      }
+    ],
+    "fts": [
+      {
+        "kinds": [
+          "tender_published",
+          "contract_awarded"
+        ],
+        "codes": [
+          "cpv:45431200",
+          "cpv:45431100",
+          "cpv:45443000",
+          "cpv:44911000",
+          "cpv:44912000",
+          "cpv:44113120"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-08-15",
+        "published_to": "2026-10-15",
+        "max_results": 20
+      }
+    ],
+    "usaspending": [
+      {
+        "kinds": [
+          "contract_awarded"
+        ],
+        "codes": [
+          "naics:238340",
+          "naics:238140"
+        ],
+        "countries": [
+          "US"
+        ],
+        "published_from": "2026-08-01",
+        "published_to": "2026-10-10",
+        "max_results": 10
+      }
+    ],
+    "tavily": [
+      {
+        "text": "luxury hotel interior fit-out contractor appointed 2026 UK natural stone marble",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-08-01",
+        "published_to": "2026-10-15",
+        "max_results": 5
+      },
+      {
+        "text": "new luxury hotel opening 2027 United States interior design stone feature wall",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "US"
+        ],
+        "published_from": "2026-08-01",
+        "published_to": "2026-10-15",
+        "max_results": 5
+      },
+      {
+        "text": "stone cladding facade contractor wins contract 2026 UK",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "GB"
+        ],
+        "published_from": "2026-08-01",
+        "published_to": "2026-10-15",
+        "max_results": 5
+      },
+      {
+        "text": "tile and stone showroom opens new branch 2026",
+        "languages": [
+          "en"
+        ],
+        "countries": [
+          "GB",
+          "US"
+        ],
+        "published_from": "2026-08-01",
+        "published_to": "2026-10-15",
+        "max_results": 5
+      }
+    ]
+  },
+  "not_buyer_codes": [
+    "sic:49410",
+    "sic:52101",
+    "sic:52102",
+    "sic:52103",
+    "sic:52211",
+    "sic:52219",
+    "sic:52241",
+    "sic:52242",
+    "sic:52243",
+    "sic:52290"
+  ],
+  "channel": "both",
+  "catalogue_lines": [
+    {
+      "name": "Design wall coverings",
+      "terms": [
+        "sculpted stone",
+        "carved stone",
+        "stone mosaic",
+        "pietra dura",
+        "feature wall",
+        "stone wall panel",
+        "stone veneer",
+        "inlay"
+      ],
+      "codes": [
+        "hs:680210",
+        "hs:680291",
+        "hs:680221"
+      ]
+    },
+    {
+      "name": "Stone crafts (fireplaces, basins, bathtubs, screens, tables)",
+      "terms": [
+        "stone fireplace",
+        "stone basin",
+        "stone bathtub",
+        "stone screen"
+      ],
+      "codes": [
+        "hs:680291"
+      ]
+    },
+    {
+      "name": "Textured and inlaid flooring",
+      "terms": [
+        "stone flooring",
+        "stone tiles",
+        "inlay"
+      ],
+      "codes": [
+        "hs:680221",
+        "hs:680229"
+      ]
+    },
+    {
+      "name": "Facade cladding",
+      "terms": [
+        "stone cladding",
+        "stone wall cladding",
+        "stone facade"
+      ],
+      "codes": [
+        "hs:680292",
+        "hs:680293",
+        "hs:680299"
+      ]
+    },
+    {
+      "name": "Landscaping paving and setts",
+      "terms": [
+        "stone paving",
+        "setts"
+      ],
+      "codes": [
+        "hs:680100",
+        "hs:680223"
+      ]
+    }
+  ],
+  "name": "An Indian natural-stone exporter"
+}
