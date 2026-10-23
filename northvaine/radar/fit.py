@@ -454,9 +454,10 @@ async def _judge_all(
         )
         own_makers = sum(1 for v in results.values() if v.own_brand)
         extra = f", {own_makers} own-name makers" if cfg.radar_fit_judge_brands else ""
+        makers = "competitors removed" if cfg.radar_fit_remove_makers else "possible competitors"
         notes.append(
-            f"line fit: {len(results)} judged, {with_line} with a line, {makes} competitors "
-            f"removed, {resells} possible distributors, {failed} failed{extra}"
+            f"line fit: {len(results)} judged, {with_line} with a line, {makes} {makers}, "
+            f"{resells} possible distributors, {failed} failed{extra}"
         )
     else:
         notes.append(f"line fit: {len(results)} judged, {with_line} with a line, {failed} failed")
@@ -862,8 +863,9 @@ async def company_fit(
         if level == "stated" and entry.evidence_level in ("generic_mention", "no_evidence"):
             update["evidence_level"] = "company_fit"  # it handles the category; no purchase yet
         out[index] = entry.model_copy(update=update)
-        if verdict.role == "makes" and rejected_out is not None:
-            # D120: its own site says it makes this kind of product: a competitor (rule 3)
+        if verdict.role == "makes" and rejected_out is not None and cfg.radar_fit_remove_makers:
+            # D120: its own site says it makes this kind of product: a competitor (rule 3).
+            # D124: off by default; the entry stays, tagged and ranked last in its level.
             rejected_out.append(
                 RejectedEntry(
                     candidate=entry.candidate,

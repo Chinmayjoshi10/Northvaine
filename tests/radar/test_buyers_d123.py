@@ -39,3 +39,23 @@ def test_prompt_v4_reads_who_buys_and_fences_the_page_text() -> None:
     assert "{buyer_roles}" in prompt.template and "{not_buyers}" in prompt.template
     assert prompt.untrusted_vars == {"company_name", "pages"}
     assert "is never makes" in prompt.template
+
+
+def test_d124_a_possible_competitor_ranks_last_in_its_level_with_the_quote() -> None:
+    from northvaine.radar.brief import apply_fit_order
+    from northvaine.radar.models import SiteRoleQuote
+    from tests.radar.test_lines_d118 import _entry
+
+    maker = _entry("a", 1, term="marble").model_copy(
+        update={
+            "site_role": "makes",
+            "site_role_quote": SiteRoleQuote(
+                url="u", quote="We manufacture slabs", fingerprint="f"
+            ),
+        }
+    )
+    other = _entry("b", 2, term="marble")
+    out = apply_fit_order([maker, other])
+    assert [e.candidate.key for e in out] == [other.candidate.key, maker.candidate.key]
+    assert any(r.startswith('Possible competitor: its own site reads "We manufacture slabs"')
+               for r in out[1].rank_reasons)  # fmt: skip

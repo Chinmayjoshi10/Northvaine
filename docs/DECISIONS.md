@@ -1205,3 +1205,8 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - The own-name rule (D121) fills in only when the judge gave no role; it never overrides `resells` or `uses`.
   - Quotes are matched ignoring case (a heading "WE MANUFACTURE" failed the check); the kept quote is still the page's own text.
   - Older recordings replay unchanged: `radar_fit_judge_buyer_roles` is pinned to False (prompt v3, case-sensitive quotes, D121 rule as before).
+
+- **D124 — A "makes" reading tags and demotes; it never removes (23 Oct).** On the stone client the role judge (D120-D123) removed seven companies as competitors and at least five were buyers: UK stone importers and distributors, a masonry supplier and two fabricators whose sites talk about cutting and making stone. On the refrigeration client the same check was right (UK sales arms of foreign makers). No rule found tells the two apart across industries, and a wrong removal is invisible: the owner never sees the buyer it cost.
+  - `radar_fit_remove_makers` (default False): a verified `makes` reading keeps the company. It is ranked last inside its evidence level and its reason reads `Possible competitor: its own site reads "<quote>". Check whether it buys from you or competes with you.` The owner decides, as for possible distributors (D116).
+  - Rule 3 is unchanged: the gate still rejects competitors from the claims before investigation. This reading comes from the company's own site after the gate and is a judgement, not a record.
+  - Older recordings replay unchanged: `radar_fit_remove_makers` is pinned to True.

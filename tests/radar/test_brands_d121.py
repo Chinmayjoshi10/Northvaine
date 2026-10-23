@@ -65,6 +65,7 @@ async def _fit(
             radar_site_guess_max_companies=0,
             radar_fit_judge_brands=brands_on,
             radar_fit_judge_buyer_roles=False,
+            radar_fit_remove_makers=True,
         ),
         evidence_out=evidence,
         run=RunContext(),

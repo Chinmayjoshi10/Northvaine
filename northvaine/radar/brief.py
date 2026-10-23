@@ -492,6 +492,7 @@ def apply_fit_order(
     settings = get_settings()
     days = timing_days if timing_days is not None else settings.radar_timing_days
     link = link_sources if link_sources is not None else settings.radar_link_by_register
+    keep_makers = not settings.radar_fit_remove_makers  # D124
     lines = lines or []
     ordered = sorted(entries, key=lambda e: e.rank)
     if lines:  # D118
@@ -509,6 +510,7 @@ def apply_fit_order(
         members = sorted(  # stable; D109: looking like the client's customers breaks ties
             (ordered[i] for i in positions),
             key=lambda e: (
+                keep_makers and e.site_role == "makes",  # D124: a possible competitor goes last
                 _fit_group(e) * 2 + (0 if e.fit_distinctive else 1),  # D118
                 line_priority(e) if lines else 0,  # D118: the client's own line order
                 link and len(e.candidate.streams) < 2,  # D115: seen in 2+ kinds of source first
@@ -526,7 +528,12 @@ def apply_fit_order(
             reasons.append(f"Company fit: its own site names {e.company_fit[0].term}")
         elif e.company_site is not None and not e.judged_lines:  # D119: a judged line says it does
             reasons.append("Company fit: its own site does not name what you sell")
-        if e.site_role == "resells":  # D120
+        if e.site_role == "makes" and e.site_role_quote is not None:  # D124
+            reasons.append(
+                f'Possible competitor: its own site reads "{e.site_role_quote.quote}". '
+                "Check whether it buys from you or competes with you."
+            )
+        elif e.site_role == "resells":  # D120
             reasons.append("Its own site: sells this kind of product")
         elif e.site_role == "uses":
             reasons.append("Its own site: uses this kind of product")

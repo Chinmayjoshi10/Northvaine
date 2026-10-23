@@ -307,6 +307,7 @@ class Settings(BaseSettings):
     radar_fit_judge_brands: bool = True  # D121: and which brands it sells (prompt v3)
     radar_fit_judge_tier: str = "mid"  # D122: the fast model misread makers' arms as resellers
     radar_fit_judge_buyer_roles: bool = True  # D123: prompt v4 reads who buys; quotes any case
+    radar_fit_remove_makers: bool = False  # D124: a "makes" reading tags and demotes, never removes
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).
     radar_contract_nature_aliases: dict[str, str] = Field(

@@ -120,6 +120,7 @@ SHAPING_SETTINGS = (
     "radar_fit_judge_brands",  # D121
     "radar_fit_judge_tier",  # D122
     "radar_fit_judge_buyer_roles",  # D123
+    "radar_fit_remove_makers",  # D124
     "radar_investigate_max_searches",
     "fit_contact_role_words",
 )

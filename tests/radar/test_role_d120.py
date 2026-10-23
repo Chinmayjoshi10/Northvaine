@@ -50,6 +50,7 @@ async def _fit(
     rejected: list[RejectedEntry] | None,
     judge_role: bool = True,
     evidence: list[Any] | None = None,
+    remove_makers: bool = True,  # the D120 behaviour; D124 turns it off by default
 ) -> tuple[list[RankedEntry], list[str], list[dict[str, Any]]]:
     sensor = FakeSensor([["https://www.acme.com/"]])
     monkeypatch.setattr(fit_module, "get_sensor", lambda *a, **k: sensor)
@@ -65,6 +66,7 @@ async def _fit(
             radar_site_guess_max_companies=0,
             radar_fit_judge_role=judge_role,
             radar_fit_judge_brands=False,  # D121 has its own tests
+            radar_fit_remove_makers=remove_makers,
         ),
         evidence_out=evidence,
         run=RunContext(),
@@ -201,3 +203,19 @@ def test_resells_and_uses_get_a_rank_reason() -> None:
     out = apply_fit_order([e1, e2], lines=[])
     assert "Its own site: sells this kind of product" in out[0].rank_reasons
     assert "Its own site: uses this kind of product" in out[1].rank_reasons
+
+
+async def test_d124_makes_keeps_the_entry_tagged_and_notes_a_possible_competitor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    rejected: list[RejectedEntry] = []
+    out, notes, _ = await _fit(
+        monkeypatch,
+        LineFitOutput(role="makes", role_quote=MAKES),
+        rejected=rejected,
+        remove_makers=False,
+    )
+    assert rejected == []
+    assert [e.site_role for e in out] == ["makes"]
+    assert out[0].site_role_quote is not None and out[0].site_role_quote.quote == MAKES
+    assert any("1 possible competitors" in n for n in notes)
