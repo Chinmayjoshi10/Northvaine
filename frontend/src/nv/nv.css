@@ -449,3 +449,11 @@
   border-radius: 3px;
   padding: 1px 4px;
 }
+
+/* D125: where a lead comes from. Small, in the existing type: a source line under each fact. */
+.dot-src { display: block; font-size: 10px; margin-top: 2px; color: var(--soft, inherit); }
+.dot-src a { color: inherit; text-underline-offset: 3px; }
+.opp-tag { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--signal); margin: 6px 0 2px; }
+.opp-why { margin: 0 0 8px; font-size: 13px; line-height: 1.45; }
+.nv-sheet .dots { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+.nv-sheet .dots li { display: grid; gap: 1px; font-size: 13px; line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }

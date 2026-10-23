@@ -8,12 +8,21 @@ from datetime import date, timedelta
 
 from pydantic import BaseModel, ConfigDict
 
+from northvaine.api.leadview import (
+    Dot,
+    OpportunityView,
+    dots,
+    opening_line,
+    opportunity_view,
+    supply_phrase,
+)
 from northvaine.core.settings import Settings
 from northvaine.radar import brief
 from northvaine.radar.edition import daily_edition
 from northvaine.radar.models import (
     Candidate,
     CandidateClaim,
+    ClientSpec,
     RadarRun,
     RadarStream,
     RankedEntry,
@@ -66,6 +75,11 @@ class Row(BaseModel):
     possible_distributor: bool = False  # D116
     accounts_type: str | None = None  # D116: type of the last filed accounts
     matched_lines: list[str] = []  # D118: the client's catalogue lines it matches
+    # D125: the opportunity, the dated facts behind it with their sources, a line to open with
+    # (None / empty in run records written before D125)
+    opportunity: OpportunityView | None = None
+    dots: list[Dot] = []
+    say: str | None = None
 
 
 class Funnel(BaseModel):
@@ -181,6 +195,9 @@ class Dossier(BaseModel):
     sources_seen: list[str] = []  # D115
     possible_distributor: bool = False  # D116
     accounts_type: str | None = None  # D116
+    opportunity: OpportunityView | None = None  # D125
+    dots: list[Dot] = []
+    say: str | None = None
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -210,7 +227,7 @@ def _accounts_type(entry: RankedEntry) -> str | None:
     return facts.accounts_type if facts else None
 
 
-def _row(entry: RankedEntry, today: date) -> Row:
+def _row(entry: RankedEntry, today: date, supply: str = "") -> Row:
     c = entry.candidate
     return Row(
         rank=entry.rank,
@@ -235,6 +252,9 @@ def _row(entry: RankedEntry, today: date) -> Row:
         possible_distributor=entry.gate.partner,
         accounts_type=_accounts_type(entry),
         matched_lines=list(entry.matched_lines),
+        opportunity=opportunity_view(entry),
+        dots=dots(entry),
+        say=opening_line(entry, supply),
     )
 
 
@@ -255,6 +275,7 @@ def brief_view(
     settings: Settings,
     previous: RadarRun | None = None,
     earlier: list[RadarRun] | None = None,
+    spec: ClientSpec | None = None,
 ) -> BriefView:
     """`earlier`: the client's runs before this one (any order), for the D110 watch fields."""
     today = run.as_of.date()
@@ -265,8 +286,10 @@ def brief_view(
         (r for r in earlier or [] if oldest <= r.as_of.date() < today), key=lambda r: r.as_of
     )
 
+    supply = supply_phrase(spec, run.offer)
+
     def row(e: RankedEntry) -> Row:
-        out = _row(e, today)
+        out = _row(e, today, supply)
         if seen:
             out = out.model_copy(update={"returning": e.candidate.key in seen})
         w = watch.get(e.candidate.key)
@@ -423,7 +446,12 @@ def _sources(entry: RankedEntry) -> list[Source]:
     ]
 
 
-def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> Dossier:
+def dossier(
+    entry: RankedEntry,
+    raw_bidders: list[dict],
+    settings: Settings,
+    supply: str = "",
+) -> Dossier:
     c, gate = entry.candidate, entry.gate
     stream = c.stream.value
     when = [
@@ -483,6 +511,9 @@ def dossier(entry: RankedEntry, raw_bidders: list[dict], settings: Settings) -> 
         sources_seen=brief.stream_words(entry.candidate),
         possible_distributor=gate.partner,
         accounts_type=_accounts_type(entry),
+        opportunity=opportunity_view(entry),
+        dots=dots(entry),
+        say=opening_line(entry, supply),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

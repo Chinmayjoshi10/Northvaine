@@ -9,9 +9,10 @@ from pydantic import BaseModel
 
 from northvaine.api import store, views
 from northvaine.api.feedback import Base
+from northvaine.api.leadview import supply_phrase
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.graph import GraphView, run_graph
-from northvaine.radar.models import REPO_ROOT, RadarRun, load_client_spec
+from northvaine.radar.models import REPO_ROOT, ClientSpec, RadarRun, load_client_spec
 
 router = APIRouter(prefix="/api", tags=["runs"])
 
@@ -62,7 +63,7 @@ def get_run(client: str, day: str, base: Base) -> views.BriefView:
             history.append(store.load_run(base, client, d)[0])
         except (HTTPException, ValueError):  # unreadable or unfit for this build: skipped
             continue
-    return views.brief_view(run, settings, previous, history)
+    return views.brief_view(run, settings, previous, history, _find_spec(client))
 
 
 @router.get("/clients/{client}/runs/{day}/entries/{rank}")
@@ -71,7 +72,8 @@ def get_entry(client: str, day: str, rank: int, base: Base) -> views.Dossier:
     for index, entry in enumerate(run.entries):
         if entry.rank == rank:
             bidders = raw["entries"][index].get("likely_bidders") or []
-            return views.dossier(entry, bidders, Settings(_env_file=None))
+            supply = supply_phrase(_find_spec(client), run.offer)
+            return views.dossier(entry, bidders, Settings(_env_file=None), supply)
     raise HTTPException(status_code=404, detail="entry not found")
 
 
@@ -108,6 +110,18 @@ def _spec_dirs() -> list[Path]:
     settings = get_settings()
     dirs = [Path(settings.onboarding_clients_dir), Path(settings.radar_clients_dir)]
     return [d if d.is_absolute() else REPO_ROOT / d for d in dirs]
+
+
+def _find_spec(client: str) -> ClientSpec | None:
+    """The client's saved spec when there is one (for the line to open with); else None."""
+    store.check_client(client)
+    for folder in _spec_dirs():
+        try:
+            if (folder / f"{client}.json").is_file():
+                return load_client_spec(client, folder)
+        except ValueError:
+            continue
+    return None
 
 
 @router.get("/clients/{client}/business")

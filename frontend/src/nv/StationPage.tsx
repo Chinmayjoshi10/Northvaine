@@ -413,9 +413,9 @@ function Station(props: {
                     {r.contract_nature ? `${r.contract_nature} ` : ""}
                     {typeOf(r).toLowerCase()}
                   </span>
-                  {urgency(r) && (
+                  {(r.opportunity?.why_now || urgency(r)) && (
                     <span className={`wait${hot ? " hot" : ""}`}>
-                      {urgency(r)}
+                      {r.opportunity?.why_now || urgency(r)}
                     </span>
                   )}
                 </div>
@@ -424,13 +424,19 @@ function Station(props: {
                     {question(r)}
                   </button>
                 </h2>
-                {((r.timing_signals ?? []).length >= 2 ||
+                {(r.opportunity ||
+                  (r.timing_signals ?? []).length >= 2 ||
                   (r.sources_seen ?? []).length >= 2 ||
                   r.label ||
                   r.possible_distributor ||
                   r.back_in_motion) && (
                   <p className="edlabel">
-                    {(r.sources_seen ?? []).length >= 2 && (
+                    {r.opportunity && (
+                      <span className="mono lab-chip">
+                        {r.opportunity.word} · {r.opportunity.words}
+                      </span>
+                    )}
+                    {!r.opportunity && (r.sources_seen ?? []).length >= 2 && (
                       <span className="mono lab-chip">
                         {(r.sources_seen ?? []).length} SOURCES
                       </span>
