@@ -207,3 +207,67 @@ def test_d128_news_of_the_clients_kind_of_project_counts_but_a_vague_tender_does
     assert assess(villa, TODAY, spec).label == "approach_now"
     tender = tender.model_copy(update={"requirement": "inferred"})  # its title names no product
     assert assess(tender, TODAY, spec).label == "watch"  # a vague tender is a project to watch
+
+
+def test_d129_a_big_fitting_distributor_is_a_relationship_and_news_ranks_it_higher() -> None:
+    quiet = _fit(_with(entry("importer", RadarStream.TRADE), key="GB:q", name="Quiet Stone Ltd"))
+    quiet = quiet.model_copy(
+        update={
+            "site_role": "resells",
+            "candidate": quiet.candidate.model_copy(
+                update={"company_register": _register(accounts_type="full")}
+            ),
+        }
+    )
+    assert assess(quiet, TODAY, SPEC).label == "relationship"
+    small = quiet.model_copy(
+        update={"candidate": quiet.candidate.model_copy(update={"company_register": _register()})}
+    )
+    assert assess(small, TODAY, SPEC).label == "watch"  # not big, no news: watch
+    busy = quiet.model_copy(
+        update={
+            "candidate": quiet.candidate.model_copy(
+                update={
+                    "key": "GB:b",
+                    "name": "Busy Stone Ltd",
+                    "company_register": _register(
+                        accounts_type="full", control_changed_on=date(2026, 9, 30)
+                    ),
+                }
+            )
+        }
+    )
+    out = order_opportunities(
+        [quiet.model_copy(update={"rank": 1}), busy.model_copy(update={"rank": 2})], TODAY, SPEC
+    )
+    assert out[0].candidate.name == "Busy Stone Ltd"  # an update that leads to buying ranks higher
+
+
+def test_d129_the_edition_takes_the_best_of_each_kind_first() -> None:
+    from northvaine.core.settings import Settings
+    from northvaine.radar.edition import daily_edition
+
+    projects = [
+        _with(
+            entry("awarded_contractor"),
+            key=f"GB:p{n}",
+            name=f"Granite Co {n}",
+            events=[_event("contract_awarded", date(2026, 10, 20))],
+        ).model_copy(update={"rank": n + 1})
+        for n in range(6)
+    ]
+    partner = _fit(_with(entry("importer", RadarStream.TRADE), key="GB:d", name="Big Distributor"))
+    partner = partner.model_copy(
+        update={
+            "rank": 7,
+            "site_role": "resells",
+            "candidate": partner.candidate.model_copy(
+                update={"company_register": _register(accounts_type="group")}
+            ),
+        }
+    )
+    picked = daily_edition(
+        order_opportunities([*projects, partner], TODAY, SPEC), Settings(_env_file=None)
+    )
+    assert len(picked) == 5
+    assert "Big Distributor" in [e.candidate.name for e in picked]  # not crowded out by projects

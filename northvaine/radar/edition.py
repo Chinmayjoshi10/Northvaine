@@ -92,7 +92,15 @@ def daily_edition(entries: list[RankedEntry], settings: Settings) -> list[Ranked
         # order; the watch list never fills a slot.
         ranked = sorted(entries, key=lambda e: e.rank)
         best = [e for e in ranked if e.opportunity is not None and e.opportunity.label != "watch"]
-        return best[: settings.radar_daily_quota]
+        # D129: the best of each kind first (connected, approach now, relationship, looking for
+        # it), so a day mixes a project, a partner and a buyer; then the rest in rank order.
+        firsts: list[RankedEntry] = []
+        for kind in ("connected", "approach_now", "relationship", "looking"):
+            pick = next((e for e in best if e.opportunity and e.opportunity.label == kind), None)
+            if pick is not None:
+                firsts.append(pick)
+        rest = [e for e in best if e not in firsts]
+        return sorted([*firsts, *rest][: settings.radar_daily_quota], key=lambda e: e.rank)
     taken: list[RankedEntry] = []
     counts: dict[str, int] = {}
     for entry in sorted(entries, key=lambda e: (-e.label_strength, e.rank)):

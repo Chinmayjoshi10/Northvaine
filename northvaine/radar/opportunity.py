@@ -19,7 +19,8 @@ from __future__ import annotations
 from datetime import date, timedelta
 from typing import Any, Literal
 
-from northvaine.radar.brief import names_term, names_trigger
+from northvaine.radar.account import size_rank
+from northvaine.radar.brief import _trade_slots, names_term, names_trigger
 from northvaine.radar.models import Opportunity, RadarStream, RankedEntry
 from northvaine.radar.timing import dated_changes
 
@@ -139,9 +140,19 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     # A project is worth a call only when its record or the company's own site names what the
     # client sells: a fresh tender for general works is a project to watch, not a lead (a live
     # run filled the top with public works tenders that never named the product).
+    label: Label
     weak_project = play == "project" and fit < 2
-    if intent == 0 or entry.site_role == "makes" or (intent == 1 and fit < 2) or weak_project:
-        label: Label = "watch"  # nothing new, a competitor, a hint at a weak fit, a vague project
+    # D129: a big channel partner that clearly fits is worth a relationship even with no news; an
+    # update that leads to buying (intent) ranks it higher. Big = larger filed accounts, or it
+    # imports the product month after month.
+    facts = c.company_register
+    months = int(_trade_slots(c).get("months_active") or 0)
+    big = size_rank(facts.accounts_type if facts else None) >= 3 or months >= 6
+    standing = play == "partner" and fit >= 2 and big and entry.site_role != "makes"
+    if standing and intent < 2:
+        label = "relationship"
+    elif intent == 0 or entry.site_role == "makes" or (intent == 1 and fit < 2) or weak_project:
+        label = "watch"  # nothing new, a competitor, a hint at a weak fit, a vague project
     elif intent >= 2 and confidence >= 3 and fit >= 2:
         label = "connected"
     else:
