@@ -8,7 +8,9 @@ import { CaseSheet, optionsFor } from "./CaseSheet";
 import { useDecisions } from "./decide";
 import {
   awardDay,
+  clientLabel,
   daysLeft,
+  decisionsOf,
   headline,
   longDate,
   nice,
@@ -50,16 +52,6 @@ export function StationPage({ client, day }: { client: string; day: string }) {
       </Shell>
     );
   return <Station client={client} day={day} brief={brief.data} crumb={crumb} />;
-}
-
-/** The client's name; else the offer cut at its first comma or 48 characters. Never the whole sentence. */
-function clientLabel(b: BriefView): string {
-  const name = b.client_name?.trim();
-  if (name) return name;
-  const first = b.offer.split(",")[0].trim();
-  return first.length > 48
-    ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…`
-    : first;
 }
 
 const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
@@ -116,51 +108,6 @@ function shortFact(r: Row): string {
   return t.length > 40 ? `${t.slice(0, 40).replace(/\s+\S*$/, "")}…` : t;
 }
 
-const DAY = 86_400_000;
-
-function daysBetween(a: string, b: string): number {
-  return Math.round((Date.parse(b) - Date.parse(a.slice(0, 10))) / DAY);
-}
-
-/**
- * The decisions, most urgent first: anything marked act-now, then tenders closing within a
- * week, then awards from the last two weeks (the winner orders soon after), then tenders
- * closing within two, then leads still to qualify, by rank. One per project: co-winners of
- * one contract are one decision.
- */
-function toDecide(rows: Row[], asOf: string): Row[] {
-  const act = rows.filter((r) => stageOf(r) === "Act now");
-  const closing = (lo: number, hi: number) =>
-    rows
-      .filter((r) => {
-        const d = daysLeft(r);
-        return d !== null && d >= lo && d <= hi;
-      })
-      .sort((a, b) => daysLeft(a)! - daysLeft(b)!);
-  const awards = rows
-    .filter((r) => {
-      const d = awardDay(r);
-      return d !== null && daysBetween(d, asOf) <= 14;
-    })
-    .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!));
-  const out: Row[] = [];
-  const seen = new Set<string>();
-  const qualify = rows.filter((r) => stageOf(r) === "Developing");
-  for (const r of [
-    ...act,
-    ...closing(0, 7),
-    ...awards,
-    ...closing(8, 14),
-    ...qualify,
-  ]) {
-    const key = projectOf(r);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(r);
-  }
-  return out.slice(0, 4);
-}
-
 /** The dateline's place: the authority when the record states it, else the company. */
 function where(r: Row): string {
   const auth = r.chain?.find(
@@ -212,11 +159,8 @@ function Station(props: {
   );
   // The daily edition (D103) leads when the run made one; older runs keep the urgency order.
   const decisions = useMemo(() => {
-    const picked = (brief.edition ?? [])
-      .map((e) => rows.find((r) => r.rank === e.rank))
-      .filter((r): r is Row => r !== undefined);
-    return picked.length > 0 ? picked : toDecide(rows, brief.as_of);
-  }, [rows, brief.edition, brief.as_of]);
+    return decisionsOf(brief, rows);
+  }, [rows, brief]);
   const { decided, decide, followed, follow, learning, lesson, dismiss } =
     useDecisions(client, brief);
   const [open, setOpen] = useState<Row | null>(null);
@@ -476,9 +420,9 @@ function Station(props: {
                   )}
                 </div>
                 <h2 className="q">
-                  <a href={link("app", client, day, "case", r.rank)}>
+                  <button type="button" onClick={() => setOpen(r)}>
                     {question(r)}
-                  </a>
+                  </button>
                 </h2>
                 {((r.timing_signals ?? []).length >= 2 ||
                   (r.sources_seen ?? []).length >= 2 ||

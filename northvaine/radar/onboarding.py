@@ -77,6 +77,8 @@ class ProposalOut(NorthvaineModel):
     related_terms: list[str] = Field(default_factory=list, max_length=10)
     markets: list[str] = Field(default_factory=list, max_length=30)
     buyer_roles: list[str] = Field(default_factory=list, max_length=8)
+    need_triggers: list[str] = Field(default_factory=list, max_length=8)
+    priority_lines: list[str] = Field(default_factory=list, max_length=6)
     not_buyers: list[str] = Field(default_factory=list, max_length=4)
     hs_codes: list[str] = Field(default_factory=list, max_length=8)
     cpv_codes: list[str] = Field(default_factory=list, max_length=6)
@@ -99,6 +101,10 @@ class OnboardingAnswers(NorthvaineModel):
     related_terms: list[str] = Field(default_factory=list, max_length=15)
     markets: list[str] = Field(min_length=1, max_length=30)
     buyer_roles: list[str] = Field(min_length=1, max_length=12)
+    # Projects or events that make a customer need the client (one per line in the form)
+    need_triggers: list[str] = Field(default_factory=list, max_length=8)
+    # Product lines, most important first; each becomes a catalogue line in the spec
+    priority_lines: list[str] = Field(default_factory=list, max_length=6)
     not_buyers: list[str] = Field(default_factory=list, max_length=8)
     not_buyer_roles: list[str] = Field(
         default_factory=lambda: [r.key for r in intermediary_roles()], max_length=10
@@ -175,6 +181,8 @@ def verify_proposal(out: ProposalOut, source_text: str) -> Proposal:
         related_terms=[t.strip() for t in out.related_terms if t.strip()],
         markets=markets,
         buyer_roles=[r.strip() for r in out.buyer_roles if r.strip()],
+        need_triggers=[r.strip() for r in out.need_triggers if r.strip()],
+        priority_lines=[r.strip() for r in out.priority_lines if r.strip()],
         not_buyers=[r.strip() for r in out.not_buyers if r.strip()],
         hs_codes=hs,
         cpv_codes=cpv,
@@ -195,7 +203,7 @@ async def propose(
     settings = settings or get_settings()
     result = await complete_json(
         tier=ModelTier.MID,
-        prompt=load_prompt("onboarding_propose", version=1),
+        prompt=load_prompt("onboarding_propose", version=2),
         variables={
             "website_text": Untrusted(website_text),
             "catalogue_text": Untrusted(catalogue_text or "(none)"),
@@ -204,7 +212,7 @@ async def propose(
         purpose="onboarding_propose",
         run=run,
         session=session,
-        max_tokens=1200,
+        max_tokens=1500,
     )
     return verify_proposal(result.value, website_text + "\n" + catalogue_text)
 
@@ -216,6 +224,25 @@ def client_id_for(website: str) -> str:
     host = host.lower().removeprefix("www.")
     slug = re.sub(r"[^a-z0-9]+", "_", host).strip("_")
     return slug[:48] or "client"
+
+
+def _catalogue_lines(answers: OnboardingAnswers) -> list[dict[str, Any]]:
+    """One catalogue line per priority line, in the person's order. Its terms are the line itself
+    plus the offer terms that share a word prefix with one of the line's words, either way round
+    ("bench" and "benches"), case-insensitive, words of 3+ letters."""
+    lines = []
+    for name in dict.fromkeys(n.strip() for n in answers.priority_lines if n.strip()):
+        words = name.casefold().split()
+        terms = [name]
+        for term in answers.offer_terms:
+            if any(
+                min(len(tw), len(w)) >= 3 and (tw.startswith(w) or w.startswith(tw))
+                for tw in term.casefold().split()
+                for w in words
+            ):
+                terms.append(term)
+        lines.append({"name": name, "terms": list(dict.fromkeys(terms)), "codes": []})
+    return lines
 
 
 def build_client_spec(
@@ -296,6 +323,8 @@ def build_client_spec(
             "offer_terms": answers.offer_terms,
             "related_terms": answers.related_terms,
             "buyer_roles": answers.buyer_roles,
+            "need_triggers": answers.need_triggers,
+            "catalogue_lines": _catalogue_lines(answers),
             "not_buyers": answers.not_buyers,
             "not_buyer_codes": not_buyer_codes,
             "product_codes": [*hs, *cpv],

@@ -207,3 +207,14 @@ def test_the_app_gets_names_without_markdown_escapes() -> None:
     c = importer("K & H (Example) Ltd", new=True)
     assert _plain_name(c) == "K & H (Example) Ltd"
     assert _plain_what(c) == "imports 12345678 (Test goods)"
+
+
+def test_the_app_shows_the_register_spelling_when_there_is_one() -> None:
+    from northvaine.api.views import _plain_name
+    from northvaine.radar.models import RegisterFacts
+
+    c = importer("ACME LIM ITED", new=True)
+    assert _plain_name(c) == "ACME LIM ITED"
+    facts = RegisterFacts(number="1", name="ACME LIMITED", status="active")
+    c = c.model_copy(update={"company_register": facts})
+    assert _plain_name(c) == "ACME LIMITED"

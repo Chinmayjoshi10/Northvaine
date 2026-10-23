@@ -79,6 +79,8 @@ function Answers({
   const [terms, setTerms] = useState(p.offer_terms.join("\n"));
   const [markets, setMarkets] = useState(p.markets.join(", "));
   const [buyers, setBuyers] = useState(p.buyer_roles.join("\n"));
+  const [triggers, setTriggers] = useState((p.need_triggers ?? []).join("\n"));
+  const [productLines, setProductLines] = useState((p.priority_lines ?? []).join("\n"));
   const [notBuyers, setNotBuyers] = useState(p.not_buyers.join("\n"));
   const roles = session.not_buyer_roles ?? [];
   const [roleKeys, setRoleKeys] = useState<string[]>(roles.map((r) => r.key));
@@ -99,6 +101,8 @@ function Answers({
       related_terms: p.related_terms,
       markets: lines(markets).map((m) => m.toUpperCase()),
       buyer_roles: lines(buyers),
+      need_triggers: lines(triggers).slice(0, 8),
+      priority_lines: lines(productLines).slice(0, 6),
       not_buyers: lines(notBuyers),
       not_buyer_roles: roleKeys,
       hs_codes: lines(hs),
@@ -151,6 +155,22 @@ function Answers({
         rows={4}
         required
       />
+      <Field
+        id="o-triggers"
+        label="Which projects or events make a customer need you?"
+        hint="One per line, e.g. new hotels, villa projects, office fit-outs, renovations."
+        value={triggers}
+        onChange={setTriggers}
+        rows={3}
+      />
+      <Field
+        id="o-lines"
+        label="Which of your product lines matter most? (most important first)"
+        hint="One per line."
+        value={productLines}
+        onChange={setProductLines}
+        rows={3}
+      />
       <fieldset className="onb-roles">
         <legend>Who do you sell to?</legend>
         {CHANNELS.map((c) => (
@@ -193,8 +213,8 @@ function Answers({
       )}
       <Field
         id="o-customers"
-        label="Current customers to leave out (optional)"
-        hint="Company names, one per line. They are never shown as new."
+        label="Your current customers (optional, private)"
+        hint="Used to find companies like them. Never shown, never listed as new."
         value={customers}
         onChange={setCustomers}
         rows={2}
