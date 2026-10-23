@@ -7,6 +7,14 @@
 # The app module is northvaine.api.main:app (northvaine/api/main.py). The nightly job uses
 # the same image with a different command (see docs/DEPLOY.md).
 
+# Stage 1: build the frontend; the API serves frontend/dist when it exists.
+FROM node:20-slim AS frontend
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend ./
+RUN npm run build
+
 FROM python:3.12-slim
 
 # uv from the official image, pinned to a minor version.
@@ -29,16 +37,27 @@ COPY northvaine ./northvaine
 COPY migrations ./migrations
 COPY alembic.ini schema.sql ./
 COPY scripts ./scripts
+# The public demo client spec (deploy/demo/README.md) and, when the nightly workflow supplies
+# them, the baked radar reports (demo_reports/radar/<client>/<date>/run.json). The folder always
+# exists in the repo (demo_reports/.keep), so a plain `docker build .` works without reports.
+COPY deploy/demo ./deploy/demo
+COPY demo_reports ./demo_reports
 # Recordings, so the offline radar run works inside the image.
 COPY tests/fixtures ./tests/fixtures
 RUN uv sync --frozen --no-dev
+COPY --from=frontend /frontend/dist ./frontend/dist
 
-# Non-root user.
+# Non-root user. The onboarding folder is world-writable because some hosts (Hugging Face
+# Spaces) run the container under a different uid; its contents are ephemeral.
 RUN useradd --create-home --uid 10001 northvaine \
+    && mkdir -p /app/onboarding_clients \
+    && chmod 777 /app/onboarding_clients \
     && chown -R northvaine:northvaine /app
 USER northvaine
 
 ENV PATH="/app/.venv/bin:$PATH" \
+    RADAR_REPORTS_DIR=/app/demo_reports/radar \
+    ONBOARDING_CLIENTS_DIR=/app/onboarding_clients \
     PORT=8000
 EXPOSE 8000
 

@@ -1,0 +1,81 @@
+name: Nightly demo
+
+# Runs the radar live for the public demo client, bakes the fresh brief into the Docker image,
+# pushes it to GHCR and restarts the Hugging Face Space. If any step fails, yesterday's image
+# stays live. See docs/HOSTING.md.
+on:
+  schedule:
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: nightly-demo
+  cancel-in-progress: false
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+      NEBIUS_BASE_URL: ${{ secrets.NEBIUS_BASE_URL }}
+      MODEL_FAST: ${{ secrets.MODEL_FAST }}
+      MODEL_MID: ${{ secrets.MODEL_MID }}
+      MODEL_DEEP: ${{ secrets.MODEL_DEEP }}
+      MODEL_EMBED: ${{ secrets.MODEL_EMBED }}
+      EMBED_DIM: ${{ secrets.EMBED_DIM }}
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      COMPANIES_HOUSE_API_KEY: ${{ secrets.COMPANIES_HOUSE_API_KEY }}
+      DAILY_BUDGET_USD: ${{ secrets.DAILY_BUDGET_USD }}
+      TOTAL_BUDGET_USD: ${{ secrets.TOTAL_BUDGET_USD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install (Python 3.12 and locked dependencies)
+        run: uv sync --frozen
+
+      # The recordings go to /tmp and are discarded; the report is what the image carries.
+      - name: Run the radar live for the demo client
+        run: >
+          uv run python scripts/radar.py --client stone_exporter_demo --record --yes
+          --clients-dir deploy/demo/clients --fixtures-dir /tmp/fixtures --out demo_reports/radar
+
+      - name: Check the report was written
+        run: test -n "$(find demo_reports/radar -name run.json | head -n 1)"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image name and date tag
+        run: |
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/northvaine" >> "$GITHUB_ENV"
+          echo "DAY=$(date -u +%Y-%m-%d)" >> "$GITHUB_ENV"
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ env.DAY }}
+
+      - name: Restart the Space so it pulls the new image
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ secrets.HF_SPACE }}
+        run: uv run python scripts/hf_space.py restart --space "$HF_SPACE"
