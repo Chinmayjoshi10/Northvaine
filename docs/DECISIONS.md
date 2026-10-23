@@ -1210,3 +1210,9 @@ brief with Claude's five corrections (docs/COLLAB.md).
   - `radar_fit_remove_makers` (default False): a verified `makes` reading keeps the company. It is ranked last inside its evidence level and its reason reads `Possible competitor: its own site reads "<quote>". Check whether it buys from you or competes with you.` The owner decides, as for possible distributors (D116).
   - Rule 3 is unchanged: the gate still rejects competitors from the claims before investigation. This reading comes from the company's own site after the gate and is a judgement, not a record.
   - Older recordings replay unchanged: `radar_fit_remove_makers` is pinned to True.
+
+- **D125 — Opportunities ranked by intent, fit and confidence (24 Oct).** The goal since D101 is the best intent-based leads for any B2B business, but the ranking stayed a ladder by evidence type (proven importers first), so the Station read like an importer database and nothing outside the UK surfaced. The founder restated the goal; the plan is `docs/INTENT_PLAN.md`.
+  - The unit is an **opportunity**: a company, the reason to talk to it now (its dated, sourced dots), a play (project, partner, account), a window and the next action.
+  - Order: the labels Connected, Approach now, Build a relationship, Looking for it, Watch list; inside a label by intent (strength and freshness of the about-to-buy signal), fit, confidence (independent kinds of source that agree), then recency. Each factor is shown in words. Import records become proof of fit and purchase, not the ranking.
+  - Junk is removed by code before any model call: contracts and news that do not name the client's product words, and leads outside the client's markets.
+  - Nothing is written for one industry: plays, signals and search phrases come from the client's own data. Every change is checked on three industries by the founder's question, "would this business call them today?".
