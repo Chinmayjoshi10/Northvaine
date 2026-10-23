@@ -281,6 +281,8 @@ class Settings(BaseSettings):
     radar_watch_days: int = Field(default=90, ge=1)
     radar_watch_runs: int = Field(default=30, ge=1)
     radar_fit_pages: int = Field(default=2, ge=1)
+    # Companies read at once in company fit: a slow site waits alone, not the whole run.
+    radar_fit_concurrency: int = Field(default=8, ge=1)
     # Also read the company's own about pages (/about-us, /about): free fetches (D113 review).
     radar_fit_about_pages: bool = True
     radar_fit_quotes: int = Field(default=3, ge=1)

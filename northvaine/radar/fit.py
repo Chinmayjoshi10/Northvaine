@@ -519,19 +519,29 @@ async def company_fit(
     searched = [e for e in shortlisted if id(e) not in guessed][: cfg.radar_fit_max_accounts]
     chosen = {id(e) for e in searched} | set(guessed)
     pool = {id(e) for e in guess_pool} | {id(e) for e in searched}
-    by_search = 0
     deep_urls: dict[int, set[str]] = {}
     proof_for: dict[int, str] = {}
     out: list[RankedEntry] = []
     pending: list[tuple[int, RankedEntry, str, list[tuple[EvidenceDocument, str]], Any]] = []
-    for entry in entries:
-        if id(entry) not in chosen:
-            out.append(entry)
-            continue
+    fit_gate = asyncio.Semaphore(cfg.radar_fit_concurrency)
+
+    async def _read_company(
+        entry: RankedEntry,
+    ) -> tuple[
+        list[str],
+        bool,
+        tuple[str, list[tuple[EvidenceDocument, str]], Any] | None,
+        str | None,
+        set[str],
+    ]:
+        """One company: (notes, found by search, (domain, read, contact) or None, proof, deep)."""
+        local: list[str] = []
+        by_search = False
+        proof: str | None = None
         c = entry.candidate
         try:
             if id(entry) in guessed:
-                host, proof_for[id(entry)] = guessed[id(entry)]
+                host, proof = guessed[id(entry)]
                 site = f"https://{host}/"
                 domain = registrable(site)
                 lead_urls = [site]
@@ -556,9 +566,8 @@ async def company_fit(
                     None,
                 )
                 if site is None:
-                    out.append(entry)
-                    continue
-                by_search += 1
+                    return local, by_search, None, proof, set()
+                by_search = True
                 domain = registrable(site)
                 lead_urls = [d.url for d in found.documents if registrable(d.url) == domain]
                 if len(lead_urls) < 2:
@@ -574,9 +583,8 @@ async def company_fit(
                     (d.url for d in found.documents if domain_matches(c.name, d.url, cfg)), None
                 )
                 if site is None:
-                    notes.append(f"company fit: no official site found for {c.name}")
-                    out.append(entry)
-                    continue
+                    local.append(f"company fit: no official site found for {c.name}")
+                    return local, by_search, None, proof, set()
                 domain = registrable(site)
                 pages = await sensor.search(
                     SensorQuery(
@@ -591,9 +599,8 @@ async def company_fit(
                     if registrable(d.url) == domain
                 ]
         except SensorError as exc:
-            notes.append(f"company fit: search failed for {c.name}: {exc}")
-            out.append(entry)
-            continue
+            local.append(f"company fit: search failed for {c.name}: {exc}")
+            return local, by_search, None, proof, set()
         if cfg.radar_fit_about_pages and cfg.radar_fit_single_search:
             # The "about" page says what a company does in sentences; a home page is often only a
             # menu (a hand-found buyer's site was read as naming nothing). Free fetches.
@@ -648,7 +655,6 @@ async def company_fit(
                     continue
                 _read_page(page, lead_url, keep_raw=False)
                 deep.add(read[-1][0].url)
-        deep_urls[id(entry)] = deep
         contact: CompanyContact | None = None
         if cfg.radar_fit_single_search:
             # One extra fetch, always: the company's own contact page. Fetching it only when the
@@ -658,8 +664,29 @@ async def company_fit(
             if page.refused is None and page.text:
                 raw_pages.append((page.final_url or page.lead_url, page.contact_text or page.text))
             contact = find_company_contact(raw_pages, domain, role_words)
-        pending.append((len(out), entry, domain, read, contact))
+        return local, by_search, (domain, read, contact), proof, deep
+
+    async def _bounded(entry: RankedEntry) -> Any:
+        async with fit_gate:
+            return await _read_company(entry)
+
+    # Companies are read concurrently (a slow site waits alone); results are assembled in the
+    # input order so notes, `out` and `pending` are what the sequential loop gave.
+    todo = [e for e in entries if id(e) in chosen]
+    reads = iter(await asyncio.gather(*(_bounded(e) for e in todo)))
+    by_search = 0
+    for entry in entries:
         out.append(entry)  # replaced below, once the whole run's words are known (D118)
+        if id(entry) not in chosen:
+            continue
+        local_notes, found_by_search, got, proof_found, deep_found = next(reads)
+        notes.extend(local_notes)
+        by_search += found_by_search
+        if proof_found is not None:
+            proof_for[id(entry)] = proof_found
+        if got is not None:
+            deep_urls[id(entry)] = deep_found
+            pending.append((len(out) - 1, entry, *got))
 
     # D118: which offer terms are common in this run. Only after every site is read.
     prefer: set[str] | None = None
