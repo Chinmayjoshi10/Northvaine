@@ -85,6 +85,9 @@ class RegisterRecord(NorthvaineModel):
     charge_created_on: date | None = None  # D111: latest charge registered
     office_moved_on: date | None = None  # D111: latest registered-office change filed
     accounts_type: str | None = None  # D116: type of the last filed accounts, nothing else
+    # D126: the company's registered office postcode and town (public company-level data)
+    postcode: str | None = None
+    locality: str | None = None
 
     @property
     def url(self) -> str:
@@ -118,6 +121,10 @@ def parse_record(profile: dict[str, Any], psc: dict[str, Any] | None) -> Registe
     accounts = profile.get("accounts")
     last = accounts.get("last_accounts") if isinstance(accounts, dict) else None
     accounts_type = last.get("type") if isinstance(last, dict) else None
+    office = profile.get("registered_office_address")
+    office = office if isinstance(office, dict) else {}
+    postcode = str(office.get("postal_code") or "").strip().upper()
+    locality = str(office.get("locality") or "").strip()
     return RegisterRecord(
         number=str(profile.get("company_number") or ""),
         name=str(profile.get("company_name") or ""),
@@ -128,6 +135,8 @@ def parse_record(profile: dict[str, Any], psc: dict[str, Any] | None) -> Registe
         controllers=controllers,
         control_changed_on=max(notified) if notified else None,
         accounts_type=str(accounts_type) if accounts_type else None,
+        postcode=postcode or None,
+        locality=locality or None,
     )
 
 

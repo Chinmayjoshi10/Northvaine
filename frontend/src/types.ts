@@ -16,6 +16,8 @@ export interface Row {
   label_reason?: string | null;
   /** D118: the client's catalogue lines this account matches, most important first */
   matched_lines?: string[];
+  /** D126: registered office at district level (UK only) */
+  place?: { lat: number; lon: number; label: string } | null;
   /** also briefed in the client's previous run */
   returning?: boolean;
   /** D110: watching over time, against all earlier runs */

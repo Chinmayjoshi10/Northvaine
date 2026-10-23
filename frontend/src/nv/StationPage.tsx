@@ -183,8 +183,11 @@ function Station(props: {
     const by = new Map<string, Place & { lead: Row }>();
     for (const r of rows) {
       if (!r.country || /not stated/.test(r.country)) continue;
-      const p = by.get(r.country) ?? {
+      const at = r.place;
+      const id = at ? `${r.country}@${at.lat},${at.lon}` : r.country;
+      const p = by.get(id) ?? {
         country: r.country,
+        ...(at ? { lat: at.lat, lon: at.lon, label: at.label } : {}),
         total: 0,
         toDecide: 0,
         kind: "watching" as const,
@@ -204,7 +207,7 @@ function Station(props: {
           ? hot.has(r.rank)
           : r.rank < p.lead.rank;
       if (better) p.lead = r;
-      by.set(r.country, p);
+      by.set(id, p);
     }
     return [...by.values()].map(({ lead, ...p }) => {
       const fact = shortFact(lead);
@@ -371,7 +374,7 @@ function Station(props: {
           </div>
           <TerritoryMap places={places} />
           <div className="mapnote">
-            <span>Placed by country, as each record states it</span>
+            <span>Placed by registered office where the record gives one, else by country</span>
             {unplaced > 0 && (
               <span>
                 {unplaced} {unplaced === 1 ? "lead states" : "leads state"} no

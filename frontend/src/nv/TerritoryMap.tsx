@@ -13,9 +13,9 @@ import type { Topology } from "topojson-specification";
 import type { Feature, FeatureCollection, Geometry, Polygon } from "geojson";
 import atlasUrl from "world-atlas/countries-50m.json?url";
 
-// The territory: land drawn as dots, one marker per country the run found leads in. Leads are
-// placed by country because that is what the record states; nothing is placed more precisely
-// than its source allows.
+// The territory: land drawn as dots, one marker per country the run found leads in, or per
+// registered-office district where the record gives one. Nothing is placed more precisely than
+// its source allows.
 
 export interface Place {
   country: string;
@@ -27,7 +27,15 @@ export interface Place {
   account?: boolean;
   /** "Company · short fact" for the country's lead row */
   note?: string;
+  /** a registered office, district level: the marker sits here, not on the country */
+  lat?: number;
+  lon?: number;
+  /** the town (or postcode district) of that office */
+  label?: string;
 }
+
+const placeId = (p: Place) =>
+  p.lat != null && p.lon != null ? `${p.country}@${p.lat},${p.lon}` : p.country;
 
 type Country = Feature<Geometry, { name: string }>;
 
@@ -192,7 +200,10 @@ export function TerritoryMap(props: {
   const markers = proj
     ? found
         .map(({ p, c }) => {
-          const xy = proj!(geoCentroid(mainland(c)));
+          const xy =
+            p.lat != null && p.lon != null
+              ? proj!([p.lon, p.lat])
+              : proj!(geoCentroid(mainland(c)));
           return xy ? { p, x: xy[0], y: xy[1] } : null;
         })
         .filter((m): m is { p: Place; x: number; y: number } => !!m)
@@ -209,7 +220,7 @@ export function TerritoryMap(props: {
           const left = x > size.w * 0.72;
           return (
             <g
-              key={p.country}
+              key={placeId(p)}
               className={`mk${hot ? " hot" : ""}`}
               style={{ animationDelay: `${300 + i * 90}ms` }}
               transform={`translate(${x},${y})`}
@@ -240,7 +251,7 @@ export function TerritoryMap(props: {
                 y={17}
                 textAnchor={left ? "end" : "start"}
               >
-                {p.country} · {p.total} on record{hot ? ` · ${p.toDecide} to decide` : ""}
+                {p.label ? `${p.label}, ${p.country}` : p.country} · {p.total} on record{hot ? ` · ${p.toDecide} to decide` : ""}
               </text>
             </g>
           );
