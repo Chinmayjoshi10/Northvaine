@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api";
+import { api, wakeLiveApi } from "../api";
 import type { OnboardingAnswers, OnboardingSession, Proposal } from "../types";
 import { link } from "../routes";
 import "../nv/nv.css";
@@ -248,6 +248,7 @@ export function OnboardingPage() {
   const [id, setId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [waking, setWaking] = useState(false);
   const [start, setStart] = useState({ company: "", website: "", email: "" });
   const [catalogueNote, setCatalogueNote] = useState("");
   const session = useSession(id, step === "running" ? 4000 : 2000);
@@ -256,6 +257,9 @@ export function OnboardingPage() {
     e.preventDefault();
     setBusy(true);
     setError("");
+    setWaking(true);
+    await wakeLiveApi(); // static demo only: free hosting sleeps when idle
+    setWaking(false);
     const r = await api.onboardingStart(start).catch(() => null);
     setBusy(false);
     if (r?.status === 409) {
@@ -372,6 +376,11 @@ export function OnboardingPage() {
                 onChange={(e) => setStart({ ...start, email: e.target.value })}
                 autoComplete="email"
               />
+              {waking && (
+                <p className="onb-hint" role="status">
+                  Waking up the radar server (free hosting sleeps when idle) - about a minute.
+                </p>
+              )}
               {error && (
                 <p className="contact-error" role="alert">
                   {error}

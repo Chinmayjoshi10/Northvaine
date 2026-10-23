@@ -4,15 +4,29 @@ The Nebius plan in `docs/DEPLOY.md` stays. This is the free route for a public d
 
 ## Design
 
-1. A nightly GitHub Actions workflow (`.github/workflows/nightly.yml`, 02:30 UTC) runs the radar
-   live for ONE public demo client, `stone_exporter_demo`, builds the Docker image with that
-   fresh brief baked in (`demo_reports/radar`), pushes it to GHCR
-   (`ghcr.io/<owner>/northvaine:latest` plus a date tag), then restarts the Hugging Face Space.
-2. The Space (Docker SDK) holds a two-line Dockerfile that is `FROM` that image, and a README
-   with the Space front-matter (`deploy/hf_space/`). Runtime secrets live in the Space settings.
-3. The demo client is anonymised: id `stone_exporter_demo`, generic name, no existing customers.
-4. If the radar run fails, the workflow stops and yesterday's image stays live. Each image
-   carries only tonight's run.
+Three free pieces:
+
+1. **Pages (static, nightly).** The demo pages judges browse (landing, Station, leads, case page,
+   connections, motion, business) are a static site on GitHub Pages: instant, never asleep.
+   A nightly workflow (`.github/workflows/nightly.yml`, 02:30 UTC) runs the radar live for ONE
+   public demo client, `stone_exporter_demo`, then `scripts/export_static.py` calls the API
+   in-process and writes the exact JSON it serves (clients, runs and the `latest` alias, entries,
+   feedback, learning, business) to files. The frontend is built with `VITE_STATIC_DATA=1`,
+   `VITE_LIVE_API=https://northvaine.onrender.com` and `VITE_BASE=/Northvaine/`, the JSON is
+   copied to `<site>/data/`, and the result is deployed with `actions/deploy-pages`.
+   If the radar run fails, nothing deploys and yesterday's site stays.
+2. **Render (live API, free, sleeps).** One free Docker web service built from `main`
+   (`https://northvaine.onrender.com`, the root `Dockerfile`) serves only the live parts:
+   onboarding ("Build my radar"), contact and feedback. It sleeps after 15 minutes idle and takes
+   up to about a minute to wake; the onboarding page says so and pings `/health` first.
+   Set `CORS_ORIGINS=["https://<github user>.github.io"]` on it so the static site may call it.
+3. **Neon demo project (database).** Every live model call writes a ledger row (budget checks),
+   so the workflow and Render need `DATABASE_URL`. Use a database that holds nothing private.
+
+A client built after the last nightly run is not in the exported files; the static site falls
+back to the live API for it.
+
+The demo client is anonymised: id `stone_exporter_demo`, generic name, no existing customers.
 
 ## One-time setup (founder, in order)
 
@@ -23,29 +37,35 @@ uv run python scripts/make_demo_spec.py --source <private spec.json> \
     --out deploy/demo/clients/stone_exporter_demo.json --forbid <word> --forbid <word>
 ```
 
-Read the demo spec by eye, then commit and push it. Put a Hugging Face write token in `.env` as
-`HF_TOKEN=` and the Space name as `HF_SPACE=user/northvaine` (names only in `.env.example`); run
-`gh_secrets.py` again if you added them after the first run.
+Read the demo spec by eye, then commit and push it.
 
-```
-uv run python scripts/hf_space.py init --space user/northvaine --owner <github owner>
-uv run python scripts/hf_space.py secrets --space user/northvaine
-```
+Then, once: repo **Settings -> Pages -> Source: GitHub Actions**. Run the workflow by hand
+(Actions, Nightly demo, Run workflow; or `gh workflow run nightly.yml`). The site appears at
+`https://<github user>.github.io/Northvaine/` (change `VITE_BASE` in the workflow if the repo is
+named differently).
 
-Then make the GHCR package public (GitHub: your profile, Packages, northvaine, Package settings,
-Change visibility) after the first push, and run the workflow once by hand (Actions, Nightly
-demo, Run workflow; or `gh workflow run nightly.yml`). The first run has to finish before the
-package exists.
+On Render set the same runtime secrets as the workflow (see `.env.example`), `DAILY_BUDGET_USD=2`
+and `CORS_ORIGINS` as above.
 
 ## Cost
 
-About $0.35 per nightly run (Nebius model calls and Tavily). The Space and GHCR are free.
+Hosting is $0 (Pages, Render free, Neon free). About $0.35 per nightly run (Nebius model calls
+and Tavily).
 
 ## Safety
 
-- The Space has a daily budget cap (`DAILY_BUDGET_USD`, 2 unless `.env` has a lower value) and
-  the lifetime cap `TOTAL_BUDGET_USD`.
-- The onboarding live run on the Space is public: anyone can start one, up to the cap.
-- `DATABASE_URL` is needed by the workflow and the Space because every live model call writes a
-  ledger row (budget checks). Use a database that holds nothing private.
-- The onboarding folder on the Space is ephemeral.
+- Render has a daily budget cap (`DAILY_BUDGET_USD`, $2) and the lifetime cap `TOTAL_BUDGET_USD`.
+- Onboarding live runs are public: anyone can start one, up to the cap.
+- The exported JSON is the same output the public API serves; nothing else is published.
+- The onboarding folder on Render is ephemeral.
+
+## Later: an always-on host
+
+The same Docker image runs on any paid always-on host (the Nebius plan in `docs/DEPLOY.md`, or a
+paid Render instance). Then drop `VITE_STATIC_DATA` and `VITE_LIVE_API`: the frontend is served
+by the API itself, same-origin, as it is in local development.
+
+## Not used: Hugging Face Space
+
+Docker Spaces now need a paid plan. `scripts/hf_space.py` and `deploy/hf_space/` stay in the repo
+but are unused, and the workflow no longer pushes to the container registry or restarts a Space.
