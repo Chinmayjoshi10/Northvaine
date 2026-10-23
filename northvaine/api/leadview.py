@@ -199,6 +199,32 @@ def supply_phrase(spec: ClientSpec | None, offer: str) -> str:
     return offer.strip()
 
 
+# The reason to call, in words a salesperson would write. Keyed by the opening words of
+# `Opportunity.why_now`: generic event types and register changes, never an industry.
+_NEWS_WORDS = (
+    ("contract awarded", "winning the contract"),
+    ("tender published", "the new tender"),
+    ("facility opened", "the new opening"),
+    ("market entry", "the move into a new market"),
+    ("expansion", "the expansion"),
+    ("product launch", "the launch"),
+    ("hiring surge", "the growth of your team"),
+)
+_CHANGE_WORDS = (
+    ("Control changed", "the change of ownership"),
+    ("A charge (new finance)", "the new investment"),
+    ("It started importing", "that you have started importing"),
+    ("It was renamed", "the new company name"),
+    ("Its registered office moved", "the move to a new office"),
+    ("It was incorporated", "the new company"),
+)
+
+
+def _reason(why_now: str, table: tuple[tuple[str, str], ...], default: str) -> str:
+    low = why_now.strip().casefold()
+    return next((words for key, words in table if low.startswith(key.casefold())), default)
+
+
 def opening_line(entry: RankedEntry, supply: str) -> str | None:
     """One line the client could open with, by play. Facts and a sample offer only: never a price,
     a discount, a date or a term."""
@@ -206,17 +232,14 @@ def opening_line(entry: RankedEntry, supply: str) -> str | None:
     if o is None or not supply:
         return None
     if o.play == "project":
-        event = _DATE_SUFFIX.sub("", o.why_now).strip()
-        what = f" ({event})" if event else ""
+        news = _reason(o.why_now, _NEWS_WORDS, "the project")
         return (
-            f"Congratulations on the project{what}. We supply {supply}; "
-            "could we send samples for the project?"
+            f"Congratulations on {news}. We supply {supply}; could we send samples for the project?"
         )
     if o.play == "partner":
-        noticed = o.why_now.strip()
-        noticed = (noticed[:1].lower() + noticed[1:]) if noticed else "your recent activity"
+        change = _reason(o.why_now, _NEWS_WORDS + _CHANGE_WORDS, "your recent growth")
         return (
-            f"We noticed {noticed}. We make {supply} and work with distributors; "
+            f"We noticed {change}. We make {supply} and work with distributors; "
             "would a sample range be useful?"
         )
     product = next(
