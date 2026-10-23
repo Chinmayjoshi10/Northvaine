@@ -326,6 +326,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_fit_remove_makers": True,  # D124: a "makes" reading removed the company (D120)
     "radar_off_target_filter": False,  # D125: no market or product filter before the gate
     "radar_rank_by_opportunity": False,  # D125: the evidence-ladder order
+    "radar_register_geocode": False,  # D126: no postcode lookup
 }
 
 

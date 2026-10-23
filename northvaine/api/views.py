@@ -34,6 +34,14 @@ class Link(BaseModel):
     url: str | None = None
 
 
+class Place(BaseModel):
+    """A registered office at district level: coordinates rounded to 2 decimals."""
+
+    lat: float
+    lon: float
+    label: str
+
+
 class Row(BaseModel):
     rank: int
     status: str
@@ -66,6 +74,7 @@ class Row(BaseModel):
     possible_distributor: bool = False  # D116
     accounts_type: str | None = None  # D116: type of the last filed accounts
     matched_lines: list[str] = []  # D118: the client's catalogue lines it matches
+    place: Place | None = None  # D126: where its registered office is (UK, district level)
 
 
 class Funnel(BaseModel):
@@ -210,6 +219,14 @@ def _accounts_type(entry: RankedEntry) -> str | None:
     return facts.accounts_type if facts else None
 
 
+def _place(entry: RankedEntry) -> Place | None:
+    facts = entry.candidate.company_register
+    if facts is None or facts.lat is None or facts.lon is None:
+        return None
+    label = (facts.locality or (facts.postcode or "").split(" ")[0]).strip()
+    return Place(lat=facts.lat, lon=facts.lon, label=label)
+
+
 def _row(entry: RankedEntry, today: date) -> Row:
     c = entry.candidate
     return Row(
@@ -235,6 +252,7 @@ def _row(entry: RankedEntry, today: date) -> Row:
         possible_distributor=entry.gate.partner,
         accounts_type=_accounts_type(entry),
         matched_lines=list(entry.matched_lines),
+        place=_place(entry),
     )
 
 

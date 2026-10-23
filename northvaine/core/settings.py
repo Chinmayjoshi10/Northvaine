@@ -266,6 +266,10 @@ class Settings(BaseSettings):
     radar_link_by_register: bool = True
     # D116: the type of the last filed accounts becomes a register claim (a size signal).
     radar_register_accounts_type: bool = True
+    # D126: UK registered-office postcodes placed on the map by one bulk postcodes.io lookup a run
+    # (free, open data, no key). Off replays older recordings unchanged.
+    radar_register_geocode: bool = True
+    radar_geocode_url: str = "https://api.postcodes.io"
     # D109: customers and approved leads looked up at the register, at most this many.
     radar_seed_max_lookups: int = Field(default=10, ge=0)
     # D111: timing signals from free official records, read for at most this many UK companies,

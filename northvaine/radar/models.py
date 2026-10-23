@@ -166,6 +166,11 @@ class RegisterFacts(NorthvaineModel):
     charge_created_on: date | None = None  # D111
     office_moved_on: date | None = None  # D111
     accounts_type: str | None = None  # D116: type of the last filed accounts, no figures
+    # D126: registered office, and its district-level coordinates (rounded to 2 decimals)
+    postcode: str | None = None
+    locality: str | None = None
+    lat: float | None = None
+    lon: float | None = None
 
 
 class Candidate(NorthvaineModel):

@@ -43,6 +43,7 @@ from northvaine.sensors.companies_house import (
     render_register_text,
     sic_descriptions,
 )
+from northvaine.sensors.postcodes import geocode_postcodes
 
 __all__ = [
     "SeedProfile",
@@ -83,6 +84,8 @@ def _facts(record: RegisterRecord, settings: Settings) -> RegisterFacts:
         charge_created_on=record.charge_created_on,
         office_moved_on=record.office_moved_on,
         accounts_type=record.accounts_type if settings.radar_register_accounts_type else None,
+        postcode=record.postcode,
+        locality=record.locality,
     )
 
 
@@ -192,7 +195,46 @@ async def register_check(
         kept, absorbed = merge_by_register(kept)
         if absorbed:
             notes.append(f"linked {absorbed} companies across sources by registration number")
+    kept, geo_notes = await _geocode(kept, http=http, settings=settings)
+    notes.extend(geo_notes)
     return mark_timing(kept, as_of, settings), rejected, notes
+
+
+async def _geocode(
+    candidates: list[Candidate], *, http: Any, settings: Settings
+) -> tuple[list[Candidate], list[str]]:
+    """D126: coordinates for the registered-office postcodes, one bulk postcodes.io request per
+    100 (free open data). Rounded to 2 decimals (about a district), so nothing is placed more
+    precisely than that. A failure is a note, never a failed run."""
+    if not settings.radar_register_geocode:
+        return candidates, []
+    codes = sorted(
+        {
+            c.company_register.postcode
+            for c in candidates
+            if c.company_register is not None and c.company_register.postcode
+        }
+    )
+    if not codes:
+        return candidates, []
+    try:
+        where = await geocode_postcodes(
+            codes,
+            base_url=settings.radar_geocode_url,
+            client=http,
+            timeout=settings.fetch_timeout_seconds,
+        )
+    except SensorError as exc:
+        return candidates, [f"register check: postcodes not placed: {exc}"]
+    out: list[Candidate] = []
+    for c in candidates:
+        facts = c.company_register
+        spot = where.get(facts.postcode or "") if facts else None
+        if facts is not None and spot is not None:
+            facts = facts.model_copy(update={"lat": spot[0], "lon": spot[1]})
+            c = c.model_copy(update={"company_register": facts})
+        out.append(c)
+    return out, [f"register check: {len(where)} of {len(codes)} postcodes placed"]
 
 
 def _renumbered(
