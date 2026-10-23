@@ -87,6 +87,12 @@ def daily_edition(entries: list[RankedEntry], settings: Settings) -> list[Ranked
     """Up to the quota, each label capped by the mix; no padding. Within the edition, entries
     with more dated changes come first, then rank (a rename plus a new owner plus new imports
     beats a company that only started importing)."""
+    if any(e.opportunity is not None for e in entries):
+        # D125: ranked by opportunity already, so the edition is simply the best ones in rank
+        # order; the watch list never fills a slot.
+        ranked = sorted(entries, key=lambda e: e.rank)
+        best = [e for e in ranked if e.opportunity is not None and e.opportunity.label != "watch"]
+        return best[: settings.radar_daily_quota]
     taken: list[RankedEntry] = []
     counts: dict[str, int] = {}
     for entry in sorted(entries, key=lambda e: (-e.label_strength, e.rank)):

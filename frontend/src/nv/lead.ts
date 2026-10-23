@@ -242,7 +242,7 @@ export function toDecide(rows: Row[], asOf: string): Row[] {
     seen.add(key);
     out.push(r);
   }
-  return out.slice(0, 4);
+  return out.slice(0, 5); // five decisions a day, like the edition
 }
 
 /** The decisions an edition asks for: the edition the run chose (D103) when it made one, else

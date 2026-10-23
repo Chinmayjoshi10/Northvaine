@@ -158,3 +158,23 @@ def test_off_target_drops_other_markets_and_unrelated_contracts_but_keeps_coded_
     assert [c.name for c in kept] == ["Stone Works", "Pflasterbau GmbH"]
     assert {o.candidate.name for o in off} == {"Hotel Singapore", "Fiber Business Ltd"}
     assert all(o.gate.by == "code" and o.gate.reason.startswith("Off target") for o in off)
+
+
+def test_the_edition_is_the_top_five_non_watch_opportunities() -> None:
+    from northvaine.core.settings import Settings
+    from northvaine.radar.edition import daily_edition
+
+    entries = []
+    for n in range(8):
+        e = _with(
+            entry("awarded_contractor"),
+            key=f"GB:{n}",
+            name=f"Granite Co {n}",
+            events=[_event("contract_awarded", date(2026, 10, 20))] if n != 1 else [],
+        )
+        entries.append(e.model_copy(update={"rank": n + 1}))
+    ordered = order_opportunities(entries, TODAY, SPEC)
+    picked = daily_edition(ordered, Settings(_env_file=None))
+    assert len(picked) == 5
+    assert all(e.opportunity.label != "watch" for e in picked)
+    assert [e.rank for e in picked] == [1, 2, 3, 4, 5]
