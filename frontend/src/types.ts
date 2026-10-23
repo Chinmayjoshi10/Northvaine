@@ -242,6 +242,8 @@ export interface Proposal {
   related_terms: string[];
   markets: string[];
   buyer_roles: string[];
+  need_triggers?: string[];
+  priority_lines?: string[];
   not_buyers: string[];
   hs_codes: string[];
   cpv_codes: string[];
@@ -272,6 +274,8 @@ export interface OnboardingAnswers {
   related_terms: string[];
   markets: string[];
   buyer_roles: string[];
+  need_triggers: string[];
+  priority_lines: string[];
   not_buyers: string[];
   not_buyer_roles: string[];
   hs_codes: string[];

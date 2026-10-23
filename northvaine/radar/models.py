@@ -95,6 +95,8 @@ class ClientSpec(NorthvaineModel):
     # gate treats traders of the offer as resellers. A client whose customers are importers or
     # distributors lists those roles here, and the gate then counts them as buyers.
     buyer_roles: list[str] = Field(default_factory=list)
+    # Projects or events that make a customer need the client (onboarding answer), as data.
+    need_triggers: list[str] = Field(default_factory=list)
     # Who is competition rather than a buyer, in plain words (e.g. "other manufacturers of the
     # same products").
     not_buyers: list[str] = Field(default_factory=list)

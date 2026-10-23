@@ -7,6 +7,8 @@ import { CaseSheet } from "./CaseSheet";
 import { useDecisions } from "./decide";
 import { LessonNote } from "./LessonNote";
 import {
+  clientLabel,
+  decisionsOf,
   isHot,
   longDate,
   nice,
@@ -26,7 +28,7 @@ export function LeadsPage({ client, day }: { client: string; day: string }) {
   const crumb = (
     <>
       Leads <span className="sl">/</span>{" "}
-      <b>{brief.state === "ready" ? brief.data.offer : client}</b>
+      <b>{brief.state === "ready" ? clientLabel(brief.data) : client}</b>
     </>
   );
   if (brief.state !== "ready")
@@ -114,7 +116,7 @@ function Leads(props: {
   }, [open, step]);
 
   const { weekday, date } = longDate(brief.as_of);
-  const act = rows.filter((r) => stageOf(r) === "Act now").length;
+  const act = useMemo(() => decisionsOf(brief, rows).length, [brief, rows]);
 
   return (
     <Shell
@@ -159,8 +161,8 @@ function Leads(props: {
         <p className="lsub">
           {rows.length} leads, every fact checked against its source.{" "}
           {act > 0
-            ? `${act} ${act === 1 ? "needs" : "need"} a decision now.`
-            : "None needs a decision today."}
+            ? `${act} to decide.`
+            : "Nothing needs a decision today."}
         </p>
 
         <div className="filters" role="group" aria-label="Lead type">

@@ -158,3 +158,32 @@ def test_unknown_role_key_is_rejected() -> None:
     data["not_buyer_roles"] = ["warehousing", "made_up"]
     with pytest.raises(ValidationError):
         OnboardingAnswers.model_validate(data)
+
+
+def test_priority_lines_become_catalogue_lines_and_triggers_are_kept() -> None:
+    answers = ANSWERS.model_copy(
+        update={
+            "need_triggers": ["new parks", "street renewals"],
+            "priority_lines": ["Garden benches", "Bins"],
+            "offer_terms": ["garden benches", "park bins", "bench cushions"],
+        }
+    )
+    spec = build_client_spec(answers, client_id="x", today=date(2026, 10, 16))
+    assert spec.need_triggers == ["new parks", "street renewals"]
+    assert [ln.name for ln in spec.catalogue_lines] == ["Garden benches", "Bins"]
+    first, second = spec.catalogue_lines
+    assert first.terms == ["Garden benches", "garden benches", "bench cushions"]
+    assert second.terms == ["Bins", "park bins"] and second.codes == []
+
+
+def test_no_priority_lines_means_no_catalogue_lines() -> None:
+    spec = build_client_spec(ANSWERS, client_id="x", today=date(2026, 10, 16))
+    assert spec.catalogue_lines == [] and spec.need_triggers == []
+
+
+def test_verify_cleans_new_lists_and_v1_replies_still_parse() -> None:
+    out = ProposalOut(offer="x", need_triggers=[" new parks ", " "], priority_lines=["Benches "])
+    proposal = verify_proposal(out, SITE)
+    assert proposal.need_triggers == ["new parks"] and proposal.priority_lines == ["Benches"]
+    old = ProposalOut.model_validate({"offer": "x", "offer_terms": ["garden benches"]})
+    assert old.need_triggers == [] and old.priority_lines == []

@@ -1,4 +1,4 @@
-import type { Link, Row } from "../types";
+import type { BriefView, Link, Row } from "../types";
 
 // How a lead reads in the app. All of it is derived from the run record; nothing is invented.
 
@@ -243,4 +243,23 @@ export function toDecide(rows: Row[], asOf: string): Row[] {
     out.push(r);
   }
   return out.slice(0, 4);
+}
+
+/** The decisions an edition asks for: the edition the run chose (D103) when it made one, else
+ * the urgency order. The Station and the Leads page both count from here. */
+export function decisionsOf(brief: BriefView, rows: Row[]): Row[] {
+  const picked = (brief.edition ?? [])
+    .map((e) => rows.find((r) => r.rank === e.rank))
+    .filter((r): r is Row => r !== undefined);
+  return picked.length > 0 ? picked : toDecide(rows, brief.as_of);
+}
+
+/** The client's name; else the offer cut at its first comma or 48 characters. Never the whole sentence. */
+export function clientLabel(b: BriefView): string {
+  const name = b.client_name?.trim();
+  if (name) return name;
+  const first = b.offer.split(",")[0].trim();
+  return first.length > 48
+    ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…`
+    : first;
 }

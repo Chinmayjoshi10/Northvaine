@@ -193,6 +193,11 @@ def _plain(text: str) -> str:
 
 
 def _plain_name(candidate: Candidate) -> str:
+    """The name to show: the register's spelling when there is one (trade records split names
+    such as "LIM ITED"; the register does not), else the candidate's own."""
+    register = candidate.company_register
+    if register and register.name and register.name.strip():
+        candidate = candidate.model_copy(update={"name": register.name.strip()})
     return _plain(brief._name(candidate))
 
 
