@@ -1,4 +1,4 @@
-import type { BriefView, Link, Row } from "../types";
+import type { BriefView, Dot, Link, Row } from "../types";
 
 // How a lead reads in the app. All of it is derived from the run record; nothing is invented.
 
@@ -263,3 +263,14 @@ export function clientLabel(b: BriefView): string {
     ? `${first.slice(0, 48).replace(/\s+\S*$/, "")}…`
     : first;
 }
+
+/** The small caps heading of a dot: the kind of fact it is. */
+export const DOT_KIND: Record<Dot["kind"], string> = {
+  contract: "Contract",
+  tender: "Tender",
+  news: "News",
+  trade: "Imports",
+  register: "Register",
+  website: "Own website",
+  check: "Check",
+};

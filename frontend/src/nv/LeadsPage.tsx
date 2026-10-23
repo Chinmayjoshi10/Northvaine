@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api";
-import type { BriefView } from "../types";
+import type { BriefView, Row } from "../types";
 import { link } from "../routes";
 import { useLoad } from "../useLoad";
 import { CaseSheet } from "./CaseSheet";
@@ -20,6 +20,14 @@ import {
 } from "./lead";
 import { Shell } from "./Shell";
 import "./leads.css";
+
+const OPPORTUNITY_WORDS = [
+  "Connected",
+  "Approach now",
+  "Build a relationship",
+  "Looking for it",
+  "Watch list",
+];
 
 // Leads: every lead in one list, each with its type; a lead opens as a sheet over the list.
 
@@ -63,12 +71,20 @@ function Leads(props: {
     useDecisions(client, brief);
   const sheetRef = useRef<HTMLDivElement>(null);
 
+  // D125: when the rows carry an opportunity the filters are its labels, else the lead types
+  const byOpportunity = rows.some((r) => r.opportunity);
+  const kindOf = (r: Row) =>
+    byOpportunity ? (r.opportunity?.word ?? "Other") : typeOf(r);
+  const kinds = byOpportunity
+    ? OPPORTUNITY_WORDS.filter((w) => rows.some((r) => kindOf(r) === w))
+    : null;
+
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
-    for (const r of rows) c[typeOf(r)] = (c[typeOf(r)] ?? 0) + 1;
+    for (const r of rows) c[kindOf(r)] = (c[kindOf(r)] ?? 0) + 1;
     return c;
-  }, [rows]);
-  const shown = rows.filter((r) => filter === "All" || typeOf(r) === filter);
+  }, [rows, byOpportunity]);
+  const shown = rows.filter((r) => filter === "All" || kindOf(r) === filter);
   const open = current !== null && shown[current] ? shown[current] : null;
 
   const step = useCallback(
@@ -166,7 +182,12 @@ function Leads(props: {
         </p>
 
         <div className="filters" role="group" aria-label="Lead type">
-          {[["All", rows.length] as const, ...Object.entries(counts)].map(
+          {[
+            ["All", rows.length] as const,
+            ...(kinds
+              ? kinds.map((k) => [k, counts[k] ?? 0] as const)
+              : Object.entries(counts)),
+          ].map(
             ([k, n]) => (
               <button
                 key={k}
@@ -178,7 +199,7 @@ function Leads(props: {
                   setCurrent(null);
                 }}
               >
-                {k === "All" ? "All" : `${k}s`}
+                {k === "All" || byOpportunity ? k : `${k}s`}
                 <span className="mono">{n}</span>
               </button>
             ),

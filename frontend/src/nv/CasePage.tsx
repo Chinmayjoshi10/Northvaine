@@ -4,9 +4,10 @@ import { api, safeHref } from "../api";
 import type { BriefView, Claim, Dossier, Link as Step, LogItem, Row } from "../types";
 import { link } from "../routes";
 import { useLoad } from "../useLoad";
-import { DecisionBox } from "./CaseSheet";
+import { DecisionBox, DotSource } from "./CaseSheet";
 import { useDecisions } from "./decide";
 import {
+  DOT_KIND,
   SLOT,
   awardDay,
   domain,
@@ -124,7 +125,11 @@ function Case(props: {
   const published = awardDay(row);
   const stated = d.claims.filter((c) => c.statement.trim() !== "");
   // newest first in the run record; a history reads oldest first
-  const history: LogItem[] = (brief.log ?? []).filter((l) => l.rank === d.rank).reverse();
+  const allDots = row.dots ?? d.dots ?? [];
+  const newest = allDots.slice(0, 4);
+  // with dots, every dated or sourced fact is the history (each with its source)
+  const history: LogItem[] =
+    allDots.length > 0 ? [] : (brief.log ?? []).filter((l) => l.rank === d.rank).reverse();
   const title =
     row.stream === "tender" || row.stream === "award"
       ? headline(row)
@@ -193,7 +198,27 @@ function Case(props: {
             </blockquote>
           )}
 
-          {chain.length > 0 && (
+          {newest.length > 0 ? (
+            <ol
+              className="chain"
+              aria-label="Where it comes from"
+              style={{ gridTemplateColumns: `repeat(${newest.length}, minmax(0, 1fr)) 56px` }}
+            >
+              {[...newest].reverse().map((dot, i) => (
+                <li key={i} className="link stated">
+                  <span className="node" aria-hidden="true" />
+                  <span className="caps">{DOT_KIND[dot.kind]}</span>
+                  <span className="l">{dot.line}</span>
+                  <DotSource dot={dot} />
+                </li>
+              ))}
+              <li className="link you">
+                <span className="node" aria-hidden="true" />
+                <span className="caps">You</span>
+              </li>
+            </ol>
+          ) : (
+            chain.length > 0 && (
             <ol
               className="chain"
               aria-label="Commercial chain"
@@ -212,6 +237,7 @@ function Case(props: {
                 <span className="caps">You</span>
               </li>
             </ol>
+            )
           )}
 
           <div className="kiu">
@@ -355,10 +381,10 @@ function Case(props: {
                   <span>{d.like_customers.join(". ")}</span>
                 </>
               )}
-              {d.opening_question && (
+              {(d.say ?? d.opening_question) && (
                 <>
                   <span className="caps">Ask</span>
-                  <span>{d.opening_question}</span>
+                  <span>{d.say ?? d.opening_question}</span>
                 </>
               )}
             </div>
@@ -366,10 +392,19 @@ function Case(props: {
 
           <div className="sec">
             <span className="caps">History</span>
-            {history.length === 0 && !d.stage_action && !row?.developments?.length ? (
+            {history.length === 0 &&
+            allDots.length === 0 &&
+            !d.stage_action &&
+            !row?.developments?.length ? (
               <p className="dash">nothing recorded yet</p>
             ) : (
               <ol className="tl">
+                {allDots.map((dot, i) => (
+                  <li className="ev" key={`dot${i}`}>
+                    <DotSource dot={dot} />
+                    {dot.line}
+                  </li>
+                ))}
                 {history.map((l, i) => (
                   <li className="ev" key={i}>
                     <span className="mono">{l.at ? shortDate(l.at) : "—"}</span>

@@ -46,6 +46,28 @@ export interface Row {
   contract_nature?: string | null;
   company_key?: string;
   chain?: Link[];
+  /** D125: why to talk to it now; the dated facts behind it, newest first; a line to open with */
+  opportunity?: Opportunity | null;
+  dots?: Dot[];
+  say?: string | null;
+}
+
+export interface Opportunity {
+  label: "connected" | "approach_now" | "relationship" | "looking" | "watch";
+  word: string;
+  words: string;
+  why_now: string;
+  play: "project" | "partner" | "account";
+}
+
+/** One dated or sourced fact about a lead, and the source that gave it. */
+export interface Dot {
+  kind: "contract" | "tender" | "news" | "trade" | "register" | "website" | "check";
+  date: string | null;
+  line: string;
+  source: string | null;
+  url: string | null;
+  ref: string | null;
 }
 
 /** One step of the commercial chain, as known: stated (a verified quote), inferred, unknown. */
@@ -167,6 +189,9 @@ export interface Dossier {
   sources_seen?: string[];
   possible_distributor?: boolean;
   accounts_type?: string | null;
+  opportunity?: Opportunity | null;
+  dots?: Dot[];
+  say?: string | null;
 }
 
 export const FAILURE_CHIPS = [

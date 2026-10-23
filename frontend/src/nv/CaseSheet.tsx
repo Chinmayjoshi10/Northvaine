@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { safeHref } from "../api";
 import { FAILURE_CHIPS, OUTCOMES } from "../types";
-import type { Link, Row } from "../types";
+import type { Dot, Link, Row } from "../types";
 import { HAPPENED, WRONG } from "./decide";
 import type { FollowUp } from "./decide";
 import {
+  DOT_KIND,
   SLOT,
   domain,
   headline,
   nice,
+  shortDate,
   stageOf,
   stripCountry,
   typeOf,
@@ -47,6 +49,23 @@ export function optionsFor(
     { kind: "later", label: "Not now" },
     { kind: "drop", label: "Not for us" },
   ];
+}
+
+/** The date and the source of one dot, the source linked when it has a page. */
+export function DotSource({ dot }: { dot: Dot }) {
+  const href = dot.url ? safeHref(dot.url) : null;
+  return (
+    <span className="mono dot-src">
+      {dot.date ? `${shortDate(dot.date)} · ` : ""}
+      {href ? (
+        <a href={href} target="_blank" rel="noreferrer noopener">
+          {dot.source ?? domain(dot.url)} ↗
+        </a>
+      ) : (
+        (dot.source ?? "")
+      )}
+    </span>
+  );
 }
 
 function notSaved(e: unknown): string {
@@ -263,6 +282,14 @@ export function CaseSheet(props: {
             {typeOf(row).toLowerCase()} · {stageOf(row)}
           </span>
           <h1 className="hl">{headline(row)}</h1>
+          {row.opportunity && (
+            <p className="mono opp-tag">
+              {row.opportunity.word} · {row.opportunity.words}
+            </p>
+          )}
+          {row.opportunity?.why_now && (
+            <p className="opp-why">{row.opportunity.why_now}</p>
+          )}
           <p className="lede">
             {row.caution.charAt(0).toUpperCase() + row.caution.slice(1)}.{" "}
             {inferNote && (
@@ -344,6 +371,18 @@ export function CaseSheet(props: {
               </span>
             </div>
           </div>
+
+          {(row.dots ?? []).length > 0 && (
+            <ol className="dots" aria-label="Where it comes from">
+              {(row.dots ?? []).slice(0, 3).map((d, i) => (
+                <li key={i}>
+                  <span className="caps">{DOT_KIND[d.kind]}</span>
+                  <span>{d.line}</span>
+                  <DotSource dot={d} />
+                </li>
+              ))}
+            </ol>
+          )}
 
           <div className="kiu">
             <div>
@@ -439,6 +478,12 @@ export function CaseSheet(props: {
                     ? "Purchasing or the buying team"
                     : "Purchasing, for this project"}
               </span>
+              {row.say && (
+                <>
+                  <span className="caps">Ask</span>
+                  <span>{row.say}</span>
+                </>
+              )}
             </div>
           </div>
         </div>
