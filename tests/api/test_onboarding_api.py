@@ -100,9 +100,12 @@ async def test_answers_write_the_spec_and_run(
 
     get_settings.cache_clear()
     ran: list[str] = []
+    seen: list[Any] = []
 
-    async def fake_run(spec: Any, *, as_of: datetime, settings: Any) -> Any:
+    async def fake_run(spec: Any, *, as_of: datetime, settings: Any, progress: Any = None) -> Any:
         ran.append(spec.id)
+        seen.append(settings)
+        progress("Reading your markets")
         raise RuntimeError("no network in tests")
 
     monkeypatch.setattr(live, "run_live", fake_run)
@@ -121,6 +124,12 @@ async def test_answers_write_the_spec_and_run(
     assert (tmp_path / "clients" / "example_test.json").is_file()
     body = await wait_for(client, sid, "failed")
     assert ran == ["example_test"] and "stopped" in body["error"]
+    # D130: the run started here is the quick one, and its stage is named for the page
+    assert body["progress"] == "Reading your markets"
+    for name, value in onboarding.QUICK_PROFILE.items():
+        assert getattr(seen[0], name) == value
+    assert get_settings().radar_skeptic_top == 30  # the shared (nightly) settings are untouched
+    assert get_settings().radar_max_gate_candidates == 80
     get_settings.cache_clear()
 
 

@@ -44,6 +44,15 @@ router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
 
 MAX_CATALOGUE_BYTES = 25 * 1024 * 1024
 _RUN_SLOT = asyncio.Semaphore(1)
+# D130: the run started from onboarding is a quick one, so a visitor is not left waiting half an
+# hour. Applied to this run's settings only; the nightly run keeps the full profile.
+QUICK_PROFILE: dict[str, int] = {
+    "radar_max_gate_candidates": 40,
+    "radar_skeptic_top": 15,
+    "radar_review_top": 5,
+    "radar_fit_max_accounts": 4,
+    "radar_investigate_top": 1,
+}
 _TASKS: set[asyncio.Task[None]] = set()
 
 Stage = Literal["reading", "ready", "proposing", "proposed", "running", "done", "failed"]
@@ -81,6 +90,7 @@ class Session(NorthvaineModel):
     company: str
     website: str
     stage: Stage
+    progress: str | None = None  # D130: the stage a running radar is in
     site_read: bool = False
     catalogue: Catalogue | None = None
     proposal: Proposal | None = None
@@ -210,11 +220,18 @@ async def _run(base: Path, sid: str, client_id: str) -> None:
     settings = get_settings()
     clients = Path(settings.onboarding_clients_dir)
     clients = clients if clients.is_absolute() else REPO_ROOT / clients
+    quick = settings.model_copy(update=QUICK_PROFILE)
+
+    def progress(stage: str) -> None:
+        _update(base, sid, progress=stage)
+
     try:
         async with _RUN_SLOT:
             _update(base, sid, stage="running")
             spec = load_client_spec(client_id, clients)
-            run = await run_live(spec, as_of=datetime.now(UTC), settings=settings)
+            run = await run_live(
+                spec, as_of=datetime.now(UTC), settings=quick, progress=progress
+            )
             write_reports(run, base)
         _update(base, sid, stage="done", client_id=client_id)
     except Exception as exc:

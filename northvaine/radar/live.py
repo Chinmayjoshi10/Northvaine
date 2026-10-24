@@ -3,6 +3,7 @@ recording. Model calls write `llm_calls` rows and are held to the run, daily and
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime
 
 from northvaine.brain.budget import RunContext
@@ -15,7 +16,13 @@ from northvaine.sensors.http import new_client
 __all__ = ["run_live"]
 
 
-async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> RadarRun:
+async def run_live(
+    spec: ClientSpec,
+    *,
+    as_of: datetime,
+    settings: Settings,
+    progress: Callable[[str], None] | None = None,
+) -> RadarRun:
     from northvaine.api import store
     from northvaine.core.db import session_scope
 
@@ -35,4 +42,5 @@ async def run_live(spec: ClientSpec, *, as_of: datetime, settings: Settings) -> 
             settings=settings,
             session=session,
             seeds=seeds,
+            progress=progress,
         )

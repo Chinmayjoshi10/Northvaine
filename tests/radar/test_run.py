@@ -285,7 +285,12 @@ async def test_the_same_loop_runs_for_every_client(
     spy = Spy(fake, monkeypatch)
     result = await radar(client_id, fake)
     assert result.client_id == client_id
-    assert sorted(spy.of("skeptic")) == sorted(e.candidate.key for e in result.entries)
+    # D130: the skeptic checks the top radar_skeptic_top passed leads, the rest say so
+    checked = spy.of("skeptic")
+    assert len(checked) == min(SETTINGS.radar_skeptic_top, len(result.entries))
+    assert set(checked) <= {e.candidate.key for e in result.entries}
+    unchecked = [e for e in result.entries if e.candidate.key not in set(checked)]
+    assert all(e.skeptic.open_questions[0].startswith("Not checked") for e in unchecked)
     assert result.leads >= 1
     paths = write_reports(result, tmp_path)  # a brief is written for every client
     assert [p.name for p in paths] == ["brief.md", "scorecard.md", "run.json"]
@@ -404,3 +409,78 @@ async def test_a_document_the_model_cannot_answer_is_skipped_with_a_note(
         f"document skipped (LlmInvalidOutput): {failed[0]}" in n for n in result.notes
     )
     assert result.entries or result.rejected  # the run went on past the bad document
+
+
+# --- D130: the skeptic only where it can matter ------------------------------------------------
+
+
+async def test_skeptic_runs_for_the_top_passed_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    serial = SETTINGS.model_copy(update={"radar_gate_concurrency": 1})  # the fake follows one key
+    fake = FakeLlm()
+    spy = Spy(fake, monkeypatch)
+    full = await radar("stone_supplier", fake, settings=serial)
+    passed = len(full.entries)
+    assert passed >= 3, "the scripted gate must pass several candidates"
+    top = passed - 2
+    fake = FakeLlm()
+    spy = Spy(fake, monkeypatch)
+    result = await radar(
+        "stone_supplier", fake, settings=serial.model_copy(update={"radar_skeptic_top": top})
+    )
+    checked = spy.of("skeptic")
+    assert len(checked) == top and len(set(checked)) == top
+    by_key = {e.candidate.key: e for e in result.entries}
+    assert len(by_key) == passed  # nobody is dropped for not being checked
+    unchecked = [e for k, e in by_key.items() if k not in checked]
+    assert len(unchecked) == 2
+    for e in unchecked:
+        assert e.skeptic.stance == "unknown" and not e.skeptic.against
+        assert e.skeptic.open_questions == [f"Not checked: outside the top {top} this run"]
+    assert [e.rank for e in result.entries] == list(range(1, passed + 1))
+    # every skeptic call came after every gate call
+    last_gate = max(i for i, (k, _) in enumerate(spy.events) if k == "gate")
+    first_skeptic = min(i for i, (k, _) in enumerate(spy.events) if k == "skeptic")
+    assert last_gate < first_skeptic
+
+
+def _candidate(key: str, stream: Any, claims: int = 1) -> Any:
+    return SimpleNamespace(key=key, stream=stream, claims=[None] * claims, window_end=None)
+
+
+def test_the_gate_cap_keeps_the_strongest_and_some_of_each_stream() -> None:
+    from northvaine.radar.models import RadarStream
+
+    trade = [_candidate(f"t{i:02d}", RadarStream.TRADE, claims=9 - i // 10) for i in range(30)]
+    tender = [_candidate(f"d{i}", RadarStream.TENDER) for i in range(4)]
+    award = [_candidate(f"a{i}", RadarStream.AWARD) for i in range(15)]
+    ordered = run_module._gate_order([*award, *tender, *trade], AS_OF.date())
+    assert [c.key for c in ordered[:30]] == [c.key for c in trade]  # trade first, by evidence
+    kept = run_module._cap_candidates(ordered, 20, 5)
+    keys = [c.key for c in kept]
+    assert len(keys) == 20
+    assert {f"d{i}" for i in range(4)} <= set(keys)  # every tender (fewer than the floor)
+    assert len([k for k in keys if k.startswith("a")]) == 5
+    assert keys == [c.key for c in ordered if c.key in set(keys)]  # order kept
+    assert [k for k in keys if k.startswith("t")][:5] == [f"t0{i}" for i in range(5)]
+    assert run_module._cap_candidates(ordered, 20, 0) == ordered[:20]  # no floor: truncation
+
+
+async def test_progress_names_the_stages() -> None:
+    stages: list[str] = []
+    spec, exchanges, pages = recorded_world("stone_supplier")
+    transport = replay_transport(exchanges, match_body=False)
+    async with httpx.AsyncClient(transport=transport) as http:
+        with llm.client_override(FakeLlm()):
+            await run_radar(
+                spec,
+                as_of=AS_OF,
+                http=http,
+                fetcher=RecordedPageFetcher(pages),
+                concepts=seeded_concepts(),
+                run=RunContext(),
+                settings=SETTINGS,
+                progress=stages.append,
+            )
+    assert stages[0] == "Reading your markets"
+    assert stages[1].startswith("Checking ") and stages[1].endswith(" companies")
+    assert "Reading their websites" in stages
