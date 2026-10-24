@@ -92,6 +92,7 @@ async def test_a_failed_review_never_holds_a_lead_back_and_numbers_must_be_groun
 
 
 def test_the_prompt_fences_the_lead_and_reads_the_clients_buyer_model() -> None:
-    prompt = load_prompt("radar_review", version=1)
+    prompt = load_prompt("radar_review", version=2)
     assert prompt.untrusted_vars == {"candidate_name", "claims", "why_now", "against"}
+    assert "{markets}" in load_prompt("radar_review", version=2).template
     assert "{buyer_roles}" in prompt.template and "{not_buyers}" in prompt.template

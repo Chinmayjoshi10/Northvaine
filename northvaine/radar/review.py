@@ -43,11 +43,12 @@ async def _review(entry: RankedEntry, spec: Any, *, run: RunContext, session: An
     against = "; ".join(p.why for p in entry.skeptic.against) or "none found"
     result = await complete_json(
         tier=ModelTier.DEEP,
-        prompt=load_prompt("radar_review", version=1),
+        prompt=load_prompt("radar_review", version=2),
         variables={
             "offer": spec.offer,
             "buyer_roles": "; ".join(spec.buyer_roles) or "not stated",
             "not_buyers": "; ".join(spec.not_buyers) or "not stated",
+            "markets": ", ".join(spec.markets) or "not stated",
             "candidate_name": Untrusted(c.name),
             "claims": Untrusted(claim_lines(c.claims)),
             "why_now": Untrusted(entry.opportunity.why_now if entry.opportunity else ""),

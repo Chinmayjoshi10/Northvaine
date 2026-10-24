@@ -229,9 +229,7 @@ async def _run(base: Path, sid: str, client_id: str) -> None:
         async with _RUN_SLOT:
             _update(base, sid, stage="running")
             spec = load_client_spec(client_id, clients)
-            run = await run_live(
-                spec, as_of=datetime.now(UTC), settings=quick, progress=progress
-            )
+            run = await run_live(spec, as_of=datetime.now(UTC), settings=quick, progress=progress)
             write_reports(run, base)
         _update(base, sid, stage="done", client_id=client_id)
     except Exception as exc:

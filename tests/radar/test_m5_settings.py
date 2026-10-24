@@ -25,7 +25,7 @@ def test_defaults(s: Settings) -> None:
     assert s.radar_reports_dir == "reports/radar"
     assert s.radar_fixtures_dir == "tests/fixtures/radar"
     assert s.radar_max_lead_upgrades == 15
-    assert s.radar_max_gate_candidates == 80  # D130
+    assert s.radar_max_gate_candidates == 120  # D132
     assert s.radar_skeptic_top == 30
     assert s.radar_gate_min_per_stream == 10
     assert s.radar_gate_concurrency == 8

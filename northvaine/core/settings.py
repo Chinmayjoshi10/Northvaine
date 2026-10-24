@@ -158,7 +158,8 @@ class Settings(BaseSettings):
     radar_reports_dir: str = "reports/radar"
     radar_fixtures_dir: str = "tests/fixtures/radar"
     radar_max_lead_upgrades: int = Field(default=15, ge=1)
-    radar_max_gate_candidates: int = Field(default=80, ge=1)  # D130: the strongest 80
+    radar_max_gate_candidates: int = Field(default=120, ge=1)  # D132: 80 dropped strong buyers
+    radar_gate_by_proof: bool = True  # D132: proven importers first, strongest first
     # D130: the skeptic runs for the top N passed leads by a first rank; the rest are marked
     # "not checked". Candidates kept per stream before the gate cap fills by order.
     radar_skeptic_top: int = Field(default=30, ge=1)

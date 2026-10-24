@@ -13,7 +13,7 @@ import asyncio
 import contextvars
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
 from types import SimpleNamespace
@@ -29,7 +29,13 @@ from northvaine.core.settings import Settings
 from northvaine.radar import run as run_module
 from northvaine.radar.brief import write_reports
 from northvaine.radar.discover import RecordedPageFetcher
-from northvaine.radar.models import ClientSpec, RadarRun, UpgradedPage, load_client_spec
+from northvaine.radar.models import (
+    ClientSpec,
+    RadarRun,
+    RadarStream,
+    UpgradedPage,
+    load_client_spec,
+)
 from northvaine.radar.run import run_radar, seeded_concepts
 from northvaine.sensors.replay import load_exchanges, replay_transport
 
@@ -262,10 +268,29 @@ async def test_every_candidate_is_an_entry_or_a_rejection_and_skeptic_follows_it
 async def test_gate_order_is_most_claims_first_then_key(monkeypatch: pytest.MonkeyPatch) -> None:
     fake = FakeLlm()
     spy = Spy(fake, monkeypatch)
-    await radar("stone_supplier", fake)
+    legacy = SETTINGS.model_copy(update={"radar_gate_by_proof": False})
+    await radar("stone_supplier", fake, settings=legacy)
     # open tender windows first (D71), then most claims, then key
     order = [(spy.closed[k], -spy.claims[k], k) for k in spy.of("gate")]
     assert order == sorted(order)
+
+
+def test_d132_gate_order_puts_the_strongest_importers_first() -> None:
+    from northvaine.radar.run import _gate_order_by_proof
+    from tests.radar.test_fit import entry
+    from tests.radar.test_opportunity_d125 import _event, _with
+
+    def trade(key: str, codes: str, months: int):
+        ev = _event("imports_recorded", date(2026, 9, 1)).model_copy(
+            update={"slots": {"codes": codes, "months_active": months}}
+        )
+        return _with(entry("importer", RadarStream.TRADE), key=key, events=[ev]).candidate
+
+    tender = _with(entry("buyer", RadarStream.TENDER), key="DE:t").candidate
+    award = _with(entry("awarded_contractor", RadarStream.AWARD), key="FR:a").candidate
+    weak, strong = trade("GB:weak", "68022100", 2), trade("GB:strong", "68022100, 68029990", 8)
+    order = _gate_order_by_proof([tender, weak, award, strong], date(2026, 10, 24))
+    assert [c.key for c in order] == ["GB:strong", "GB:weak", "FR:a", "DE:t"]
 
 
 async def test_the_gate_cap_turns_the_rest_into_a_note(monkeypatch: pytest.MonkeyPatch) -> None:

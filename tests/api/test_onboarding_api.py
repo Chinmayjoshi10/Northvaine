@@ -129,7 +129,7 @@ async def test_answers_write_the_spec_and_run(
     for name, value in onboarding.QUICK_PROFILE.items():
         assert getattr(seen[0], name) == value
     assert get_settings().radar_skeptic_top == 30  # the shared (nightly) settings are untouched
-    assert get_settings().radar_max_gate_candidates == 80
+    assert get_settings().radar_max_gate_candidates == 120  # D132
     get_settings.cache_clear()
 
 

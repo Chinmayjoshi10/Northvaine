@@ -33,7 +33,7 @@ from northvaine.core.models import (
 )
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.bidders import likely_bidders
-from northvaine.radar.brief import apply_fit_order, main_selection, off_target, rank
+from northvaine.radar.brief import _trade_slots, apply_fit_order, main_selection, off_target, rank
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.edition import label_entries
@@ -118,6 +118,26 @@ def _gate_order(candidates: list[Candidate], today: date) -> list[Candidate]:
     return sorted(
         candidates,
         key=lambda c: (not still_open(c), c.stream != RadarStream.TRADE, -len(c.claims), c.key),
+    )
+
+
+def _trade_strength(c: Candidate) -> int:
+    """How much of the client's product the import record shows: product codes x months."""
+    slots = _trade_slots(c)
+    codes = len([x for x in str(slots.get("codes") or "").split(",") if x.strip()])
+    return codes * int(slots.get("months_active") or 0)
+
+
+_STREAM_FIRST = {RadarStream.TRADE: 0, RadarStream.AWARD: 1, RadarStream.ANNOUNCEMENT: 2}
+
+
+def _gate_order_by_proof(candidates: list[Candidate], today: date) -> list[Candidate]:
+    """D132: proven buyers first, strongest import record first; then named winners and news;
+    tenders last (a tender names no contractor yet and is rarely a lead itself, D128). A live run
+    with tenders first spent the gate cap on public works and dropped the strongest importers."""
+    return sorted(
+        candidates,
+        key=lambda c: (_STREAM_FIRST.get(c.stream, 3), -_trade_strength(c), -len(c.claims), c.key),
     )
 
 
@@ -286,7 +306,8 @@ async def run_radar(
 
     # 4. gate every candidate (strongest first, capped); the skeptic then runs only for the top
     # passed leads by a first rank (D130), since only the top is ever shown
-    ordered = _gate_order(candidates, as_of.date())
+    order = _gate_order_by_proof if settings.radar_gate_by_proof else _gate_order
+    ordered = order(candidates, as_of.date())
     limit = settings.radar_max_gate_candidates
     if len(ordered) > limit:
         notes.append(f"{len(ordered) - limit} candidate(s) not gated: cap of {limit} reached")
