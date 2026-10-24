@@ -119,6 +119,7 @@ def test_signatures_match_the_plan() -> None:
         "evidence_out",
         "strategy",
         "seeds",
+        "progress",
     ]  # fmt: skip  (session: D69, a live run logs every call; evidence_out: D86, saving a run)
 
 

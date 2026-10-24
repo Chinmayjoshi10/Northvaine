@@ -101,6 +101,8 @@ SHAPING_SETTINGS = (
     "radar_fit_min_token",
     "hmrc_min_kept",  # how many importers were kept, gated and looked up (D107)
     "radar_max_gate_candidates",
+    "radar_skeptic_top",  # D130
+    "radar_gate_min_per_stream",  # D130
     "radar_register_max_lookups",
     "radar_seed_max_lookups",  # D109
     "radar_timing_max_lookups",  # D111

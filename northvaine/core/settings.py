@@ -158,7 +158,11 @@ class Settings(BaseSettings):
     radar_reports_dir: str = "reports/radar"
     radar_fixtures_dir: str = "tests/fixtures/radar"
     radar_max_lead_upgrades: int = Field(default=15, ge=1)
-    radar_max_gate_candidates: int = Field(default=200, ge=1)
+    radar_max_gate_candidates: int = Field(default=80, ge=1)  # D130: the strongest 80
+    # D130: the skeptic runs for the top N passed leads by a first rank; the rest are marked
+    # "not checked". Candidates kept per stream before the gate cap fills by order.
+    radar_skeptic_top: int = Field(default=30, ge=1)
+    radar_gate_min_per_stream: int = Field(default=10, ge=0)
     # Gate calls in flight at once (D107): a wide import net is gated in minutes, not an hour.
     radar_gate_concurrency: int = Field(default=8, ge=1)
     radar_brief_entries: int = Field(default=10, ge=1)

@@ -1,7 +1,7 @@
 """One radar run per client (T5.6): discover, extract, identify, gate, skeptic, rank.
 
 The order is fixed here, in one function (rules #3 and #4): discover -> evidence ledger ->
-candidates -> gate -> skeptic (passed candidates only, after their gate) -> rank. Nothing in this
+candidates -> gate -> rank -> skeptic (top passed leads only, D130) -> rank. Nothing in this
 module knows about a client or an industry: everything comes from the `ClientSpec` and settings.
 """
 
@@ -11,6 +11,7 @@ import asyncio
 import importlib.util
 import math
 import random
+from collections.abc import Callable
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -120,6 +121,27 @@ def _gate_order(candidates: list[Candidate], today: date) -> list[Candidate]:
     )
 
 
+def _cap_candidates(ordered: list[Candidate], limit: int, min_per_stream: int) -> list[Candidate]:
+    """Keep `limit` candidates from an already ordered list (D130): the first `min_per_stream`
+    of each stream present, then the rest by order, so one stream (trade records, say) never
+    crowds out every tender, award or news item. The order is kept."""
+    if min_per_stream <= 0:
+        return ordered[:limit]
+    taken: set[int] = set()
+    per_stream: dict[RadarStream, int] = {}
+    for i, c in enumerate(ordered):
+        if len(taken) >= limit:
+            break
+        if per_stream.get(c.stream, 0) < min_per_stream:
+            per_stream[c.stream] = per_stream.get(c.stream, 0) + 1
+            taken.add(i)
+    for i in range(len(ordered)):
+        if len(taken) >= limit:
+            break
+        taken.add(i)
+    return [c for i, c in enumerate(ordered) if i in taken]
+
+
 async def run_radar(
     spec: ClientSpec,
     *,
@@ -133,6 +155,7 @@ async def run_radar(
     evidence_out: list[tuple[EvidenceDocument, LedgerResult]] | None = None,
     strategy: Any = None,  # radar.strategy.Strategy; Any keeps the database layer out
     seeds: list[str] | None = None,  # D109: names of leads the client approved
+    progress: Callable[[str], None] | None = None,  # D130: names the stage for the app
 ) -> RadarRun:
     """Run the whole radar pipeline for one client and return the run record (D61).
     `evidence_out`, when given, receives every document read with its ledger result, so the
@@ -143,6 +166,12 @@ async def run_radar(
         run.budget_usd = cap
     notes: list[str] = []
     llm_calls = 0
+
+    def say(stage: str) -> None:
+        if progress is not None:
+            progress(stage)
+
+    say("Reading your markets")
 
     def over_budget() -> bool:
         return run.spent > cap
@@ -255,12 +284,14 @@ async def run_radar(
                 f"off target: {len(off)} lead(s) outside your markets or not about your product"
             )
 
-    # 4. gate every candidate (best-evidenced first, capped), skeptic only on passed ones
+    # 4. gate every candidate (strongest first, capped); the skeptic then runs only for the top
+    # passed leads by a first rank (D130), since only the top is ever shown
     ordered = _gate_order(candidates, as_of.date())
     limit = settings.radar_max_gate_candidates
     if len(ordered) > limit:
         notes.append(f"{len(ordered) - limit} candidate(s) not gated: cap of {limit} reached")
-        ordered = ordered[:limit]
+        ordered = _cap_candidates(ordered, limit, settings.radar_gate_min_per_stream)
+    say(f"Checking {len(ordered)} companies")
     # Candidates are gated several at a time (radar_gate_concurrency): the calls are independent,
     # and each outcome is kept in its slot so the run record keeps the gate order.
     gate_slots = asyncio.Semaphore(settings.radar_gate_concurrency)
@@ -276,67 +307,102 @@ async def run_radar(
                     stopped = True
                 outcomes[i] = ("not_gated", None)
                 return
-            decision: GateDecision | None = None
             try:
                 decision = await gate_candidate(
                     candidate, spec, run=run, session=session, settings=settings
                 )
                 if candidate.claims:
                     gate_calls[i] += 1  # a candidate with no claim is rejected by code, no call
-                if not decision.passed:
-                    outcomes[i] = ("rejected", RejectedEntry(candidate=candidate, gate=decision))
-                    return
-                if over_budget():
-                    outcomes[i] = ("not_investigated", candidate.name)
-                    stopped = True
-                    return
-                finding = await skeptic(
-                    candidate, decision, spec, run=run, session=session, settings=settings
-                )
-                gate_calls[i] += 1
             except BudgetExceeded as exc:
                 if not stopped:
                     notes.append(f"stopped: {exc}")
                 stopped = True
-                passed_gate = decision is not None and decision.passed
-                outcomes[i] = ("not_investigated" if passed_gate else "not_gated", candidate.name)
+                outcomes[i] = ("not_gated", None)
                 return
             except _ITEM_FAILURES as exc:
                 notes.append(f"candidate skipped ({type(exc).__name__}): {candidate.name}")
                 return
-            outcomes[i] = ("passed", (candidate, decision, finding))
+            if decision.passed:
+                outcomes[i] = ("gated", (candidate, decision))
+            else:
+                outcomes[i] = ("rejected", RejectedEntry(candidate=candidate, gate=decision))
 
     await asyncio.gather(*(gate_one(i, c) for i, c in enumerate(ordered)))
     llm_calls += sum(gate_calls)
-    passed: list[tuple[Candidate, GateDecision, SkepticFinding]] = []
+    gated: list[tuple[Candidate, GateDecision]] = []
     not_gated = 0
-    not_investigated: list[str] = []
     for kind, value in outcomes:
-        if kind == "passed":
-            passed.append(value)
+        if kind == "gated":
+            gated.append(value)
         elif kind == "rejected":
             rejected.append(value)
         elif kind == "not_gated":
             not_gated += 1
-        elif kind == "not_investigated":
-            not_investigated.append(value)
     if not_gated:
         notes.append(f"{not_gated} candidate(s) not gated: run budget reached")
+
+    # 4b. the skeptic for the top `radar_skeptic_top` passed leads by a first rank made with a
+    # placeholder finding; the rest carry a finding that says plainly they were not checked
+    skeptic_top = settings.radar_skeptic_top
+    unchecked = SkepticFinding(
+        stance="unknown",
+        against=[],
+        open_questions=[f"Not checked: outside the top {skeptic_top} this run"],
+    )
+    rank_args: dict[str, Any] = {
+        "as_of": as_of,
+        "settings": settings,
+        "offer": spec.offer,
+        "terms": spec.offer_terms,
+        "related_terms": spec.related_terms,
+    }
+    first = rank([(c, d, unchecked) for c, d in gated], **rank_args)
+    chosen = {e.candidate.key for e in first[:skeptic_top]}
+    findings: dict[str, SkepticFinding] = {}
+    dropped: set[str] = set()
+    not_investigated: list[str] = []
+    skeptic_calls = 0
+
+    async def skeptic_one(candidate: Candidate, decision: GateDecision) -> None:
+        nonlocal stopped, skeptic_calls
+        async with gate_slots:
+            if over_budget():
+                stopped = True
+                dropped.add(candidate.key)
+                not_investigated.append(candidate.name)
+                return
+            try:
+                findings[candidate.key] = await skeptic(
+                    candidate, decision, spec, run=run, session=session, settings=settings
+                )
+                skeptic_calls += 1
+            except BudgetExceeded as exc:
+                if not stopped:
+                    notes.append(f"stopped: {exc}")
+                stopped = True
+                dropped.add(candidate.key)
+                not_investigated.append(candidate.name)
+            except _ITEM_FAILURES as exc:
+                notes.append(f"candidate skipped ({type(exc).__name__}): {candidate.name}")
+                dropped.add(candidate.key)
+
+    await asyncio.gather(*(skeptic_one(c, d) for c, d in gated if c.key in chosen))
+    llm_calls += skeptic_calls
     if not_investigated:
         notes.append(
             "passed the gate but not briefed (no skeptic review, run budget reached): "
             + ", ".join(not_investigated)
         )
+    if len(gated) > len(chosen):
+        notes.append(
+            f"skeptic review for the top {len(chosen)} of {len(gated)} passed lead(s) (D130)"
+        )
 
-    # 5. rank (code only) and assemble the run record
-    entries = rank(
-        passed,
-        as_of=as_of,
-        settings=settings,
-        offer=spec.offer,
-        terms=spec.offer_terms,
-        related_terms=spec.related_terms,
-    )
+    # 5. rank again with the real findings (code only) and assemble the run record
+    passed: list[tuple[Candidate, GateDecision, SkepticFinding]] = [
+        (c, d, findings.get(c.key, unchecked)) for c, d in gated if c.key not in dropped
+    ]
+    entries = rank(passed, **rank_args)
 
     # A page that tried to steer the system marks every entry it supports (D85).
     if found.steered_urls:
@@ -376,6 +442,7 @@ async def run_radar(
     notes.extend(bidder_notes)
 
     # 7. company fit from the account's own website (D96, code only)
+    say("Reading their websites")
     entries, fit_notes = await company_fit(
         entries,
         spec,
@@ -420,6 +487,7 @@ async def run_radar(
         # 7d. the senior review (D127): the deep model's last check on the top opportunities;
         # what it would not call is held back to the watch list with its reason
         if settings.radar_review_top > 0:
+            say("Final review")
             entries, review_notes = await review_top(
                 entries,
                 spec,

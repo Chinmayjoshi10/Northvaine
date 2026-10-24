@@ -494,8 +494,8 @@ export function OnboardingPage() {
               <p className="contact-lede" role="status">
                 Searching tenders, import records and news for buyers of what
                 you sell, then checking every fact against its source. This
-                takes about five minutes; this page opens your first edition
-                when it is ready.
+                takes a few minutes; this page opens your first edition
+                when it is ready.{session?.progress ? ` Now: ${session.progress}.` : ""}
               </p>
             )}
           </>

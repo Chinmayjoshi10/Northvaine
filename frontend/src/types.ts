@@ -288,6 +288,8 @@ export interface OnboardingSession {
   proposal: Proposal | null;
   client_id: string | null;
   error: string | null;
+  /** D130: the stage a running radar is in */
+  progress?: string | null;
   notes: string[];
   /** D114: kinds of firm that only move, clear or store goods; offered pre-ticked */
   not_buyer_roles: { key: string; label: string }[];
