@@ -8,6 +8,11 @@ on:
   # schedule:
   #   - cron: "30 2 * * *"
   workflow_dispatch:
+    inputs:
+      fresh_run:
+        description: "Run the radar live (false = publish the reviewed edition committed in demo_reports)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -51,11 +56,13 @@ jobs:
 
       # The recordings go to /tmp and are discarded; the report is what the site carries.
       - name: Run the radar live for the demo client
+        if: ${{ github.event.inputs.fresh_run != 'false' }}
         run: >
           uv run python scripts/radar.py --client stone_exporter_demo --record --yes
           --clients-dir deploy/demo/clients --fixtures-dir /tmp/fixtures --out demo_reports/radar
 
       - name: Check the report was written
+        if: ${{ github.event.inputs.fresh_run != 'false' }}
         run: test -n "$(find demo_reports/radar -name run.json | head -n 1)"
 
       # The client is anonymised: drop its own group and customers (private list in a secret),
