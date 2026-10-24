@@ -144,7 +144,10 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     confidence = len(kinds)
 
     partner = entry.gate.partner or (entry.site_role == "resells" and spec.channel != "direct")
-    if c.stream in _PROJECT_STREAMS:
+    # A company found on the web that resells the product is a partner, not a project (D133);
+    # official tenders and awards stay projects.
+    record = c.stream in (RadarStream.TENDER, RadarStream.AWARD)
+    if c.stream in _PROJECT_STREAMS and (record or not partner):
         play: Play = "project"
     elif partner:
         play = "partner"
@@ -162,7 +165,10 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     facts = c.company_register
     months = int(_trade_slots(c).get("months_active") or 0)
     big = size_rank(facts.accounts_type if facts else None) >= 3 or months >= 6
-    standing = play == "partner" and fit >= 2 and big and entry.site_role != "makes"
+    # Abroad there are no UK accounts or import records to size a company: a partner whose own
+    # site shows it resells the product counts on fit alone (D133).
+    abroad = facts is None and (c.country or "") != "GB" and entry.site_role == "resells"
+    standing = play == "partner" and fit >= 2 and (big or abroad) and entry.site_role != "makes"
     if standing and intent < 2:
         label = "relationship"
     elif intent == 0 or entry.site_role == "makes" or (intent == 1 and fit < 2) or weak_project:

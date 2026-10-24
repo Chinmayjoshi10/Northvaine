@@ -354,6 +354,29 @@ def _own_claims(
     return kept
 
 
+# Separators of a page title: "Acme Ltd | What we do - Home".
+_TITLE_PARTS = re.compile(r"\s+[|\u2013\u2014-]\s+|\s*[|\u2013\u2014:]\s*")
+
+
+def site_owner(doc: EvidenceDocument, settings: Settings) -> SubjectMention | None:
+    """The company whose own website a page is (D133), or None. A page is the company's own when
+    a part of its title is a company-like name that the page's registrable domain carries
+    (the company-fit rule, D108) and that appears verbatim in the page text. Lets a fact read from
+    a distributor's own site count for that distributor when the extractor named nobody."""
+    from northvaine.radar.fit import domain_matches  # late: fit imports this module's neighbours
+
+    if not doc.title or not doc.url or not doc.text:
+        return None
+    text = doc.text.casefold()
+    for part in _TITLE_PARTS.split(doc.title):
+        name = part.strip()
+        if len(name) < 3 or len(name) > 60 or subject_problem(name, settings) is not None:
+            continue
+        if domain_matches(name, doc.url, settings) and name.casefold() in text:
+            return SubjectMention(name=name, country=None, role="supplier")
+    return None
+
+
 def build_candidates(
     results: list[tuple[EvidenceDocument, LedgerResult]], *, settings: Settings | None = None
 ) -> tuple[list[Candidate], list[RejectedEntry]]:
@@ -366,7 +389,12 @@ def build_candidates(
         for event in result.events:
             claims = [(verified[fp], doc) for fp in event.claim_fingerprints if fp in verified]
             stream = stream_for(doc.source_name, event.event_type, settings)
-            if event.subject is None:
+            subject = event.subject
+            if subject is None and settings.radar_site_owner_subject:
+                subject = site_owner(doc, settings)  # D133: its own site names the company
+                if subject is not None:
+                    event = event.model_copy(update={"subject": subject})
+            if subject is None:
                 rejected.append(
                     _unidentified(event, doc, stream, claims, "no company named", settings)
                 )

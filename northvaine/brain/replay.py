@@ -329,6 +329,8 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_intent_search": False,  # D126: no intent searches written from the answers
     "radar_review_top": 0,  # D127: no senior review
     "radar_gate_by_proof": False,  # D132: the open-tenders-first gate order
+    "radar_drop_report_pages": False,  # D133: report pages were kept
+    "radar_site_owner_subject": False,  # D133: an unnamed fact on a company site was dropped
     "radar_register_geocode": False,  # map: no postcode lookup
     "radar_skeptic_top": 10_000,  # D130: the skeptic ran for every passed candidate
     "radar_gate_min_per_stream": 0,  # D130: no per-stream floor in the gate cap

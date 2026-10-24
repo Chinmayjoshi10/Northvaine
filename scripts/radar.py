@@ -130,6 +130,8 @@ SHAPING_SETTINGS = (
     "radar_intent_per_market",
     "radar_review_top",  # D127
     "radar_gate_by_proof",  # D132
+    "radar_drop_report_pages",  # D133
+    "radar_site_owner_subject",
     "radar_register_geocode",  # map
     "radar_investigate_max_searches",
     "fit_contact_role_words",

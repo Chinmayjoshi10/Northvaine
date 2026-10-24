@@ -157,6 +157,19 @@ def strip_contacts(text: str) -> str:
         text = cleaned
 
 
+# Generic words of market-research reports and "top companies" lists (any industry): such pages
+# describe a market, never a company about to buy (D133).
+_REPORT_TITLE = re.compile(
+    r"\b(market (size|share|report|analysis|research|outlook|forecast|trends?)|industry report|"
+    r"top \d+ companies|top ten companies|cagr)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_report_page(title: str | None) -> bool:
+    return bool(title) and bool(_REPORT_TITLE.search(title or ""))
+
+
 class PageFetcher(Protocol):
     """Fetches one lead's publisher page; a refusal is a result, never an exception."""
 
@@ -316,8 +329,17 @@ async def discover(
             except Exception as exc:  # a timeout or a dropped connection never stops a run
                 notes.append(f"sensor {sensor_name} query {i + 1}: {type(exc).__name__}")
                 continue
-            collected.extend(result.documents)
-            for sdoc in result.documents:
+            documents = result.documents
+            if settings.radar_drop_report_pages:  # D133: market reports and listicles name no buyer
+                kept = [d for d in documents if not _is_report_page(d.title)]
+                if len(kept) < len(documents):
+                    notes.append(
+                        f"sensor {sensor_name} query {i + 1}: {len(documents) - len(kept)} "
+                        "market-report page(s) skipped"
+                    )
+                documents = kept
+            collected.extend(documents)
+            for sdoc in documents:
                 refs = refs_by_hash.setdefault(sdoc.content_hash, [])
                 ref = f"{sensor_name}:{i + 1}"
                 if ref not in refs:

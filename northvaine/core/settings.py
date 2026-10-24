@@ -160,6 +160,8 @@ class Settings(BaseSettings):
     radar_max_lead_upgrades: int = Field(default=15, ge=1)
     radar_max_gate_candidates: int = Field(default=120, ge=1)  # D132: 80 dropped strong buyers
     radar_gate_by_proof: bool = True  # D132: proven importers first, strongest first
+    radar_drop_report_pages: bool = True  # D133: skip market-report and listicle pages
+    radar_site_owner_subject: bool = True  # D133: a company's own site names the company
     # D130: the skeptic runs for the top N passed leads by a first rank; the rest are marked
     # "not checked". Candidates kept per stream before the gate cap fills by order.
     radar_skeptic_top: int = Field(default=30, ge=1)
