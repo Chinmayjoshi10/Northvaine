@@ -1,103 +1,174 @@
 # Northvaine
 
-Northvaine is an AI sales assistant for real-world B2B businesses such as exporters,
-manufacturers, distributors and logistics firms. **Radar** finds organisations that are about to
-buy, at the right moment, from public tenders, award notices, news and company pages, and writes a
-short brief in which every fact links to a saved copy of its source. **Gateway** (planned) makes the
-business findable and answerable to people and AI agents. A person always negotiates and decides:
-Northvaine never sends anything and never quotes prices.
+**Intent data for the real economy.** Northvaine finds the companies most likely to buy what a B2B
+business sells, *soon*, and tells the seller why, when and what to say. It reads official trade
+records, public tenders and contract awards, company registers, company websites and project news
+across the client's markets, connects the dots, and hands over **five leads a day**, each with every
+fact quoted from its source.
 
-Built for the Nebius x NVIDIA Global AI Hackathon, Best Apps and Agents track (with the Tavily bonus).
+- **Live demo:** https://chinmayjoshi10.github.io/Northvaine/ (the sample client is an anonymised
+  Indian natural-stone exporter selling to the UK, US, Germany, France, Italy, UAE, Saudi Arabia
+  and Qatar)
+- **Try it on your own business:** the demo's "Build my radar" (live server:
+  https://northvaine.onrender.com - free hosting, may take a minute to wake)
+- **Video:** _link added at submission_
+- **Track:** Best Apps and Agents - Nebius x NVIDIA Global AI Hackathon
 
-## How it works, in brief
+## The problem
 
-1. **Business profile.** A client spec (what they sell, where, to whom) is turned into search
-   theses and queries by an LLM. Nothing is hard-coded for any industry; business knowledge is data.
-2. **Sensors** fetch candidate buyers: Tavily search, the EU TED tenders API, and public web pages
-   (robots-respecting). All fetched content is treated as untrusted data and fenced in prompts.
-3. **Gate.** Competitors and sellers of the client's own offer are rejected before any investigation.
-4. **Evidence.** Every fact is a claim linked to a stored document snapshot. Code checks that the
-   quoted text really appears in the snapshot before any model judges it. Unverified claims are never
-   shown, scored or used.
-5. **Skeptic before judge.** Each case stores the evidence against it, or says "unknown".
-6. **Brief.** A one-screen summary, what is stated versus inferred, and next actions. Drafts and
-   approval only: no real sending.
+A manufacturer, exporter or distributor wins business by calling the right company at the right
+moment: when a hotel is about to be fitted out, when a distributor opens a new branch and needs a new
+supplier, when an importer starts buying the product. Those moments are public, but scattered across
+government registers, tender portals, trade records, company sites and news in many countries and
+languages. Today a salesperson spends days searching, and most of what they find is either the wrong
+kind of company or already too late. Tools that sell "intent data" track website clicks for software
+companies; nobody does it for businesses that sell physical products to other businesses.
 
-Architecture notes: `docs/ARCHITECTURE.md`. Exact specs: `docs/SPEC.md`. Rules: `CLAUDE.md`.
+## What Northvaine does
 
-## Where the sponsors are used
+Every night, for each client, Northvaine builds **opportunities**: a company, the dated reasons to talk
+to it now, the kind of play, and the next action.
 
-| Technology | Where | What for |
+| Label | What it means | Example |
 |---|---|---|
-| **NVIDIA Nemotron** | `northvaine/brain/llm.py` (model routing by tier `MODEL_FAST`, `MODEL_MID`, `MODEL_DEEP`); prompts in `northvaine/brain/prompts/` (`radar_gate`, `radar_skeptic`, `evidence_extract`, `claim_support`) | Gate, evidence extraction, claim checking, skeptic |
-| **Nebius Token Factory** | `northvaine/brain/llm.py` (OpenAI-compatible client, `NEBIUS_BASE_URL`, `NEBIUS_API_KEY`); `scripts/smoke_llm.py` for a live check | Serves the Nemotron models. Every call is Pydantic-validated, budget-capped and logged to the `llm_calls` table |
-| **Tavily** | `northvaine/sensors/tavily.py` | Web search for buying signals, with a hard budget stop |
-| Nebius Serverless | `Dockerfile`, `docs/DEPLOY.md` | Hosting the API and job |
+| **Connected** | Several independent signals agree on one company | New owner in May + first import in June + its own site sells the product |
+| **Approach now** | A project of the kind that needs the product, with a named company | A contractor wins a contract that names the product |
+| **Build a relationship** | A fitting distributor or dealer that is changing | A stone and tile distributor opens a new showroom |
+| **Looking for it** | Proof it already buys the product, plus a fresh sign | It started importing the client's product codes this year |
+| **Watch list** | Right fit, nothing new yet | Woken up automatically when a new signal appears |
 
-Every model call goes through the one file `northvaine/brain/llm.py` (enforced by
-`scripts/check_invariants.py`). Embeddings: Token Factory serves no Nemotron embedding model, so the
-catalog's Qwen embedder is used for embeddings (see `docs/DECISIONS.md`, D6); generation uses Nemotron.
+Each lead shows **Intent** (how strong and fresh the signal is), **Fit** (how well it matches what the
+client sells) and **Confidence** (how many independent kinds of source agree), the **source chain**
+behind it (each fact with its date and a link to where it came from), the **evidence against**, and
+**one line to open with**. The Station shows the best five each day; the rest are one click away.
 
-## Setup
+## How it works
 
-Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), and for the full app a Postgres 16 with
-pgvector (Neon works).
-
-```bash
-uv run python scripts/tasks.py setup      # uv sync
-cp .env.example .env                      # then fill the names in; never commit .env
-uv run python scripts/tasks.py migrate    # needs DATABASE_URL
-uv run python scripts/tasks.py dev        # run the API locally
-uv run python scripts/tasks.py gate       # lint, invariants, unit tests, golden set
+```
+client's answers (offer, products, buyers, markets, the projects that create need)
+   │
+   ├─ sensors: UK import records (HMRC) · UK Find a Tender · EU tenders (TED) · US contracts
+   │           (USAspending) · intent web searches per market (Tavily) · company register
+   │           (Companies House) · company websites (free fetch, robots.txt respected)
+   ▼
+evidence ledger ── every fact is a claim whose quote CODE finds in the stored source text
+   ▼
+off-target filter (code) ── other markets, contracts and news that never relate to the product
+   ▼
+buyer gate (Nemotron Super) ── buyer / competitor / reseller / publisher / not a buyer
+   ▼
+skeptic (Nemotron Super) ── cited evidence against every lead
+   ▼
+company fit (Nemotron Super + Tavily) ── does its own site show it deals in the product, and what
+                                          is it: maker, reseller or user? quote-checked
+   ▼
+opportunity ranking (code) ── play, intent, fit, confidence, labels
+   ▼
+senior review (Nemotron Ultra) ── "would this business call them today?" with cited facts;
+                                   a "no" is held back to the watch list with its reason
+   ▼
+five leads a day, each with its source chain, why now and an opening line
 ```
 
-## Try it offline (no keys, no network)
+Nothing is written for one industry: every search phrase and rule comes from the client's own data,
+and a check in the build fails if an industry word appears in the code. Northvaine never sends
+anything and never quotes prices: a person decides and makes contact.
 
-The radar can run a full cycle from recorded sensor and model responses:
+## Where NVIDIA Nemotron, Nebius Token Factory and Tavily are used
+
+| What | Model / service | Where in the code |
+|---|---|---|
+| Senior review of the top leads (serious reasoning) | **Nemotron 3 Ultra** `nvidia/Nemotron-3-Ultra-550b-a55b` | `northvaine/radar/review.py`, prompt `brain/prompts/radar_review.v1.md` |
+| Buyer gate, skeptic, company role and product-line judge, onboarding proposal | **Nemotron 3 Super** `nvidia/nemotron-3-super-120b-a12b` | `radar/gate.py`, `radar/court.py`, `radar/linefit.py`, `radar/onboarding.py` |
+| Evidence extraction and claim support from fetched pages (fast, high volume) | **Nemotron 3.5 Lightning** `nvidia/Nemotron-3_5-Lightning` | `radar/extract.py`, `radar/verify.py` |
+| All model calls | **Nebius Token Factory** (OpenAI-compatible API), schema-constrained JSON output | `northvaine/brain/llm.py`: model routing by tier, Pydantic-validated output, retries, per-call and per-run budgets, every call logged |
+| Intent searches per market, company website discovery, top-lead investigation | **Tavily** search | `radar/intent.py`, `radar/fit.py`, `radar/investigate.py`, `sensors/tavily.py` |
+
+Embeddings use `Qwen/Qwen3-Embedding-8B` on Token Factory, because the catalogue has no Nemotron
+embedding model (see feedback below). Every model call goes through the one file
+`northvaine/brain/llm.py`; a build check enforces it.
+
+## Trust by design
+
+- **No source, no claim.** Code confirms every quote appears in the stored page before any model
+  sees it; unverified facts are never shown, scored or used.
+- **Sources can't steer the system.** Fetched text is fenced as data; text that tries to instruct an
+  AI ("rank me first") is removed and the page flagged.
+- **Skeptic before judge, and a senior review before the owner.** Every lead carries the evidence
+  against it; the top ten are checked by the strongest model, and doubtful ones are held back with
+  the reason, never silently deleted.
+- **Privacy.** Contact details of people are never stored; the public demo is anonymised and
+  company contacts are removed before publishing.
+
+## Run it
+
+Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), Node 20 (frontend), and for live runs a
+Postgres 16 with pgvector (Neon works) plus Nebius and Tavily keys.
+
+```bash
+uv run python scripts/tasks.py setup      # install
+cp .env.example .env                      # fill in the names; never commit .env
+uv run python scripts/tasks.py migrate    # needs DATABASE_URL
+uv run python scripts/tasks.py dev        # API + frontend locally
+uv run python scripts/tasks.py gate       # invariants, lint, ~1,900 tests, golden set, frontend build
+```
+
+Offline, with no keys or network, a full radar cycle replays from recorded responses:
 
 ```bash
 uv run python scripts/tasks.py radar -- --client stone_supplier
 ```
 
-Other recorded clients: `coldchain_maker`, `packaging_supplier` (specs in `tests/fixtures/clients/`).
-Reports are written to `reports/radar/` (git-ignored). Live recording (`record-radar`) spends real
-money and needs keys.
+Docker (the same image the live server runs): `docker build -t northvaine . && docker run --rm -p
+8000:8000 --env-file .env northvaine`. Hosting and the nightly job: `docs/HOSTING.md`.
 
-## Run with Docker
+## Built during the hackathon
 
-```bash
-docker build -t northvaine .
-docker run --rm -p 8000:8000 --env-file .env northvaine
-curl http://127.0.0.1:8000/health
-```
+Started from an empty repository on 2 October 2026, inside the submission period. Architecture and
+every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D128).
 
-Deploying on Nebius: `docs/DEPLOY.md`.
+## How it was built
+
+A solo founder with an AI engineering team: Claude Code as the lead engineer, planning, reviewing
+and merging, with sub-agents building single, specified pieces in isolated branches. Every change
+passes the same gate (invariant checks, lint, unit and golden tests, frontend build) before it is
+merged. The product's own intelligence runs on NVIDIA Nemotron through Nebius Token Factory.
 
 ## Honest status
 
-- Working: the radar pipeline (gate, evidence ledger with source-quote verification, skeptic, brief),
-  TED and Tavily sensors, the LLM layer with budgets and a ledger, database schema and migrations,
-  offline replay, the golden test set.
-- In progress or planned: the web app for leads and feedback, UK tenders, the learning loop from
-  owner feedback, the Gateway, the scheduled nightly run.
-- Not done: any real sending of messages (by design), and a public demo URL (placeholder:
-  `TODO: add demo URL`).
-- Model output is probabilistic. Briefs are drafts for a person to review.
+- Working: the full radar (all sensors above), opportunity ranking and senior review, the Station,
+  case pages with source chains, leads, connections, the map, onboarding from a website, nightly
+  publishing of the demo.
+- Limits: company-named import records exist for free only in the UK; other markets rely on tenders,
+  contracts, registers and the web. Model output is probabilistic; leads are drafts for a person.
+- Next: linking project -> contractor -> supplier chains, more markets and signal types, learning
+  from which leads turn into meetings, accounts for many clients.
+
+## Feedback on Nebius Token Factory and NVIDIA Nemotron
+
+_Draft from our build notes (`docs/integrations/`); founder to review and add._
+
+- **Model tiers work as the track suggests.** Lightning for high-volume extraction, Super for the
+  buyer gate and skeptic, Ultra only for the final review keeps a full run (about 300 model calls
+  across eight markets) at about a quarter of a dollar, in about 25 minutes.
+- **Structured output is the feature we relied on most, and it is under-documented.** Token Factory
+  accepts `response_format: json_schema`, but no page lists which JSON Schema keywords are honoured.
+  We probed it live: `$defs`/`$ref`, `enum`, `maxItems` and `additionalProperties: false` were
+  enforced even against prompt pressure; `minItems`, `pattern`, `format`, `oneOf` were never
+  confirmed. A per-model "structured output: yes / which keywords" table would save every team a day.
+- **No Nemotron embedding model in the Token Factory catalogue.** We had to use Qwen3-Embedding-8B for
+  embeddings next to Nemotron for generation. A Nemotron embedder on Token Factory would let a whole
+  app stay on NVIDIA models.
+- **Model ids are inconsistent in casing and format** (`Nemotron-3_5-Lightning` with an underscore,
+  `nemotron-3-super-120b-a12b` lower case, `NVIDIA-Nemotron-3-Nano-30B-A3B` upper case). They must be
+  copied verbatim; one consistent scheme, or case-insensitive matching, would prevent silent errors.
+- **Reasoning control for Ultra is not documented on Token Factory** (whether
+  `chat_template_kwargs.enable_thinking` or `reasoning_effort` applies). We had to find out by testing.
+- **Error bodies and rate limits are not documented**, so we treat every 5xx as retryable with
+  backoff. Published per-model rate limits would let apps size their concurrency safely.
+- **Usage visibility:** a per-key, per-model usage and cost view (or an API for it) would help apps
+  enforce budgets; we log every call ourselves for that reason.
 
 ## Licence
 
 MIT, see `LICENSE`.
-
-## Feedback on Token Factory, Nebius and NVIDIA tools
-
-_Founder to fill in before submission. Prompts:_
-
-- **Token Factory:** What worked first time? What did the docs get wrong or leave out (for example
-  the `response_format` nesting and `reasoning_effort` behaviour we measured against the live API)?
-  How was latency and cost per call? Anything you wished the model catalog or usage dashboard showed?
-- **Nemotron:** Which tier (fast, mid, deep) was worth its price for which task? Where did structured
-  JSON output fail or surprise you? How did it compare on long source documents?
-- **Nebius Serverless / Container Registry:** How long did first deploy take? Was Preview status a
-  problem? What was missing (scheduled jobs, health checks, scaling, stop/start)?
-- **Nebius Managed services or credits:** Anything about billing, quotas or support worth passing on?
-- **Tavily:** Result quality for B2B buying signals, rate limits, cost per useful lead.

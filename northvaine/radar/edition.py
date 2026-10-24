@@ -94,16 +94,17 @@ def daily_edition(entries: list[RankedEntry], settings: Settings) -> list[Ranked
         best = [e for e in ranked if e.opportunity is not None and e.opportunity.label != "watch"]
         # D134: leads the senior review passed come first; an unreviewed one only fills a gap.
         reviewed = [e for e in best if any(r.startswith("Reviewed:") for r in e.rank_reasons)]
-        if reviewed:
-            best = [*reviewed, *(e for e in best if e not in reviewed)]
+        unreviewed = [e for e in best if e not in reviewed]
         # D129: the best of each kind first (connected, approach now, relationship, looking for
-        # it), so a day mixes a project, a partner and a buyer; then the rest in rank order.
+        # it), so a day mixes a project, a partner and a buyer - but chosen among the reviewed
+        # leads when there are any: variety never pushes out a lead the review passed.
+        pool = reviewed or unreviewed
         firsts: list[RankedEntry] = []
         for kind in ("connected", "approach_now", "relationship", "looking"):
-            pick = next((e for e in best if e.opportunity and e.opportunity.label == kind), None)
+            pick = next((e for e in pool if e.opportunity and e.opportunity.label == kind), None)
             if pick is not None:
                 firsts.append(pick)
-        rest = [e for e in best if e not in firsts]
+        rest = [e for e in [*reviewed, *unreviewed] if e not in firsts]
         return sorted([*firsts, *rest][: settings.radar_daily_quota], key=lambda e: e.rank)
     taken: list[RankedEntry] = []
     counts: dict[str, int] = {}
