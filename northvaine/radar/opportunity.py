@@ -22,7 +22,7 @@ from typing import Any, Literal
 from northvaine.radar.account import size_rank
 from northvaine.radar.brief import _trade_slots, names_term, names_trigger
 from northvaine.radar.models import Opportunity, RadarStream, RankedEntry
-from northvaine.radar.timing import dated_changes
+from northvaine.radar.timing import dated_changes, trade_changes
 
 __all__ = ["LABEL_ORDER", "Opportunity", "assess", "order_opportunities"]
 
@@ -46,8 +46,22 @@ LABEL_WORDS = {
 _INTENT_WORDS = ("No new signal", "Weak intent", "Clear intent", "Strong intent")
 _FIT_WORDS = ("Fit unknown", "Some fit", "Good fit", "Strong fit")
 _PROJECT_STREAMS = (RadarStream.TENDER, RadarStream.AWARD, RadarStream.ANNOUNCEMENT)
+# The opening words of changes read from the import record rather than the register.
+_TRADE_LINES = (
+    "It started importing",
+    "It added a new product line",
+    "It came back to importing",
+    "Its imports are rising",
+)
 # The opening words timing.dated_changes uses for the changes that weigh more.
-_STRONG_CHANGES = ("Control changed", "A charge (new finance)", "It started importing")
+_STRONG_CHANGES = (
+    "Control changed",
+    "A charge (new finance)",
+    "It started importing",
+    "It added a new product line",  # D131: changes in the import record itself
+    "It came back to importing",
+    "Its imports are rising",
+)
 
 
 def _freshness(when: date, today: date, strong_days: int, clear_days: int) -> int:
@@ -75,14 +89,14 @@ def _signals(entry: RankedEntry, today: date) -> list[tuple[int, date, str, str]
         if strength:
             what = event.event_type.replace("_", " ")
             out.append((strength, event.occurred_on, f"{what} on {event.occurred_on}", kind))
-    for when, line in dated_changes(c):
+    for when, line in [*dated_changes(c), *trade_changes(c)]:
         # A company change opens a window but is weaker than a project. A new owner, new finance
         # or a first import says more than a new name or a moved office (a hint only).
         base = 2 if line.startswith(_STRONG_CHANGES) else 1
         age = (today - when).days
         strength = base if 0 <= age <= 90 else (base - 1 if 0 <= age <= 180 else 0)
         if strength:
-            kind = "trade" if "importing" in line else "register"
+            kind = "trade" if line.startswith(_TRADE_LINES) else "register"
             out.append((strength, when, line, kind))
     return out
 

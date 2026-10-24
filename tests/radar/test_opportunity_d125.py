@@ -271,3 +271,40 @@ def test_d129_the_edition_takes_the_best_of_each_kind_first() -> None:
     )
     assert len(picked) == 5
     assert "Big Distributor" in [e.candidate.name for e in picked]  # not crowded out by projects
+
+
+def _importer(months: list[str], code_months: dict[str, list[str]]) -> RankedEntry:
+    e = entry("importer", RadarStream.TRADE)
+    ev = _event("imports_recorded", date(2026, 9, 1)).model_copy(
+        update={"slots": {"months": months, "code_months": code_months, "last_month": months[-1]}}
+    )
+    return e.model_copy(update={"candidate": e.candidate.model_copy(update={"events": [ev]})})
+
+
+def test_d131_import_record_changes_new_line_back_after_gap_and_rising() -> None:
+    from northvaine.radar.timing import trade_changes
+
+    new_line = _importer(
+        ["2026-02", "2026-04", "2026-08"],
+        {"68022100": ["2026-02", "2026-04"], "68029990": ["2026-08"]},
+    )
+    lines = [line for _, line in trade_changes(new_line.candidate)]
+    assert any(line.startswith("It added a new product line (code 68029990") for line in lines)
+    back = _importer(["2026-01", "2026-06"], {"68022100": ["2026-01", "2026-06"]})
+    assert any(
+        "came back to importing in 2026-06 after 4 months" in line
+        for _, line in trade_changes(back.candidate)
+    )
+    rising = _importer(
+        ["2026-02", "2026-06", "2026-07", "2026-08"],
+        {"68022100": ["2026-02", "2026-06", "2026-07", "2026-08"]},
+    )
+    assert any(
+        line.startswith("Its imports are rising") for _, line in trade_changes(rising.candidate)
+    )
+    steady = _importer(
+        [f"2026-0{m}" for m in range(1, 9)], {"68022100": [f"2026-0{m}" for m in range(1, 9)]}
+    )
+    assert trade_changes(steady.candidate) == []  # every month, no change: no signal
+    # and it moves the lead: a fresh new line is clear intent
+    assert assess(_fit(new_line), date(2026, 10, 20), SPEC).intent >= 2

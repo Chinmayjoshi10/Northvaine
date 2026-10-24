@@ -210,6 +210,10 @@ def trader_document(
         "first_month": month_label(first),
         "last_month": month_label(last),
         "months_active": len(all_months),
+        # per product code, the months it was imported (D131: a new line, a gap, a rise)
+        "code_months": {
+            code: [month_label(m) for m in sorted(ms)] for code, ms in trader.months.items()
+        },
         "previous_year": previous_year,
         "new_this_year": not trader.seen_last_year,
     }

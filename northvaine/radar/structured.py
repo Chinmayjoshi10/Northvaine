@@ -277,6 +277,8 @@ def _trade_evidence(doc: EvidenceDocument) -> tuple[list[ClaimDraft], list[Event
         "first_month": meta.get("first_month"),
         "last_month": last_month,
         "months_active": meta.get("months_active"),
+        "months": _strings(meta.get("months")),
+        "code_months": meta.get("code_months") if isinstance(meta.get("code_months"), dict) else {},
         "new_this_year": bool(meta.get("new_this_year")),
     }
     event = EventDraft(
