@@ -234,13 +234,22 @@ def opening_line(entry: RankedEntry, supply: str) -> str | None:
     o = entry.opportunity
     if o is None or not supply:
         return None
+    # A product name mid-sentence: lower-case its first letter, unless it is an acronym.
+    if len(supply) > 1 and supply[0].isupper() and not supply[1].isupper():
+        supply = supply[0].lower() + supply[1:]
     if o.play == "project":
         news = _reason(o.why_now, _NEWS_WORDS, "the project")
         return (
             f"Congratulations on {news}. We supply {supply}; could we send samples for the project?"
         )
     if o.play == "partner":
-        change = _reason(o.why_now, _NEWS_WORDS + _CHANGE_WORDS, "your recent growth")
+        # Only a dated, sourced change may be "noticed"; with none, the line claims nothing.
+        change = _reason(o.why_now, _NEWS_WORDS + _CHANGE_WORDS, "") if o.why_now else ""
+        if not change:
+            return (
+                f"We make {supply} and work with distributors like you; "
+                "would a sample range be useful?"
+            )
         return (
             f"We noticed {change}. We make {supply} and work with distributors; "
             "would a sample range be useful?"

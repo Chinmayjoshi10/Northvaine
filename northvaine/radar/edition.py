@@ -92,6 +92,10 @@ def daily_edition(entries: list[RankedEntry], settings: Settings) -> list[Ranked
         # order; the watch list never fills a slot.
         ranked = sorted(entries, key=lambda e: e.rank)
         best = [e for e in ranked if e.opportunity is not None and e.opportunity.label != "watch"]
+        # D134: leads the senior review passed come first; an unreviewed one only fills a gap.
+        reviewed = [e for e in best if any(r.startswith("Reviewed:") for r in e.rank_reasons)]
+        if reviewed:
+            best = [*reviewed, *(e for e in best if e not in reviewed)]
         # D129: the best of each kind first (connected, approach now, relationship, looking for
         # it), so a day mixes a project, a partner and a buyer; then the rest in rank order.
         firsts: list[RankedEntry] = []

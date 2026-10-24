@@ -308,3 +308,28 @@ def test_d131_import_record_changes_new_line_back_after_gap_and_rising() -> None
     assert trade_changes(steady.candidate) == []  # every month, no change: no signal
     # and it moves the lead: a fresh new line is clear intent
     assert assess(_fit(new_line), date(2026, 10, 20), SPEC).intent >= 2
+
+
+def test_d134_the_edition_prefers_leads_the_review_passed() -> None:
+    from northvaine.core.settings import Settings
+    from northvaine.radar.edition import daily_edition
+
+    leads = []
+    for n in range(7):
+        e = _with(
+            entry("awarded_contractor"),
+            key=f"GB:r{n}",
+            name=f"Granite Co {n}",
+            events=[_event("contract_awarded", date(2026, 10, 20))],
+        ).model_copy(update={"rank": n + 1})
+        leads.append(e)
+    ordered = order_opportunities(leads, TODAY, SPEC)
+    passed = {"Granite Co 5", "Granite Co 6"}
+    ordered = [
+        e.model_copy(update={"rank_reasons": ["Reviewed: worth a call today.", *e.rank_reasons]})
+        if e.candidate.name in passed
+        else e
+        for e in ordered
+    ]
+    picked = {e.candidate.name for e in daily_edition(ordered, Settings(_env_file=None))}
+    assert passed <= picked  # reviewed leads are never pushed out by unreviewed ones

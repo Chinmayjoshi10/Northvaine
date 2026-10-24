@@ -139,7 +139,7 @@ def test_say_per_play_uses_the_priority_line_and_names_no_price_or_term() -> Non
 
     project = _with_opportunity(_award_entry())
     line = opening_line(project, supply)
-    assert line is not None and "Sandstone paving" in line and "samples" in line
+    assert line is not None and "sandstone paving" in line and "samples" in line
     assert "2026-10-21" not in line
 
     partner_base = _with_opportunity(_award_entry())
@@ -147,7 +147,7 @@ def test_say_per_play_uses_the_priority_line_and_names_no_price_or_term() -> Non
         update={"opportunity": partner_base.opportunity.model_copy(update={"play": "partner"})}
     )
     pline = opening_line(partner, supply)
-    assert pline is not None and pline.startswith("We noticed ") and "Sandstone paving" in pline
+    assert pline is not None and pline.startswith("We noticed ") and "sandstone paving" in pline
 
     claim = _claim("Commodity 68029300: imported in 4 months", "C1").model_copy(
         update={"source_name": "hmrc"}
@@ -163,3 +163,29 @@ def test_say_per_play_uses_the_priority_line_and_names_no_price_or_term() -> Non
 
     for text in (line, pline, aline):
         assert not PRICE_WORDS.search(text), text
+
+
+def test_d134_a_partner_with_no_dated_reason_gets_a_line_that_claims_nothing() -> None:
+    from northvaine.api.leadview import opening_line
+    from northvaine.radar.models import Opportunity
+
+    entry = _award_entry().model_copy(
+        update={
+            "opportunity": Opportunity(
+                label="relationship",
+                play="partner",
+                intent=0,
+                fit=3,
+                confidence=2,
+                latest=None,
+                why_now="",
+                words="No new signal · Strong fit · 2 sources agree",
+            )
+        }
+    )
+    line = opening_line(entry, "Design wall coverings")
+    assert line == (
+        "We make design wall coverings and work with distributors like you; "
+        "would a sample range be useful?"
+    )
+    assert "noticed" not in line and "growth" not in line
