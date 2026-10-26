@@ -1,0 +1,144 @@
+"""A distributor's own website becomes a candidate (D136).
+
+Outside the UK there are no import records. A partner-discovery search (`intent.partner_queries`)
+returns companies' own websites, which carry no dated event, so `build_candidates` drops them.
+Here, by code, a page that is a company's own site (D133) and has a sentence naming what the client
+sells becomes a candidate with an undated "company_profile" event and verified claims quoting the
+page. They then go through the same off-target filter, gate, skeptic, fit and review as any lead.
+Nothing is read by a model here; the text is the fetched page's cleaned text (rule 10).
+"""
+
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any
+
+from northvaine.core.models import (
+    ClaimCheck,
+    ClaimDraft,
+    ClaimStatus,
+    Eligibility,
+    EvidenceDocument,
+    EvidenceKind,
+    LedgerResult,
+    SubjectMention,
+)
+from northvaine.core.settings import Settings, get_settings
+from northvaine.radar.entities import company_key, site_owner
+from northvaine.radar.fit import fit_sentences
+from northvaine.radar.ledger import event_fingerprint
+from northvaine.radar.models import Candidate, CandidateClaim, CandidateEvent, RadarStream
+from northvaine.radar.verify import claim_fingerprint
+
+__all__ = ["partner_candidates"]
+
+_MAX_CLAIMS = 3
+EVENT_TYPE = "company_profile"
+
+
+def _name_part(key: str) -> str:
+    return key.partition(":")[2]
+
+
+def partner_candidates(
+    documents: Iterable[tuple[EvidenceDocument, str]],
+    spec: Any,
+    existing: Iterable[Candidate],
+    *,
+    settings: Settings | None = None,
+) -> tuple[list[Candidate], list[tuple[EvidenceDocument, LedgerResult]]]:
+    """`documents` are (page, country of the query that found it). Returns the new candidates and
+    the (document, ledger result) pairs that store their claims with their source."""
+    cfg = settings or get_settings()
+    terms = {t.casefold() for t in spec.offer_terms if t.strip()}
+    if not terms:
+        return [], []
+    taken_keys = {c.key for c in existing}
+    taken_names = {_name_part(c.key) for c in existing}
+    out: list[Candidate] = []
+    evidence: list[tuple[EvidenceDocument, LedgerResult]] = []
+    for doc, country in documents:
+        owner = site_owner(doc, cfg)
+        if owner is None:
+            continue
+        key = company_key(owner.name, country, cfg)
+        if key in taken_keys or _name_part(key) in taken_names:
+            continue
+        found = fit_sentences(doc.text, terms, set(), limit=_MAX_CLAIMS)
+        found = [f for f in found if f[2] == "stated" and f[0] in doc.text]
+        if not found:
+            continue
+        checks: list[ClaimCheck] = []
+        claims: list[CandidateClaim] = []
+        for sentence, term, _level in found:
+            statement = f"{owner.name}'s own website says it sells {term}."
+            fingerprint = claim_fingerprint(doc.id, statement, sentence)
+            checks.append(
+                ClaimCheck(
+                    document_id=doc.id,
+                    draft=ClaimDraft(
+                        statement=statement,
+                        source_quote=sentence,
+                        subject=SubjectMention(name=owner.name, country=country, role="supplier"),
+                        extracted_by="code",
+                    ),
+                    status=ClaimStatus.VERIFIED,
+                    quote_offset=doc.text.index(sentence),
+                    verified_by="code",
+                    fingerprint=fingerprint,
+                )
+            )
+            claims.append(
+                CandidateClaim(
+                    ref=f"C{len(claims) + 1}",
+                    fingerprint=fingerprint,
+                    document_id=doc.id,
+                    statement=statement,
+                    source_quote=sentence,
+                    source_name=doc.source_name,
+                    url=doc.url,
+                    available_at=doc.available_at,
+                    evidence_kind=EvidenceKind.FULL_TEXT,
+                    verified_by="code",
+                    upgraded_from=None,
+                )
+            )
+        event = CandidateEvent(
+            event_type=EVENT_TYPE,
+            description=f"{owner.name}'s own website: a company that sells what you sell.",
+            occurred_on=None,
+            available_at=doc.available_at,
+            claim_refs=[c.ref for c in claims],
+            slots={},
+            fingerprint=event_fingerprint(EVENT_TYPE, [c.fingerprint for c in claims], None, key),
+        )
+        out.append(
+            Candidate(
+                key=key,
+                name=owner.name,
+                country=country,
+                aliases=[],
+                roles=["distributor"],
+                stream=RadarStream.ANNOUNCEMENT,
+                streams=[RadarStream.ANNOUNCEMENT],
+                events=[event],
+                claims=claims,
+                window_start=None,
+                window_end=None,
+                window_estimated=False,
+                window_note="Specification window, not enumerable.",
+            )
+        )
+        taken_keys.add(key)
+        taken_names.add(_name_part(key))
+        evidence.append(
+            (
+                doc,
+                LedgerResult(
+                    document_id=doc.id,
+                    eligibility=Eligibility(kind=EvidenceKind.FULL_TEXT),
+                    checks=checks,
+                ),
+            )
+        )
+    return out, evidence

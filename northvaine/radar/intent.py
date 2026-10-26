@@ -20,7 +20,7 @@ from typing import Any
 from northvaine.core.standards import iso2_to_name
 from northvaine.sensors.base import SensorQuery
 
-__all__ = ["intent_queries"]
+__all__ = ["intent_queries", "partner_queries", "trade_covered"]
 
 _PROJECT_WORDS = "contractor appointed"
 # One change per market, rotating: a search with all of them at once finds none well.
@@ -75,6 +75,44 @@ def intent_queries(spec: Any, as_of: date, days: int, per_market: int = 2) -> li
                     languages=["en"],
                     published_from=as_of - timedelta(days=days),
                     published_to=as_of,
+                    max_results=5,
+                )
+            )
+    return out
+
+
+def trade_covered(spec: Any) -> set[str]:
+    """Countries the client's import-record sensors cover: any sensor query with an `hs:` code."""
+    covered: set[str] = set()
+    for queries in (getattr(spec, "sensors", None) or {}).values():
+        for q in queries:
+            if any(str(c).startswith("hs:") for c in q.codes):
+                covered.update(c.upper() for c in q.countries)
+    return covered
+
+
+def partner_queries(spec: Any, as_of: date, per_market: int = 1) -> list[SensorQuery]:
+    """Partner discovery (D136): for each market without import records, search for the
+    companies' own websites (`<channel role> <product> showrooms <country>`). No date filter: a
+    distributor's site is not news. Nothing for a client that sells direct."""
+    del as_of  # no date window; kept so the call reads like `intent_queries`
+    product = _product(spec)
+    partners = _channel_roles(spec)
+    if not product or not partners or spec.channel == "direct":
+        return []
+    covered = trade_covered(spec)
+    out: list[SensorQuery] = []
+    for i, country in enumerate(spec.markets):
+        if country.upper() in covered:
+            continue
+        place = (iso2_to_name(country) or country).title()
+        for j in range(max(per_market, 1)):
+            role = partners[(i + j) % len(partners)]
+            out.append(
+                SensorQuery(
+                    text=f"{role} {product} showrooms {place}",
+                    countries=[country],
+                    languages=["en"],
                     max_results=5,
                 )
             )

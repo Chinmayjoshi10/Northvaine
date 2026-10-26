@@ -128,6 +128,8 @@ SHAPING_SETTINGS = (
     "radar_intent_search",  # D126
     "radar_intent_days",
     "radar_intent_per_market",
+    "radar_partner_discovery",  # D136
+    "radar_partner_per_market",
     "radar_review_top",  # D127
     "radar_gate_by_proof",  # D132
     "radar_drop_report_pages",  # D133
