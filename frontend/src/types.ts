@@ -54,6 +54,8 @@ export interface Row {
   /** D137: who did what, and why it matters to the client, in plain words */
   headline?: string | null;
   why_you?: string | null;
+  /** D138: one of the client's target accounts */
+  from_list?: boolean;
 }
 
 export interface Opportunity {
@@ -203,6 +205,8 @@ export interface Dossier {
   /** D137: who did what, and why it matters to the client, in plain words */
   headline?: string | null;
   why_you?: string | null;
+  /** D138: one of the client's target accounts */
+  from_list?: boolean;
 }
 
 export const FAILURE_CHIPS = [

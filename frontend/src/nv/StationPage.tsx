@@ -485,6 +485,7 @@ function Station(props: {
                   (r.sources_seen ?? []).length >= 2 ||
                   r.label ||
                   r.possible_distributor ||
+                  r.from_list ||
                   r.back_in_motion) && (
                   <p className="edlabel">
                     {r.opportunity && (
@@ -501,6 +502,9 @@ function Station(props: {
                       <span className="mono lab-chip">
                         {(r.timing_signals ?? []).length} SIGNALS
                       </span>
+                    )}
+                    {r.from_list && (
+                      <span className="mono lab-chip">From your list</span>
                     )}
                     {r.possible_distributor && (
                       <span className="mono lab-chip">Possible distributor</span>

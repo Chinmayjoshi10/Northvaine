@@ -333,6 +333,9 @@ class Settings(BaseSettings):
     # D136: a distributor's own website found abroad (no import records there) becomes a lead
     radar_partner_discovery: bool = True
     radar_partner_per_market: int = Field(default=1, ge=1, le=2)
+    # D138: read each target account's own site (direct fetch, no search credits)
+    radar_target_accounts: bool = True
+    radar_target_pages: int = Field(default=6, ge=1, le=10)
     radar_review_top: int = Field(default=10, ge=0)  # D127: top opportunities the deep model checks
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).

@@ -40,7 +40,9 @@ to it now, the kind of play, and the next action.
 Each lead shows **Intent** (how strong and fresh the signal is), **Fit** (how well it matches what the
 client sells) and **Confidence** (how many independent kinds of source agree), the **source chain**
 behind it (each fact with its date and a link to where it came from), the **evidence against**, and
-**one line to open with**. The Station shows the best five each day; the rest are one click away.
+**one line to open with**. It reads in plain words, built by code from the checked facts: *"Mega
+Marble started importing a new product line: natural stone and marble (first in 2026-07). Their own
+site sells marble, which you supply."* The Station shows the best five each day; the rest are one click away.
 
 ## How it works
 
@@ -50,6 +52,7 @@ client's answers (offer, products, buyers, markets, the projects that create nee
    ├─ sensors: UK import records (HMRC) · UK Find a Tender · EU tenders (TED) · US contracts
    │           (USAspending) · intent web searches per market (Tavily) · company register
    │           (Companies House) · company websites (free fetch, robots.txt respected)
+   │           · the client's own target accounts, read from their sites and checked like any lead
    ▼
 evidence ledger ── every fact is a claim whose quote CODE finds in the stored source text
    ▼
@@ -78,7 +81,7 @@ anything and never quotes prices: a person decides and makes contact.
 
 | What | Model / service | Where in the code |
 |---|---|---|
-| Senior review of the top leads (serious reasoning) | **Nemotron 3 Ultra** `nvidia/Nemotron-3-Ultra-550b-a55b` | `northvaine/radar/review.py`, prompt `brain/prompts/radar_review.v1.md` |
+| Senior review of the top leads (serious reasoning) | **Nemotron 3 Ultra** `nvidia/Nemotron-3-Ultra-550b-a55b` | `northvaine/radar/review.py`, prompt `brain/prompts/radar_review.v2.md` |
 | Buyer gate, skeptic, company role and product-line judge, onboarding proposal | **Nemotron 3 Super** `nvidia/nemotron-3-super-120b-a12b` | `radar/gate.py`, `radar/court.py`, `radar/linefit.py`, `radar/onboarding.py` |
 | Evidence extraction and claim support from fetched pages (fast, high volume) | **Nemotron 3.5 Lightning** `nvidia/Nemotron-3_5-Lightning` | `radar/extract.py`, `radar/verify.py` |
 | All model calls | **Nebius Token Factory** (OpenAI-compatible API), schema-constrained JSON output | `northvaine/brain/llm.py`: model routing by tier, Pydantic-validated output, retries, per-call and per-run budgets, every call logged |
@@ -125,7 +128,7 @@ Docker (the same image the live server runs): `docker build -t northvaine . && d
 ## Built during the hackathon
 
 Started from an empty repository on 2 October 2026, inside the submission period. Architecture and
-every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D128).
+every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D138).
 
 ## How it was built
 

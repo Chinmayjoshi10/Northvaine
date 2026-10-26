@@ -52,9 +52,10 @@ from northvaine.radar.models import (
     RadarStream,
     RejectedEntry,
     SkepticFinding,
+    TargetAccount,
 )
 from northvaine.radar.opportunity import order_opportunities
-from northvaine.radar.partners import partner_candidates
+from northvaine.radar.partners import partner_candidates, target_candidates
 from northvaine.radar.register import (
     SeedProfile,
     mark_likeness,
@@ -63,6 +64,7 @@ from northvaine.radar.register import (
     seed_register_profiles,
 )
 from northvaine.radar.review import review_top
+from northvaine.sensors.base import SensorQuery
 
 __all__ = ["run_radar", "seeded_concepts"]
 
@@ -221,6 +223,22 @@ async def run_radar(
             f"strategy v{strategy.version} chose the searches "
             f"({sum(len(q) for q in queries.values())} run; D89)"
         )
+    # D138: the client's target accounts, each read from its own site (after the strategy step,
+    # so the list is always read); pages are matched back to their account by query
+    target_of: dict[str, TargetAccount] = {}
+    if settings.radar_target_accounts and spec.target_accounts:
+        sites = list(queries.get("website", []))
+        for account in spec.target_accounts:
+            sites.append(
+                SensorQuery(
+                    text=account.website,
+                    countries=[account.country],
+                    max_results=settings.radar_target_pages,
+                )
+            )
+            target_of[f"website:{len(sites)}"] = account
+        queries = {**queries, "website": sites}
+        notes.append(f"your list: {len(spec.target_accounts)} account site(s) read")
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
     notes.extend(found.notes)
     # A page fetched during this run is available at the run's moment, never later: sensors
@@ -283,6 +301,22 @@ async def run_radar(
             evidence_out.extend(partner_evidence)
         if made:
             notes.append(f"partner discovery: {len(made)} company site(s) became candidates")
+    if target_of:  # D138: the client's own list, checked like any lead
+        target_pages = []
+        for doc, _ in results:
+            refs = [r for r in found.found_by.get(str(doc.id), []) if r in target_of]
+            if refs:
+                target_pages.append((doc, target_of[refs[0]]))
+        made, target_evidence, already, target_notes = target_candidates(
+            target_pages, spec, candidates, accounts=spec.target_accounts, settings=settings
+        )
+        candidates = [
+            c.model_copy(update={"from_list": True}) if c.key in already else c for c in candidates
+        ] + made
+        if evidence_out is not None:
+            evidence_out.extend(target_evidence)
+        notes.extend(target_notes)
+        notes.append(f"your list: {len(made) + len(already)} account(s) on record")
 
     def name_key(name: str) -> str:
         return company_key(name, None, settings)

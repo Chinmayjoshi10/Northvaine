@@ -240,12 +240,13 @@ function Leads(props: {
               <b>{nice(r.company)}</b>
               <span>
                 {r.country} · {roleOf(r)}
+                {r.from_list ? " · from your list" : ""}
               </span>
             </span>
             <span className={`type ${typeOf(r).toLowerCase()}`}>
               {typeOf(r)}
             </span>
-            <span className="what">{stripCountry(r.what)}</span>
+            <span className="what">{r.headline ?? stripCountry(r.what)}</span>
             <span className={`win${isHot(r) ? " hot" : ""}`}>
               {windowOf(r)}
             </span>

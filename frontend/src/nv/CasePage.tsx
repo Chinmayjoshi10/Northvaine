@@ -312,6 +312,14 @@ function Case(props: {
 
           <div className="sec">
             <span className="caps">How to reach them · company only</span>
+            {d.from_list && (
+              <p className="edlabel">
+                <span className="mono lab-chip">From your list</span>
+                <span className="lab-why">
+                  One of your target accounts, checked like any other lead.
+                </span>
+              </p>
+            )}
             {d.possible_distributor && (
               <p className="edlabel">
                 <span className="mono lab-chip">Possible distributor</span>

@@ -76,6 +76,14 @@ class CatalogueLine(NorthvaineModel):
     codes: list[str] = Field(default_factory=list)  # "hs:..." / "cpv:..." like product_codes
 
 
+class TargetAccount(NorthvaineModel):
+    """A company the client already wants to win (D138): read from its own website each run."""
+
+    name: str
+    country: Iso2
+    website: str
+
+
 class ClientSpec(NorthvaineModel):
     id: str
     offer: str
@@ -98,6 +106,9 @@ class ClientSpec(NorthvaineModel):
     # Projects or events that make a customer need the client (onboarding answer), as data.
     need_triggers: list[str] = Field(default_factory=list)
     home_country: Iso2 | None = None  # where the client is based (the map's origin)
+    # D138: companies the client wants to win; each is read from its own site and checked
+    # like any lead, never assumed to be a buyer
+    target_accounts: list[TargetAccount] = Field(default_factory=list)
     # Who is competition rather than a buyer, in plain words (e.g. "other manufacturers of the
     # same products").
     not_buyers: list[str] = Field(default_factory=list)
@@ -192,6 +203,7 @@ class Candidate(NorthvaineModel):
     # D109: short reasons it looks like the client's customers (never an existing customer's name)
     like_customers: list[str] = Field(default_factory=list)
     timing_signals: list[str] = Field(default_factory=list)  # D111
+    from_list: bool = False  # D138: one of the client's target accounts
 
 
 class GateDecision(NorthvaineModel):

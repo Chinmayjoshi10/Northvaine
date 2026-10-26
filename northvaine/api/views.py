@@ -119,6 +119,7 @@ class Row(BaseModel):
     # D137: plain words built by code from verified facts: who did what, and why it matters
     headline: str | None = None
     why_you: str | None = None
+    from_list: bool = False  # D138: one of the client's target accounts
 
 
 class Funnel(BaseModel):
@@ -243,6 +244,7 @@ class Dossier(BaseModel):
     # D137: plain words built by code from verified facts: who did what, and why it matters
     headline: str | None = None
     why_you: str | None = None
+    from_list: bool = False  # D138: one of the client's target accounts
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -312,6 +314,7 @@ def _row(entry: RankedEntry, today: date, supply: str = "", terms: list[str] | N
         reach=_reach(entry),
         headline=headline(entry, terms),
         why_you=why_you(entry, terms),
+        from_list=entry.candidate.from_list,
     )
 
 
@@ -578,6 +581,7 @@ def dossier(
         reach=_reach(entry),
         headline=headline(entry, terms),
         why_you=why_you(entry, terms),
+        from_list=entry.candidate.from_list,
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

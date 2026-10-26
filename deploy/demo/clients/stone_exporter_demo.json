@@ -317,5 +317,47 @@
     "office, retail or restaurant fit-out",
     "hotel or heritage building renovation"
   ],
-  "home_country": "IN"
+  "home_country": "IN",
+  "target_accounts": [
+    {
+      "name": "Urbacon",
+      "country": "GB",
+      "website": "https://www.urbacon.co.uk/"
+    },
+    {
+      "name": "Marble Mosaics",
+      "country": "GB",
+      "website": "https://www.marble-mosaics.com/"
+    },
+    {
+      "name": "Domus",
+      "country": "GB",
+      "website": "https://www.domusgroup.com/"
+    },
+    {
+      "name": "Mandarin Stone",
+      "country": "GB",
+      "website": "https://www.mandarinstone.com/"
+    },
+    {
+      "name": "TileBar",
+      "country": "US",
+      "website": "https://www.tilebar.com/"
+    },
+    {
+      "name": "Emser Tile",
+      "country": "US",
+      "website": "https://www.emser.com/"
+    },
+    {
+      "name": "Walker Zanger",
+      "country": "US",
+      "website": "https://www.walkerzanger.com/"
+    },
+    {
+      "name": "ALEC Fitout",
+      "country": "AE",
+      "website": "https://www.alecfitout.ae/"
+    }
+  ]
 }
