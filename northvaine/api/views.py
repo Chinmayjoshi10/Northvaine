@@ -51,6 +51,31 @@ class Place(BaseModel):
     label: str
 
 
+class Reach(BaseModel):
+    """Public, company-level ways to reach a lead (never a person): its website and its entry in
+    an official company register."""
+
+    website: str | None = None
+    register_url: str | None = None
+    register_label: str | None = None
+
+
+_COMPANIES_HOUSE = "https://find-and-update.company-information.service.gov.uk/company/"
+
+
+def _reach(entry: RankedEntry) -> Reach | None:
+    site = entry.company_site
+    website = f"https://{site}" if site and not site.startswith("http") else site
+    facts = entry.candidate.company_register
+    register_url = register_label = None
+    if facts is not None and facts.number and (entry.candidate.country or "GB") == "GB":
+        register_url = _COMPANIES_HOUSE + facts.number
+        register_label = f"Companies House {facts.number}"
+    if not website and not register_url:
+        return None
+    return Reach(website=website, register_url=register_url, register_label=register_label)
+
+
 class Row(BaseModel):
     rank: int
     status: str
@@ -89,6 +114,7 @@ class Row(BaseModel):
     opportunity: OpportunityView | None = None
     dots: list[Dot] = []
     say: str | None = None
+    reach: Reach | None = None  # how to reach them: public company channels only
 
 
 class Funnel(BaseModel):
@@ -126,6 +152,8 @@ class BriefView(BaseModel):
     log: list[LogItem] = []
     # D103: today's few checked targets, labelled; empty on a thin day (never padded)
     edition: list[Row] = []
+    markets: list[str] = []  # the client's markets (ISO-2)
+    home_country: str | None = None  # where the client is based
 
 
 class Claim(BaseModel):
@@ -207,6 +235,7 @@ class Dossier(BaseModel):
     opportunity: OpportunityView | None = None  # D125
     dots: list[Dot] = []
     say: str | None = None
+    reach: Reach | None = None  # how to reach them: public company channels only
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -273,6 +302,7 @@ def _row(entry: RankedEntry, today: date, supply: str = "") -> Row:
         opportunity=opportunity_view(entry),
         dots=dots(entry),
         say=opening_line(entry, supply),
+        reach=_reach(entry),
     )
 
 
@@ -336,6 +366,8 @@ def brief_view(
         client_id=run.client_id,
         offer=brief._inline(run.offer),
         client_name=run.client_name,
+        markets=list(spec.markets) if spec else [],
+        home_country=spec.home_country if spec else None,
         previous=brief._day(previous.as_of) if previous else None,
         as_of=brief._day(run.as_of),
         accounts=[row(e) for e in accounts],
@@ -532,6 +564,7 @@ def dossier(
         opportunity=opportunity_view(entry),
         dots=dots(entry),
         say=opening_line(entry, supply),
+        reach=_reach(entry),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

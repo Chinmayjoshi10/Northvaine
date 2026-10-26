@@ -97,6 +97,7 @@ class ClientSpec(NorthvaineModel):
     buyer_roles: list[str] = Field(default_factory=list)
     # Projects or events that make a customer need the client (onboarding answer), as data.
     need_triggers: list[str] = Field(default_factory=list)
+    home_country: Iso2 | None = None  # where the client is based (the map's origin)
     # Who is competition rather than a buyer, in plain words (e.g. "other manufacturers of the
     # same products").
     not_buyers: list[str] = Field(default_factory=list)

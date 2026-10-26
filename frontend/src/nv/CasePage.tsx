@@ -336,6 +336,22 @@ function Case(props: {
                   </span>
                 </>
               )}
+              {!d.company_site && !d.company_contact && (
+                <>
+                  <span className="caps">Site</span>
+                  <span className="dash">not found in this run</span>
+                </>
+              )}
+              {d.reach?.register_url && (
+                <>
+                  <span className="caps">Register</span>
+                  <span>
+                    <a href={d.reach.register_url} target="_blank" rel="noreferrer">
+                      {d.reach.register_label ?? "Official company register"}
+                    </a>
+                  </span>
+                </>
+              )}
               {(d.matched_lines ?? []).length > 0 && (
                 <>
                   <span className="caps">Catalogue</span>

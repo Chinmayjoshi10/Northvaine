@@ -16,6 +16,7 @@ the client's own data.
 
 from __future__ import annotations
 
+import html
 from datetime import date, timedelta
 from typing import Any, Literal
 
@@ -76,6 +77,56 @@ def _freshness(when: date, today: date, strong_days: int, clear_days: int) -> in
     return 1 if age <= 365 else 0
 
 
+def _money(raw: object) -> str:
+    """'6791315.00' -> '6.8 million'; '780126.04' -> '780 thousand'; '' when not a number."""
+    try:
+        value = float(str(raw).replace(",", ""))
+    except ValueError:
+        return ""
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.1f} million"
+    if value >= 1_000:
+        return f"{value / 1_000:.0f} thousand"
+    return f"{value:.0f}" if value > 0 else ""
+
+
+def record_line(event: Any, claims: list[Any]) -> str | None:
+    """A contract or tender in plain words from its official record (D135): who awarded or opened
+    it, for what, and its published value - or None when the record carries none of that. The
+    value is the whole contract's: when several companies won lots, it is shared among them."""
+    slots = event.slots or {}
+    buyer = str(slots.get("buyer_names") or "").split(";")[0].strip()
+    by_ref = {c.ref: c for c in claims}
+    title = ""
+    for ref in event.claim_refs:
+        quote = by_ref[ref].source_quote if ref in by_ref else ""
+        if quote.startswith("Title ["):
+            title = html.unescape(html.unescape(quote.split("]:", 1)[-1].strip()))
+            title = title.split(" " + chr(0x2013) + " ")[
+                -1
+            ].strip()  # drop the "Country - Category -" prefix
+            break
+    if len(title) > 70:
+        title = title[:70].rsplit(" ", 1)[0] + "..."
+    value = _money(slots.get("value"))
+    winners = sum(
+        1 for c in claims if c.source_quote.startswith("Winner ") and ";" in c.source_quote
+    )
+    if not (buyer or title or value):
+        return None
+    when = event.occurred_on.isoformat() if event.occurred_on else ""
+    what = f": {title}" if title else ""
+    size = ""
+    if value:
+        size = f"total value {value}" + (", shared by several winners" if winners else "")
+    if event.event_type == "contract_awarded":
+        head = f"Won a contract from {buyer}" if buyer else "Won a contract"
+    else:
+        head = f"{buyer} opened a tender" if buyer else "A tender opened"
+    tail = "; ".join(x for x in (size, when) if x)
+    return f"{head}{what}" + (f" ({tail})" if tail else "")
+
+
 def _signals(entry: RankedEntry, today: date) -> list[tuple[int, date, str, str]]:
     """(strength, date, line, kind) for every dated about-to-buy signal on the entry."""
     c = entry.candidate
@@ -88,7 +139,10 @@ def _signals(entry: RankedEntry, today: date) -> list[tuple[int, date, str, str]
         kind = "record" if c.stream in (RadarStream.TENDER, RadarStream.AWARD) else "news"
         if strength:
             what = event.event_type.replace("_", " ")
-            out.append((strength, event.occurred_on, f"{what} on {event.occurred_on}", kind))
+            line = f"{what} on {event.occurred_on}"
+            if kind == "record":
+                line = record_line(event, c.claims) or line  # D135: who, for what, how big
+            out.append((strength, event.occurred_on, line, kind))
     for when, line in [*dated_changes(c), *trade_changes(c)]:
         # A company change opens a window but is weaker than a project. A new owner, new finance
         # or a first import says more than a new name or a moved office (a hint only).

@@ -15,8 +15,8 @@ from northvaine.radar.models import (
     RadarStream,
     RankedEntry,
 )
-from northvaine.radar.opportunity import LABEL_WORDS
-from northvaine.radar.timing import dated_changes
+from northvaine.radar.opportunity import LABEL_WORDS, record_line
+from northvaine.radar.timing import dated_changes, trade_changes
 
 __all__ = ["Dot", "OpportunityView", "dots", "opening_line", "opportunity_view", "supply_phrase"]
 
@@ -59,6 +59,9 @@ class Dot(BaseModel):
     source: str | None
     url: str | None
     ref: str | None = None
+
+
+_RECORD_STREAMS = (RadarStream.TENDER, RadarStream.AWARD)
 
 
 def source_name(raw: str) -> str:
@@ -130,14 +133,17 @@ def dots(entry: RankedEntry) -> list[Dot]:
             Dot(
                 kind=_STREAM_KIND[c.stream],
                 date=ev.occurred_on.isoformat(),
-                line=_short(ev.description),
+                line=_short(
+                    (record_line(ev, c.claims) if c.stream in _RECORD_STREAMS else None)
+                    or ev.description
+                ),
                 source=source_name(claim.source_name) if claim else None,
                 url=claim.url if claim else None,
                 ref=claim.ref if claim else None,
             )
         )
 
-    for when, line in dated_changes(c):
+    for when, line in [*dated_changes(c), *trade_changes(c)]:  # D131 import signals too
         if "importing" in line:
             out.append(
                 Dot(
@@ -202,6 +208,7 @@ def supply_phrase(spec: ClientSpec | None, offer: str) -> str:
 # The reason to call, in words a salesperson would write. Keyed by the opening words of
 # `Opportunity.why_now`: generic event types and register changes, never an industry.
 _NEWS_WORDS = (
+    ("Won a contract", "winning the contract"),  # D135 record lines
     ("contract awarded", "winning the contract"),
     ("tender published", "the new tender"),
     ("facility opened", "the new opening"),

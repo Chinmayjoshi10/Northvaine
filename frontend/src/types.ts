@@ -50,6 +50,7 @@ export interface Row {
   opportunity?: Opportunity | null;
   dots?: Dot[];
   say?: string | null;
+  reach?: Reach | null;
 }
 
 export interface Opportunity {
@@ -192,6 +193,7 @@ export interface Dossier {
   opportunity?: Opportunity | null;
   dots?: Dot[];
   say?: string | null;
+  reach?: Reach | null;
 }
 
 export const FAILURE_CHIPS = [
@@ -329,4 +331,11 @@ export interface BusinessView {
   /** how many current customers are left out; their names are never sent to the page */
   existing_customers: number;
   searches: { source: string; count: number }[];
+}
+
+/** Public, company-level ways to reach a lead: website and official register entry. */
+export interface Reach {
+  website: string | null;
+  register_url: string | null;
+  register_label: string | null;
 }
