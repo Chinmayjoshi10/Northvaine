@@ -128,6 +128,34 @@ export function laneCountries(
 
 const PITCH = 5;
 
+const KIND_ORDER = { act: 0, developing: 1, watching: 2 } as const;
+
+/** One marker per country: totals added up, the best kind kept, and the best lead (most to decide,
+ * then the place listed first) named and opened. Used when the view is too wide for districts. */
+function byCountry(places: Place[]): Place[] {
+  const out = new Map<string, Place>();
+  for (const p of places) {
+    const { lat: _lat, lon: _lon, label: _label, ...flat } = p;
+    const q = out.get(p.country);
+    if (!q) {
+      out.set(p.country, { ...flat });
+      continue;
+    }
+    const best = p.toDecide > q.toDecide ? flat : q;
+    const kind =
+      KIND_ORDER[p.kind ?? "watching"] < KIND_ORDER[q.kind ?? "watching"] ? p.kind : q.kind;
+    out.set(p.country, {
+      ...best,
+      kind,
+      total: q.total + p.total,
+      toDecide: q.toDecide + p.toDecide,
+      account: !!(q.account || p.account),
+    });
+  }
+  return [...out.values()];
+}
+
+
 export function TerritoryMap(props: {
   places: Place[];
   /** open the place's best lead */
@@ -136,7 +164,7 @@ export function TerritoryMap(props: {
   markets?: string[];
   home?: string | null;
 }) {
-  const { places, onOpen, markets, home } = props;
+  const { onOpen, markets, home } = props;
   const [tip, setTip] = useState<string | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -174,6 +202,9 @@ export function TerritoryMap(props: {
   }, []);
 
   const byName = new Map((countries ?? []).map((c) => [c.properties.name, c]));
+  // With the base known the view spans continents, too wide for districts: one marker a country.
+  const homeCountry = home ? byName.get(regionName(home) ?? "") : undefined;
+  const places = homeCountry ? byCountry(props.places) : props.places;
   const found = places
     .map((p) => ({ p, c: byName.get(ALIAS[p.country] ?? p.country) }))
     .filter((x): x is { p: Place; c: Country } => !!x.c);
@@ -185,7 +216,14 @@ export function TerritoryMap(props: {
       [36, 56],
       [size.w - 36, size.h - 40],
     ];
-    if (found.length) {
+    // With the client's base known, frame the story: the base and every country with leads,
+    // fitted on projected bounds (a span such as Europe to India never wraps the globe).
+    if (homeCountry && found.length) {
+      proj = geoEqualEarth().fitExtent(pad, {
+        type: "FeatureCollection",
+        features: [homeCountry, ...found.map((f) => f.c)].map((c) => mainland(c)),
+      });
+    } else if (found.length) {
       const [[x0, y0], [x1, y1]] = geoBounds({
         type: "FeatureCollection",
         features: found.map((f) => mainland(f.c)),
@@ -262,7 +300,7 @@ export function TerritoryMap(props: {
         ctx.fill();
       }
     // the projection is rebuilt each render from these same inputs
-  }, [countries, size.w, size.h, theme, places, markets]);
+  }, [countries, size.w, size.h, theme, props.places, markets]);
 
   const markers = proj
     ? found
@@ -311,6 +349,10 @@ export function TerritoryMap(props: {
     }
   }
   const tipMark = markers.find((m) => placeId(m.p) === tip);
+  // Only the most urgent marker keeps a written label; the rest show theirs on hover or focus,
+  // so a crowded region never turns into overlapping text.
+  const labelled = [...markers].sort((a, b) => b.p.toDecide - a.p.toDecide)[0];
+  const labelledId = labelled ? placeId(labelled.p) : null;
   const tipUp = tipMark ? tipMark.y + 24 > size.h - 90 : false;
 
   return (
@@ -387,6 +429,8 @@ export function TerritoryMap(props: {
                 )}
               </g>
               {p.account && <circle className="acc" r={hot ? 7.5 : 7} />}
+              {id === labelledId && (
+              <>
               <text x={left ? -14 : 14} y={3} textAnchor={left ? "end" : "start"}>
                 {p.note ?? p.country}
               </text>
@@ -398,6 +442,8 @@ export function TerritoryMap(props: {
               >
                 {p.label ? `${p.label}, ${p.country}` : p.country} · {p.total} on record{hot ? ` · ${p.toDecide} to decide` : ""}
               </text>
+              </>
+              )}
             </g>
           );
         })}

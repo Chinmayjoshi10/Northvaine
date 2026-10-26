@@ -253,12 +253,12 @@ function Station(props: {
     (r) => !r.country || /not stated/.test(r.country),
   ).length;
 
-  // the masthead: the newest award is the news; otherwise the most urgent decision
+  // the masthead: today's most urgent decision; the newest award only when there is none
   const lead =
+    decisions[0] ??
     [...rows]
       .filter((r) => awardDay(r))
-      .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!))[0] ??
-    decisions[0];
+      .sort((a, b) => awardDay(b)!.localeCompare(awardDay(a)!))[0];
   // the dek: the lead's own reason, then plain counts of the rest; zero counts are skipped
   const dek: ReactNode[] = [];
   const top = decisions[0];
@@ -423,7 +423,11 @@ function Station(props: {
             onOpen={(rank) => setOpen(rows.find((r) => r.rank === rank) ?? null)}
           />
           <div className="mapnote">
-            <span>Placed by registered office where the record gives one, else by country</span>
+            <span>
+              {homeName
+                ? "One marker per country, sized by leads; lanes run from your base to markets with leads to act on"
+                : "Placed by registered office where the record gives one, else by country"}
+            </span>
             {unplaced > 0 && (
               <span>
                 {unplaced} {unplaced === 1 ? "lead states" : "leads state"} no
