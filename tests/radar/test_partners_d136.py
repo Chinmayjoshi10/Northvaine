@@ -25,7 +25,7 @@ TODAY = date(2026, 10, 24)
 CFG = Settings(_env_file=None)
 PAGE_TEXT = (
     "Acme Tile & Stone is a family business. "
-    "We import and distribute natural stone through 12 showrooms across Texas. "
+    "We import and distribute natural stone through 12 showrooms across Texas, USA. "
     "Visit us today."
 )
 
@@ -178,3 +178,17 @@ async def test_the_run_adds_partner_searches_and_their_candidates_reach_the_gate
     assert "partner discovery: 1 search(es)" in result.notes
     assert spy.of("gate") == ["US:acme tile stone"]
     assert any(r.checks and r.checks[0].draft.source_quote in PAGE_TEXT for _, r in evidence)
+
+
+def test_a_company_keeps_the_searched_country_only_when_its_page_shows_it() -> None:
+    from northvaine.radar.partners import stated_country
+
+    other = _doc("Home", "https://acme-tile.com/", "Showrooms in Pennsylvania and Maryland.")
+    assert stated_country(other, "FR") is None  # a search for France found a company elsewhere
+    assert stated_country(_doc("Home", "https://acme.fr/", "Bonjour"), "FR") == "FR"
+    assert (
+        stated_country(_doc("Home", "https://a.com/", "Serving the USA since 1980"), "US") == "US"
+    )
+    assert stated_country(_doc("Home", "https://a.com/", "usage leaders"), "US") is None
+    made, _ = partner_candidates([(other, "FR")], _spec(), [], settings=CFG)
+    assert made == [] or made[0].country is None

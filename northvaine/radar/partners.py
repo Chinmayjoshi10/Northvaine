@@ -14,8 +14,10 @@ lead, marked as on the client's list. Being on the list never makes it a buyer.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from typing import Any
+from urllib.parse import urlsplit
 
 from northvaine.core.models import (
     ClaimCheck,
@@ -28,6 +30,7 @@ from northvaine.core.models import (
     SubjectMention,
 )
 from northvaine.core.settings import Settings, get_settings
+from northvaine.core.standards import iso2_to_name
 from northvaine.radar.entities import company_key, site_owner
 from northvaine.radar.fit import fit_sentences
 from northvaine.radar.ledger import event_fingerprint
@@ -50,6 +53,30 @@ Made = tuple[Candidate, tuple[EvidenceDocument, LedgerResult]]
 
 def _name_part(key: str) -> str:
     return key.partition(":")[2]
+
+
+# Short forms a company page uses for a country, besides its standard name.
+_SHORT_NAMES = {"US": ("usa", "u.s."), "GB": ("uk", "u.k."), "AE": ("uae", "u.a.e.")}
+
+
+def stated_country(doc: EvidenceDocument, country: str | None) -> str | None:
+    """The searched country only when the page itself shows it: the site's country domain or the
+    country's name on the page. A search for one country often returns companies of another, so
+    otherwise the company's country is not stated."""
+    if not country:
+        return None
+    host = (urlsplit(doc.url).hostname or "").lower()
+    if host.endswith("." + country.lower()):
+        return country
+    try:
+        names = {iso2_to_name(country), *_SHORT_NAMES.get(country.upper(), ())}
+    except KeyError:
+        return None
+    text = doc.text.casefold()
+    for name in names:
+        if re.search(rf"(?<![\w.]){re.escape(name)}(?![\w])", text):
+            return country
+    return None
 
 
 def _terms(spec: Any) -> set[str]:
@@ -153,10 +180,11 @@ def partner_candidates(
         owner = site_owner(doc, cfg)
         if owner is None:
             continue
-        key = company_key(owner.name, country, cfg)
+        where = stated_country(doc, country)
+        key = company_key(owner.name, where, cfg)
         if key in taken_keys or _name_part(key) in taken_names:
             continue
-        made = _site_candidate(doc, owner.name, country, key, terms)
+        made = _site_candidate(doc, owner.name, where, key, terms)
         if made is None:
             continue
         out.append(made[0])
