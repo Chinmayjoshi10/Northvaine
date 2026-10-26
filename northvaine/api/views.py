@@ -8,6 +8,7 @@ from datetime import date, timedelta
 
 from pydantic import BaseModel, ConfigDict
 
+from northvaine.api.headline import headline, why_you
 from northvaine.api.leadview import (
     Dot,
     OpportunityView,
@@ -115,6 +116,9 @@ class Row(BaseModel):
     dots: list[Dot] = []
     say: str | None = None
     reach: Reach | None = None  # how to reach them: public company channels only
+    # D137: plain words built by code from verified facts: who did what, and why it matters
+    headline: str | None = None
+    why_you: str | None = None
 
 
 class Funnel(BaseModel):
@@ -236,6 +240,9 @@ class Dossier(BaseModel):
     dots: list[Dot] = []
     say: str | None = None
     reach: Reach | None = None  # how to reach them: public company channels only
+    # D137: plain words built by code from verified facts: who did what, and why it matters
+    headline: str | None = None
+    why_you: str | None = None
 
 
 _MD_ESCAPE = re.compile(r"\\([\\`*_\[\]()<>!#|~])")
@@ -273,7 +280,7 @@ def _place(entry: RankedEntry) -> Place | None:
     return Place(lat=facts.lat, lon=facts.lon, label=label)
 
 
-def _row(entry: RankedEntry, today: date, supply: str = "") -> Row:
+def _row(entry: RankedEntry, today: date, supply: str = "", terms: list[str] | None = None) -> Row:
     c = entry.candidate
     return Row(
         rank=entry.rank,
@@ -303,6 +310,8 @@ def _row(entry: RankedEntry, today: date, supply: str = "") -> Row:
         dots=dots(entry),
         say=opening_line(entry, supply),
         reach=_reach(entry),
+        headline=headline(entry, terms),
+        why_you=why_you(entry, terms),
     )
 
 
@@ -335,9 +344,10 @@ def brief_view(
     )
 
     supply = supply_phrase(spec, run.offer)
+    terms = list(spec.offer_terms) if spec else []
 
     def row(e: RankedEntry) -> Row:
-        out = _row(e, today, supply)
+        out = _row(e, today, supply, terms)
         if seen:
             out = out.model_copy(update={"returning": e.candidate.key in seen})
         w = watch.get(e.candidate.key)
@@ -501,6 +511,7 @@ def dossier(
     raw_bidders: list[dict],
     settings: Settings,
     supply: str = "",
+    terms: list[str] | None = None,
 ) -> Dossier:
     c, gate = entry.candidate, entry.gate
     stream = c.stream.value
@@ -565,6 +576,8 @@ def dossier(
         dots=dots(entry),
         say=opening_line(entry, supply),
         reach=_reach(entry),
+        headline=headline(entry, terms),
+        why_you=why_you(entry, terms),
         company_contact=(
             CompanyContactView(**entry.company_contact.model_dump())
             if entry.company_contact

@@ -72,8 +72,10 @@ def get_entry(client: str, day: str, rank: int, base: Base) -> views.Dossier:
     for index, entry in enumerate(run.entries):
         if entry.rank == rank:
             bidders = raw["entries"][index].get("likely_bidders") or []
-            supply = supply_phrase(_find_spec(client), run.offer)
-            return views.dossier(entry, bidders, Settings(_env_file=None), supply)
+            spec = _find_spec(client)
+            supply = supply_phrase(spec, run.offer)
+            terms = list(spec.offer_terms) if spec else []
+            return views.dossier(entry, bidders, Settings(_env_file=None), supply, terms)
     raise HTTPException(status_code=404, detail="entry not found")
 
 

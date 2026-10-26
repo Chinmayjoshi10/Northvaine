@@ -287,8 +287,11 @@ export function CaseSheet(props: {
               {row.opportunity.word} · {row.opportunity.words}
             </p>
           )}
-          {row.opportunity?.why_now && (
-            <p className="opp-why">{row.opportunity.why_now}</p>
+          {(row.headline ?? row.opportunity?.why_now) && (
+            <p className="opp-why">
+              {row.headline ?? row.opportunity?.why_now}
+              {row.why_you && <> {row.why_you}</>}
+            </p>
           )}
           <p className="lede">
             {row.caution.charAt(0).toUpperCase() + row.caution.slice(1)}.{" "}

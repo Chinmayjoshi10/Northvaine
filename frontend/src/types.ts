@@ -51,6 +51,9 @@ export interface Row {
   dots?: Dot[];
   say?: string | null;
   reach?: Reach | null;
+  /** D137: who did what, and why it matters to the client, in plain words */
+  headline?: string | null;
+  why_you?: string | null;
 }
 
 export interface Opportunity {
@@ -197,6 +200,9 @@ export interface Dossier {
   dots?: Dot[];
   say?: string | null;
   reach?: Reach | null;
+  /** D137: who did what, and why it matters to the client, in plain words */
+  headline?: string | null;
+  why_you?: string | null;
 }
 
 export const FAILURE_CHIPS = [

@@ -27,7 +27,26 @@ def display_name(name: str, settings: Settings | None = None) -> str:
     while words and words[-1].casefold().strip(".,") in forms:
         words.pop()
     text = " ".join(words) or name
-    return text.title() if text.isupper() else text
+    if not text.isupper():
+        return text
+    small = {
+        "de",
+        "des",
+        "du",
+        "la",
+        "le",
+        "les",
+        "of",
+        "and",
+        "the",
+        "et",
+        "y",
+        "di",
+        "der",
+        "und",
+    }
+    out = [w.title() for w in text.split()]
+    return " ".join([out[0], *(w.lower() if w.lower() in small else w for w in out[1:])])
 
 
 def _client_words(entry: RankedEntry, terms: list[str]) -> list[str]:
@@ -122,4 +141,6 @@ def why_you(entry: RankedEntry, terms: list[str] | None = None) -> str | None:
         return f"Their own site sells {fit}, which you supply."
     if products:
         return f"They import {products[0].lower()}, which you supply."
+    if line:
+        return f"The work calls for your {_lower_first(line)} line."
     return None

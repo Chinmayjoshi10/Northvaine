@@ -166,6 +166,11 @@ function Case(props: {
           </div>
 
           <h1 className="hl">{title}</h1>
+          {d.headline && (
+            <p className="lede">
+              <b>{d.headline}</b> {d.why_you ?? ""}
+            </p>
+          )}
           {d.demand.text && (
             <p className="lede">
               {d.requirement === "inferred" ? (

@@ -357,7 +357,7 @@ function Station(props: {
                   className="hlink"
                   onClick={() => setOpen(lead)}
                 >
-                  {title(lead)}
+                  {lead.headline ?? title(lead)}
                 </button>
               ) : (
                 "A quiet edition"
@@ -524,8 +524,16 @@ function Station(props: {
                   </p>
                 )}
                 <p className="why">
-                  <b>{projectOf(r)}.</b>{" "}
-                  {readable(r.caution) && sentence(r.caution)}
+                  {r.headline ? (
+                    <>
+                      <b>{r.headline}</b> {r.why_you ?? ""}
+                    </>
+                  ) : (
+                    <>
+                      <b>{projectOf(r)}.</b>{" "}
+                      {readable(r.caution) && sentence(r.caution)}
+                    </>
+                  )}
                   {missing.length > 0 &&
                     ` Not yet known: ${missing.join(", ")}.`}{" "}
                   <button
