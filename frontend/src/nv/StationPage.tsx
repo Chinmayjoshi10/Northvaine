@@ -23,7 +23,7 @@ import {
 } from "./lead";
 import { LessonNote, progressLine } from "./LessonNote";
 import { Shell } from "./Shell";
-import { TerritoryMap } from "./TerritoryMap";
+import { TerritoryMap, laneCountries, regionName } from "./TerritoryMap";
 import type { Place } from "./TerritoryMap";
 import "./leads.css";
 import "./station.css";
@@ -146,6 +146,21 @@ const VERB: Record<string, string> = {
   funding: "raised funding",
 };
 
+const OPP_ORDER: Record<string, number> = {
+  connected: 0,
+  approach_now: 1,
+  relationship: 2,
+  looking: 3,
+  watch: 4,
+};
+const OPP_KIND: Record<string, "act" | "developing" | "watching"> = {
+  connected: "act",
+  approach_now: "act",
+  relationship: "developing",
+  looking: "developing",
+  watch: "watching",
+};
+
 function Station(props: {
   client: string;
   day: string;
@@ -201,22 +216,39 @@ function Station(props: {
       } else if (p.kind !== "act" && stageOf(r) === "Developing")
         p.kind = "developing";
       if (mine.has(r.rank)) p.account = true;
-      // the label names the country's most urgent row: a decision first, else the best rank
+      // the label names the place's best row: by opportunity label when the rows have one,
+      // else a decision first, else the best rank
+      const sr = OPP_ORDER[r.opportunity?.label ?? ""] ?? 9;
+      const sl = OPP_ORDER[p.lead.opportunity?.label ?? ""] ?? 9;
       const better =
-        hot.has(r.rank) !== hot.has(p.lead.rank)
-          ? hot.has(r.rank)
-          : r.rank < p.lead.rank;
+        sr !== sl && Math.min(sr, sl) < 9
+          ? sr < sl
+          : hot.has(r.rank) !== hot.has(p.lead.rank)
+            ? hot.has(r.rank)
+            : r.rank < p.lead.rank;
       if (better) p.lead = r;
       by.set(id, p);
     }
     return [...by.values()].map(({ lead, ...p }) => {
       const fact = shortFact(lead);
+      const opp = lead.opportunity;
       return {
         ...p,
+        // the marker's colour is the best label among its leads, when the rows carry one
+        kind: opp ? OPP_KIND[opp.label] : p.kind,
+        rank: lead.rank,
+        tip: {
+          company: nice(lead.company),
+          word: opp?.word,
+          why: opp?.why_now || lead.why_now,
+        },
         note: fact ? `${nice(lead.company)} · ${fact}` : nice(lead.company),
       };
     });
   }, [rows, decisions, brief.accounts]);
+  const homeName = brief.home_country ? regionName(brief.home_country) : null;
+  const showLanes =
+    !!homeName && laneCountries(places, brief.markets, brief.home_country).length > 0;
   const unplaced = rows.filter(
     (r) => !r.country || /not stated/.test(r.country),
   ).length;
@@ -370,9 +402,26 @@ function Station(props: {
                 <i className="m a" />
                 your account
               </span>
+              {homeName && (
+                <span>
+                  <i className="m base" />
+                  your base
+                </span>
+              )}
+              {showLanes && (
+                <span>
+                  <i className="ln" />
+                  trade lane
+                </span>
+              )}
             </span>
           </div>
-          <TerritoryMap places={places} />
+          <TerritoryMap
+            places={places}
+            markets={brief.markets}
+            home={brief.home_country}
+            onOpen={(rank) => setOpen(rows.find((r) => r.rank === rank) ?? null)}
+          />
           <div className="mapnote">
             <span>Placed by registered office where the record gives one, else by country</span>
             {unplaced > 0 && (

@@ -112,6 +112,9 @@ export interface BriefView {
   log?: LogItem[];
   /** D103: today's few checked targets; empty on a thin day */
   edition?: Row[];
+  /** the client's markets (ISO-2) and where it is based; both optional */
+  markets?: string[];
+  home_country?: string | null;
 }
 
 /** One thing the run saw, newest first: when its source made it public, what, and about whom. */

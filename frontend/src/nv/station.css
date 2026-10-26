@@ -502,3 +502,69 @@
   fill: var(--ink);
   stroke: none;
 }
+.tmap .hit {
+  fill: transparent;
+}
+.tmap .mk.go {
+  cursor: pointer;
+  outline: none;
+}
+.tmap .mk.go:focus-visible .hit {
+  stroke: var(--signal);
+  stroke-width: 1.5;
+}
+.tmap .core.calm {
+  filter: none;
+}
+.tmap .lane {
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 1;
+  opacity: 0.35;
+  pointer-events: none;
+}
+.tmap .home rect {
+  fill: var(--ink);
+  stroke: var(--mapbg-solid, var(--bg));
+  stroke-width: 1.2;
+}
+.tmap .home text {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  fill: var(--soft);
+}
+.tmap .tip {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  max-width: min(240px, calc(100% - 24px));
+  padding: 8px 10px;
+  background: var(--mapbg-solid, var(--bg));
+  border: 1px solid var(--hair);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink);
+  pointer-events: none;
+}
+.tmap .tip .w {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+}
+.tmap .tip .y {
+  color: var(--soft);
+}
+.st .legend .m.base {
+  transform: rotate(45deg);
+  background: var(--ink);
+}
+.st .legend .ln {
+  width: 14px;
+  height: 0;
+  border-top: 1px solid var(--signal);
+  opacity: 0.5;
+}
