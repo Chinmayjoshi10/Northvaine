@@ -128,6 +128,8 @@ export function laneCountries(
 
 const PITCH = 5;
 
+const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
+
 const KIND_ORDER = { act: 0, developing: 1, watching: 2 } as const;
 
 /** One marker per country: totals added up, the best kind kept, and the best lead (most to decide,
@@ -432,7 +434,7 @@ export function TerritoryMap(props: {
               {id === labelledId && (
               <>
               <text x={left ? -14 : 14} y={3} textAnchor={left ? "end" : "start"}>
-                {p.note ?? p.country}
+                {clip(p.note ?? p.country, 34)}
               </text>
               <text
                 className="sub"

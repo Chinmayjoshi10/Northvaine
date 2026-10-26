@@ -262,7 +262,9 @@ function Station(props: {
   // the dek: the lead's own reason, then plain counts of the rest; zero counts are skipped
   const dek: ReactNode[] = [];
   const top = decisions[0];
-  if (top?.label_reason) {
+  if (top?.headline) {
+    if (top.why_you) dek.push(<span key="l">{top.why_you} </span>);
+  } else if (top?.label_reason) {
     dek.push(
       <span key="l">
         <b>{nice(top.company)}</b>: {top.label_reason.replace(/[.\s]+$/, "")}
@@ -294,6 +296,19 @@ function Station(props: {
     if (r.stream === "tender" || r.stream === "award") return headline(r, 44);
     const ev = (brief.log ?? []).find((l) => l.rank === r.rank && VERB[l.kind]);
     return ev ? `${nice(r.company)} ${VERB[ev.kind]}` : headline(r, 44);
+  };
+  // the masthead keeps who did what, the number and the date; a record's long title stays on the card
+  const brief_ = (h: string): string => {
+    const cut = h.indexOf(": ");
+    const tail = h.lastIndexOf(" (");
+    return cut > 0 && tail > cut ? `${h.slice(0, cut)}${h.slice(tail)}` : h;
+  };
+  // the card's dated line: the opportunity's reason when short, else just its date
+  const shortWhy = (r: Row): string => {
+    const why = r.opportunity?.why_now ?? "";
+    if (why.length <= 60) return why;
+    const day = why.match(/\d{4}-\d{2}-\d{2}/g)?.pop();
+    return day ? `${r.stream === "tender" ? "opened" : "on record"} ${day}` : "";
   };
   const { weekday, date } = longDate(brief.as_of);
   const f = brief.funnel;
@@ -357,7 +372,7 @@ function Station(props: {
                   className="hlink"
                   onClick={() => setOpen(lead)}
                 >
-                  {lead.headline ?? title(lead)}
+                  {lead.headline ? brief_(lead.headline) : title(lead)}
                 </button>
               ) : (
                 "A quiet edition"
@@ -469,9 +484,9 @@ function Station(props: {
                     {r.contract_nature ? `${r.contract_nature} ` : ""}
                     {typeOf(r).toLowerCase()}
                   </span>
-                  {(r.opportunity?.why_now || urgency(r)) && (
+                  {(shortWhy(r) || urgency(r)) && (
                     <span className={`wait${hot ? " hot" : ""}`}>
-                      {r.opportunity?.why_now || urgency(r)}
+                      {shortWhy(r) || urgency(r)}
                     </span>
                   )}
                 </div>
@@ -522,7 +537,7 @@ function Station(props: {
                         {LABEL[r.label] ?? r.label}
                       </span>
                     )}
-                    {r.label && r.label_reason && (
+                    {r.label && r.label_reason && !r.headline && (
                       <span className="lab-why">{r.label_reason}</span>
                     )}
                   </p>

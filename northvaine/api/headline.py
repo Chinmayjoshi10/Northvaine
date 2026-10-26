@@ -131,6 +131,7 @@ def headline(
 def why_you(entry: RankedEntry, terms: list[str] | None = None) -> str | None:
     """Why it matters to the client, in the client's own product words."""
     line = entry.matched_lines[0] if entry.matched_lines else ""
+    line = line.split(":")[0].split(" (")[0].strip()  # the line's name, not its list of products
     stated = [f.term for f in entry.company_fit if f.level == "stated"]
     fit = stated[0] if stated else ""
     own = _client_words(entry, terms or [])
