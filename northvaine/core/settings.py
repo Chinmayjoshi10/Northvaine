@@ -105,7 +105,7 @@ class Settings(BaseSettings):
         "sa", "sas", "sarl", "srl", "spa", "sl", "aps", "ab", "oy", "asa",
     )  # fmt: skip
     tavily_api_url: str = "https://api.tavily.com"
-    tavily_max_calls_per_run: int = Field(default=20, ge=1)
+    tavily_max_calls_per_run: int = Field(default=30, ge=1)
     sensor_max_results: int = Field(default=250, ge=1)
 
     # money caps (brain/budget.py checks all four before every call). DAILY_BUDGET_USD and
@@ -330,6 +330,9 @@ class Settings(BaseSettings):
     # Searches per market per run: 1 alternates project and partner by day, to stay inside the
     # free web-search month (D126).
     radar_intent_per_market: int = Field(default=1, ge=1, le=2)
+    # D136: a distributor's own website found abroad (no import records there) becomes a lead
+    radar_partner_discovery: bool = True
+    radar_partner_per_market: int = Field(default=1, ge=1, le=2)
     radar_review_top: int = Field(default=10, ge=0)  # D127: top opportunities the deep model checks
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).

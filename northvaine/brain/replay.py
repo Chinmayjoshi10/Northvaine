@@ -327,6 +327,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_off_target_filter": False,  # D125: no market or product filter before the gate
     "radar_rank_by_opportunity": False,  # D125: the evidence-ladder order
     "radar_intent_search": False,  # D126: no intent searches written from the answers
+    "radar_partner_discovery": False,  # D136: no partner discovery searches
     "radar_review_top": 0,  # D127: no senior review
     "radar_gate_by_proof": False,  # D132: the open-tenders-first gate order
     "radar_drop_report_pages": False,  # D133: report pages were kept

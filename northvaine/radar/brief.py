@@ -281,7 +281,14 @@ def off_target(
         reason = None
         if markets and c.country and c.country.upper() not in markets:
             reason = "outside your markets"
-        elif c.stream in _PROJECT_STREAMS and terms and not _carries_code(c, cpv):
+        elif (
+            c.stream in _PROJECT_STREAMS
+            and terms
+            and not _carries_code(c, cpv)
+            # D136: a company's own site was kept only for a sentence naming what the client
+            # sells (checked by code), though that sentence says "we", not the company's name
+            and not (c.events and all(e.event_type == "company_profile" for e in c.events))
+        ):
             named = requirement_of(c, terms, prefix=True)[0] == "stated"
             # News or a named winner may describe the kind of project the client said makes a
             # customer need it ("luxury villa", "hotel opening") without naming the product.

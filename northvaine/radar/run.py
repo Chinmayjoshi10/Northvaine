@@ -40,7 +40,7 @@ from northvaine.radar.edition import label_entries
 from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
-from northvaine.radar.intent import intent_queries
+from northvaine.radar.intent import intent_queries, partner_queries
 from northvaine.radar.investigate import investigate, rerank
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
@@ -54,6 +54,7 @@ from northvaine.radar.models import (
     SkepticFinding,
 )
 from northvaine.radar.opportunity import order_opportunities
+from northvaine.radar.partners import partner_candidates
 from northvaine.radar.register import (
     SeedProfile,
     mark_likeness,
@@ -205,6 +206,13 @@ async def run_radar(
         if written:
             queries = {**queries, "tavily": [*queries.get("tavily", []), *written]}
             notes.append(f"intent search: {len(written)} search(es) written from your answers")
+    partner_texts: set[str] = set()
+    if settings.radar_partner_discovery:  # D136: distributors' own sites in markets without records
+        wanted = partner_queries(spec, as_of.date(), settings.radar_partner_per_market)
+        if wanted:
+            queries = {**queries, "tavily": [*queries.get("tavily", []), *wanted]}
+            partner_texts = {q.text or "" for q in wanted}
+            notes.append(f"partner discovery: {len(wanted)} search(es)")
     rng = random.Random(f"{spec.id}|{as_of.isoformat()}")  # seeded: a run is reproducible
     query_propensity: dict[str, float] = {}
     if strategy is not None and strategy.labels >= settings.learning_min_labels:
@@ -258,6 +266,23 @@ async def run_radar(
         evidence_out.extend(results)
     candidates, rejected = build_candidates(results, settings=settings)
     rejected = list(rejected)
+    if partner_texts:  # D136: a company's own site found by a partner search is a candidate
+        country_of_ref = {
+            f"tavily:{i + 1}": q.countries[0]
+            for i, q in enumerate(queries.get("tavily", []))
+            if (q.text or "") in partner_texts and q.countries
+        }
+        pages = []
+        for doc, _ in results:
+            refs = [r for r in found.found_by.get(str(doc.id), []) if r in country_of_ref]
+            if refs:
+                pages.append((doc, country_of_ref[refs[0]]))
+        made, partner_evidence = partner_candidates(pages, spec, candidates, settings=settings)
+        candidates = [*candidates, *made]
+        if evidence_out is not None:
+            evidence_out.extend(partner_evidence)
+        if made:
+            notes.append(f"partner discovery: {len(made)} company site(s) became candidates")
 
     def name_key(name: str) -> str:
         return company_key(name, None, settings)

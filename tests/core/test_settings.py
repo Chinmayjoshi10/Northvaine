@@ -155,7 +155,7 @@ def test_sensor_settings_defaults() -> None:
     assert s.ted_extreme_lag_days == 365
     assert s.tavily_api_url == "https://api.tavily.com"
     assert s.tavily_api_key is None
-    assert s.tavily_max_calls_per_run == 20
+    assert s.tavily_max_calls_per_run == 30
     assert s.sensor_max_results == 250
 
 
