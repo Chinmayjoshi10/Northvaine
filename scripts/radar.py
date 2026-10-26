@@ -404,6 +404,16 @@ def _strip_search_contacts(ex: Any, tavily_prefix: str) -> Any:
     return ex.model_copy(update={"body_json": {**body, "results": results}})
 
 
+def _strip_page_contacts(ex: Any) -> Any:
+    """Strip contacts from a fetched web page (a target account's own site, D138, or its
+    robots.txt) with the pipeline's `strip_contacts`, as discover strips the page text before any
+    model sees it. API answers are JSON and are left to their own rules."""
+    ctype = next((v for k, v in ex.headers.items() if k.lower() == "content-type"), "")
+    if ex.body_text is None or not ctype.lower().startswith("text/"):
+        return ex
+    return ex.model_copy(update={"body_text": strip_contacts(ex.body_text)})
+
+
 # The OCDS paths sensors/fts.py reads; everything else (free text, contact points, amendments,
 # terms) is dropped before a recording is saved. `{}` keeps a whole value.
 _FTS_READ: dict[str, Any] = {
@@ -507,6 +517,7 @@ def redact_recording(recording: Recording, settings: Settings) -> Recording:
         for ex in recording.exchanges
     ]
     exchanges = [_strip_search_contacts(ex, tavily_prefix) for ex in exchanges]
+    exchanges = [_strip_page_contacts(ex) for ex in exchanges]
     exchanges = [_strip_fts_unread(ex) for ex in exchanges]
     register_prefix = settings.companies_house_api_url.rstrip("/")
     exchanges = [_strip_register_people(ex, register_prefix) for ex in exchanges]

@@ -254,7 +254,17 @@ async def run_radar(
     results: list[tuple[EvidenceDocument, LedgerResult]] = []
     kinds: dict[str, int] = {}
     stopped = False
+    # D138: a target account's own pages are read by code (target_candidates), never extracted
+    # by a model; a page another search also found is read as usual
+    target_pages = []
+    for doc in found.documents:
+        refs = found.found_by.get(str(doc.id), [])
+        if target_of and refs and all(r in target_of for r in refs):
+            target_pages.append((doc, target_of[refs[0]]))
+    skip = {id(doc) for doc, _ in target_pages}
     for index, doc in enumerate(found.documents):
+        if id(doc) in skip:
+            continue
         if over_budget():
             skipped = len(found.documents) - index
             notes.append(
@@ -302,7 +312,6 @@ async def run_radar(
         if made:
             notes.append(f"partner discovery: {len(made)} company site(s) became candidates")
     if target_of:  # D138: the client's own list, checked like any lead
-        target_pages = []
         for doc, _ in results:
             refs = [r for r in found.found_by.get(str(doc.id), []) if r in target_of]
             if refs:

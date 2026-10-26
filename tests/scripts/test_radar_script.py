@@ -324,6 +324,32 @@ def test_search_result_contacts_are_stripped_the_way_the_pipeline_strips_them(
     assert "example.org" not in kept["raw_content"] and kept["score"] == 1
 
 
+def test_a_fetched_web_page_has_its_contacts_stripped_and_json_is_untouched(
+    radar: ModuleType,
+) -> None:
+    from northvaine.radar.discover import strip_contacts
+    from northvaine.sensors.replay import RecordedExchange
+
+    raw = "<p>Call +44 20 7946 0000 or write to " + "sales" + "@" + "example.org today.</p>"
+
+    def ex(ctype: str, **body: Any) -> RecordedExchange:
+        return RecordedExchange.model_validate(
+            {
+                "method": "GET",
+                "url": "https://acme.example/",
+                "status": 200,
+                "headers": {"content-type": ctype},
+                "recorded_at": "2026-10-27T00:00:00+00:00",
+                **body,
+            }
+        )
+
+    page = radar._strip_page_contacts(ex("text/html; charset=utf-8", body_text=raw))
+    assert page.body_text == strip_contacts(raw) and "example.org" not in page.body_text
+    api = ex("application/json", body_json={"n": "+44 20 7946 0000"})
+    assert radar._strip_page_contacts(api) == api
+
+
 def test_fts_free_text_and_contacts_are_dropped_and_the_parse_is_unchanged(
     radar: ModuleType,
 ) -> None:
