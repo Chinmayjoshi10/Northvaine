@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
   geoArea,
   geoBounds,
@@ -32,9 +33,13 @@ export interface Place {
   lon?: number;
   /** the town (or postcode district) of that office */
   label?: string;
+  /** rank of the place's best lead: the marker opens it */
+  rank?: number;
+  /** the tooltip: the best lead's company, its label word, and why now */
+  tip?: { company: string; word?: string; why?: string };
 }
 
-const placeId = (p: Place) =>
+export const placeId = (p: Place) =>
   p.lat != null && p.lon != null ? `${p.country}@${p.lat},${p.lon}` : p.country;
 
 type Country = Feature<Geometry, { name: string }>;
@@ -73,13 +78,66 @@ function mainland(c: Country): Feature<Polygon> {
   return { type: "Feature", properties: {}, geometry: best };
 }
 
+/** Atlas spellings of a few countries Intl names differently. */
+const REGION_ALIAS: Record<string, string> = {
+  "United States": "United States of America",
+  "T\u00fcrkiye": "Turkey",
+  "Bosnia & Herzegovina": "Bosnia and Herz.",
+  "Myanmar (Burma)": "Myanmar",
+  "Congo - Kinshasa": "Dem. Rep. Congo",
+  "Dominican Republic": "Dominican Rep.",
+  "Equatorial Guinea": "Eq. Guinea",
+  "South Sudan": "S. Sudan",
+  "Central African Republic": "Central African Rep.",
+};
+
+/** The atlas name of an ISO-2 country code, or null when it cannot be named. */
+export function regionName(iso: string): string | null {
+  try {
+    const n = new Intl.DisplayNames(["en"], { type: "region" }).of(
+      iso.trim().toUpperCase(),
+    );
+    return n ? (REGION_ALIAS[n] ?? n) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Atlas names of the market countries that hold at least one lead to act on or develop. */
+export function laneCountries(
+  places: Place[],
+  markets: string[] | undefined,
+  home: string | null | undefined,
+): string[] {
+  if (!home || !markets?.length) return [];
+  const homeName = regionName(home);
+  const names = new Set(
+    markets.map(regionName).filter((n): n is string => !!n && n !== homeName),
+  );
+  const out = new Set<string>();
+  for (const p of places) {
+    const n = ALIAS[p.country] ?? p.country;
+    if (
+      names.has(n) &&
+      (p.kind === "act" || p.kind === "developing" || p.toDecide > 0)
+    )
+      out.add(n);
+  }
+  return [...out];
+}
+
 const PITCH = 5;
 
 export function TerritoryMap(props: {
   places: Place[];
-  onPick?: (country: string) => void;
+  /** open the place's best lead */
+  onOpen?: (rank: number) => void;
+  /** the client's markets (ISO-2) and base country: both optional */
+  markets?: string[];
+  home?: string | null;
 }) {
-  const { places, onPick } = props;
+  const { places, onOpen, markets, home } = props;
+  const [tip, setTip] = useState<string | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -175,6 +233,14 @@ export function TerritoryMap(props: {
     m.beginPath();
     path({ type: "FeatureCollection", features: countries });
     m.fill();
+    const marketFeatures = (markets ?? [])
+      .map((iso) => regionName(iso))
+      .map((n) => (n ? byName.get(n) : undefined))
+      .filter((c): c is Country => !!c);
+    m.fillStyle = "#00f"; // the client's markets
+    m.beginPath();
+    path({ type: "FeatureCollection", features: marketFeatures });
+    m.fill();
     m.fillStyle = "#0f0"; // countries with leads
     m.beginPath();
     path({ type: "FeatureCollection", features: found.map((f) => f.c) });
@@ -187,15 +253,16 @@ export function TerritoryMap(props: {
       for (let x = PITCH; x < w; x += PITCH) {
         const i = (y * w + x) * 4;
         if (px[i + 3] < 128) continue;
-        const hasLeads = px[i + 1] > px[i];
-        ctx.globalAlpha = hasLeads ? 0.75 : 1;
-        ctx.fillStyle = hasLeads ? lit : dot;
+        const hasLeads = px[i + 1] > px[i] && px[i + 1] >= px[i + 2];
+        const market = !hasLeads && px[i + 2] > px[i] && px[i + 2] > px[i + 1];
+        ctx.globalAlpha = hasLeads ? 0.75 : market ? 0.5 : 1;
+        ctx.fillStyle = hasLeads || market ? lit : dot;
         ctx.beginPath();
-        ctx.arc(x, y, hasLeads ? 1.15 : 1.05, 0, Math.PI * 2);
+        ctx.arc(x, y, hasLeads ? 1.15 : market ? 1.1 : 1.05, 0, Math.PI * 2);
         ctx.fill();
       }
     // the projection is rebuilt each render from these same inputs
-  }, [countries, size.w, size.h, theme, places]);
+  }, [countries, size.w, size.h, theme, places, markets]);
 
   const markers = proj
     ? found
@@ -210,37 +277,115 @@ export function TerritoryMap(props: {
         .sort((a, b) => a.p.toDecide - b.p.toDecide)
     : [];
 
+  // trade lanes: from the base to the best marker in each market that has something to act on
+  const homeName = home ? regionName(home) : null;
+  const homeC = homeName ? byName.get(homeName) : undefined;
+  let base: { x: number; y: number } | null = null;
+  if (proj && homeC) {
+    const xy = proj(geoCentroid(mainland(homeC)));
+    if (xy)
+      base = {
+        x: Math.min(Math.max(xy[0], 24), size.w - 24),
+        y: Math.min(Math.max(xy[1], 64), size.h - 48),
+      };
+  }
+  const laneSet = new Set(laneCountries(places, markets, home));
+  const lanes: { id: string; d: string }[] = [];
+  if (base) {
+    const seen = new Set<string>();
+    for (const m of [...markers].sort((a, b) => b.p.toDecide - a.p.toDecide)) {
+      const n = ALIAS[m.p.country] ?? m.p.country;
+      if (!laneSet.has(n) || seen.has(n)) continue;
+      if (m.p.kind === "watching" && m.p.toDecide === 0) continue;
+      seen.add(n);
+      const dx = m.x - base.x;
+      const dy = m.y - base.y;
+      const len = Math.hypot(dx, dy);
+      if (len < 30) continue;
+      const cx = (base.x + m.x) / 2 + (dy / len) * len * 0.18;
+      const cy = (base.y + m.y) / 2 - (dx / len) * len * 0.18;
+      lanes.push({
+        id: n,
+        d: `M${base.x},${base.y} Q${cx},${cy} ${m.x},${m.y}`,
+      });
+    }
+  }
+  const tipMark = markers.find((m) => placeId(m.p) === tip);
+  const tipUp = tipMark ? tipMark.y + 24 > size.h - 90 : false;
+
   return (
     <div className="tmap" ref={box}>
       <canvas ref={canvas} className="dots" aria-hidden="true" />
-      <svg width={size.w} height={size.h} role="img" aria-label="Leads by country">
+      <svg width={size.w} height={size.h} role="group" aria-label="Leads by country">
+        {lanes.map((l) => (
+          <path key={l.id} className="lane" d={l.d} />
+        ))}
+        {base && homeName && (
+          <g className="home" transform={`translate(${base.x},${base.y})`}>
+            <rect x={-4} y={-4} width={8} height={8} transform="rotate(45)" />
+            <text
+              x={base.x > size.w * 0.72 ? -12 : 12}
+              y={3}
+              textAnchor={base.x > size.w * 0.72 ? "end" : "start"}
+            >
+              {homeName === "United States of America" ? "United States" : homeName}{" "}
+              · your base
+            </text>
+          </g>
+        )}
         {markers.map(({ p, x, y }, i) => {
           const hot = p.toDecide > 0;
           const kind = hot ? "act" : (p.kind ?? "watching");
           const left = x > size.w * 0.72;
+          const k = 1 + Math.min(3, p.total - 1) * 0.12;
+          const id = placeId(p);
+          const open =
+            onOpen && p.rank != null ? () => onOpen(p.rank as number) : undefined;
           return (
             <g
-              key={placeId(p)}
-              className={`mk${hot ? " hot" : ""}`}
+              key={id}
+              className={`mk${hot ? " hot" : ""}${open ? " go" : ""}`}
               style={{ animationDelay: `${300 + i * 90}ms` }}
               transform={`translate(${x},${y})`}
-              onClick={onPick ? () => onPick(p.country) : undefined}
+              onClick={open}
+              onMouseEnter={() => setTip(id)}
+              onMouseLeave={() => setTip((t) => (t === id ? null : t))}
+              onFocus={() => setTip(id)}
+              onBlur={() => setTip((t) => (t === id ? null : t))}
+              {...(open
+                ? {
+                    tabIndex: 0,
+                    role: "button",
+                    "aria-label": `${p.note ?? p.country}, open the lead`,
+                    onKeyDown: (e: ReactKeyboardEvent) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        open();
+                      }
+                    },
+                  }
+                : {})}
             >
-              {hot ? (
-                <>
-                  <circle className="wash" r={22} />
-                  <circle className="ring" r={12} />
-                  <circle className="core" r={4.2} />
-                </>
-              ) : (
-                <rect
-                  className={kind === "developing" ? "sq dev" : "sq"}
-                  x={-3.5}
-                  y={-3.5}
-                  width={7}
-                  height={7}
-                />
-              )}
+              <circle className="hit" r={22} />
+              <g transform={`scale(${k})`}>
+                {hot ? (
+                  <>
+                    <circle className="wash" r={22} />
+                    <circle className="ring" r={12} />
+                    <circle className="core" r={4.2} />
+                  </>
+                ) : kind === "act" ? (
+                  <circle className="core calm" r={4.2} />
+                ) : (
+                  <rect
+                    className={kind === "developing" ? "sq dev" : "sq"}
+                    x={-3.5}
+                    y={-3.5}
+                    width={7}
+                    height={7}
+                  />
+                )}
+              </g>
               {p.account && <circle className="acc" r={hot ? 7.5 : 7} />}
               <text x={left ? -14 : 14} y={3} textAnchor={left ? "end" : "start"}>
                 {p.note ?? p.country}
@@ -257,6 +402,21 @@ export function TerritoryMap(props: {
           );
         })}
       </svg>
+      {tipMark?.p.tip && (
+        <div
+          className="tip"
+          role="tooltip"
+          style={{
+            left: Math.min(Math.max(tipMark.x, 120), Math.max(120, size.w - 120)),
+            top: tipUp ? tipMark.y - 20 : tipMark.y + 24,
+            transform: tipUp ? "translate(-50%,-100%)" : "translateX(-50%)",
+          }}
+        >
+          <b>{tipMark.p.tip.company}</b>
+          {tipMark.p.tip.word && <span className="w">{tipMark.p.tip.word}</span>}
+          {tipMark.p.tip.why && <span className="y">{tipMark.p.tip.why}</span>}
+        </div>
+      )}
       {failed && <p className="tfail">The map could not load. The leads are all listed.</p>}
     </div>
   );
