@@ -32,7 +32,7 @@ from northvaine.radar.onboarding import (
     OnboardingAnswers,
     Proposal,
     build_client_spec,
-    check_codes,
+    check_codes_suggest,
     clean_text,
     client_id_for,
     intermediary_roles,
@@ -204,9 +204,19 @@ async def _propose(base: Path, sid: str) -> None:
             known = await hs6_descriptions(proposal.hs_codes, client=client)
         unknown = [c for c in proposal.hs_codes if c not in known]
         in_tariff = {c: known[c] for c in proposal.hs_codes if c in known}
-        kept, mismatch = await check_codes(
+        kept, mismatch, better = await check_codes_suggest(
             proposal.offer, proposal.offer_terms, in_tariff, run=RunContext()
         )
+        if better:  # D141: a code suggested in place of a dropped one, checked like the rest
+            async with new_client(30.0) as client:
+                found = await hs6_descriptions(better, client=client)
+            again, _, _ = await check_codes_suggest(
+                proposal.offer, proposal.offer_terms, found, run=RunContext()
+            )
+            for code in again:
+                kept.append(code)
+                in_tariff[code] = found[code]
+                mismatch.append(f"customs code {code} added in its place: {found[code]}")
         proposal = proposal.model_copy(
             update={
                 "hs_codes": kept,

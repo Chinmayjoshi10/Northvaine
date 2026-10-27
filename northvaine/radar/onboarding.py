@@ -42,6 +42,7 @@ __all__ = [
     "Proposal",
     "build_client_spec",
     "check_codes",
+    "check_codes_suggest",
     "clean_text",
     "client_id_for",
     "intermediary_roles",
@@ -98,6 +99,7 @@ class CodeCheck(NorthvaineModel):
     code: str = Field(max_length=12)
     matches: bool
     reason: str = Field(default="", max_length=300)
+    better: str = Field(default="", max_length=12)  # v2: the code that fits instead, if known
 
 
 class CodeChecks(NorthvaineModel):
@@ -239,16 +241,33 @@ async def check_codes(
     settings: Settings | None = None,
     session: Any = None,
 ) -> tuple[list[str], list[str]]:
+    """`check_codes_suggest` without the suggestions."""
+    kept, notes, _ = await check_codes_suggest(
+        offer, terms, described, run=run, settings=settings, session=session
+    )
+    return kept, notes
+
+
+async def check_codes_suggest(
+    offer: str,
+    terms: list[str],
+    described: dict[str, str],
+    *,
+    run: RunContext,
+    settings: Settings | None = None,
+    session: Any = None,
+) -> tuple[list[str], list[str], list[str]]:
     """Keep only the customs codes whose official description describes the client's own
     products (same kind and same material). Returns (kept codes in order, notes on dropped
-    ones). If the model call fails, every code is kept: onboarding is never blocked."""
+    ones, six-digit codes suggested instead of dropped ones, not yet checked). If the model call
+    fails, every code is kept: onboarding is never blocked."""
     codes = list(described)
     if not codes:
-        return [], []
+        return [], [], []
     try:
         result = await complete_json(
             tier=ModelTier.MID,
-            prompt=load_prompt("onboarding_codes", version=1),
+            prompt=load_prompt("onboarding_codes", version=2),
             variables={
                 "offer": Untrusted(offer),
                 "product_terms": Untrusted(", ".join(terms) or "(none)"),
@@ -261,10 +280,11 @@ async def check_codes(
             max_tokens=900,
         )
     except Exception:
-        return codes, []
+        return codes, [], []
     verdict = {c.code: c for c in result.value.checks}
     kept: list[str] = []
     notes: list[str] = []
+    better: list[str] = []
     for code in codes:
         check = verdict.get(code)
         if check is None or check.matches:  # no verdict: keep (the person can still edit)
@@ -272,7 +292,10 @@ async def check_codes(
         else:
             why = check.reason.strip() or "its description names a different product"
             notes.append(f"customs code {code} does not match your products: {why}")
-    return kept, notes
+            alt = check.better.strip()
+            if re.fullmatch(r"\d{6}", alt) and alt not in codes and alt not in better:
+                better.append(alt)
+    return kept, notes, better
 
 
 def client_id_for(website: str) -> str:

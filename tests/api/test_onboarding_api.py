@@ -45,9 +45,9 @@ async def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncIterat
     monkeypatch.setattr("northvaine.sensors.hmrc.hs6_descriptions", known)
 
     async def all_match(_offer: str, _terms: list[str], described: dict[str, str], **_: Any):
-        return list(described), []
+        return list(described), [], []
 
-    monkeypatch.setattr(onboarding, "check_codes", all_match)  # never a real model call (D141)
+    monkeypatch.setattr(onboarding, "check_codes_suggest", all_match)  # no real model call (D141)
     app.dependency_overrides[onboarding.reports] = lambda: tmp_path
     app.dependency_overrides[onboarding.accounts.reports] = lambda: tmp_path
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:

@@ -73,7 +73,7 @@ async def test_no_codes_means_no_call(monkeypatch) -> None:
 
 
 def test_prompt_loads_and_proposal_has_descriptions() -> None:
-    prompt = load_prompt("onboarding_codes", version=1)
+    prompt = load_prompt("onboarding_codes", version=2)
     assert prompt.name == "onboarding_codes"
     p = Proposal(offer="x")
     assert p.hs_descriptions == {}
@@ -84,7 +84,24 @@ def test_the_codes_prompt_renders_with_its_variables() -> None:
     from northvaine.brain.fencing import Untrusted
     from northvaine.brain.prompts import load_prompt
 
-    text = load_prompt("onboarding_codes", version=1).render(
+    text = load_prompt("onboarding_codes", version=2).render(
         offer=Untrusted("An offer"), product_terms=Untrusted("a, b"), codes="123456: a product"
     )
     assert "123456: a product" in text and '{"checks"' in text
+
+
+async def test_a_dropped_code_can_bring_a_better_one_to_check(monkeypatch) -> None:
+    monkeypatch.setattr(
+        onboarding,
+        "complete_json",
+        _fake(
+            [
+                CodeCheck(code="111111", matches=True, reason="fits"),
+                CodeCheck(code="222222", matches=False, reason="other material", better="333333"),
+            ]
+        ),
+    )
+    kept, notes, better = await onboarding.check_codes_suggest(
+        "An offer", ["a"], {"111111": "x", "222222": "y"}, run=RunContext()
+    )
+    assert kept == ["111111"] and len(notes) == 1 and better == ["333333"]
