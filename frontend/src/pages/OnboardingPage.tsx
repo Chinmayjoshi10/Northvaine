@@ -19,12 +19,27 @@ function useSession(id: string | null, every: number) {
   useEffect(() => {
     if (!id) return;
     let stop = false;
+    let lost = 0;
     const tick = async () => {
       try {
         const s = await api.onboarding(id);
+        lost = 0;
         if (!stop) setSession(s);
-      } catch {
-        // keep polling; a brief network error should not end onboarding
+      } catch (e) {
+        // keep polling; a brief network error should not end onboarding. But a session the server
+        // no longer knows (it restarted: free hosting) will never finish, so say so.
+        lost = e instanceof Error && e.message === "Not found." ? lost + 1 : 0;
+        if (lost >= 5 && !stop)
+          setSession((s) =>
+            s
+              ? {
+                  ...s,
+                  stage: "failed",
+                  error:
+                    "The server restarted while building your radar, so this run was lost. Please start again.",
+                }
+              : s,
+          );
       }
     };
     void tick();
