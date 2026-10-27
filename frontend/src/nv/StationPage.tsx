@@ -176,6 +176,14 @@ function Station(props: {
   const decisions = useMemo(() => {
     return decisionsOf(brief, rows);
   }, [rows, brief]);
+  // a day with no edition still shows the few watch-list companies worth a look
+  const watchBest = useMemo(
+    () =>
+      (brief.watch_best ?? [])
+        .map((n) => rows.find((r) => r.rank === n))
+        .filter((r): r is Row => r !== undefined),
+    [rows, brief],
+  );
   const { decided, decide, followed, follow, learning, lesson, dismiss } =
     useDecisions(client, brief);
   const [open, setOpen] = useState<Row | null>(null);
@@ -463,6 +471,45 @@ function Station(props: {
               {rows.length > 0 &&
                 `${rows.length} ${rows.length === 1 ? "company is" : "companies are"} on watch; you will see one here when it changes.`}
             </p>
+          )}
+          {decisions.length === 0 && watchBest.length > 0 && (
+            <>
+              <div className="hd">
+                <span className="caps">Worth watching</span>
+                <span className="mono">{watchBest.length}</span>
+              </div>
+              {watchBest.map((r) => (
+                <article className="d" key={r.rank}>
+                  <div className="meta">
+                    <span className="dateline">
+                      <b>{nice(where(r))}</b> · {typeOf(r).toLowerCase()}
+                    </span>
+                  </div>
+                  <h2 className="q">
+                    <button type="button" onClick={() => setOpen(r)}>
+                      {nice(r.company)}
+                    </button>
+                  </h2>
+                  <p className="edlabel">
+                    {r.opportunity && (
+                      <span className="mono lab-chip">
+                        {r.opportunity.word} · {r.opportunity.words}
+                      </span>
+                    )}
+                    {r.from_list && (
+                      <span className="mono lab-chip">From your list</span>
+                    )}
+                    {r.possible_distributor && (
+                      <span className="mono lab-chip">Possible distributor</span>
+                    )}
+                  </p>
+                  <p className="why">
+                    <b>{r.headline || r.opportunity?.why_now}</b>{" "}
+                    {r.why_you ?? ""}
+                  </p>
+                </article>
+              ))}
+            </>
           )}
           {decisions.map((r, i) => {
             const d = daysLeft(r);

@@ -56,6 +56,8 @@ export interface Row {
   why_you?: string | null;
   /** D138: one of the client's target accounts */
   from_list?: boolean;
+  /** its own site says it makes what the client makes */
+  possible_competitor?: boolean;
 }
 
 export interface Opportunity {
@@ -118,6 +120,8 @@ export interface BriefView {
   log?: LogItem[];
   /** D103: today's few checked targets; empty on a thin day */
   edition?: Row[];
+  /** ranks of up to three watch-list companies to show on a day with no edition */
+  watch_best?: number[];
   /** the client's markets (ISO-2) and where it is based; both optional */
   markets?: string[];
   home_country?: string | null;

@@ -241,6 +241,7 @@ function Leads(props: {
               <span>
                 {r.country} · {roleOf(r)}
                 {r.from_list ? " · from your list" : ""}
+                {r.possible_competitor ? " · possible competitor" : ""}
               </span>
             </span>
             <span className={`type ${typeOf(r).toLowerCase()}`}>

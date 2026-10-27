@@ -120,6 +120,8 @@ class Row(BaseModel):
     headline: str | None = None
     why_you: str | None = None
     from_list: bool = False  # D138: one of the client's target accounts
+    # its own site says it makes what the client makes (D120): a likely competitor, not a buyer
+    possible_competitor: bool = False
 
 
 class Funnel(BaseModel):
@@ -159,6 +161,8 @@ class BriefView(BaseModel):
     edition: list[Row] = []
     markets: list[str] = []  # the client's markets (ISO-2)
     home_country: str | None = None  # where the client is based
+    # ranks of up to three watch-list companies worth showing on a day with no edition
+    watch_best: list[int] = []
 
 
 class Claim(BaseModel):
@@ -315,6 +319,7 @@ def _row(entry: RankedEntry, today: date, supply: str = "", terms: list[str] | N
         headline=headline(entry, terms),
         why_you=why_you(entry, terms),
         from_list=entry.candidate.from_list,
+        possible_competitor=entry.site_role == "makes",
     )
 
 
@@ -328,6 +333,21 @@ def _now_on_record(entry: RankedEntry, earlier: list[RankedEntry]) -> list[str]:
         for link in chain(entry)
         if link.state == "stated" and before.get(link.slot) in ("unknown", "inferred")
     ]
+
+
+def watch_best(entries: list[RankedEntry], limit: int = 3) -> list[int]:
+    """Ranks of the watch-list entries to show when nothing is to act on: not makers of the
+    client's own product, gate passed; those with a dated reason first, then by rank."""
+    pool = [
+        e
+        for e in entries
+        if e.opportunity is not None
+        and e.opportunity.label == "watch"
+        and e.site_role != "makes"
+        and e.gate.passed
+    ]
+    pool.sort(key=lambda e: (not (e.opportunity and e.opportunity.why_now), e.rank))
+    return [e.rank for e in pool[:limit]]
 
 
 def brief_view(
@@ -375,6 +395,7 @@ def brief_view(
     tenders = [e for e in ordered if e.candidate.stream == RadarStream.TENDER][:cap]
     shown = {id(e) for e in accounts + tenders}
     weaker = [e for e in ordered if id(e) not in shown]
+    edition = [row(e) for e in daily_edition(ordered, settings)]
     return BriefView(
         client_id=run.client_id,
         offer=brief._inline(run.offer),
@@ -390,7 +411,8 @@ def brief_view(
         notes=[brief._inline(n) for n in run.notes],
         funnel=_funnel(run),
         log=_log(run),
-        edition=[row(e) for e in daily_edition(ordered, settings)],
+        edition=edition,
+        watch_best=[] if edition else watch_best(ordered),
     )
 
 
