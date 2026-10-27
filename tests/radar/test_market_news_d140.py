@@ -67,3 +67,14 @@ def test_a_first_radar_searches_for_distributors_in_markets_with_import_records_
     )
     assert [q.countries for q in partner_queries(spec, TODAY)] == [["US"]]
     assert [q.countries for q in partner_queries(spec, TODAY, all_markets=True)] == [["GB"], ["US"]]
+
+
+def test_a_first_radar_stays_small_on_the_free_server() -> None:
+    from northvaine.api.onboarding import QUICK_MAX_MARKETS
+
+    assert QUICK_MAX_MARKETS == 6
+    assert QUICK_PROFILE["radar_gate_concurrency"] <= 4
+    assert QUICK_PROFILE["radar_fit_concurrency"] <= 3
+    assert QUICK_PROFILE["fetch_max_bytes"] <= 2_000_000
+    Settings(_env_file=None).model_copy(update=QUICK_PROFILE)  # every key is a real setting
+    assert set(QUICK_PROFILE) <= set(Settings.model_fields)

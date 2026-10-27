@@ -12,6 +12,7 @@ text are kept in separate files and never returned. One radar run at a time.
 from __future__ import annotations
 
 import asyncio
+import gc
 import json
 import secrets
 from datetime import UTC, datetime
@@ -61,7 +62,14 @@ QUICK_PROFILE: dict[str, int | bool] = {
     # client; and distributors are searched in every market, import records or not
     "radar_intent_days": 180,
     "radar_partner_all_markets": True,
+    # D142: the free server has 512 MB; fewer parallel steps and smaller pages keep a first radar
+    # well inside it
+    "radar_gate_concurrency": 4,
+    "radar_fit_concurrency": 3,
+    "fetch_max_bytes": 2_000_000,
 }
+# D142: a first radar reads the client's first markets only (the nightly run reads them all)
+QUICK_MAX_MARKETS = 6
 _TASKS: set[asyncio.Task[None]] = set()
 
 Stage = Literal["reading", "ready", "proposing", "proposed", "running", "done", "failed"]
@@ -254,8 +262,11 @@ async def _run(base: Path, sid: str, client_id: str) -> None:
         async with _RUN_SLOT:
             _update(base, sid, stage="running")
             spec = load_client_spec(client_id, clients)
+            spec = spec.model_copy(update={"markets": spec.markets[:QUICK_MAX_MARKETS]})
             run = await run_live(spec, as_of=datetime.now(UTC), settings=quick, progress=progress)
             write_reports(run, base)
+            del run
+            gc.collect()  # D142: give the memory back before the next run
         _update(base, sid, stage="done", client_id=client_id)
     except Exception as exc:
         _update(base, sid, stage="failed", error=f"The radar run stopped ({type(exc).__name__}).")
