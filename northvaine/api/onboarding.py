@@ -46,12 +46,20 @@ MAX_CATALOGUE_BYTES = 25 * 1024 * 1024
 _RUN_SLOT = asyncio.Semaphore(1)
 # D130: the run started from onboarding is a quick one, so a visitor is not left waiting half an
 # hour. Applied to this run's settings only; the nightly run keeps the full profile.
-QUICK_PROFILE: dict[str, int] = {
+QUICK_PROFILE: dict[str, int | bool] = {
     "radar_max_gate_candidates": 40,
     "radar_skeptic_top": 15,
     "radar_review_top": 5,
-    "radar_fit_max_accounts": 4,
+    "radar_fit_max_accounts": 10,  # D140: read more sites, so makers of the product show as such
     "radar_investigate_top": 1,
+    # D140: a first radar reads the client's markets widely: project and partner searches in every
+    # market, plus news of the client's own triggers
+    "radar_intent_per_market": 2,
+    "radar_market_news_per_market": 2,
+    # D140: a first radar has no history, so a signal up to 6 months old is still news to the
+    # client; and distributors are searched in every market, import records or not
+    "radar_intent_days": 180,
+    "radar_partner_all_markets": True,
 }
 _TASKS: set[asyncio.Task[None]] = set()
 

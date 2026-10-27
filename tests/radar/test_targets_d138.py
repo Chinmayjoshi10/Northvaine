@@ -53,6 +53,16 @@ def test_legacy_recordings_read_no_account_sites() -> None:
     assert LEGACY_SETTINGS["radar_target_accounts"] is False
 
 
+@pytest.fixture
+def _env(monkeypatch: pytest.MonkeyPatch, clean_settings: None) -> None:
+    monkeypatch.setenv("MODEL_FAST", "nvidia/Nemotron-3_5-Lightning")
+    monkeypatch.setenv("MODEL_MID", "nvidia/nemotron-3-super-120b-a12b")
+    monkeypatch.setenv("DAILY_BUDGET_USD", "10")
+    monkeypatch.setenv("TOTAL_BUDGET_USD", "29")
+    llm.get_settings.cache_clear()
+
+
+@pytest.mark.usefixtures("_env")
 async def test_the_run_reads_each_account_site_and_gates_it(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

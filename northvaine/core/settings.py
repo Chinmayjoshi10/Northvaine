@@ -330,9 +330,13 @@ class Settings(BaseSettings):
     # Searches per market per run: 1 alternates project and partner by day, to stay inside the
     # free web-search month (D126).
     radar_intent_per_market: int = Field(default=1, ge=1, le=2)
+    # D140: market-news searches per market (the client's triggers, no product word); the first
+    # radar from onboarding uses them, the nightly run does not by default
+    radar_market_news_per_market: int = Field(default=0, ge=0, le=3)
     # D136: a distributor's own website found abroad (no import records there) becomes a lead
     radar_partner_discovery: bool = True
     radar_partner_per_market: int = Field(default=1, ge=1, le=2)
+    radar_partner_all_markets: bool = False  # D140: a first radar searches every market
     # D138: read each target account's own site (direct fetch, no search credits)
     radar_target_accounts: bool = True
     radar_target_pages: int = Field(default=6, ge=1, le=10)

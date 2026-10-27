@@ -20,7 +20,7 @@ from typing import Any
 from northvaine.core.standards import iso2_to_name
 from northvaine.sensors.base import SensorQuery
 
-__all__ = ["intent_queries", "partner_queries", "trade_covered"]
+__all__ = ["intent_queries", "market_news_queries", "partner_queries", "trade_covered"]
 
 _PROJECT_WORDS = "contractor appointed"
 # One change per market, rotating: a search with all of them at once finds none well.
@@ -91,16 +91,19 @@ def trade_covered(spec: Any) -> set[str]:
     return covered
 
 
-def partner_queries(spec: Any, as_of: date, per_market: int = 1) -> list[SensorQuery]:
+def partner_queries(
+    spec: Any, as_of: date, per_market: int = 1, all_markets: bool = False
+) -> list[SensorQuery]:
     """Partner discovery (D136): for each market without import records, search for the
     companies' own websites (`<channel role> <product> showrooms <country>`). No date filter: a
-    distributor's site is not news. Nothing for a client that sells direct."""
+    distributor's site is not news. Nothing for a client that sells direct. `all_markets`
+    (a first radar, D140) searches markets with import records too."""
     del as_of  # no date window; kept so the call reads like `intent_queries`
     product = _product(spec)
     partners = _channel_roles(spec)
     if not product or not partners or spec.channel == "direct":
         return []
-    covered = trade_covered(spec)
+    covered = set() if all_markets else trade_covered(spec)
     out: list[SensorQuery] = []
     for i, country in enumerate(spec.markets):
         if country.upper() in covered:
@@ -113,6 +116,39 @@ def partner_queries(spec: Any, as_of: date, per_market: int = 1) -> list[SensorQ
                     text=f"{role} {product} showrooms {place}",
                     countries=[country],
                     languages=["en"],
+                    max_results=5,
+                )
+            )
+    return out
+
+
+def market_news_queries(
+    spec: Any, as_of: date, days: int, per_market: int = 1, limit: int = 6
+) -> list[SensorQuery]:
+    """Market news (D140): the client's own need triggers in each market, newest `days` only,
+    without the product word (`<trigger> <country>`, e.g. "<kind of project> <country>"). Project
+    news rarely names a supplier's product; it names the project and the companies behind it.
+    The results still pass the off-target filter, which keeps news only when its own quotes name
+    one of the client's triggers or products (D128), then the gate and the skeptic. Triggers
+    rotate across markets so the set covers more of them. Every market gets its first search
+    before any gets a second, and the whole set stops at `limit` (search credits)."""
+    triggers = [t for t in getattr(spec, "need_triggers", []) if t.strip()]
+    if not triggers or not spec.markets or per_market < 1:
+        return []
+    out: list[SensorQuery] = []
+    for j in range(per_market):
+        for i, country in enumerate(spec.markets):
+            if len(out) >= limit:
+                return out
+            place = (iso2_to_name(country) or country).title()
+            trigger = triggers[(i * per_market + j) % len(triggers)]
+            out.append(
+                SensorQuery(
+                    text=f"{trigger} {place}",
+                    countries=[country],
+                    languages=["en"],
+                    published_from=as_of - timedelta(days=days),
+                    published_to=as_of,
                     max_results=5,
                 )
             )
