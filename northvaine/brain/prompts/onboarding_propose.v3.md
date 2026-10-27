@@ -29,9 +29,9 @@ Answer in this order:
    what the business sells. Copy each one exactly as it is written in the text (any language), so
    it can be found there. Product names and product types, not adjectives or slogans.
    Each term must name the product to a stranger on its own, outside this website. Prefer the
-   phrase that carries the product's kind (for example "refrigerated cabinets", "blast chillers",
-   "commercial refrigeration") over a bare word that also names unrelated things ("cabinets",
-   "counters", "bakery", "panels", "systems"). Leave out menu and section names and brand or
+   phrase that carries the product's kind or purpose (a word such as the material, the use or
+   the trade, together with the product) over a bare word that also names unrelated things
+   ("cabinets", "counters", "panels", "systems", "units"). Leave out menu and section names and brand or
    model names. A bare word is allowed only when it already means this kind of product alone.
 3. `related_terms`: up to 10 short phrases for neighbouring products the business does not make
    but a buyer of its products often also buys. These need not appear in the text.
