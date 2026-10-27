@@ -288,6 +288,7 @@ export interface Proposal {
   priority_lines?: string[];
   not_buyers: string[];
   hs_codes: string[];
+  hs_descriptions?: Record<string, string>;
   cpv_codes: string[];
   search_phrases: string[];
   dropped: string[];

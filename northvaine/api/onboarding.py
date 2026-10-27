@@ -32,6 +32,7 @@ from northvaine.radar.onboarding import (
     OnboardingAnswers,
     Proposal,
     build_client_spec,
+    check_codes,
     clean_text,
     client_id_for,
     intermediary_roles,
@@ -194,12 +195,18 @@ async def _propose(base: Path, sid: str) -> None:
         async with new_client(30.0) as client:
             known = await hs6_descriptions(proposal.hs_codes, client=client)
         unknown = [c for c in proposal.hs_codes if c not in known]
+        in_tariff = {c: known[c] for c in proposal.hs_codes if c in known}
+        kept, mismatch = await check_codes(
+            proposal.offer, proposal.offer_terms, in_tariff, run=RunContext()
+        )
         proposal = proposal.model_copy(
             update={
-                "hs_codes": [c for c in proposal.hs_codes if c in known],
+                "hs_codes": kept,
+                "hs_descriptions": {c: in_tariff[c] for c in kept},
                 "dropped": [
                     *proposal.dropped,
                     *(f"customs code {c} is not in the UK tariff" for c in unknown),
+                    *mismatch,
                 ],
             }
         )

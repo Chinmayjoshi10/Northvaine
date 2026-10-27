@@ -244,6 +244,11 @@ function Answers({
           onChange={setHs}
           rows={1}
         />
+        {Object.entries(p.hs_descriptions ?? {}).map(([code, text]) => (
+          <p className="onb-hint" key={code}>
+            {code} - {text.length > 90 ? `${text.slice(0, 90)}…` : text}
+          </p>
+        ))}
         <Field
           id="o-cpv"
           label="Tender codes (CPV, 8 digits)"
