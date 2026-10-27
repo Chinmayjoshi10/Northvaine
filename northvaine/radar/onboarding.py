@@ -203,7 +203,7 @@ async def propose(
     settings = settings or get_settings()
     result = await complete_json(
         tier=ModelTier.MID,
-        prompt=load_prompt("onboarding_propose", version=2),
+        prompt=load_prompt("onboarding_propose", version=3),
         variables={
             "website_text": Untrusted(website_text),
             "catalogue_text": Untrusted(catalogue_text or "(none)"),

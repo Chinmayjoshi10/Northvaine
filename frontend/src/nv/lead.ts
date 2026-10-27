@@ -251,7 +251,11 @@ export function decisionsOf(brief: BriefView, rows: Row[]): Row[] {
   const picked = (brief.edition ?? [])
     .map((e) => rows.find((r) => r.rank === e.rank))
     .filter((r): r is Row => r !== undefined);
-  return picked.length > 0 ? picked : toDecide(rows, brief.as_of);
+  if (picked.length > 0) return picked;
+  // runs with opportunities (D125) choose their edition: an empty one means nothing to act on,
+  // and the watch list never fills it
+  if (rows.some((r) => r.opportunity)) return [];
+  return toDecide(rows, brief.as_of);
 }
 
 /** The client's name; else the offer cut at its first comma or 48 characters. Never the whole sentence. */

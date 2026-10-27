@@ -200,3 +200,10 @@ Industry-neutral; official APIs and public pages only; company-level facts only.
   sensor queries with `meta.queries`, but since D126 the recording stores the expanded set (intent,
   partner and target-account searches), so a recent recording is refused as "queries differ".
   Compare against the expanded set (or record both) so a live run can be replayed after a code fix.
+
+- **Clean-up after the hackathon (scan of 28 Oct).** Built for the full architecture but unused in
+  the shipped product: about 35 table models for features not built (Gateway enquiries, messages,
+  quote requests, theses, cases, beliefs, playbooks), the Postgres job queue (`core/queue.py`), the
+  empty `gateway/` package, and a growing set of legacy settings pinned for old recordings. Also:
+  split `radar/run.py`; add the frontend to the format check; scan the frontend for dead code.
+  Remove on a branch after the submission freeze, with the gate.

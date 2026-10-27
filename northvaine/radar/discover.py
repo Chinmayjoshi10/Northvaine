@@ -161,7 +161,12 @@ def strip_contacts(text: str) -> str:
 # describe a market, never a company about to buy (D133).
 _REPORT_TITLE = re.compile(
     r"\b(market (size|share|report|analysis|research|outlook|forecast|trends?)|industry report|"
-    r"top \d+ companies|top ten companies|cagr)\b",
+    r"top \d+|top (five|ten|twenty)|cagr|list of|"
+    # rankings and guides: "the leading ... manufacturers", "best ... suppliers in ..."
+    r"(leading|best|biggest|largest|top-rated) [\w ,&'-]{0,50}?"
+    r"(manufacturers|makers|companies|suppliers|brands|distributors|exporters|producers))\b"
+    # a question is an article, never a company: "Who are the ...", "How to choose ..."
+    r"|^\W*(who|what|which|how|why|where) (are|is|to|do|does|can|should)\b",
     re.IGNORECASE,
 )
 

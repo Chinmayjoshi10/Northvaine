@@ -31,7 +31,13 @@ def _doc(title: str, url: str, text: str) -> EvidenceDocument:
 def test_market_report_and_top_ten_pages_are_skipped_but_company_pages_are_not() -> None:
     assert _is_report_page("Construction Ornamental Stone Market Size & Forecast 2030")
     assert _is_report_page("Top 10 Companies in Global Natural Stone Slab Market")
+    assert _is_report_page("Who are the leading kitchen cabinet manufacturers in France")
+    assert _is_report_page("The 12 Best Commercial Refrigeration Brands of 2026")
+    assert _is_report_page("How to choose a blast chiller | Guide")
+    assert _is_report_page("List of tile distributors in Texas")
     assert not _is_report_page("Tile and Marble Installation in Saudi Arabia | AAKCM")
+    assert not _is_report_page("Leading Edge Tiles Ltd | Home")
+    assert not _is_report_page("Best Tiles - Showrooms across Texas")
     assert not _is_report_page(None)
 
 

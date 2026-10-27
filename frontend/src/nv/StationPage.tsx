@@ -458,7 +458,11 @@ function Station(props: {
             <span className="mono">{decisions.length}</span>
           </div>
           {decisions.length === 0 && (
-            <p className="quiet">Nothing needs a decision in this edition.</p>
+            <p className="quiet">
+              Nothing to act on today.{" "}
+              {rows.length > 0 &&
+                `${rows.length} ${rows.length === 1 ? "company is" : "companies are"} on watch; you will see one here when it changes.`}
+            </p>
           )}
           {decisions.map((r, i) => {
             const d = daysLeft(r);
