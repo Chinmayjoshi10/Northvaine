@@ -376,7 +376,13 @@ export function OnboardingPage() {
           <>
             <h1>Find the companies about to buy what you sell.</h1>
             <p className="contact-lede">
-              Your first radar is free. It takes a few minutes.
+              Your first radar is free. It takes about ten minutes.
+            </p>
+            <p className="onb-hint">
+              Built for businesses that sell physical products to other businesses:
+              manufacturers, exporters and distributors. It reads official trade records,
+              tenders and company registers (richest for the UK and EU) and company news
+              everywhere.
             </p>
             <form className="contact-form" onSubmit={begin}>
               <label htmlFor="s-company">Company</label>

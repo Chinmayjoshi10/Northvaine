@@ -47,7 +47,7 @@ general engine with nothing hard-coded per industry.
 **Founder and ChatGPT, in parallel:**
 - reach 5-10 stone exporters with discovery conversations;
 - hand-research leads with every link checked;
-- log the anonymised feedback in `docs/COLLAB.md`;
+- log the anonymised feedback;
 - record the 3-minute video in the last week.
 
 **Gate 0 (about 15 Oct):**

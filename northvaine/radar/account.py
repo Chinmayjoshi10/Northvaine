@@ -6,7 +6,7 @@ when the contract is for **supplies** (it purchases the goods itself). For **wor
 After an award, the winner of a works or services contract is the account to approach. The
 winner of a supplies contract sells that kind of product: a competitor or a channel.
 
-Evidence levels (ChatGPT CEO, COLLAB.md 9 Oct), strongest first:
+Evidence levels (product review, 9 Oct), strongest first:
 
 | Level | Meaning |
 | --- | --- |

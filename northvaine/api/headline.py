@@ -65,7 +65,7 @@ def _products(entry: RankedEntry) -> list[str]:
         if not quote.startswith("Commodity ") or "(" not in quote:
             continue
         desc = quote.split("(", 1)[1]
-        desc = re.split(r",? (?:incl|excl)\.|\(|, with|, in |, whether", desc)[0].strip(" ,")
+        desc = re.split(r",? (?:incl|excl)\.|\(|, with|, in |, whether|, of ", desc)[0].strip(" ,")
         if desc and desc not in out:
             out.append(desc if len(desc) <= 60 else desc[:60].rsplit(" ", 1)[0])
     return out

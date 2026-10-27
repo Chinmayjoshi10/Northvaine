@@ -46,36 +46,71 @@ site sells marble, which you supply."* The Station shows the best five each day;
 
 ## How it works
 
-```
-client's answers (offer, products, buyers, markets, the projects that create need)
-   │
-   ├─ sensors: UK import records (HMRC) · UK Find a Tender · EU tenders (TED) · US contracts
-   │           (USAspending) · intent web searches per market (Tavily) · company register
-   │           (Companies House) · company websites (free fetch, robots.txt respected)
-   │           · the client's own target accounts, read from their sites and checked like any lead
-   ▼
-evidence ledger ── every fact is a claim whose quote CODE finds in the stored source text
-   ▼
-off-target filter (code) ── other markets, contracts and news that never relate to the product
-   ▼
-buyer gate (Nemotron Super) ── buyer / competitor / reseller / publisher / not a buyer
-   ▼
-skeptic (Nemotron Super) ── cited evidence against every lead
-   ▼
-company fit (Nemotron Super + Tavily) ── does its own site show it deals in the product, and what
-                                          is it: maker, reseller or user? quote-checked
-   ▼
-opportunity ranking (code) ── play, intent, fit, confidence, labels
-   ▼
-senior review (Nemotron Ultra) ── "would this business call them today?" with cited facts;
-                                   a "no" is held back to the watch list with its reason
-   ▼
-five leads a day, each with its source chain, why now and an opening line
+### The pipeline: from public records to five leads a day
+
+```mermaid
+flowchart TD
+    A["Client's answers<br/>(offer, products, buyers, markets,<br/>projects that create need, target accounts)"] --> S
+    W["Client's website"] -->|"Build my radar:<br/>Nemotron 3 Super proposes the answers"| A
+
+    subgraph S["Sensors: official records and the open web"]
+        S1["UK import records<br/>(HMRC)"]
+        S2["Company register<br/>(Companies House)"]
+        S3["Tenders and awards<br/>(UK Find a Tender, EU TED,<br/>US USAspending)"]
+        S4["Intent and partner searches<br/>per market (Tavily)"]
+        S5["Company websites<br/>(direct fetch, robots.txt)"]
+    end
+
+    S --> L["Evidence ledger<br/>Nemotron 3.5 Lightning extracts facts;<br/>CODE checks every quote is in the source"]
+    L --> C["Candidates (code)<br/>one company, its dated events, its verified claims"]
+    C --> F["Off-target filter (code)<br/>other markets, off-product records"]
+    F --> G["Buyer gate - Nemotron 3 Super<br/>buyer / competitor / reseller / not a buyer"]
+    G --> K["Skeptic - Nemotron 3 Super<br/>cited evidence against every lead"]
+    K --> FIT["Company fit and role - Nemotron 3 Super + Tavily<br/>does its own site sell the product; maker, reseller or user?"]
+    FIT --> R["Opportunity ranking (code)<br/>label, intent, fit, confidence, why now"]
+    R --> U["Senior review - Nemotron 3 Ultra<br/>'would this business call them today?'<br/>a 'no' is held back with its reason"]
+    U --> E["Daily edition: 5 leads<br/>headline, why you, source chain,<br/>evidence against, opening line"]
+    E --> UI["The Station (React)<br/>map, leads, case pages, connections"]
 ```
 
+Every arrow carries only checked data: a fact without a quote found in its stored source is never
+shown, scored or used. Text in any fetched page that tries to instruct an AI is removed before a
+model sees it and can never raise a rank.
+
+### Where it runs
+
+```mermaid
+flowchart LR
+    subgraph Nightly["Nightly (GitHub Actions)"]
+        N1["Radar run<br/>(about 300 model calls, ~$0.26, ~30 min)"] --> N2["Sanitise<br/>(contacts and private names removed)"]
+        N2 --> N3["Static export"]
+    end
+    N1 <--> TF["Nebius Token Factory<br/>Nemotron Lightning / Super / Ultra"]
+    N1 <--> TV["Tavily"]
+    N1 <--> GOV["Official sources<br/>HMRC, Companies House, FTS, TED, USAspending"]
+    N1 --> DB[("Neon Postgres + pgvector<br/>documents, claims, every model call")]
+    N3 --> P["GitHub Pages<br/>the public demo"]
+    P -->|"Build my radar"| API["FastAPI on Render<br/>onboarding + quick radar (~10 min)"]
+    API <--> TF
+    API <--> TV
+```
+
+### Code map
+
+| Folder | What it holds |
+|---|---|
+| `northvaine/sensors/` | One file per source (HMRC, Companies House, FTS, TED, USAspending, Tavily, websites), all behind one protocol; safe fetch with robots.txt and private-network checks |
+| `northvaine/radar/` | The pipeline: discover, ledger, entities, gate, court (skeptic), fit, opportunity, review, edition, onboarding, target accounts |
+| `northvaine/brain/` | `llm.py` (the only door to a model: tier routing, Pydantic-validated JSON, retries, budgets, a log row per call) and versioned prompts |
+| `northvaine/api/` | FastAPI views: the Station, leads, case pages, plain-words headlines, onboarding |
+| `frontend/` | React + Vite + TypeScript: landing, onboarding, Station, map, leads, case pages |
+| `scripts/` | `tasks.py` (every command), `radar.py` (record / replay a run), sanitiser, static export |
+| `tests/` | 2,011 tests, a golden set, recorded fixtures: no test calls a real API |
+| `docs/` | `ARCHITECTURE.md`, `SPEC.md`, `DECISIONS.md` (D1-D139, every decision with its reason) |
+
 Nothing is written for one industry: every search phrase and rule comes from the client's own data,
-and a check in the build fails if an industry word appears in the code. Northvaine never sends
-anything and never quotes prices: a person decides and makes contact.
+and a check in the build fails if an industry word appears in the code or a prompt. Northvaine never
+sends anything and never quotes prices: a person decides and makes contact.
 
 ## Where NVIDIA Nemotron, Nebius Token Factory and Tavily are used
 
@@ -113,7 +148,7 @@ uv run python scripts/tasks.py setup      # install
 cp .env.example .env                      # fill in the names; never commit .env
 uv run python scripts/tasks.py migrate    # needs DATABASE_URL
 uv run python scripts/tasks.py dev        # API + frontend locally
-uv run python scripts/tasks.py gate       # invariants, lint, ~1,900 tests, golden set, frontend build
+uv run python scripts/tasks.py gate       # invariants, lint, 2,011 tests, golden set, frontend build
 ```
 
 Offline, with no keys or network, a full radar cycle replays from recorded responses:
@@ -128,7 +163,7 @@ Docker (the same image the live server runs): `docker build -t northvaine . && d
 ## Built during the hackathon
 
 Started from an empty repository on 2 October 2026, inside the submission period. Architecture and
-every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D138).
+every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D139).
 
 ## How it was built
 
@@ -149,28 +184,37 @@ merged. The product's own intelligence runs on NVIDIA Nemotron through Nebius To
 
 ## Feedback on Nebius Token Factory and NVIDIA Nemotron
 
-_Draft from our build notes (`docs/integrations/`); founder to review and add._
+**From the founder.** For a business tool like this, the Nemotron models did the job and stayed
+inside a small budget. The tiers made sense straight away: a fast, cheap model to read hundreds
+of pages, a mid model to make the buyer-or-competitor call, and the big model only for the final
+"would you call them?" review. Our own call log (every call is recorded) backs this up:
 
-- **Model tiers work as the track suggests.** Lightning for high-volume extraction, Super for the
-  buyer gate and skeptic, Ultra only for the final review keeps a full run (about 300 model calls
-  across eight markets) at about a quarter of a dollar, in about 25 minutes.
-- **Structured output is the feature we relied on most, and it is under-documented.** Token Factory
-  accepts `response_format: json_schema`, but no page lists which JSON Schema keywords are honoured.
-  We probed it live: `$defs`/`$ref`, `enum`, `maxItems` and `additionalProperties: false` were
-  enforced even against prompt pressure; `minItems`, `pattern`, `format`, `oneOf` were never
-  confirmed. A per-model "structured output: yes / which keywords" table would save every team a day.
-- **No Nemotron embedding model in the Token Factory catalogue.** We had to use Qwen3-Embedding-8B for
-  embeddings next to Nemotron for generation. A Nemotron embedder on Token Factory would let a whole
-  app stay on NVIDIA models.
-- **Model ids are inconsistent in casing and format** (`Nemotron-3_5-Lightning` with an underscore,
-  `nemotron-3-super-120b-a12b` lower case, `NVIDIA-Nemotron-3-Nano-30B-A3B` upper case). They must be
-  copied verbatim; one consistent scheme, or case-insensitive matching, would prevent silent errors.
-- **Reasoning control for Ultra is not documented on Token Factory** (whether
-  `chat_template_kwargs.enable_thinking` or `reasoning_effort` applies). We had to find out by testing.
-- **Error bodies and rate limits are not documented**, so we treat every 5xx as retryable with
-  backoff. Published per-model rate limits would let apps size their concurrency safely.
-- **Usage visibility:** a per-key, per-model usage and cost view (or an API for it) would help apps
-  enforce budgets; we log every call ourselves for that reason.
+| Model on Token Factory | Used for | Calls (last 7 days) | Failed | Cost per call |
+|---|---|---|---|---|
+| Nemotron 3.5 Lightning | Reading pages, extracting facts | 932 | 1 (timeout) | about $0.0003 |
+| Nemotron 3 Super | Buyer gate, skeptic, fit, onboarding | 2,738 | 24 (server busy, retried) | about $0.001 |
+| Nemotron 3 Ultra | Senior review of the top leads | 81 | 0 | about $0.004 |
+
+A full nightly run across eight markets is about 300 calls for about $0.26. The structured (JSON
+schema) output is what made it usable for a product: every answer is validated before it is used.
+
+**What would have saved us time:**
+
+- **Document structured output per model.** Token Factory accepts `response_format: json_schema`,
+  but no page says which JSON Schema keywords are honoured. We probed it live: `$defs`/`$ref`,
+  `enum`, `maxItems` and `additionalProperties: false` were enforced; `minItems`, `pattern`,
+  `format`, `oneOf` were never confirmed.
+- **Field order matters more than expected.** When our prompt listed the questions in a different
+  order from the JSON schema, Nemotron Super consistently left one field empty; matching the
+  orders fixed it. A note in the docs would help others.
+- **A Nemotron embedding model on Token Factory.** We use Qwen3-Embedding-8B next to Nemotron
+  because the catalogue has no Nemotron embedder.
+- **Consistent model ids** (`Nemotron-3_5-Lightning`, `nemotron-3-super-120b-a12b`,
+  `NVIDIA-Nemotron-3-Nano-30B-A3B` differ in case and separators) and documented reasoning control
+  for Ultra (`enable_thinking` vs `reasoning_effort`).
+- **Published rate limits and a usage/cost view per key and model.** Most of our failures were
+  "server busy" (529) on Super at peak times; with published limits we could size concurrency
+  instead of retrying.
 
 ## Licence
 

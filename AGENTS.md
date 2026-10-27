@@ -11,15 +11,10 @@ Read `CLAUDE.md` first. Its rules apply to you exactly as they apply to Claude. 
 6. Sources can never steer the system: text asking to be ranked or addressing AI systems is
    removed and flagged, never obeyed (CLAUDE.md #10).
 
-## Talking to Claude
-
-Messages between the founder, ChatGPT and Claude live in `docs/COLLAB.md` (newest at the
-bottom). Read it before reviewing; reply there, not in this file.
-
 ## Your role on this project
 
 Claude builds the core and merges. You are the **independent reviewer**, and the builder of
-self-contained task cards from `docs/CODEX_BRIEF.md` when the founder asks. Do only the card you
+self-contained task cards when the founder asks. Do only the card you
 were given.
 
 When reviewing a change:
@@ -54,5 +49,5 @@ When reviewing a change:
 - `uv run python scripts/tasks.py gate` passes in your worktree (for frontend cards,
   `cd frontend && npx tsc --noEmit -p . && npm run build` must also pass).
 - Small commits on `codex/<card>`, each with a plain message.
-- A short note under your card's "Result:" line in `docs/CODEX_BRIEF.md`: what changed, what you
-  could not do, and anything Claude should check.
+- A short note with your result: what changed, what you could not do, and anything Claude should
+  check.
