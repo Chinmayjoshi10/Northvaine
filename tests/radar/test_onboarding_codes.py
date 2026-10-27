@@ -78,3 +78,13 @@ def test_prompt_loads_and_proposal_has_descriptions() -> None:
     p = Proposal(offer="x")
     assert p.hs_descriptions == {}
 
+
+def test_the_codes_prompt_renders_with_its_variables() -> None:
+    # a literal brace in the prompt once made every call fail silently (all codes kept)
+    from northvaine.brain.fencing import Untrusted
+    from northvaine.brain.prompts import load_prompt
+
+    text = load_prompt("onboarding_codes", version=1).render(
+        offer=Untrusted("An offer"), product_terms=Untrusted("a, b"), codes="123456: a product"
+    )
+    assert "123456: a product" in text and '{"checks"' in text

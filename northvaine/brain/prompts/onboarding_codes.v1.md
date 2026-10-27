@@ -32,11 +32,13 @@ Rules:
   part or accessory of the product, or the same product in a different material does not match.
 - A broad residual heading such as "other" matches only when the business's product plainly falls
   under it and its parent heading.
-- When the business's material or product is not stated clearly enough to decide, answer false.
+- When the business does not state its material, judge on the kind of product alone. Answer false
+  only when the description plainly names a different product, or a material the business's own
+  words contradict.
 - Judge only from the descriptions and the business's own words. Never add facts from memory.
 
 Give every candidate code exactly once. `reason` is one short sentence saying what the
 description covers and how it differs from, or fits, the business's products.
 
-Answer with the JSON object {"checks": [{"code": "...", "matches": true or false, "reason": "..."}]}
+Answer with the JSON object {{"checks": [{{"code": "...", "matches": true or false, "reason": "..."}}]}}
 and nothing else.
