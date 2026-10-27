@@ -41,6 +41,7 @@ __all__ = [
     "OnboardingAnswers",
     "Proposal",
     "build_client_spec",
+    "check_codes",
     "clean_text",
     "client_id_for",
     "intermediary_roles",
@@ -89,6 +90,18 @@ class Proposal(ProposalOut):
     """What the person is shown: only checked items. `dropped` says what was removed and why."""
 
     dropped: list[str] = Field(default_factory=list)
+    # Official tariff description of each kept customs code (filled by the API)
+    hs_descriptions: dict[str, str] = Field(default_factory=dict)
+
+
+class CodeCheck(NorthvaineModel):
+    code: str = Field(max_length=12)
+    matches: bool
+    reason: str = Field(default="", max_length=300)
+
+
+class CodeChecks(NorthvaineModel):
+    checks: list[CodeCheck] = Field(default_factory=list, max_length=30)
 
 
 class OnboardingAnswers(NorthvaineModel):
@@ -215,6 +228,51 @@ async def propose(
         max_tokens=1500,
     )
     return verify_proposal(result.value, website_text + "\n" + catalogue_text)
+
+
+async def check_codes(
+    offer: str,
+    terms: list[str],
+    described: dict[str, str],
+    *,
+    run: RunContext,
+    settings: Settings | None = None,
+    session: Any = None,
+) -> tuple[list[str], list[str]]:
+    """Keep only the customs codes whose official description describes the client's own
+    products (same kind and same material). Returns (kept codes in order, notes on dropped
+    ones). If the model call fails, every code is kept: onboarding is never blocked."""
+    codes = list(described)
+    if not codes:
+        return [], []
+    try:
+        result = await complete_json(
+            tier=ModelTier.MID,
+            prompt=load_prompt("onboarding_codes", version=1),
+            variables={
+                "offer": Untrusted(offer),
+                "product_terms": Untrusted(", ".join(terms) or "(none)"),
+                "codes": "\n".join(f"{c}: {d}" for c, d in described.items()),
+            },
+            output_model=CodeChecks,
+            purpose="onboarding_codes",
+            run=run,
+            session=session,
+            max_tokens=900,
+        )
+    except Exception:
+        return codes, []
+    verdict = {c.code: c for c in result.value.checks}
+    kept: list[str] = []
+    notes: list[str] = []
+    for code in codes:
+        check = verdict.get(code)
+        if check is None or check.matches:  # no verdict: keep (the person can still edit)
+            kept.append(code)
+        else:
+            why = check.reason.strip() or "its description names a different product"
+            notes.append(f"customs code {code} does not match your products: {why}")
+    return kept, notes
 
 
 def client_id_for(website: str) -> str:
