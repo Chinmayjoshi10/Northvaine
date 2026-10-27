@@ -119,6 +119,14 @@ def headline(
             return f"{name} {words}{why[len(start) :]}."
     if why:
         return f"{name}: {why}."
+    # a project or news item with no dated reason: its own checked quote says what happened
+    if entry.candidate.stream.value in ("announcement", "award", "tender"):
+        quotes = {c.ref: c.source_quote for c in entry.candidate.claims}
+        for event in entry.candidate.events:
+            quote = next((quotes[r] for r in event.claim_refs if r in quotes), "").strip()
+            if quote and event.event_type != "company_profile":
+                text = quote if len(quote) <= 160 else quote[:160].rsplit(" ", 1)[0] + "..."
+                return text if text.endswith((".", "...")) else f"{text}."
     facts = entry.candidate.company_register
     size = _SIZE.get((facts.accounts_type or "").lower(), "") if facts else ""
     role = "distributor" if entry.site_role == "resells" else "buyer"

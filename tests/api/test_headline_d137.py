@@ -50,3 +50,25 @@ def test_the_row_carries_the_plain_words() -> None:
     row = _row(_with_opportunity(_award_entry()), TODAY, "", list(SPEC.offer_terms))
     assert row.headline and row.headline.endswith(".")
     assert row.why_you and "natural stone" in row.why_you
+
+
+def test_a_project_without_a_dated_reason_reads_as_its_own_quote() -> None:
+    from northvaine.radar.models import RadarStream
+    from tests.radar.test_opportunity_d125 import _claim, _event
+
+    quote = "Acme Health plans to invest 600 million to build a new hospital in Springfield."
+    e = _with(
+        entry("awarded_contractor"),
+        name="ACME HEALTH",
+        stream=RadarStream.ANNOUNCEMENT,
+        events=[
+            _event("contract_awarded", date(2026, 5, 12)).model_copy(
+                update={"claim_refs": ["C1"], "occurred_on": None}
+            )
+        ],
+        claims=[_claim(quote, "C1")],
+        company_register=None,
+    )
+    e = _with_opportunity(e)
+    assert e.opportunity is not None and not e.opportunity.why_now
+    assert headline(e) == quote
