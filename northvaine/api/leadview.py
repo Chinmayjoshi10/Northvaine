@@ -143,8 +143,11 @@ def dots(entry: RankedEntry) -> list[Dot]:
             )
         )
 
-    for when, line in [*dated_changes(c), *trade_changes(c)]:  # D131 import signals too
-        if "importing" in line:
+    # D131 import signals too: every trade change comes from the import record, whatever its words
+    changes = [(w, ln, "importing" in ln) for w, ln in dated_changes(c)]
+    changes += [(w, ln, True) for w, ln in trade_changes(c)]
+    for when, line, from_imports in changes:
+        if from_imports:
             out.append(
                 Dot(
                     kind="trade",

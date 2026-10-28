@@ -79,3 +79,4 @@ checkpoints/
 demo_reports/*
 !demo_reports/.keep
 site_data/
+.video/

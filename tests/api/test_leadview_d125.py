@@ -189,3 +189,15 @@ def test_d134_a_partner_with_no_dated_reason_gets_a_line_that_claims_nothing() -
         "would a sample range be useful?"
     )
     assert "noticed" not in line and "growth" not in line
+
+
+def test_a_new_product_line_is_sourced_to_the_import_record_not_the_register() -> None:
+    from northvaine.api.leadview import TRADE_SOURCE
+    from tests.radar.test_opportunity_d125 import _importer
+
+    e = _importer(
+        ["2026-02", "2026-04", "2026-08"],
+        {"68022100": ["2026-02", "2026-04"], "68029990": ["2026-08"]},
+    )
+    found = [d for d in dots(e) if d.line.startswith("It added a new product line")]
+    assert found and all(d.source == TRADE_SOURCE and d.kind == "trade" for d in found)
