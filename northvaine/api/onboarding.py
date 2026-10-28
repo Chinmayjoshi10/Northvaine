@@ -67,6 +67,8 @@ QUICK_PROFILE: dict[str, int | bool] = {
     "radar_gate_concurrency": 4,
     "radar_fit_concurrency": 3,
     "fetch_max_bytes": 2_000_000,
+    # D143: pages are read by the model four at a time, not one after another (was 30+ minutes)
+    "radar_ledger_concurrency": 4,
 }
 # D142: a first radar reads the client's first markets only (the nightly run reads them all)
 QUICK_MAX_MARKETS = 6
