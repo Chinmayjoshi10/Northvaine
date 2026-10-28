@@ -333,6 +333,9 @@ class Settings(BaseSettings):
     # D140: market-news searches per market (the client's triggers, no product word); the first
     # radar from onboarding uses them, the nightly run does not by default
     radar_market_news_per_market: int = Field(default=0, ge=0, le=3)
+    # D143: documents read at once in the evidence ledger; 1 is the plain sequential loop (the
+    # nightly run and replays), the first radar from onboarding reads a few at a time
+    radar_ledger_concurrency: int = Field(default=1, ge=1, le=8)
     # D136: a distributor's own website found abroad (no import records there) becomes a lead
     radar_partner_discovery: bool = True
     radar_partner_per_market: int = Field(default=1, ge=1, le=2)

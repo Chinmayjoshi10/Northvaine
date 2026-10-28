@@ -129,6 +129,7 @@ SHAPING_SETTINGS = (
     "radar_intent_days",
     "radar_intent_per_market",
     "radar_market_news_per_market",  # D140
+    "radar_ledger_concurrency",  # D143
     "radar_partner_all_markets",
     "radar_partner_discovery",  # D136
     "radar_partner_per_market",

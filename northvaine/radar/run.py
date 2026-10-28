@@ -273,32 +273,79 @@ async def run_radar(
         if target_of and refs and all(r in target_of for r in refs):
             target_pages.append((doc, target_of[refs[0]]))
     skip = {id(doc) for doc, _ in target_pages}
-    for index, doc in enumerate(found.documents):
-        if id(doc) in skip:
-            continue
-        if over_budget():
-            skipped = len(found.documents) - index
+    if settings.radar_ledger_concurrency <= 1:
+        for index, doc in enumerate(found.documents):
+            if id(doc) in skip:
+                continue
+            if over_budget():
+                skipped = len(found.documents) - index
+                notes.append(
+                    f"run budget of ${cap} reached: {skipped} document(s) not read, "
+                    "and no candidate was gated"
+                )
+                stopped = True
+                break
+            try:
+                result = await build_evidence(
+                    doc, concepts, [], run=run, session=session, settings=settings
+                )
+            except BudgetExceeded as exc:
+                notes.append(f"stopped reading documents: {exc}")
+                stopped = True
+                break
+            except _ITEM_FAILURES as exc:
+                notes.append(f"document skipped ({type(exc).__name__}): {doc.url}")
+                continue
+            llm_calls += result.llm_calls
+            results.append((doc, result))
+            kind = result.eligibility.kind.value
+            kinds[kind] = kinds.get(kind, 0) + 1
+    else:
+        # D143: a few documents are read at once; slots keep the original document order
+        todo = [(i, d) for i, d in enumerate(found.documents) if id(d) not in skip]
+        slots: dict[int, LedgerResult | None] = {}
+        item_notes: dict[int, str] = {}
+        halt: dict[str, str] = {}
+        cursor = 0
+
+        async def read_documents() -> None:
+            nonlocal cursor
+            while cursor < len(todo) and not halt:
+                index, doc = todo[cursor]
+                cursor += 1
+                if over_budget():
+                    halt["budget"] = ""
+                    return
+                try:
+                    slots[index] = await build_evidence(
+                        doc, concepts, [], run=run, session=session, settings=settings
+                    )
+                except BudgetExceeded as exc:
+                    halt.setdefault("exceeded", f"stopped reading documents: {exc}")
+                except _ITEM_FAILURES as exc:
+                    item_notes[index] = f"document skipped ({type(exc).__name__}): {doc.url}"
+
+        await asyncio.gather(
+            *(read_documents() for _ in range(min(settings.radar_ledger_concurrency, len(todo))))
+        )
+        for index, doc in todo[:cursor]:
+            if index in item_notes:
+                notes.append(item_notes[index])
+            outcome = slots.get(index)
+            if outcome is not None:
+                llm_calls += outcome.llm_calls
+                results.append((doc, outcome))
+                kind = outcome.eligibility.kind.value
+                kinds[kind] = kinds.get(kind, 0) + 1
+        if "exceeded" in halt:
+            notes.append(halt["exceeded"])
+            stopped = True
+        elif "budget" in halt:
             notes.append(
-                f"run budget of ${cap} reached: {skipped} document(s) not read, "
+                f"run budget of ${cap} reached: {len(todo) - cursor + 1} document(s) not read, "
                 "and no candidate was gated"
             )
             stopped = True
-            break
-        try:
-            result = await build_evidence(
-                doc, concepts, [], run=run, session=session, settings=settings
-            )
-        except BudgetExceeded as exc:
-            notes.append(f"stopped reading documents: {exc}")
-            stopped = True
-            break
-        except _ITEM_FAILURES as exc:
-            notes.append(f"document skipped ({type(exc).__name__}): {doc.url}")
-            continue
-        llm_calls += result.llm_calls
-        results.append((doc, result))
-        kind = result.eligibility.kind.value
-        kinds[kind] = kinds.get(kind, 0) + 1
 
     # 3. candidates (code only); unidentified subjects are rejected here
     if evidence_out is not None:
