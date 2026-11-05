@@ -5,14 +5,15 @@ propose (website + catalogue -> checked answers) -> the person confirms the answ
 runs once and its edition opens. Each step is a small request; slow work runs in the background
 and the page polls `GET /api/onboarding/{id}`.
 
-State is a JSON file per session in the reports folder (never committed). Website and catalogue
-text are kept in separate files and never returned. One radar run at a time.
+State is a JSON file per session in the reports folder (never committed), also saved in the
+durable store so a restart of the free server loses nothing (D144). Website and catalogue text are
+kept in separate files and never returned. The radar itself runs in its own process, one at a
+time, started and watched by `api/supervisor.py`; this module only queues it.
 """
 
 from __future__ import annotations
 
 import asyncio
-import gc
 import json
 import secrets
 from datetime import UTC, datetime
@@ -23,11 +24,10 @@ from urllib.parse import urlsplit
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import Field
 
-from northvaine.api import accounts, store
+from northvaine.api import accounts, durable, store
 from northvaine.brain.budget import RunContext
 from northvaine.core.models import NorthvaineModel
 from northvaine.core.settings import get_settings
-from northvaine.radar.brief import write_reports
 from northvaine.radar.models import REPO_ROOT
 from northvaine.radar.onboarding import (
     OnboardingAnswers,
@@ -45,7 +45,6 @@ from northvaine.sensors.http import new_client
 router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
 
 MAX_CATALOGUE_BYTES = 25 * 1024 * 1024
-_RUN_SLOT = asyncio.Semaphore(1)
 # D130: the run started from onboarding is a quick one, so a visitor is not left waiting half an
 # hour. Applied to this run's settings only; the nightly run keeps the full profile.
 QUICK_PROFILE: dict[str, int | bool] = {
@@ -72,13 +71,20 @@ QUICK_PROFILE: dict[str, int | bool] = {
 }
 # D142: a first radar reads the client's first markets only (the nightly run reads them all)
 QUICK_MAX_MARKETS = 6
+# D144: what a typical first radar takes on the free server, for the queue estimate
+TYPICAL_RUN_MINUTES = 12
 _TASKS: set[asyncio.Task[None]] = set()
 
-Stage = Literal["reading", "ready", "proposing", "proposed", "running", "done", "failed"]
+Stage = Literal["reading", "ready", "proposing", "proposed", "queued", "running", "done", "failed"]
 
 
 def reports() -> Path:
     return store.reports_dir()
+
+
+def clients_dir() -> Path:
+    clients = Path(get_settings().onboarding_clients_dir)
+    return clients if clients.is_absolute() else REPO_ROOT / clients
 
 
 Base = Annotated[Path, Depends(reports)]
@@ -118,6 +124,16 @@ class Session(NorthvaineModel):
     notes: list[str] = Field(default_factory=list)
     not_buyer_roles: list[RoleOption] = Field(default_factory=_role_options)
     created_at: str
+    # D144: the run queue and its supervision
+    queued_at: str | None = None
+    as_of: str | None = None  # the run's moment, fixed once, so a resumed run repeats itself
+    started_at: str | None = None
+    heartbeat_at: str | None = None
+    attempts: int = 0  # runs that stopped with an error
+    resumes: int = 0  # runs cut short by a server restart
+    last_error: str | None = None
+    queue_position: int | None = None  # filled when read: 1 = next
+    wait_minutes: int | None = None  # filled when read: a rough estimate
 
 
 def _dir(base: Path) -> Path:
@@ -136,12 +152,40 @@ def _load(base: Path, sid: str) -> Session:
 
 
 def _save(base: Path, session: Session) -> Session:
-    (_dir(base) / f"{session.id}.json").write_text(session.model_dump_json(), encoding="utf-8")
+    text = session.model_dump_json(exclude={"queue_position", "wait_minutes"})
+    (_dir(base) / f"{session.id}.json").write_text(text, encoding="utf-8")
+    durable.save_later("onboarding", session.id, text)
     return session
 
 
 def _update(base: Path, sid: str, **changes: Any) -> Session:
     return _save(base, _load(base, sid).model_copy(update=changes))
+
+
+def _save_text(base: Path, name: str, text: str) -> None:
+    (_dir(base) / f"{name}.txt").write_text(text, encoding="utf-8")
+    durable.save_later("onboarding_text", name, text)
+
+
+def _now() -> str:
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
+
+
+def sessions(base: Path) -> list[Session]:
+    """Every session on file (small: one file per visitor)."""
+    found = []
+    for path in _dir(base).glob("*.json"):
+        try:
+            found.append(Session.model_validate_json(path.read_text(encoding="utf-8")))
+        except ValueError:
+            continue
+    return found
+
+
+def queue(base: Path) -> list[Session]:
+    """Sessions waiting for or holding the run slot, in the order they were queued."""
+    waiting = [s for s in sessions(base) if s.stage in ("queued", "running")]
+    return sorted(waiting, key=lambda s: (s.stage != "running", s.queued_at or s.created_at))
 
 
 def _spawn(coro: Any) -> None:
@@ -178,7 +222,7 @@ async def _read_site(base: Path, sid: str, website: str) -> None:
         text = "\n\n".join(
             f"Page: {url}\n{clean_text(body, settings, 6000)}" for url, body in pages
         )
-        (_dir(base) / f"{sid}.site.txt").write_text(text[:15_000], encoding="utf-8")
+        _save_text(base, f"{sid}.site", text[:15_000])
         _update(base, sid, stage="ready", site_read=bool(text.strip()))
     except Exception as exc:  # the person can still continue from their own answers
         _update(
@@ -248,57 +292,69 @@ async def _propose(base: Path, sid: str) -> None:
         )
 
 
-async def _run(base: Path, sid: str, client_id: str) -> None:
-    from northvaine.radar.live import run_live
-    from northvaine.radar.models import load_client_spec
+def recover(base: Path) -> list[str]:
+    """After a restart: steps that ran inside the old web process start again (D144). Radar runs
+    are picked up by the supervisor."""
+    resumed = []
+    for session in sessions(base):
+        if session.stage == "reading":
+            _spawn(_read_site(base, session.id, session.website))
+            resumed.append(session.id)
+        elif session.stage == "proposing":
+            _spawn(_propose(base, session.id))
+            resumed.append(session.id)
+    return resumed
 
-    settings = get_settings()
-    clients = Path(settings.onboarding_clients_dir)
-    clients = clients if clients.is_absolute() else REPO_ROOT / clients
-    quick = settings.model_copy(update=QUICK_PROFILE)
 
-    def progress(stage: str) -> None:
-        _update(base, sid, progress=stage)
-
+def _finished_ok(base: Path, sid: str | None) -> bool:
+    if not sid:
+        return True  # a claim from before sessions were recorded counts as used
     try:
-        async with _RUN_SLOT:
-            _update(base, sid, stage="running")
-            spec = load_client_spec(client_id, clients)
-            spec = spec.model_copy(update={"markets": spec.markets[:QUICK_MAX_MARKETS]})
-            run = await run_live(spec, as_of=datetime.now(UTC), settings=quick, progress=progress)
-            write_reports(run, base)
-            del run
-            gc.collect()  # D142: give the memory back before the next run
-        _update(base, sid, stage="done", client_id=client_id)
-    except Exception as exc:
-        _update(base, sid, stage="failed", error=f"The radar run stopped ({type(exc).__name__}).")
+        return _load(base, sid).stage == "done"
+    except HTTPException:
+        return False
 
 
 @router.post("", status_code=201)
 async def start(body: StartIn, base: Base) -> Session:
     email = accounts._email(body.email)
     if email not in accounts._subscribers(base):
-        if accounts._trial_used(base, email):
+        claimed = accounts.trial_sessions(base, email)
+        # D144: the free radar is used once it has finished; a run that never finished (or was
+        # never started) can be tried again
+        if any(_finished_ok(base, sid) for sid in claimed):
             raise HTTPException(
                 status_code=409,
                 detail="The free radar for this email has been used. Talk to us to subscribe.",
             )
-        accounts._append(base / accounts.TRIALS, {"email": email, "claimed_at": accounts._now()})
     session = Session(
         id=secrets.token_hex(12),
         company=body.company.strip(),
         website=body.website.strip(),
         stage="reading",
-        created_at=accounts._now(),
+        created_at=_now(),
     )
     _save(base, session)
+    if email not in accounts._subscribers(base):
+        accounts.record_trial(base, email, session.id)
     _spawn(_read_site(base, session.id, session.website))
     return session
 
 
 @router.get("/{sid}")
 async def status(sid: str, base: Base) -> Session:
-    return _load(base, sid)
+    session = _load(base, sid)
+    if session.stage in ("queued", "running"):
+        ids = [s.id for s in queue(base)]
+        position = ids.index(sid) + 1 if sid in ids else 1
+        waiting = position - 1 if session.stage == "queued" else 0
+        session = session.model_copy(
+            update={
+                "queue_position": position,
+                "wait_minutes": waiting * TYPICAL_RUN_MINUTES + TYPICAL_RUN_MINUTES,
+            }
+        )
+    return session
 
 
 @router.post("/{sid}/catalogue")
@@ -315,7 +371,7 @@ async def upload_catalogue(sid: str, request: Request, base: Base) -> Catalogue:
         raise HTTPException(
             status_code=422, detail="That file could not be read as a PDF."
         ) from None
-    (_dir(base) / f"{sid}.catalogue.txt").write_text(read.text, encoding="utf-8")
+    _save_text(base, f"{sid}.catalogue", read.text)
     catalogue = Catalogue(pages=read.pages, readable=read.readable)
     _update(base, sid, catalogue=catalogue)
     return catalogue
@@ -324,7 +380,7 @@ async def upload_catalogue(sid: str, request: Request, base: Base) -> Catalogue:
 @router.post("/{sid}/propose")
 async def start_proposal(sid: str, base: Base) -> Session:
     session = _load(base, sid)
-    if session.stage in ("proposing", "running", "done"):
+    if session.stage in ("proposing", "queued", "running", "done"):
         return session
     session = _update(base, sid, stage="proposing" if session.stage != "reading" else "reading")
     _spawn(_propose(base, sid))
@@ -334,17 +390,26 @@ async def start_proposal(sid: str, base: Base) -> Session:
 @router.post("/{sid}/answers")
 async def confirm(sid: str, answers: OnboardingAnswers, base: Base) -> Session:
     session = _load(base, sid)
-    if session.stage in ("running", "done"):
+    if session.stage in ("queued", "running", "done"):
         return session
-    settings = get_settings()
-    clients = Path(settings.onboarding_clients_dir)
-    clients = clients if clients.is_absolute() else REPO_ROOT / clients
+    clients = clients_dir()
     clients.mkdir(parents=True, exist_ok=True)
     client_id = client_id_for(answers.website)
     spec = build_client_spec(answers, client_id=client_id, today=datetime.now(UTC).date())
-    (clients / f"{client_id}.json").write_text(
-        json.dumps(spec.model_dump(mode="json"), indent=2, ensure_ascii=False), encoding="utf-8"
+    text = json.dumps(spec.model_dump(mode="json"), indent=2, ensure_ascii=False)
+    (clients / f"{client_id}.json").write_text(text, encoding="utf-8")
+    durable.save_later("client", client_id, text)
+    now = _now()
+    session = _update(
+        base,
+        sid,
+        stage="queued",
+        client_id=client_id,
+        queued_at=now,
+        as_of=datetime.now(UTC).isoformat(),
+        error=None,
     )
-    session = _update(base, sid, stage="running", client_id=client_id)
-    _spawn(_run(base, sid, client_id))
-    return session
+    from northvaine.api import supervisor
+
+    supervisor.wake()
+    return await status(sid, base)

@@ -266,6 +266,20 @@ class Settings(BaseSettings):
     )  # fmt: skip
     # Where onboarded clients' specs are written (never committed).
     onboarding_clients_dir: str = "reports/clients"
+    # D144: visitors' sessions, finished radars and feedback are also saved in `app_state`, so a
+    # restart of the free server loses nothing (needs DATABASE_URL; off: disk only).
+    durable_state: bool = True
+    # D144: a radar runs in its own low-priority process, one at a time; the web process only
+    # supervises it. A run that stops is tried again up to this many times (a server restart
+    # does not count as a try, up to onboarding_max_resumes restarts).
+    onboarding_max_attempts: int = Field(default=3, ge=1)
+    onboarding_max_resumes: int = Field(default=6, ge=0)
+    # A run whose process has not reported for this long is stopped and tried again.
+    onboarding_stale_seconds: int = Field(default=600, ge=30)
+    # A run is stopped after this long in any case.
+    onboarding_run_timeout_seconds: int = Field(default=3600, ge=60)
+    # Priority of the run process (POSIX nice); the web process keeps answering pages.
+    onboarding_worker_nice: int = Field(default=10, ge=0, le=19)
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
     radar_register_max_lookups: int = Field(default=200, ge=0)
     # D115: candidates with the same company registration number are one company; non-trade

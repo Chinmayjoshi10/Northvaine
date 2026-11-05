@@ -607,3 +607,11 @@ CREATE TABLE audit_log (                     -- append-only: who did what, when
   details      jsonb,
   created_at   timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE app_state (                     -- app records that must survive a restart (D144)
+  kind         text NOT NULL,                -- e.g. 'onboarding', 'report', 'trial', 'cache:<run>'
+  key          text NOT NULL,
+  value        bytea NOT NULL,               -- zlib-compressed UTF-8 text
+  updated_at   timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (kind, key)
+);
