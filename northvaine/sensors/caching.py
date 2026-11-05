@@ -60,9 +60,14 @@ class CachingTransport(httpx.AsyncBaseTransport):
                     }
                 ),
             )
-        return httpx.Response(
-            response.status_code, headers=response.headers, content=body, request=request
-        )
+        # `aread` has already undone any compression: the body passed on is plain, so the headers
+        # that describe the wire form (encoding, length) must not travel with it
+        plain = [
+            (k, v)
+            for k, v in response.headers.multi_items()
+            if k.lower() not in ("content-encoding", "content-length", "transfer-encoding")
+        ]
+        return httpx.Response(response.status_code, headers=plain, content=body, request=request)
 
     async def aclose(self) -> None:
         await self.inner.aclose()

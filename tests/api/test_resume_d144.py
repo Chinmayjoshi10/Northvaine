@@ -14,6 +14,7 @@ import pytest
 
 from northvaine.api import durable
 from northvaine.jobs.resume import ResumeCache
+from northvaine.sensors import caching as resume
 
 
 @pytest.fixture
@@ -167,3 +168,35 @@ async def test_hydrate_restores_records_without_overwriting_the_image(
     assert "x@y.test" in (reports / "_trials.jsonl").read_text()
     assert feedback.read_text().splitlines() == ['{"a": 1}', '{"b": 2}']  # merged, no duplicate
     assert counts["report"] == 2
+
+
+async def test_compressed_answers_reach_the_sensor_readable(
+    store: dict[tuple[str, str], str],
+) -> None:
+    """A gzip answer (official trade data comes compressed) is read once and passed on plain,
+    both live and when replayed (the bug behind 'sensor hmrc: DecodingError' on staging)."""
+    import gzip
+
+    payload = json.dumps({"value": [{"Hs6Code": "391732"}]}).encode()
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            headers={"content-encoding": "gzip", "content-type": "application/json"},
+            content=gzip.compress(payload),
+        )
+
+    live = httpx.AsyncClient(
+        transport=resume.CachingTransport(httpx.MockTransport(handler), ResumeCache("s1"))
+    )
+    assert (await live.get("https://api.example.test/Commodity")).json()["value"][0][
+        "Hs6Code"
+    ] == "391732"
+    again = httpx.AsyncClient(
+        transport=resume.CachingTransport(
+            httpx.MockTransport(handler), await ResumeCache.load("s1")
+        )
+    )
+    assert (await again.get("https://api.example.test/Commodity")).json()["value"][0][
+        "Hs6Code"
+    ] == "391732"
