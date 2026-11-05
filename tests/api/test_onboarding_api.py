@@ -153,3 +153,23 @@ async def test_session_offers_the_not_buyer_roles(client: AsyncClient) -> None:
     roles = body["not_buyer_roles"]
     assert [r["key"] for r in roles] == ["haulage_forwarding", "warehousing", "cargo_handling"]
     assert all(r["label"] for r in roles)
+
+
+async def test_catalogue_is_read_in_its_own_process(client: AsyncClient) -> None:
+    """D144: a real PDF goes through `northvaine.jobs.read_pdf`, not the web process."""
+    import io
+
+    from pypdf import PdfWriter
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=200, height=200)
+    writer.add_blank_page(width=200, height=200)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    r = await client.post(
+        f"/api/onboarding/{sid}/catalogue",
+        content=buffer.getvalue(),
+        headers={"content-type": "application/pdf"},
+    )
+    assert r.status_code == 200 and r.json() == {"pages": 2, "readable": False}

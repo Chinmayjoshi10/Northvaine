@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import secrets
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -30,6 +32,7 @@ from northvaine.core.models import NorthvaineModel
 from northvaine.core.settings import get_settings
 from northvaine.radar.models import REPO_ROOT
 from northvaine.radar.onboarding import (
+    CatalogueRead,
     OnboardingAnswers,
     Proposal,
     build_client_spec,
@@ -38,7 +41,6 @@ from northvaine.radar.onboarding import (
     client_id_for,
     intermediary_roles,
     propose,
-    read_catalogue,
 )
 from northvaine.sensors.http import new_client
 
@@ -71,6 +73,11 @@ QUICK_PROFILE: dict[str, int | bool] = {
 }
 # D142: a first radar reads the client's first markets only (the nightly run reads them all)
 QUICK_MAX_MARKETS = 6
+# D144: a site page is cut before cleaning, so a huge page cannot hold the web process
+SITE_PAGE_CHARS = 60_000
+# D144: a catalogue is read in its own process (pypdf holds the interpreter while it parses);
+# one that takes longer than this is reported as unreadable, and the answers guide the radar
+CATALOGUE_SECONDS = 150
 # D144: what a typical first radar takes on the free server, for the queue estimate
 TYPICAL_RUN_MINUTES = 12
 _TASKS: set[asyncio.Task[None]] = set()
@@ -220,7 +227,8 @@ async def _read_site(base: Path, sid: str, website: str) -> None:
             ]
             pages = await sensor.extract(list(dict.fromkeys(urls))[:5])
         text = "\n\n".join(
-            f"Page: {url}\n{clean_text(body, settings, 6000)}" for url, body in pages
+            f"Page: {url}\n{clean_text(body[:SITE_PAGE_CHARS], settings, 6000)}"
+            for url, body in pages
         )
         _save_text(base, f"{sid}.site", text[:15_000])
         _update(base, sid, stage="ready", site_read=bool(text.strip()))
@@ -290,6 +298,34 @@ async def _propose(base: Path, sid: str) -> None:
             stage="failed",
             error=f"Could not prepare the answers ({type(exc).__name__}).",
         )
+
+
+async def _read_catalogue_apart(folder: Path, sid: str, data: bytes) -> CatalogueRead | None:
+    """Read a PDF catalogue in a separate, lower-priority process (`northvaine.jobs.read_pdf`),
+    so the web process keeps answering. None when the file is not a readable PDF; a catalogue
+    that takes too long reads as unreadable (no text), and the person's answers guide the radar."""
+    pdf = folder / f"{sid}.upload.pdf"
+    out = folder / f"{sid}.upload.json"
+    pdf.write_bytes(data)
+    kwargs = {"preexec_fn": lambda: os.nice(10)} if os.name == "posix" else {}
+    process = await asyncio.create_subprocess_exec(
+        sys.executable, "-m", "northvaine.jobs.read_pdf", str(pdf), str(out),
+        **kwargs,  # type: ignore[arg-type]
+    )  # fmt: skip
+    try:
+        code = await asyncio.wait_for(process.wait(), timeout=CATALOGUE_SECONDS)
+    except TimeoutError:
+        process.kill()
+        await process.wait()
+        return CatalogueRead(pages=0, chars=0, text="", readable=False)
+    finally:
+        pdf.unlink(missing_ok=True)
+    if code != 0 or not out.is_file():
+        return None
+    try:
+        return CatalogueRead.model_validate_json(out.read_text(encoding="utf-8"))
+    finally:
+        out.unlink(missing_ok=True)
 
 
 def recover(base: Path) -> list[str]:
@@ -365,12 +401,9 @@ async def upload_catalogue(sid: str, request: Request, base: Base) -> Catalogue:
     data = await request.body()
     if len(data) > MAX_CATALOGUE_BYTES:
         raise HTTPException(status_code=413, detail="The catalogue is over 25 MB.")
-    try:
-        read = await asyncio.to_thread(read_catalogue, data)
-    except Exception:
-        raise HTTPException(
-            status_code=422, detail="That file could not be read as a PDF."
-        ) from None
+    read = await _read_catalogue_apart(_dir(base), sid, data)
+    if read is None:
+        raise HTTPException(status_code=422, detail="That file could not be read as a PDF.")
     _save_text(base, f"{sid}.catalogue", read.text)
     catalogue = Catalogue(pages=read.pages, readable=read.readable)
     _update(base, sid, catalogue=catalogue)

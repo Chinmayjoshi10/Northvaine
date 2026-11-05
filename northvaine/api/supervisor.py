@@ -35,8 +35,8 @@ EXIT_DONE = 0
 EXIT_FINAL = 3  # the run stopped for a reason a retry cannot fix
 
 FAILED_MESSAGE = (
-    "We could not finish your radar this time. We have kept your answers and will finish it "
-    "and email you; meanwhile you can open an example radar."
+    "We could not finish your radar this time. Your free radar is still yours: start again with "
+    "the same email, or open an example radar."
 )
 
 _wake = asyncio.Event()
