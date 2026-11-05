@@ -302,7 +302,15 @@ export interface OnboardingSession {
   id: string;
   company: string;
   website: string;
-  stage: "reading" | "ready" | "proposing" | "proposed" | "running" | "done" | "failed";
+  stage:
+    | "reading"
+    | "ready"
+    | "proposing"
+    | "proposed"
+    | "queued"
+    | "running"
+    | "done"
+    | "failed";
   site_read: boolean;
   catalogue: { pages: number; readable: boolean } | null;
   proposal: Proposal | null;
@@ -313,6 +321,9 @@ export interface OnboardingSession {
   notes: string[];
   /** D114: kinds of firm that only move, clear or store goods; offered pre-ticked */
   not_buyer_roles: { key: string; label: string }[];
+  /** D144: place in the run queue (1 = next or running) and a rough wait */
+  queue_position?: number | null;
+  wait_minutes?: number | null;
 }
 
 export interface OnboardingAnswers {

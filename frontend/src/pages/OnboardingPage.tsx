@@ -14,29 +14,58 @@ const lines = (text: string) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
+// D144: a judge who refreshes or comes back keeps their run
+const SAVED = "nv-onboarding";
+
+function savedRun(): { id: string; step: Step } | null {
+  try {
+    const raw = window.localStorage.getItem(SAVED);
+    return raw ? (JSON.parse(raw) as { id: string; step: Step }) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveRun(id: string | null, step: Step) {
+  try {
+    if (id && step !== "start")
+      window.localStorage.setItem(SAVED, JSON.stringify({ id, step }));
+    else window.localStorage.removeItem(SAVED);
+  } catch {
+    // private window: the run still works, it just is not remembered
+  }
+}
+
 function useSession(id: string | null, every: number) {
   const [session, setSession] = useState<OnboardingSession | null>(null);
+  const [reconnecting, setReconnecting] = useState(false);
   useEffect(() => {
     if (!id) return;
     let stop = false;
-    let lost = 0;
+    let missing = 0;
     const tick = async () => {
       try {
         const s = await api.onboarding(id);
-        lost = 0;
-        if (!stop) setSession(s);
+        missing = 0;
+        if (!stop) {
+          setSession(s);
+          setReconnecting(false);
+        }
       } catch (e) {
-        // keep polling; a brief network error should not end onboarding. But a session the server
-        // no longer knows (it restarted: free hosting) will never finish, so say so.
-        lost = e instanceof Error && e.message === "Not found." ? lost + 1 : 0;
-        if (lost >= 5 && !stop)
+        // D144: the server keeps the run through a restart, so a network error or a short
+        // "not found" while it starts again only means "reconnecting". A run the server still
+        // does not know after about two minutes is gone.
+        if (stop) return;
+        setReconnecting(true);
+        missing = e instanceof Error && e.message === "Not found." ? missing + 1 : 0;
+        if (missing * every >= 120_000)
           setSession((s) =>
             s
               ? {
                   ...s,
                   stage: "failed",
                   error:
-                    "The server restarted while building your radar, so this run was lost. Please start again.",
+                    "We could not find this run any more. Please start again; your free radar is still yours.",
                 }
               : s,
           );
@@ -49,7 +78,7 @@ function useSession(id: string | null, every: number) {
       window.clearInterval(timer);
     };
   }, [id, every]);
-  return session;
+  return { session, reconnecting };
 }
 
 function Field(props: {
@@ -284,14 +313,16 @@ function Answers({
 }
 
 export function OnboardingPage() {
-  const [step, setStep] = useState<Step>("start");
-  const [id, setId] = useState<string | null>(null);
+  const resumed = savedRun();
+  const [step, setStep] = useState<Step>(resumed?.step ?? "start");
+  const [id, setId] = useState<string | null>(resumed?.id ?? null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [waking, setWaking] = useState(false);
   const [start, setStart] = useState({ company: "", website: "", email: "" });
   const [catalogueNote, setCatalogueNote] = useState("");
-  const session = useSession(id, step === "running" ? 4000 : 2000);
+  const { session, reconnecting } = useSession(id, step === "running" ? 4000 : 2000);
+  useEffect(() => saveRun(id, step), [id, step]);
 
   const begin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -356,6 +387,7 @@ export function OnboardingPage() {
 
   useEffect(() => {
     if (session?.stage === "done" && session.client_id) {
+      saveRun(null, "start");
       window.location.hash = link("app", session.client_id, "latest");
     }
   }, [session?.stage, session?.client_id]);
@@ -512,17 +544,36 @@ export function OnboardingPage() {
           <>
             <h1>Building your radar</h1>
             {session?.stage === "failed" ? (
-              <p className="contact-error" role="alert">
-                {session.error} <a href={link("contact")}>Talk to us</a> and we
-                will run it for you.
-              </p>
+              <>
+                <p className="contact-error" role="alert">
+                  {session.error}
+                </p>
+                <p className="contact-lede">
+                  <a href={link("app", "stone_exporter_demo", "latest")}>
+                    Open an example radar
+                  </a>{" "}
+                  or <a href={link("contact")}>talk to us</a>.
+                </p>
+              </>
             ) : (
-              <p className="contact-lede" role="status">
-                Searching tenders, import records and news for buyers of what
-                you sell, then checking every fact against its source. This
-                takes a few minutes; this page opens your first edition
-                when it is ready.{session?.progress ? ` Now: ${session.progress}.` : ""}
-              </p>
+              <>
+                <p className="contact-lede" role="status">
+                  {session?.stage === "queued" && (session.queue_position ?? 1) > 1
+                    ? `Your radar is number ${session.queue_position} in the queue; it starts in about ${Math.max((session.wait_minutes ?? 12) - 12, 1)} minutes. `
+                    : ""}
+                  Searching tenders, import records and news for buyers of what
+                  you sell, then checking every fact against its source. This
+                  takes about {session?.wait_minutes ?? 12} minutes; this page
+                  opens your first edition when it is ready, and you can close it
+                  and come back.
+                  {session?.progress ? ` Now: ${session.progress}.` : ""}
+                </p>
+                {reconnecting && (
+                  <p className="onb-hint" role="status">
+                    Reconnecting to the server. Your radar keeps going.
+                  </p>
+                )}
+              </>
             )}
           </>
         )}
