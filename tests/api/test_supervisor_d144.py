@@ -188,3 +188,30 @@ async def test_run_process_marks_done(base: Path, monkeypatch: pytest.MonkeyPatc
     _session(base, "s1", stage="running")
     assert await onboarding_run.run("s1") == onboarding_run.EXIT_DONE
     assert onboarding._load(base, "s1").stage == "done"
+
+
+async def test_keep_awake_pings_only_during_a_run(
+    base: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pinged: list[str] = []
+
+    class Client:
+        async def __aenter__(self) -> Client:
+            return self
+
+        async def __aexit__(self, *_: Any) -> None:
+            return None
+
+        async def get(self, url: str) -> None:
+            pinged.append(url)
+
+    monkeypatch.setattr("northvaine.sensors.http.new_client", lambda *_: Client())
+    monkeypatch.setenv("RENDER_EXTERNAL_URL", "https://example.onrender.test/")
+    sup = supervisor.Supervisor(base)
+    await sup._keep_awake()
+    await sup._keep_awake()  # within the interval: no second ping
+    assert pinged == ["https://example.onrender.test/health"]
+    monkeypatch.delenv("RENDER_EXTERNAL_URL")
+    sup._last_ping = float("-inf")
+    await sup._keep_awake()  # not on the host: never pings
+    assert len(pinged) == 1

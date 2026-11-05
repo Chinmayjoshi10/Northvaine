@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 EXIT_DONE = 0
 EXIT_FINAL = 3  # the run stopped for a reason a retry cannot fix
+KEEP_AWAKE_SECONDS = 240.0
 
 FAILED_MESSAGE = (
     "We could not finish your radar this time. Your free radar is still yours: start again with "
@@ -65,6 +66,7 @@ class Supervisor:
         self.tick_seconds = tick_seconds
         self.process: asyncio.subprocess.Process | None = None
         self.sid: str | None = None
+        self._last_ping = float("-inf")
 
     def resume_after_restart(self) -> list[str]:
         """Sessions a restart left "running" go back to the front of the queue."""
@@ -103,11 +105,29 @@ class Supervisor:
         if self.process is not None:
             if self.process.returncode is None:
                 self._check_alive()
+                await self._keep_awake()
                 return
             self._finished(self.process.returncode)
         nxt = next((s for s in onboarding.queue(self.base) if s.stage == "queued"), None)
         if nxt is not None:
             await self._start(nxt.id)
+
+    async def _keep_awake(self) -> None:
+        """While a run is going, visit our own public address now and then: the free host puts a
+        server to sleep after 15 minutes without visitors, which would stop a run whose visitor
+        closed the page. Only while a run is going; the host sets RENDER_EXTERNAL_URL."""
+        url = os.environ.get("RENDER_EXTERNAL_URL")
+        now = asyncio.get_running_loop().time()
+        if not url or now - self._last_ping < KEEP_AWAKE_SECONDS:
+            return
+        self._last_ping = now
+        from northvaine.sensors.http import new_client
+
+        try:
+            async with new_client(20.0) as client:
+                await client.get(url.rstrip("/") + "/health")
+        except Exception:  # a missed ping is retried at the next interval
+            logger.info("keep-awake ping failed")
 
     def _check_alive(self) -> None:
         settings = get_settings()
