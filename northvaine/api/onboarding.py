@@ -258,6 +258,11 @@ async def _propose(base: Path, sid: str) -> None:
     )
     cat_path = folder / f"{sid}.catalogue.txt"
     catalogue = cat_path.read_text(encoding="utf-8") if cat_path.is_file() else ""
+    if not site.strip() and not catalogue.strip():
+        # D144: nothing was read, so nothing is proposed (a model asked to guess invents
+        # products); the person fills in the answers themselves
+        _update(base, sid, stage="proposed", proposal=Proposal(offer=""))
+        return
     try:
         proposal = await propose(
             site or "(the website could not be read)", catalogue, run=RunContext()

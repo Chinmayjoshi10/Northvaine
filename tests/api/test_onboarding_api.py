@@ -173,3 +173,23 @@ async def test_catalogue_is_read_in_its_own_process(client: AsyncClient) -> None
         headers={"content-type": "application/pdf"},
     )
     assert r.status_code == 200 and r.json() == {"pages": 2, "readable": False}
+
+
+async def test_nothing_read_means_nothing_proposed(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D144: with no website text and no catalogue the model is not asked to guess."""
+
+    async def unread_site(base: Path, sid: str, website: str) -> None:
+        onboarding._update(base, sid, stage="ready", site_read=False)
+
+    async def must_not_propose(*_: Any, **__: Any) -> Proposal:
+        raise AssertionError("the model was asked to propose from nothing")
+
+    monkeypatch.setattr(onboarding, "_read_site", unread_site)
+    monkeypatch.setattr(onboarding, "propose", must_not_propose)
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    await client.post(f"/api/onboarding/{sid}/propose")
+    body = await wait_for(client, sid, "proposed")
+    assert body["proposal"]["offer"] == "" and body["proposal"]["related_terms"] == []
