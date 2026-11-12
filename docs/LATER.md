@@ -207,3 +207,9 @@ Industry-neutral; official APIs and public pages only; company-level facts only.
   empty `gateway/` package, and a growing set of legacy settings pinned for old recordings. Also:
   split `radar/run.py`; add the frontend to the format check; scan the frontend for dead code.
   Remove on a branch after the submission freeze, with the gate.
+
+- **Rate-limit address behind the host's proxy (13 Nov, go-live check).** `api/limits.py` keys on
+  the first `X-Forwarded-For` entry, which a visitor can set; the global daily session cap bounds
+  the damage. Before switching to the last entry, log the header chain on staging once: if another
+  proxy sits in front of the host, the last entry is that proxy and every visitor would share one
+  limit.

@@ -245,3 +245,11 @@ def test_a_money_cap_stop_says_so(base: Path) -> None:
     sup._finished(supervisor.EXIT_FINAL)
     session = onboarding._load(base, "m1")
     assert session.stage == "failed" and session.error == supervisor.BUDGET_MESSAGE
+
+
+def test_a_run_cap_stop_is_an_ordinary_failure(base: Path) -> None:
+    _session(base, "m2", stage="running", last_error="money cap reached (run)")
+    sup = supervisor.Supervisor(base)
+    sup.sid = "m2"
+    sup._finished(supervisor.EXIT_FINAL)
+    assert onboarding._load(base, "m2").error == supervisor.FAILED_MESSAGE

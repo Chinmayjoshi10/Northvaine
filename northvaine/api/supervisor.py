@@ -173,7 +173,8 @@ class Supervisor:
         settings = get_settings()
         attempts = session.attempts + 1
         if code == EXIT_FINAL or attempts >= settings.onboarding_max_attempts:
-            budget = code == EXIT_FINAL and "money cap" in (session.last_error or "")
+            # only the day's cap resets tomorrow; a run's own cap is an ordinary failure
+            budget = code == EXIT_FINAL and "money cap reached (day)" in (session.last_error or "")
             onboarding._update(
                 self.base,
                 sid,
