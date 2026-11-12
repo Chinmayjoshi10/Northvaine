@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
+import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -12,11 +16,50 @@ from northvaine.api import accounts, feedback, onboarding, runs
 from northvaine.core.settings import get_settings
 
 _DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]  # Vite dev server
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    """D144: at start, saved visitor records come back to disk, steps a restart cut short start
+    again, and the run supervisor starts; at stop, a running radar process is stopped."""
+    from northvaine.api import durable, supervisor
+
+    base = onboarding.reports()
+    try:  # the small records first: sessions, clients, trials (the supervisor needs them)
+        counts = await durable.hydrate(base, onboarding.clients_dir(), with_reports=False)
+        if counts:
+            logger.info("restored saved records: %s", counts)
+    except Exception:  # the app must start even if the store cannot be read
+        logger.exception("could not restore saved records")
+    background = asyncio.create_task(_after_start(base))
+    onboarding.recover(base)
+    supervisor.start(base)
+    try:
+        yield
+    finally:
+        background.cancel()
+        await supervisor.stop()
+
+
+async def _after_start(base: Path) -> None:
+    """D146: work that must not delay the health check: finished radars back to disk, and old
+    run caches dropped from the free database."""
+    from northvaine.api import durable
+
+    try:
+        restored = await durable.hydrate_reports(base)
+        size = await durable.sweep()
+        logger.info("restored %d radar files; app_state is %s bytes", restored, size)
+    except Exception:
+        logger.exception("background restore failed")
+
 
 app = FastAPI(
     title="Northvaine",
     description="AI sales assistant for B2B businesses",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 

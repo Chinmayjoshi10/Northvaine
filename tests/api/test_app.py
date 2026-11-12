@@ -291,3 +291,22 @@ async def test_brief_marks_a_row_back_in_motion(client: AsyncClient, base: Path)
     assert quiet["returning"] is True and quiet["back_in_motion"] is False
     first_day = (await client.get("/api/clients/acme/runs/2026-10-05")).json()
     assert not any(r["back_in_motion"] for r in first_day["accounts"] + first_day["tenders"])
+
+
+async def test_a_visitors_radar_is_not_listed(client: AsyncClient, base: Path) -> None:
+    # D146: an onboarded client's radar is reached by its link, never listed for other visitors
+    from northvaine.api import onboarding
+
+    onboarding._save(
+        base,
+        onboarding.Session(
+            id="v1",
+            company="Acme",
+            website="acme.example",
+            stage="done",
+            created_at="2026-11-13T00:00:00+00:00",
+            client_id="acme",
+        ),
+    )
+    assert (await client.get("/api/clients")).json() == []
+    assert (await client.get("/api/clients/acme/runs/latest")).status_code == 200

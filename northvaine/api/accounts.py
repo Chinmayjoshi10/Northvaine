@@ -14,6 +14,7 @@ reply and to enforce the limit.
 from __future__ import annotations
 
 import json
+import secrets
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Literal
@@ -21,7 +22,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field, field_validator
 
-from northvaine.api import store
+from northvaine.api import durable, store
 from northvaine.core.models import NorthvaineModel
 
 router = APIRouter(prefix="/api", tags=["accounts"])
@@ -101,6 +102,32 @@ def _trial_used(base: Path, email: str) -> bool:
     return False
 
 
+def trial_sessions(base: Path, email: str) -> list[str | None]:
+    """The onboarding sessions claimed with this email, oldest first (None: a claim made before
+    sessions were recorded, D144)."""
+    path = base / TRIALS
+    if not path.is_file():
+        return []
+    found: list[str | None] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            record = json.loads(line)
+        except ValueError:
+            continue
+        if record.get("email") == email:
+            found.append(record.get("session"))
+    return found
+
+
+def record_trial(base: Path, email: str, session: str | None = None) -> None:
+    """Append a claim, on disk and in the durable store (D144)."""
+    record: dict[str, object] = {"email": email, "claimed_at": _now()}
+    if session:
+        record["session"] = session
+    _append(base / TRIALS, record)
+    durable.save_later("trial", f"{email}|{session or record['claimed_at']}", json.dumps(record))
+
+
 def _now() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat()
 
@@ -112,6 +139,9 @@ def post_contact(body: ContactIn, base: Base) -> Received:
     record = body.model_dump(exclude={"website_url"})
     record["received_at"] = _now()
     _append(base / REQUESTS, record)
+    durable.save_later(
+        "request", f"{record['received_at']}-{secrets.token_hex(4)}", json.dumps(record)
+    )
     return Received()
 
 
@@ -125,5 +155,5 @@ def claim_trial(body: TrialIn, base: Base) -> dict[str, str]:
             status_code=409,
             detail="The free radar for this email has been used. Talk to us to subscribe.",
         )
-    _append(base / TRIALS, {"email": body.email, "claimed_at": _now()})
+    record_trial(base, body.email)
     return {"status": "free"}

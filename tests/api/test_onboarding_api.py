@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import AsyncIterator
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +17,15 @@ from northvaine.api.main import app
 from northvaine.radar.onboarding import Proposal
 
 START = {"email": "owner@example.test", "company": "Example Works", "website": "example.test"}
+ANSWERS = {
+    "company": "Example Works",
+    "website": "https://www.example.test",
+    "offer": "Maker of garden benches for retailers.",
+    "offer_terms": ["garden benches"],
+    "markets": ["GB"],
+    "buyer_roles": ["retailers"],
+    "hs_codes": ["940179"],
+}
 PROPOSAL = Proposal(
     offer="Maker of garden benches.",
     offer_terms=["garden benches"],
@@ -48,6 +56,7 @@ async def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncIterat
         return list(described), [], []
 
     monkeypatch.setattr(onboarding, "check_codes_suggest", all_match)  # no real model call (D141)
+    onboarding.limits.reset()
     app.dependency_overrides[onboarding.reports] = lambda: tmp_path
     app.dependency_overrides[onboarding.accounts.reports] = lambda: tmp_path
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
@@ -64,11 +73,16 @@ async def wait_for(c: AsyncClient, sid: str, stage: str) -> dict[str, Any]:
     raise AssertionError(f"stage {stage} not reached: {body}")
 
 
-async def test_start_claims_the_free_radar_once(client: AsyncClient) -> None:
+async def test_start_claims_the_free_radar_once(client: AsyncClient, tmp_path: Path) -> None:
     first = await client.post("/api/onboarding", json=START)
     assert first.status_code == 201
+    # D144: a radar that never finished can be tried again with the same email
     again = await client.post("/api/onboarding", json=START)
-    assert again.status_code == 409
+    assert again.status_code == 201
+    await wait_for(client, again.json()["id"], "ready")
+    onboarding._update(tmp_path, again.json()["id"], stage="done")
+    third = await client.post("/api/onboarding", json=START)
+    assert third.status_code == 409
 
 
 async def test_catalogue_must_be_a_pdf(client: AsyncClient) -> None:
@@ -94,48 +108,47 @@ async def test_proposal_drops_codes_not_in_the_tariff(client: AsyncClient) -> No
     assert any("999999" in d for d in body["proposal"]["dropped"])
 
 
-async def test_answers_write_the_spec_and_run(
+async def test_answers_write_the_spec_and_queue_the_run(
     client: AsyncClient, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from northvaine.radar import live
+    from northvaine.api import supervisor
 
-    monkeypatch.setattr(onboarding, "REPO_ROOT", tmp_path)
     monkeypatch.setenv("ONBOARDING_CLIENTS_DIR", str(tmp_path / "clients"))
     from northvaine.core.settings import get_settings
 
     get_settings.cache_clear()
-    ran: list[str] = []
-    seen: list[Any] = []
-
-    async def fake_run(spec: Any, *, as_of: datetime, settings: Any, progress: Any = None) -> Any:
-        ran.append(spec.id)
-        seen.append(settings)
-        progress("Reading your markets")
-        raise RuntimeError("no network in tests")
-
-    monkeypatch.setattr(live, "run_live", fake_run)
+    woken: list[bool] = []
+    monkeypatch.setattr(supervisor, "wake", lambda: woken.append(True))
     sid = (await client.post("/api/onboarding", json=START)).json()["id"]
-    answers = {
-        "company": "Example Works",
-        "website": "https://www.example.test",
-        "offer": "Maker of garden benches for retailers.",
-        "offer_terms": ["garden benches"],
-        "markets": ["GB"],
-        "buyer_roles": ["retailers"],
-        "hs_codes": ["940179"],
-    }
-    r = await client.post(f"/api/onboarding/{sid}/answers", json=answers)
-    assert r.status_code == 200 and r.json()["client_id"] == "example_test"
-    assert (tmp_path / "clients" / "example_test.json").is_file()
-    body = await wait_for(client, sid, "failed")
-    assert ran == ["example_test"] and "stopped" in body["error"]
-    # D130: the run started here is the quick one, and its stage is named for the page
-    assert body["progress"] == "Reading your markets"
-    for name, value in onboarding.QUICK_PROFILE.items():
-        assert getattr(seen[0], name) == value
-    assert get_settings().radar_skeptic_top == 30  # the shared (nightly) settings are untouched
-    assert get_settings().radar_max_gate_candidates == 120  # D132
+    r = await client.post(f"/api/onboarding/{sid}/answers", json=ANSWERS)
+    body = r.json()
+    # D146: the readable name plus a random part, so no one opens it by guessing
+    assert r.status_code == 200 and body["client_id"].startswith("example_test_")
+    assert len(body["client_id"]) == len("example_test_") + 8
+    assert (tmp_path / "clients" / f"{body['client_id']}.json").is_file()
+    # D144: the run is queued for the supervisor, with its moment fixed and a place in the queue
+    assert body["stage"] == "queued" and body["as_of"] and body["queue_position"] == 1
+    assert body["wait_minutes"] == onboarding.TYPICAL_RUN_MINUTES and woken == [True]
+    # a second confirm does not queue it twice
+    again = (await client.post(f"/api/onboarding/{sid}/answers", json=ANSWERS)).json()
+    assert again["queued_at"] == body["queued_at"]
     get_settings.cache_clear()
+
+
+async def test_answers_accept_country_names(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from northvaine.api import supervisor
+
+    monkeypatch.setattr(supervisor, "wake", lambda: None)
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    named = {**ANSWERS, "markets": ["UK", "Germany", "usa", "AE", "DE"]}
+    r = await client.post(f"/api/onboarding/{sid}/answers", json=named)
+    assert r.status_code == 200
+    unknown = {**ANSWERS, "markets": ["Atlantis"]}
+    sid2 = (await client.post("/api/onboarding", json=START)).json()["id"]
+    r = await client.post(f"/api/onboarding/{sid2}/answers", json=unknown)
+    assert r.status_code == 422 and "Atlantis" in r.text
 
 
 async def test_session_offers_the_not_buyer_roles(client: AsyncClient) -> None:
@@ -143,3 +156,98 @@ async def test_session_offers_the_not_buyer_roles(client: AsyncClient) -> None:
     roles = body["not_buyer_roles"]
     assert [r["key"] for r in roles] == ["haulage_forwarding", "warehousing", "cargo_handling"]
     assert all(r["label"] for r in roles)
+
+
+async def test_catalogue_is_read_in_its_own_process(client: AsyncClient) -> None:
+    """D144: a real PDF goes through `northvaine.jobs.read_pdf`, not the web process."""
+    import io
+
+    from pypdf import PdfWriter
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=200, height=200)
+    writer.add_blank_page(width=200, height=200)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    r = await client.post(
+        f"/api/onboarding/{sid}/catalogue",
+        content=buffer.getvalue(),
+        headers={"content-type": "application/pdf"},
+    )
+    assert r.status_code == 200 and r.json() == {"pages": 2, "readable": False}
+
+
+async def test_nothing_read_means_nothing_proposed(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D144: with no website text and no catalogue the model is not asked to guess."""
+
+    async def unread_site(base: Path, sid: str, website: str) -> None:
+        onboarding._update(base, sid, stage="ready", site_read=False)
+
+    async def must_not_propose(*_: Any, **__: Any) -> Proposal:
+        raise AssertionError("the model was asked to propose from nothing")
+
+    monkeypatch.setattr(onboarding, "_read_site", unread_site)
+    monkeypatch.setattr(onboarding, "propose", must_not_propose)
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    await client.post(f"/api/onboarding/{sid}/propose")
+    body = await wait_for(client, sid, "proposed")
+    assert body["proposal"]["offer"] == "" and body["proposal"]["related_terms"] == []
+
+
+async def test_a_second_start_hands_back_the_run_in_the_queue(
+    client: AsyncClient, tmp_path: Path
+) -> None:
+    # review of D144: two tabs must not queue two paid runs for one free radar
+    first = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, first, "ready")
+    onboarding._update(tmp_path, first, stage="queued", queued_at=onboarding._now())
+    again = await client.post("/api/onboarding", json=START)
+    assert again.status_code == 201 and again.json()["id"] == first
+
+
+async def test_no_catalogue_once_the_radar_has_started(client: AsyncClient, tmp_path: Path) -> None:
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    onboarding._update(tmp_path, sid, stage="running")
+    r = await client.post(
+        f"/api/onboarding/{sid}/catalogue",
+        content=b"%PDF",
+        headers={"content-type": "application/pdf"},
+    )
+    assert r.status_code == 409
+
+
+async def test_the_raw_error_never_reaches_the_browser(client: AsyncClient, tmp_path: Path) -> None:
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    onboarding._update(tmp_path, sid, last_error="OperationalError: host db.internal")
+    assert (await client.get(f"/api/onboarding/{sid}")).json()["last_error"] is None
+    assert onboarding._load(tmp_path, sid).last_error  # kept on the server for the supervisor
+
+
+def test_a_session_is_saved_whole(tmp_path: Path) -> None:
+    session = onboarding.Session(
+        id="abc123", company="A", website="a.example", stage="ready", created_at="2026-11-12"
+    )
+    onboarding._save(tmp_path, session)
+    folder = onboarding._dir(tmp_path)
+    assert [p.name for p in folder.iterdir()] == ["abc123.json"]  # no temporary file left over
+
+
+async def test_starts_are_rate_limited_per_address(client: AsyncClient) -> None:
+    # D146: a script cannot spend the search credits by starting sessions in a loop
+    codes = []
+    for n in range(onboarding.limits.PER_HOUR["start"] + 1):
+        r = await client.post("/api/onboarding", json={**START, "email": f"p{n}@example.com"})
+        codes.append(r.status_code)
+    assert codes[:-1] == [201] * onboarding.limits.PER_HOUR["start"] and codes[-1] == 429
+    other = await client.post(
+        "/api/onboarding",
+        json={**START, "email": "q@example.com"},
+        headers={"x-forwarded-for": "203.0.113.9"},
+    )
+    assert other.status_code == 201

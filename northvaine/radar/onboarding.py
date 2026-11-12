@@ -45,6 +45,7 @@ __all__ = [
     "check_codes_suggest",
     "clean_text",
     "client_id_for",
+    "country_code",
     "intermediary_roles",
     "propose",
     "read_catalogue",
@@ -131,6 +132,25 @@ class OnboardingAnswers(NorthvaineModel):
     # D116: who the client sells to; new onboarding defaults to both end buyers and distributors
     channel: Literal["direct", "distributors", "both"] = "both"
 
+    @field_validator("markets", mode="before")
+    @classmethod
+    def _market_codes(cls, values: object) -> object:
+        """D144: a country typed as a name ("UK", "Germany") becomes its ISO code; an unknown
+        name is refused with a clear message instead of a server error."""
+        if not isinstance(values, list):
+            return values
+        codes: list[str] = []
+        unknown: list[str] = []
+        for value in values:
+            code = country_code(str(value))
+            if code is None:
+                unknown.append(str(value).strip())
+            elif code not in codes:
+                codes.append(code)
+        if unknown:
+            raise ValueError(f"unknown countries: {', '.join(unknown)}")
+        return codes
+
     @field_validator("not_buyer_roles")
     @classmethod
     def _known_roles(cls, keys: list[str]) -> list[str]:
@@ -139,6 +159,38 @@ class OnboardingAnswers(NorthvaineModel):
         if bad:
             raise ValueError(f"unknown not_buyer_roles: {', '.join(bad)}")
         return list(dict.fromkeys(keys))
+
+
+# Common names and short forms that are not the ISO short name (D144).
+_COUNTRY_ALIASES = {
+    "uk": "GB", "u.k.": "GB", "great britain": "GB", "britain": "GB", "england": "GB",
+    "scotland": "GB", "wales": "GB", "northern ireland": "GB", "usa": "US", "u.s.": "US",
+    "u.s.a.": "US", "america": "US", "united states of america": "US", "uae": "AE",
+    "emirates": "AE", "turkey": "TR", "holland": "NL", "the netherlands": "NL",
+    "czech republic": "CZ", "korea": "KR", "republic of korea": "KR", "russian federation": "RU",
+    "viet nam": "VN", "ksa": "SA", "saudi": "SA", "hong kong sar": "HK",
+}  # fmt: skip
+
+
+def country_code(value: str) -> str | None:
+    """An ISO 3166-1 alpha-2 code from a code or an English country name; None if unknown."""
+    text = " ".join(value.strip().split())
+    if not text:
+        return None
+    countries = _iso3166()
+    if len(text) == 2 and text.upper() in countries:
+        return text.upper()
+    folded = text.casefold()
+    if folded in _COUNTRY_ALIASES:
+        return _COUNTRY_ALIASES[folded]
+    if len(text) == 3:
+        for code, (alpha3, _name) in countries.items():
+            if alpha3 == text.upper():
+                return code
+    for code, (_alpha3, name) in countries.items():
+        if name == folded:
+            return code
+    return None
 
 
 class CatalogueRead(NorthvaineModel):

@@ -38,7 +38,7 @@ _DASHES = dict.fromkeys("\u2010\u2011\u2012\u2013\u2014\u2015\u2212\ufe58\ufe63\
 # Fuzzy search is skipped on text longer than this many times `extract_max_doc_chars`.
 _FUZZY_TEXT_FACTOR = 2
 _FUZZY_SLACK = 0.10
-_FUZZY_MAX_CANDIDATES = 200
+_FUZZY_MAX_CANDIDATES = 12
 _NUMBERS = re.compile(r"\d+(?:[.,]\d+)*")
 
 
@@ -109,24 +109,46 @@ def _find_structured(text: str, quote: str) -> QuoteMatch:
 
 
 def _candidate_starts(norm_text: str, norm_quote: str) -> list[int]:
-    """Estimated window starts: where a short piece of the quote occurs in the text."""
+    """Estimated window starts, best first: where many short pieces of the quote agree.
+
+    Every k-gram of the quote found in the text votes for the window start it implies; votes
+    are pooled into buckets of the fuzzy slack. A true near-copy gathers most of its k-grams in
+    one bucket, while text that merely shares common words scatters its votes, so only the few
+    best-voted buckets are checked with the (quadratic) `SequenceMatcher` (D145).
+    """
     k = max(4, min(8, len(norm_quote) // 4))
     grams: dict[str, list[int]] = {}
     for i in range(len(norm_quote) - k + 1):
         grams.setdefault(norm_quote[i : i + k], []).append(i)
-    found: set[int] = set()
+    bucket = max(1, int(len(norm_quote) * _FUZZY_SLACK))
+    exact: dict[int, int] = {}  # window start -> votes
+    votes: dict[int, int] = {}  # bucket -> votes
+    best_in: dict[int, int] = {}  # bucket -> its most-voted window start
     for pos in range(len(norm_text) - k + 1):
         offsets = grams.get(norm_text[pos : pos + k])
         if offsets:
             for q in offsets:
-                found.add(pos - q)
-    ordered = sorted(found)
-    if len(ordered) > _FUZZY_MAX_CANDIDATES:
-        # keep the candidates with the most agreeing neighbours: bounded work, same result on
-        # a true near-match because its estimates cluster
-        step = len(ordered) / _FUZZY_MAX_CANDIDATES
-        ordered = [ordered[int(i * step)] for i in range(_FUZZY_MAX_CANDIDATES)]
-    return ordered
+                est = pos - q
+                b = est // bucket
+                n = exact[est] = exact.get(est, 0) + 1
+                votes[b] = votes.get(b, 0) + 1
+                if n > exact.get(best_in.get(b, est), 0) or b not in best_in:
+                    best_in[b] = est
+    if not votes:
+        return []
+    # a bucket's votes plus its neighbours', since a near-copy can straddle a bucket edge; the
+    # window starts where the most pieces agree exactly (intact pieces of a near-copy all do)
+    pooled = {b: votes[b] + votes.get(b - 1, 0) + votes.get(b + 1, 0) for b in votes}
+    ranked = sorted(pooled, key=lambda b: (-pooled[b], b))
+    starts: list[int] = []
+    for b in ranked:
+        near = [best_in[n] for n in (b - 1, b, b + 1) if n in best_in]
+        est = max(near, key=lambda e: (exact[e], -e))
+        if est not in starts:
+            starts.append(est)
+        if len(starts) == _FUZZY_MAX_CANDIDATES:
+            break
+    return starts
 
 
 def _find_fuzzy(norm_text: str, norm_quote: str, min_ratio: float) -> tuple[int, int, float] | None:
@@ -148,10 +170,23 @@ def _find_fuzzy(norm_text: str, norm_quote: str, min_ratio: float) -> tuple[int,
             continue
         span_start = lo + real[0].b
         span_end = lo + real[-1].b + real[-1].size
-        span = norm_text[span_start:span_end]
-        ratio = SequenceMatcher(None, norm_quote, span, autojunk=False).ratio()
-        if best is None or ratio > best[2]:
-            best = (span_start, span_end, ratio)
+        # In text that shares the quote's words, stray matches at the window's edges stretch
+        # the block span; also score the voted start itself (D145).
+        spans = {
+            (span_start, span_end),
+            (max(span_start, est), span_end),
+            (est, min(len(norm_text), est + length)),
+        }
+        for first, last in spans:
+            if last <= first:
+                continue
+            matcher = SequenceMatcher(None, norm_quote, norm_text[first:last], autojunk=False)
+            floor = min_ratio if best is None else max(min_ratio, best[2])
+            if matcher.quick_ratio() < floor:  # a cheap upper bound on ratio()
+                continue
+            ratio = matcher.ratio()
+            if best is None or ratio > best[2]:
+                best = (first, last, ratio)
     if best is not None and best[2] >= min_ratio:
         # A near-copy may differ in wording, never in a number ("250 staff" vs "240 staff").
         if _NUMBERS.findall(norm_quote) != _NUMBERS.findall(norm_text[best[0] : best[1]]):

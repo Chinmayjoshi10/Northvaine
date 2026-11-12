@@ -877,6 +877,15 @@ class AuditLogRow(NorthvaineModel):
     created_at: datetime
 
 
+class AppStateRow(NorthvaineModel):
+    """A record that must survive a restart (D144); `value` is zlib-compressed UTF-8 text."""
+
+    kind: str
+    key: str
+    value: bytes
+    updated_at: datetime
+
+
 # ---------------------------------------------------------------------------
 # M4 (evidence ledger, factory/board/M4/PLAN.md "Frozen contracts"). Plain values passed between
 # radar/ and core/ledger.py; none of them is a table row.

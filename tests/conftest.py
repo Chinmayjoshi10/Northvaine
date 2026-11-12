@@ -62,3 +62,14 @@ async def _dispose_engine_after_db_test(request: pytest.FixtureRequest) -> Async
     from northvaine.core.db import dispose_engine
 
     await dispose_engine()
+
+
+@pytest.fixture(autouse=True)
+def _no_durable_state(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> None:
+    """D144: unit tests never write app state to a real database (a local .env may set one).
+    Tests marked `db` keep the real switch."""
+    if request.node.get_closest_marker("db") is not None:
+        return
+    from northvaine.api import durable
+
+    monkeypatch.setattr(durable, "enabled", lambda: False)
