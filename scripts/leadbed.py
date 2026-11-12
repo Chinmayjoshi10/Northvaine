@@ -22,6 +22,7 @@ import argparse
 import asyncio
 import importlib.util
 import json
+import subprocess
 import sys
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -153,15 +154,20 @@ async def obtain_run(
             return None, "needs --yes to record", 0, Decimal("0")
         if credits_left < settings.tavily_max_calls_per_run or usd_left < MIN_USD_LEFT:
             return None, "skipped: spend cap", 0, Decimal("0")
-        code = await asyncio.to_thread(  # radar.main runs its own event loop
-            radar.main,
+        # One process per recording: the model client and database engine are cached per event
+        # loop, so a second run in this process fails with "Event loop is closed".
+        done = await asyncio.to_thread(
+            subprocess.run,
             [
+                sys.executable, str(ROOT / "scripts" / "radar.py"),
                 "--client", business, "--record", "--yes",
                 "--clients-dir", str(harness / "specs"),
                 "--fixtures-dir", str(harness / "recordings"),
                 "--out", str(out / "radar"),
-            ]
+            ],
+            cwd=ROOT,
         )  # fmt: skip
+        code = done.returncode
         have = code == 0 and all((folder / name).is_file() for name in radar.FILES)
         if not have:
             return None, "record failed", 0, Decimal("0")
