@@ -138,6 +138,39 @@ def test_fuzzy_search_is_fast_on_a_large_document() -> None:
     assert time.perf_counter() - started < 5
 
 
+def _shared_word_text(seed: int, words: int) -> str:
+    import random
+
+    rng = random.Random(seed)
+    vocab = "the of and supply range new order market project year from with for price stock"
+    return " ".join(rng.choice(vocab.split()) for _ in range(words))
+
+
+def test_long_quote_in_same_vocabulary_text_checks_few_windows(monkeypatch) -> None:
+    # A 30-page catalogue made one long quote cost about 100 s on the free server (D145): text
+    # sharing the quote's words gave hundreds of candidate windows, each a quadratic comparison.
+    from northvaine.radar import quote_check
+
+    calls = {"n": 0}
+    real = quote_check.SequenceMatcher
+
+    def counting(*args, **kwargs):
+        calls["n"] += 1
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(quote_check, "SequenceMatcher", counting)
+    text = _shared_word_text(1, 4000)[:24000]
+    miss = _shared_word_text(2, 110)[:600]
+    assert not find_quote(text, miss, settings=SETTINGS).found
+    assert calls["n"] <= 4 * quote_check._FUZZY_MAX_CANDIDATES  # was hundreds
+
+    original = text[5000:5600]
+    near = original.replace(" the ", " a ", 1)
+    match = find_quote(text, near, settings=SETTINGS)
+    assert match.found and match.method == "fuzzy"
+    assert abs(match.offset - 5000) <= 10
+
+
 # --- find_quote, structured ---------------------------------------------------------------
 
 RECORD = "Title: Road works\nCPV: 45233000\nBuyer country: DEU\nValue: 1 200 000 EUR"
