@@ -280,6 +280,9 @@ class Settings(BaseSettings):
     onboarding_run_timeout_seconds: int = Field(default=3600, ge=60)
     # Priority of the run process (POSIX nice); the web process keeps answering pages.
     onboarding_worker_nice: int = Field(default=10, ge=0, le=19)
+    # D146: new "Build my radar" sessions per UTC day, all visitors together (each one searches
+    # the web); past it the page asks people to come back tomorrow.
+    onboarding_daily_sessions: int = Field(default=60, ge=1)
     # Register check (D103): UK candidates looked up before the gate, at most this many a run.
     radar_register_max_lookups: int = Field(default=200, ge=0)
     # D115: candidates with the same company registration number are one company; non-trade

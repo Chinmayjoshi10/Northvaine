@@ -26,7 +26,7 @@ from urllib.parse import urlsplit
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import Field
 
-from northvaine.api import accounts, durable, store
+from northvaine.api import accounts, durable, limits, store
 from northvaine.brain.budget import RunContext
 from northvaine.core.models import NorthvaineModel
 from northvaine.core.settings import get_settings
@@ -138,7 +138,7 @@ class Session(NorthvaineModel):
     heartbeat_at: str | None = None
     attempts: int = 0  # runs that stopped with an error
     resumes: int = 0  # runs cut short by a server restart
-    last_error: str | None = None
+    last_error: str | None = None  # raw error text: never sent to the browser (_public)
     queue_position: int | None = None  # filled when read: 1 = next
     wait_minutes: int | None = None  # filled when read: a rough estimate
 
@@ -173,7 +173,11 @@ def last_heartbeat(base: Path, sid: str) -> str | None:
 
 def _save(base: Path, session: Session) -> Session:
     text = session.model_dump_json(exclude={"queue_position", "wait_minutes"})
-    (_dir(base) / f"{session.id}.json").write_text(text, encoding="utf-8")
+    # write then rename, so a run process killed mid-write never leaves half a file
+    path = _dir(base) / f"{session.id}.json"
+    tmp = path.with_name(f"{session.id}.{os.getpid()}.tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
     durable.save_later("onboarding", session.id, text)
     return session
 
@@ -370,7 +374,7 @@ def _finished_ok(base: Path, sid: str | None) -> bool:
 
 
 @router.post("", status_code=201)
-async def start(body: StartIn, base: Base) -> Session:
+async def start(body: StartIn, request: Request, base: Base) -> Session:
     email = accounts._email(body.email)
     if email not in accounts._subscribers(base):
         claimed = accounts.trial_sessions(base, email)
@@ -381,6 +385,23 @@ async def start(body: StartIn, base: Base) -> Session:
                 status_code=409,
                 detail="The free radar for this email has been used. Talk to us to subscribe.",
             )
+        # a second tab or a repeated click: hand back the run already waiting or running
+        for sid in claimed:
+            try:
+                existing = _load(base, sid) if sid else None
+            except HTTPException:
+                continue
+            if existing is not None and existing.stage in ("queued", "running"):
+                return _public(existing)
+    limits.check(request, "start")
+    today = _now()[:10]
+    if sum(s.created_at[:10] == today for s in sessions(base)) >= (
+        get_settings().onboarding_daily_sessions
+    ):
+        raise HTTPException(
+            status_code=429,
+            detail="Today's free radars are all taken. Please come back tomorrow.",
+        )
     session = Session(
         id=secrets.token_hex(12),
         company=body.company.strip(),
@@ -395,9 +416,14 @@ async def start(body: StartIn, base: Base) -> Session:
     return session
 
 
+def _public(session: Session) -> Session:
+    """What the browser sees: never the raw error text of a failed attempt."""
+    return session.model_copy(update={"last_error": None})
+
+
 @router.get("/{sid}")
 async def status(sid: str, base: Base) -> Session:
-    session = _load(base, sid)
+    session = _public(_load(base, sid))
     if session.stage in ("queued", "running"):
         ids = [s.id for s in queue(base)]
         position = ids.index(sid) + 1 if sid in ids else 1
@@ -413,9 +439,14 @@ async def status(sid: str, base: Base) -> Session:
 
 @router.post("/{sid}/catalogue")
 async def upload_catalogue(sid: str, request: Request, base: Base) -> Catalogue:
-    _load(base, sid)
+    if _load(base, sid).stage in ("queued", "running", "done"):
+        raise HTTPException(status_code=409, detail="The radar has already started.")
+    limits.check(request, "catalogue")
     if request.headers.get("content-type", "").split(";")[0] != "application/pdf":
         raise HTTPException(status_code=415, detail="Upload the catalogue as a PDF.")
+    declared = request.headers.get("content-length", "")
+    if declared.isdigit() and int(declared) > MAX_CATALOGUE_BYTES:
+        raise HTTPException(status_code=413, detail="The catalogue is over 25 MB.")
     data = await request.body()
     if len(data) > MAX_CATALOGUE_BYTES:
         raise HTTPException(status_code=413, detail="The catalogue is over 25 MB.")
@@ -429,23 +460,27 @@ async def upload_catalogue(sid: str, request: Request, base: Base) -> Catalogue:
 
 
 @router.post("/{sid}/propose")
-async def start_proposal(sid: str, base: Base) -> Session:
+async def start_proposal(sid: str, request: Request, base: Base) -> Session:
     session = _load(base, sid)
     if session.stage in ("proposing", "queued", "running", "done"):
-        return session
+        return _public(session)
+    limits.check(request, "propose")
     session = _update(base, sid, stage="proposing" if session.stage != "reading" else "reading")
     _spawn(_propose(base, sid))
-    return session
+    return _public(session)
 
 
 @router.post("/{sid}/answers")
 async def confirm(sid: str, answers: OnboardingAnswers, base: Base) -> Session:
     session = _load(base, sid)
     if session.stage in ("queued", "running", "done"):
-        return session
+        return _public(session)
     clients = clients_dir()
     clients.mkdir(parents=True, exist_ok=True)
-    client_id = client_id_for(answers.website)
+    # D146: an onboarded client's radar is reached by its link only; the random part keeps one
+    # visitor from opening (or marking leads on) another visitor's radar by guessing its name
+    session_client = session.client_id
+    client_id = session_client or f"{client_id_for(answers.website)}_{secrets.token_hex(4)}"
     spec = build_client_spec(answers, client_id=client_id, today=datetime.now(UTC).date())
     text = json.dumps(spec.model_dump(mode="json"), indent=2, ensure_ascii=False)
     (clients / f"{client_id}.json").write_text(text, encoding="utf-8")
@@ -459,6 +494,8 @@ async def confirm(sid: str, answers: OnboardingAnswers, base: Base) -> Session:
         queued_at=now,
         as_of=datetime.now(UTC).isoformat(),
         error=None,
+        attempts=0,  # a confirmed retry starts with its full allowance
+        resumes=0,
     )
     from northvaine.api import supervisor
 

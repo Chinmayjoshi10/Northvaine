@@ -23,6 +23,7 @@ import contextlib
 import logging
 import os
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -38,6 +39,12 @@ KEEP_AWAKE_SECONDS = 240.0
 FAILED_MESSAGE = (
     "We could not finish your radar this time. Your free radar is still yours: start again with "
     "the same email, or open an example radar."
+)
+
+# D146: a run stopped by the money cap fails again until the day's cap resets, so say so
+BUDGET_MESSAGE = (
+    "Today's free radars are all used up. Your free radar is still yours: please start again "
+    "tomorrow (after midnight UTC) with the same email, or open an example radar."
 )
 
 _wake = asyncio.Event()
@@ -151,17 +158,28 @@ class Supervisor:
         sid, self.process, self.sid = self.sid, None, None
         if sid is None:
             return
-        try:
-            session = onboarding._load(self.base, sid)
-        except Exception:
+        session = None
+        for _ in range(2):  # one retry: a file read at the moment it is replaced
+            try:
+                session = onboarding._load(self.base, sid)
+                break
+            except Exception:
+                time.sleep(0.1)
+        if session is None:
+            logger.warning("run %s: session unreadable after the process ended", sid)
             return
         if session.stage == "done":
             return
         settings = get_settings()
         attempts = session.attempts + 1
         if code == EXIT_FINAL or attempts >= settings.onboarding_max_attempts:
+            budget = code == EXIT_FINAL and "money cap" in (session.last_error or "")
             onboarding._update(
-                self.base, sid, stage="failed", attempts=attempts, error=FAILED_MESSAGE
+                self.base,
+                sid,
+                stage="failed",
+                attempts=attempts,
+                error=BUDGET_MESSAGE if budget else FAILED_MESSAGE,
             )
             return
         onboarding._update(

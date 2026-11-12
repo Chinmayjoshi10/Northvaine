@@ -39,7 +39,9 @@ function saveRun(id: string | null, step: Step) {
 function useSession(id: string | null, every: number) {
   const [session, setSession] = useState<OnboardingSession | null>(null);
   const [reconnecting, setReconnecting] = useState(false);
+  const [gone, setGone] = useState(false);
   useEffect(() => {
+    setGone(false);
     if (!id) return;
     let stop = false;
     let missing = 0;
@@ -58,6 +60,7 @@ function useSession(id: string | null, every: number) {
         if (stop) return;
         setReconnecting(true);
         missing = e instanceof Error && e.message === "Not found." ? missing + 1 : 0;
+        if (missing * every >= 120_000) setGone(true);
         if (missing * every >= 120_000)
           setSession((s) =>
             s
@@ -78,7 +81,7 @@ function useSession(id: string | null, every: number) {
       window.clearInterval(timer);
     };
   }, [id, every]);
-  return { session, reconnecting };
+  return { session, reconnecting, gone };
 }
 
 function Field(props: {
@@ -321,8 +324,24 @@ export function OnboardingPage() {
   const [waking, setWaking] = useState(false);
   const [start, setStart] = useState({ company: "", website: "", email: "" });
   const [catalogueNote, setCatalogueNote] = useState("");
-  const { session, reconnecting } = useSession(id, step === "running" ? 4000 : 2000);
+  const { session, reconnecting, gone } = useSession(
+    id,
+    step === "running" ? 4000 : 2000,
+  );
   useEffect(() => saveRun(id, step), [id, step]);
+  // a run that failed, or that the server no longer has, is not brought back on every visit
+  const failed = session?.stage === "failed" || gone;
+  const startAgain = () => {
+    saveRun(null, "start");
+    setId(null);
+    setError("");
+    setStep("start");
+  };
+  const againButton = (
+    <button className="landing-btn dark" type="button" onClick={startAgain}>
+      Start again
+    </button>
+  );
 
   const begin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,6 +354,11 @@ export function OnboardingPage() {
     setBusy(false);
     if (r?.status === 409) {
       window.location.hash = link("contact", "used");
+      return;
+    }
+    if (r?.status === 429) {
+      const body = (await r.json().catch(() => null)) as { detail?: string } | null;
+      setError(body?.detail ?? "Too many tries. Please try again later.");
       return;
     }
     if (!r || !r.ok) {
@@ -522,11 +546,16 @@ export function OnboardingPage() {
             <h1>Tell us about your buyers</h1>
             {session?.stage === "proposed" && session.proposal ? (
               <Answers session={session} onDone={confirm} />
-            ) : session?.stage === "failed" ? (
-              <p className="contact-error" role="alert">
-                {session.error} <a href={link("contact")}>Talk to us</a> and we
-                will set it up with you.
-              </p>
+            ) : failed ? (
+              <>
+                <p className="contact-error" role="alert">
+                  {session?.error ??
+                    "We could not find this run any more. Please start again."}{" "}
+                  <a href={link("contact")}>Talk to us</a> and we will set it up
+                  with you.
+                </p>
+                {againButton}
+              </>
             ) : (
               <p className="contact-lede" role="status">
                 Reading your website{session?.catalogue ? " and catalogue" : ""}{" "}
@@ -543,11 +572,13 @@ export function OnboardingPage() {
         {step === "running" && (
           <>
             <h1>Building your radar</h1>
-            {session?.stage === "failed" ? (
+            {failed ? (
               <>
                 <p className="contact-error" role="alert">
-                  {session.error}
+                  {session?.error ??
+                    "We could not find this run any more. Please start again; your free radar is still yours."}
                 </p>
+                {againButton}
                 <p className="contact-lede">
                   <a href={link("app", "stone_exporter_demo", "latest")}>
                     Open an example radar

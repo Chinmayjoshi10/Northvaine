@@ -235,3 +235,13 @@ def test_a_fresh_heartbeat_file_keeps_a_run_alive(base: Path) -> None:
     sup.sid, sup.process = "s1", Proc()  # type: ignore[assignment]
     sup._check_alive()
     assert killed == []
+
+
+def test_a_money_cap_stop_says_so(base: Path) -> None:
+    # D146: starting again fails again until the day's cap resets, so the page must say that
+    _session(base, "m1", stage="running", last_error="money cap reached (day)")
+    sup = supervisor.Supervisor(base)
+    sup.sid = "m1"
+    sup._finished(supervisor.EXIT_FINAL)
+    session = onboarding._load(base, "m1")
+    assert session.stage == "failed" and session.error == supervisor.BUDGET_MESSAGE

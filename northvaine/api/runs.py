@@ -28,8 +28,14 @@ class ClientSummary(BaseModel):
 
 @router.get("/clients")
 def list_clients(base: Base) -> list[ClientSummary]:
+    # D146: only the demo radars are listed; a visitor's own radar is reached by its link only
+    from northvaine.api.onboarding import sessions
+
+    private = {s.client_id for s in sessions(base) if s.client_id}
     out = []
     for client in store.client_ids(base):
+        if client in private:
+            continue
         days = store.run_days(base, client)
         offer, accounts, tenders = None, 0, 0
         if days:

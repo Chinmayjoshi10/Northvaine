@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import time
 from contextlib import AbstractContextManager
 from typing import Any
 
@@ -43,6 +44,7 @@ class ResumeCache:
         self.saved: dict[str, str] = dict(saved or {})
         self.hits = 0
         self.misses = 0
+        self.last_activity = time.monotonic()  # any answer asked for or received (D145)
 
     @classmethod
     async def load(cls, run_key: str) -> ResumeCache:
@@ -51,6 +53,7 @@ class ResumeCache:
         return cache
 
     def get(self, key: str) -> str | None:
+        self.last_activity = time.monotonic()
         found = self.saved.get(key)
         if found is None:
             self.misses += 1
@@ -59,6 +62,7 @@ class ResumeCache:
         return found
 
     def keep(self, key: str, value: str) -> None:
+        self.last_activity = time.monotonic()
         self.saved[key] = value
         durable.save_later(self.kind, key, value)
 

@@ -39,6 +39,14 @@ SELECT_KIND = (
     "SELECT key, value FROM app_state WHERE kind = :kind AND key LIKE :prefix ORDER BY key"
 )
 
+DELETE_KIND = "DELETE FROM app_state WHERE kind = :kind"
+# D146: a run's saved answers are only needed until it finishes; anything older is left over
+SWEEP_CACHES = (
+    "DELETE FROM app_state WHERE kind LIKE 'cache:%' AND updated_at < now() - make_interval("
+    "hours => :hours)"
+)
+TABLE_SIZE = "SELECT pg_total_relation_size('app_state')"
+
 _queue: asyncio.Queue[tuple[str, str, str]] | None = None
 _writer: asyncio.Task[None] | None = None
 _loop: asyncio.AbstractEventLoop | None = None
@@ -107,6 +115,40 @@ async def items(kind: str, prefix: str = "") -> list[tuple[str, str]]:
     return [(key, _unpack(value)) for key, value in rows]
 
 
+async def drop_kind(kind: str) -> None:
+    """Delete every record of one kind (a finished run's saved answers)."""
+    if not enabled():
+        return
+    from sqlalchemy import text as sql
+
+    from northvaine.core.db import session_scope
+
+    try:
+        async with session_scope() as session:
+            await session.execute(sql(DELETE_KIND), {"kind": kind})
+    except Exception as exc:
+        logger.warning("app_state delete failed (%s): %s", kind, type(exc).__name__)
+
+
+async def sweep(hours: int = 24) -> int | None:
+    """Drop run caches older than `hours` and return the table's size in bytes (logged at start,
+    so a store nearing the free plan's limit is seen before it stops model calls)."""
+    if not enabled():
+        return None
+    from sqlalchemy import text as sql
+
+    from northvaine.core.db import session_scope
+
+    try:
+        async with session_scope() as session:
+            await session.execute(sql(SWEEP_CACHES), {"hours": hours})
+            size = (await session.execute(sql(TABLE_SIZE))).scalar()
+    except Exception as exc:
+        logger.warning("app_state sweep failed: %s", type(exc).__name__)
+        return None
+    return int(size) if size is not None else None
+
+
 def save_later(kind: str, key: str, text: str) -> None:
     """Queue a record to be saved by one background writer, in order. Safe to call from sync
     code that runs inside the event loop; without a running loop or a database it does nothing."""
@@ -163,7 +205,20 @@ def _safe(base: Path, relative: str) -> Path | None:
     return target if target.is_relative_to(base.resolve()) else None
 
 
-async def hydrate(reports: Path, clients: Path) -> dict[str, int]:
+async def hydrate_reports(reports: Path) -> int:
+    """Write finished radars back to disk. The largest kind, so it runs after the server already
+    answers (D146): a radar opened in the first moments after a restart may need a reload."""
+    if not enabled():
+        return 0
+    rows = await items("report")
+    for key, text in rows:
+        path = _safe(reports, key)
+        if path is not None:
+            _write_new(path, text)
+    return len(rows)
+
+
+async def hydrate(reports: Path, clients: Path, *, with_reports: bool = True) -> dict[str, int]:
     """Write the saved records back to disk (at server start). Files that came with the image are
     never overwritten; line files (trials, feedback) are merged."""
     counts: dict[str, int] = {}
@@ -184,12 +239,8 @@ async def hydrate(reports: Path, clients: Path) -> dict[str, int]:
         if path is not None:
             _write_new(path, text)
     counts["client"] = len(rows)
-    rows = await items("report")
-    for key, text in rows:
-        path = _safe(reports, key)
-        if path is not None:
-            _write_new(path, text)
-    counts["report"] = len(rows)
+    if with_reports:
+        counts["report"] = await hydrate_reports(reports)
     from northvaine.api.accounts import REQUESTS, TRIALS
 
     for kind, name in (("trial", TRIALS), ("request", REQUESTS)):

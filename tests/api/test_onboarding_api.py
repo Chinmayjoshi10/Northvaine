@@ -56,6 +56,7 @@ async def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncIterat
         return list(described), [], []
 
     monkeypatch.setattr(onboarding, "check_codes_suggest", all_match)  # no real model call (D141)
+    onboarding.limits.reset()
     app.dependency_overrides[onboarding.reports] = lambda: tmp_path
     app.dependency_overrides[onboarding.accounts.reports] = lambda: tmp_path
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
@@ -121,8 +122,10 @@ async def test_answers_write_the_spec_and_queue_the_run(
     sid = (await client.post("/api/onboarding", json=START)).json()["id"]
     r = await client.post(f"/api/onboarding/{sid}/answers", json=ANSWERS)
     body = r.json()
-    assert r.status_code == 200 and body["client_id"] == "example_test"
-    assert (tmp_path / "clients" / "example_test.json").is_file()
+    # D146: the readable name plus a random part, so no one opens it by guessing
+    assert r.status_code == 200 and body["client_id"].startswith("example_test_")
+    assert len(body["client_id"]) == len("example_test_") + 8
+    assert (tmp_path / "clients" / f"{body['client_id']}.json").is_file()
     # D144: the run is queued for the supervisor, with its moment fixed and a place in the queue
     assert body["stage"] == "queued" and body["as_of"] and body["queue_position"] == 1
     assert body["wait_minutes"] == onboarding.TYPICAL_RUN_MINUTES and woken == [True]
@@ -193,3 +196,58 @@ async def test_nothing_read_means_nothing_proposed(
     await client.post(f"/api/onboarding/{sid}/propose")
     body = await wait_for(client, sid, "proposed")
     assert body["proposal"]["offer"] == "" and body["proposal"]["related_terms"] == []
+
+
+async def test_a_second_start_hands_back_the_run_in_the_queue(
+    client: AsyncClient, tmp_path: Path
+) -> None:
+    # review of D144: two tabs must not queue two paid runs for one free radar
+    first = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, first, "ready")
+    onboarding._update(tmp_path, first, stage="queued", queued_at=onboarding._now())
+    again = await client.post("/api/onboarding", json=START)
+    assert again.status_code == 201 and again.json()["id"] == first
+
+
+async def test_no_catalogue_once_the_radar_has_started(client: AsyncClient, tmp_path: Path) -> None:
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    onboarding._update(tmp_path, sid, stage="running")
+    r = await client.post(
+        f"/api/onboarding/{sid}/catalogue",
+        content=b"%PDF",
+        headers={"content-type": "application/pdf"},
+    )
+    assert r.status_code == 409
+
+
+async def test_the_raw_error_never_reaches_the_browser(client: AsyncClient, tmp_path: Path) -> None:
+    sid = (await client.post("/api/onboarding", json=START)).json()["id"]
+    await wait_for(client, sid, "ready")
+    onboarding._update(tmp_path, sid, last_error="OperationalError: host db.internal")
+    assert (await client.get(f"/api/onboarding/{sid}")).json()["last_error"] is None
+    assert onboarding._load(tmp_path, sid).last_error  # kept on the server for the supervisor
+
+
+def test_a_session_is_saved_whole(tmp_path: Path) -> None:
+    session = onboarding.Session(
+        id="abc123", company="A", website="a.example", stage="ready", created_at="2026-11-12"
+    )
+    onboarding._save(tmp_path, session)
+    folder = onboarding._dir(tmp_path)
+    assert [p.name for p in folder.iterdir()] == ["abc123.json"]  # no temporary file left over
+
+
+async def test_starts_are_rate_limited_per_address(client: AsyncClient) -> None:
+    # D146: a script cannot spend the search credits by starting sessions in a loop
+    codes = []
+    for n in range(onboarding.limits.PER_HOUR["start"] + 1):
+        r = await client.post("/api/onboarding", json={**START, "email": f"p{n}@example.com"})
+        codes.append(r.status_code)
+    assert codes[:-1] == [201] * onboarding.limits.PER_HOUR["start"] and codes[-1] == 429
+    other = await client.post(
+        "/api/onboarding",
+        json={**START, "email": "q@example.com"},
+        headers={"x-forwarded-for": "203.0.113.9"},
+    )
+    assert other.status_code == 201
