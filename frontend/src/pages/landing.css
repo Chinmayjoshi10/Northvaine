@@ -375,3 +375,25 @@
   .landing-feature:hover, .landing-industry-card:hover, .landing-btn:hover, .lm-tilt { transform: none !important; }
   .landing-proof mark::after { transform: none; opacity: 1; }
 }
+
+/* Examples: finished radars for other industries (data from public/examples). */
+.landing-ex-lede { max-width: 36em; margin: 0; color: var(--soft-copy); font: 300 20px/1.5 var(--serif); }
+.landing-ex-tabs { display: flex; gap: 8px; margin-top: 34px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.landing-ex-tab { flex: none; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--soft-copy); font: 500 14px var(--sans); cursor: pointer; transition: background .2s ease, color .2s ease; }
+.landing-ex-tab:hover { color: var(--ink); }
+.landing-ex-tab[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--raised); }
+.landing-ex-tab:focus-visible, .landing-ex-panel a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.landing-ex-panel { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: center; margin-top: 18px; padding: 34px 36px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
+.landing-ex-panel h3 { margin: 10px 0 8px; font: 400 32px/1.12 var(--serif); letter-spacing: -.01em; }
+.landing-ex-panel p { margin: 0 0 22px; color: var(--soft-copy); font-size: 15px; line-height: 1.6; }
+.landing-ex-facts { display: grid; gap: 0; margin: 0; }
+.landing-ex-facts > div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.landing-ex-facts > div:last-child { border-bottom: 0; }
+.landing-ex-facts dt { color: var(--soft-copy); font-size: 13.5px; }
+.landing-ex-facts dd { margin: 0; font: 300 38px/1 var(--serif); }
+.landing-ex-facts .signal dd { color: var(--signal); }
+@media (max-width: 900px) {
+  .landing-ex-panel { grid-template-columns: minmax(0, 1fr); gap: 22px; padding: 24px 20px; }
+  .landing-ex-panel h3 { font-size: 26px; }
+  .landing-ex-lede { font-size: 17px; }
+}

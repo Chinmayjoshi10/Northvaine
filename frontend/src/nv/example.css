@@ -1,0 +1,29 @@
+/* The strip above an example radar (read-only, finished run). */
+.nv-example {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--hair);
+  background: var(--signal-wash);
+  color: var(--soft);
+  font-size: 12.5px;
+}
+.nv-example span {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.nv-example b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.nv-example a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
