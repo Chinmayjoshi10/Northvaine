@@ -1,0 +1,14 @@
+{
+  "_note": "Hard-rule word lists for the lead scorer, as data (regular expressions, matched case-insensitively against a lead's name). A match marks the lead as junk for that reason. Nothing here names an industry: these are kinds of organisation that are never a buyer of a business's offer.",
+  "junk_name_patterns": {
+    "statistics_body": ["statistic", "\\bcensus\\b", "\\bONS\\b", "eurostat", "\\bbureau of\\b", "\\bobservatory\\b"],
+    "regulator": ["regulator", "regulatory", "\\bofgem\\b", "\\bofwat\\b", "\\bofcom\\b", "competition and markets", "\\bcommission$", "\\bwatchdog\\b"],
+    "lender": ["\\bbank\\b", "\\blender\\b", "\\bmortgage", "building society", "private equity", "\\bventures\\b", "capital partners", "investment (fund|trust)", "\\bfunding\\b"],
+    "trade_association": ["association", "federation", "\\binstitute\\b", "chamber of commerce", "\\bcouncil of\\b", "trade body", "\\bsociety of\\b", "\\balliance\\b", "confederation", "\\bforum\\b"],
+    "news_site": ["\\bnews\\b", "\\btimes\\b", "magazine", "\\bjournal\\b", "gazette", "\\bmedia\\b", "\\bpress\\b", "\\bdaily\\b", "tribune", "\\bobserver\\b", "\\bbulletin\\b", "\\breuters\\b", "bloomberg", "\\bblog\\b", "\\binsider\\b"],
+    "generic_government": ["^(the )?[a-z]+ (government|administration)$", "^(the )?government\\b", "^(the )?(ministry|department) of\\b", "^(the )?\\w+ ministry$"],
+    "no_company_named": ["^\\(no company named\\)$", "unidentified", "^unknown$", "^n/?a$"]
+  },
+  "stale_days": 400,
+  "why_now_min_intent": 1
+}

@@ -165,6 +165,65 @@ def _cap_candidates(ordered: list[Candidate], limit: int, min_per_stream: int) -
     return [c for i, c in enumerate(ordered) if i in taken]
 
 
+def expanded_queries(
+    spec: ClientSpec, as_of: datetime, settings: Settings
+) -> tuple[dict[str, list[SensorQuery]], list[str], set[str]]:
+    """The searches a run sends before any learned strategy: the spec's own, then intent, market
+    news (D126, D140) and partner discovery (D136). Returns them, the notes, and the texts of the
+    partner searches. Shared by the run and by replay, so a recording can be checked against it."""
+    notes: list[str] = []
+    queries = prepare_queries(spec.sensors, as_of.date(), settings)
+    if settings.radar_intent_search:  # D126: projects and partner changes, every market
+        written = intent_queries(
+            spec, as_of.date(), settings.radar_intent_days, settings.radar_intent_per_market
+        )
+        if written:
+            queries = {**queries, "tavily": [*queries.get("tavily", []), *written]}
+            notes.append(f"intent search: {len(written)} search(es) written from your answers")
+        news = market_news_queries(
+            spec, as_of.date(), settings.radar_intent_days, settings.radar_market_news_per_market
+        )
+        if news:  # D140: the client's triggers in each market, as news
+            queries = {**queries, "tavily": [*queries.get("tavily", []), *news]}
+            notes.append(f"market news: {len(news)} search(es) for your triggers")
+    partner_texts: set[str] = set()
+    if settings.radar_partner_discovery:  # D136: distributors' own sites in markets without records
+        wanted = partner_queries(
+            spec,
+            as_of.date(),
+            settings.radar_partner_per_market,
+            all_markets=settings.radar_partner_all_markets,
+        )
+        if wanted:
+            queries = {**queries, "tavily": [*queries.get("tavily", []), *wanted]}
+            partner_texts = {q.text or "" for q in wanted}
+            notes.append(f"partner discovery: {len(wanted)} search(es)")
+    return queries, notes, partner_texts
+
+
+def with_target_accounts(
+    spec: ClientSpec, queries: dict[str, list[SensorQuery]], settings: Settings
+) -> tuple[dict[str, list[SensorQuery]], dict[str, TargetAccount], list[str]]:
+    """Add each target account's own site (D138); returns the queries, the account behind each
+    `website:N` ref, and the notes."""
+    notes: list[str] = []
+    target_of: dict[str, TargetAccount] = {}
+    if settings.radar_target_accounts and spec.target_accounts:
+        sites = list(queries.get("website", []))
+        for account in spec.target_accounts:
+            sites.append(
+                SensorQuery(
+                    text=account.website,
+                    countries=[account.country],
+                    max_results=settings.radar_target_pages,
+                )
+            )
+            target_of[f"website:{len(sites)}"] = account
+        queries = {**queries, "website": sites}
+        notes.append(f"your list: {len(spec.target_accounts)} account site(s) read")
+    return queries, target_of, notes
+
+
 async def run_radar(
     spec: ClientSpec,
     *,
@@ -200,32 +259,8 @@ async def run_radar(
         return run.spent > cap
 
     # 1. discover (sensors with queries shifted to the run date, then lead upgrade)
-    queries = prepare_queries(spec.sensors, as_of.date(), settings)
-    if settings.radar_intent_search:  # D126: projects and partner changes, every market
-        written = intent_queries(
-            spec, as_of.date(), settings.radar_intent_days, settings.radar_intent_per_market
-        )
-        if written:
-            queries = {**queries, "tavily": [*queries.get("tavily", []), *written]}
-            notes.append(f"intent search: {len(written)} search(es) written from your answers")
-        news = market_news_queries(
-            spec, as_of.date(), settings.radar_intent_days, settings.radar_market_news_per_market
-        )
-        if news:  # D140: the client's triggers in each market, as news
-            queries = {**queries, "tavily": [*queries.get("tavily", []), *news]}
-            notes.append(f"market news: {len(news)} search(es) for your triggers")
-    partner_texts: set[str] = set()
-    if settings.radar_partner_discovery:  # D136: distributors' own sites in markets without records
-        wanted = partner_queries(
-            spec,
-            as_of.date(),
-            settings.radar_partner_per_market,
-            all_markets=settings.radar_partner_all_markets,
-        )
-        if wanted:
-            queries = {**queries, "tavily": [*queries.get("tavily", []), *wanted]}
-            partner_texts = {q.text or "" for q in wanted}
-            notes.append(f"partner discovery: {len(wanted)} search(es)")
+    queries, expand_notes, partner_texts = expanded_queries(spec, as_of, settings)
+    notes.extend(expand_notes)
     rng = random.Random(f"{spec.id}|{as_of.isoformat()}")  # seeded: a run is reproducible
     query_propensity: dict[str, float] = {}
     if strategy is not None and strategy.labels >= settings.learning_min_labels:
@@ -236,20 +271,8 @@ async def run_radar(
         )
     # D138: the client's target accounts, each read from its own site (after the strategy step,
     # so the list is always read); pages are matched back to their account by query
-    target_of: dict[str, TargetAccount] = {}
-    if settings.radar_target_accounts and spec.target_accounts:
-        sites = list(queries.get("website", []))
-        for account in spec.target_accounts:
-            sites.append(
-                SensorQuery(
-                    text=account.website,
-                    countries=[account.country],
-                    max_results=settings.radar_target_pages,
-                )
-            )
-            target_of[f"website:{len(sites)}"] = account
-        queries = {**queries, "website": sites}
-        notes.append(f"your list: {len(spec.target_accounts)} account site(s) read")
+    queries, target_of, target_notes = with_target_accounts(spec, queries, settings)
+    notes.extend(target_notes)
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
     notes.extend(found.notes)
     # A page fetched during this run is available at the run's moment, never later: sensors

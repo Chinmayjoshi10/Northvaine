@@ -64,7 +64,12 @@ from northvaine.radar.models import (  # noqa: E402
     UpgradedPage,
     load_client_spec,
 )
-from northvaine.radar.run import run_radar, seeded_concepts  # noqa: E402
+from northvaine.radar.run import (  # noqa: E402
+    expanded_queries,
+    run_radar,
+    seeded_concepts,
+    with_target_accounts,
+)
 from northvaine.sensors.base import SensorQuery  # noqa: E402
 from northvaine.sensors.fts import FTS_API_URL  # noqa: E402
 from northvaine.sensors.fts import _text as fts_text  # noqa: E402
@@ -252,6 +257,21 @@ def write_recording(folder: Path, recording: Recording) -> list[Path]:
 # --- replay -------------------------------------------------------------------------------
 
 
+def queries_match(
+    spec: ClientSpec,
+    as_of: datetime,
+    settings: Settings,
+    recorded: dict[str, list[SensorQuery]],
+) -> bool:
+    """A recording stores the expanded set (intent, market news, partner and target-account
+    searches, D126+), older ones only the spec's own queries; either one is current."""
+    if prepare_queries(spec.sensors, as_of.date(), settings) == recorded:
+        return True
+    expanded, _, _ = expanded_queries(spec, as_of, settings)
+    expanded, _, _ = with_target_accounts(spec, expanded, settings)
+    return expanded == recorded
+
+
 async def run_replay(
     spec: ClientSpec, recording: Recording, *, evidence_out: list[Any] | None = None
 ) -> RadarRun:
@@ -271,7 +291,7 @@ async def run_replay(
             tavily_api_key=SecretStr("replay-only"),
             companies_house_api_key=SecretStr("replay-only") if had_register else None,
         )
-        if prepare_queries(spec.sensors, as_of.date(), settings) != recording.meta.queries:
+        if not queries_match(spec, as_of, settings, recording.meta.queries):
             raise Refused(
                 f"the client spec {spec.id!r} no longer matches its recording (queries differ). "
                 "Re-record it with record-radar."
