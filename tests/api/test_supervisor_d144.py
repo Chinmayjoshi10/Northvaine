@@ -215,3 +215,23 @@ async def test_keep_awake_pings_only_during_a_run(
     sup._last_ping = float("-inf")
     await sup._keep_awake()  # not on the host: never pings
     assert len(pinged) == 1
+
+
+def test_a_fresh_heartbeat_file_keeps_a_run_alive(base: Path) -> None:
+    """D144: the run process beats from its own thread into its own file; a run whose session
+    file is old but whose heartbeat file is fresh is healthy."""
+    old = (datetime.now(UTC) - timedelta(minutes=20)).isoformat()  # silent > 10 min, < 1 h
+    _session(base, "s1", stage="running", started_at=old, heartbeat_at=old)
+    onboarding.heartbeat_path(base, "s1").write_text(datetime.now(UTC).isoformat(), "utf-8")
+    killed: list[bool] = []
+
+    class Proc:
+        returncode = None
+
+        def kill(self) -> None:
+            killed.append(True)
+
+    sup = supervisor.Supervisor(base)
+    sup.sid, sup.process = "s1", Proc()  # type: ignore[assignment]
+    sup._check_alive()
+    assert killed == []

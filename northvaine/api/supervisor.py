@@ -136,7 +136,10 @@ class Supervisor:
             session = onboarding._load(self.base, self.sid)
         except Exception:
             return
-        silent = _seconds_since(session.heartbeat_at or session.started_at)
+        beats = [
+            b for b in (onboarding.last_heartbeat(self.base, self.sid), session.heartbeat_at) if b
+        ]
+        silent = _seconds_since(max(beats) if beats else session.started_at)
         running = _seconds_since(session.started_at)
         if silent > settings.onboarding_stale_seconds or (
             running > settings.onboarding_run_timeout_seconds

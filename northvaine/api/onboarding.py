@@ -158,6 +158,19 @@ def _load(base: Path, sid: str) -> Session:
     return Session.model_validate_json(path.read_text(encoding="utf-8"))
 
 
+def heartbeat_path(base: Path, sid: str) -> Path:
+    """Written by the run process every few seconds (D144); never part of the session file."""
+    return _dir(base) / f"{sid}.beat"
+
+
+def last_heartbeat(base: Path, sid: str) -> str | None:
+    path = heartbeat_path(base, sid)
+    try:
+        return path.read_text(encoding="utf-8").strip() or None
+    except OSError:
+        return None
+
+
 def _save(base: Path, session: Session) -> Session:
     text = session.model_dump_json(exclude={"queue_position", "wait_minutes"})
     (_dir(base) / f"{session.id}.json").write_text(text, encoding="utf-8")

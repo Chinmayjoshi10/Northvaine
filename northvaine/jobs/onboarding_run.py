@@ -14,7 +14,9 @@ import asyncio
 import gc
 import logging
 import sys
+import threading
 from datetime import UTC, datetime
+from pathlib import Path
 
 from northvaine.api import durable, onboarding
 from northvaine.api.supervisor import EXIT_DONE, EXIT_FINAL
@@ -32,10 +34,21 @@ def _now() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
-async def _heartbeat(base: object, sid: str) -> None:
-    while True:
-        await asyncio.sleep(HEARTBEAT_SECONDS)
-        onboarding._update(base, sid, heartbeat_at=_now())  # type: ignore[arg-type]
+def _start_heartbeat(base: Path, sid: str) -> threading.Event:
+    """Touch the run's heartbeat file every HEARTBEAT_SECONDS from a thread of its own, so a long
+    CPU-heavy step on the free server's small CPU never makes a healthy run look dead (the
+    supervisor's overall time limit still stops a run that truly hangs). A separate file, so it
+    never races the progress updates written to the session file."""
+    stop = threading.Event()
+    path = onboarding.heartbeat_path(base, sid)
+
+    def beat() -> None:
+        while not stop.wait(HEARTBEAT_SECONDS):
+            path.write_text(_now(), encoding="utf-8")
+
+    path.write_text(_now(), encoding="utf-8")
+    threading.Thread(target=beat, name="heartbeat", daemon=True).start()
+    return stop
 
 
 async def run(sid: str) -> int:
@@ -52,7 +65,7 @@ async def run(sid: str) -> int:
     settings = get_settings()
     quick = settings.model_copy(update=onboarding.QUICK_PROFILE)
     as_of = datetime.fromisoformat(session.as_of) if session.as_of else datetime.now(UTC)
-    beat = asyncio.create_task(_heartbeat(base, sid))
+    beat = _start_heartbeat(base, sid)
 
     def progress(stage: str) -> None:
         onboarding._update(base, sid, progress=stage, heartbeat_at=_now())
@@ -82,7 +95,7 @@ async def run(sid: str) -> int:
         onboarding._update(base, sid, last_error=f"{type(exc).__name__}: {exc}"[:300])
         return EXIT_RETRY
     finally:
-        beat.cancel()
+        beat.set()
         await durable.flush()
         await dispose_engine()
 
