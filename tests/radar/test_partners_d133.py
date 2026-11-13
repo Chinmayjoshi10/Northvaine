@@ -59,12 +59,25 @@ def test_a_company_own_site_names_the_company_only_when_domain_and_text_agree() 
     assert site_owner(news, CFG) is None  # "Gulf News" never appears in the text as written
 
 
-def test_a_reseller_found_abroad_is_a_partner_and_a_relationship_on_fit() -> None:
+def test_a_reseller_found_abroad_is_a_partner_and_a_relationship_once_its_size_is_stated() -> None:
+    from northvaine.radar.models import SiteSize
+
     web = _fit(
         _with(
             entry("supplier", RadarStream.ANNOUNCEMENT), key="SA:aakcm", country="SA", name="AAKCM"
         )
     )
     web = web.model_copy(update={"site_role": "resells"})
+    # D150: fit alone no longer makes a foreign reseller a relationship; a stated size does
     o = assess(web, TODAY, SPEC)
-    assert (o.play, o.label) == ("partner", "relationship")
+    assert o.play == "partner" and o.label != "relationship"
+    sized = web.model_copy(
+        update={
+            "site_size": SiteSize(
+                tier=3, words="12 showrooms", url="u", quote="Our 12 showrooms.", fingerprint="f"
+            )
+        }
+    )
+    o = assess(sized, TODAY, SPEC)
+    assert (o.play, o.label, o.size_tier) == ("partner", "relationship", 3)
+    assert "Large (12 showrooms)" in o.words

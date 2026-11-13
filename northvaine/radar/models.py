@@ -277,6 +277,17 @@ class JudgedLine(NorthvaineModel):
     fingerprint: str
 
 
+class SiteSize(NorthvaineModel):
+    """How big the company's own site says it is (D150): a verbatim sentence, confirmed by
+    code, and its tier on the `account.size_rank` scale (1 small, 2 mid, 3 large)."""
+
+    tier: int = Field(ge=1, le=3)
+    words: str  # "24 branches"
+    url: str
+    quote: str
+    fingerprint: str
+
+
 class SiteRoleQuote(NorthvaineModel):
     """What the company's own site shows it is to the client's kind of product (D120): the
     quote is a verbatim part of the page, confirmed by code."""
@@ -308,6 +319,8 @@ class Opportunity(NorthvaineModel):
     words: str  # "Strong intent · Good fit · 3 sources agree"
     # D148: why the evidence floor holds this entry back (never shown as a lead); None = shown
     held: str | None = None
+    # D150: 0 unknown, 1 small, 2 mid, 3 large (filed accounts, import months, its own site)
+    size_tier: int = 0
 
 
 class RankedEntry(NorthvaineModel):
@@ -343,6 +356,7 @@ class RankedEntry(NorthvaineModel):
     judged_lines: list[JudgedLine] = Field(default_factory=list)  # D119
     site_role: str | None = None  # D120: makes / resells / uses, verified by quote
     site_role_quote: SiteRoleQuote | None = None
+    site_size: SiteSize | None = None  # D150: a size its own site states
     opportunity: Opportunity | None = None  # D125
     company_contact: CompanyContact | None = None  # D108
     site_proof: str | None = None  # D113: "registration number" / "registered name"

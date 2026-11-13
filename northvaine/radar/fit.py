@@ -54,7 +54,9 @@ from northvaine.radar.models import (
     RejectedAs,
     RejectedEntry,
     SiteRoleQuote,
+    SiteSize,
 )
+from northvaine.radar.size import size_facts
 from northvaine.radar.verify import claim_fingerprint
 from northvaine.sensors.base import SensorError, SensorQuery, content_hash
 from northvaine.sensors.registry import get_sensor
@@ -723,9 +725,39 @@ async def company_fit(
         judged_here: list[JudgedLine] = []
         verdict = judged.get(id(entry)) or JudgeResult()
         role_here: SiteRoleQuote | None = None
+        size_here: SiteSize | None = None
         seen_lines: set[str] = set()
         for doc, text in read:
             checks: list[ClaimCheck] = []
+            if cfg.radar_size_signals:
+                # D150: the strongest size its own pages state, kept as a verified quote
+                for fact in size_facts(text)[:1]:
+                    if size_here is not None and size_here.tier >= fact.tier:
+                        break
+                    statement = f"{c.name}'s own website gives its size: {fact.words}."
+                    fingerprint = claim_fingerprint(doc.id, statement, fact.sentence)
+                    checks.append(
+                        ClaimCheck(
+                            document_id=doc.id,
+                            draft=ClaimDraft(
+                                statement=statement,
+                                source_quote=fact.sentence,
+                                subject=SubjectMention(name=c.name, country=c.country, role="fit"),
+                                extracted_by="code",
+                            ),
+                            status=ClaimStatus.VERIFIED,
+                            quote_offset=text.index(fact.sentence),
+                            verified_by="code",
+                            fingerprint=fingerprint,
+                        )
+                    )
+                    size_here = SiteSize(
+                        tier=fact.tier,
+                        words=fact.words,
+                        url=doc.url,
+                        quote=fact.sentence,
+                        fingerprint=fingerprint,
+                    )
             for sentence, term, level in fit_sentences(
                 text, terms, related, limit=cfg.radar_fit_quotes, prefer=prefer
             ):
@@ -850,6 +882,8 @@ async def company_fit(
             )
         if judged_here:
             update["judged_lines"] = judged_here
+        if size_here is not None:
+            update["site_size"] = size_here
         if verdict.role in ("makes", "resells", "uses"):
             update["site_role"] = verdict.role
             if role_here is not None:

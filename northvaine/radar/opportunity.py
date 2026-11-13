@@ -20,6 +20,7 @@ import html
 from datetime import date, timedelta
 from typing import Any, Literal
 
+from northvaine.core.settings import get_settings
 from northvaine.radar.account import LEVEL_ORDER as EVIDENCE_ORDER
 from northvaine.radar.account import size_rank
 from northvaine.radar.brief import _trade_slots, names_term, names_trigger
@@ -156,6 +157,22 @@ def _signals(entry: RankedEntry, today: date) -> list[tuple[int, date, str, str]
     return out
 
 
+_SIZE_WORDS = ("", "Small", "Mid-sized", "Large")
+
+
+def size_tier(entry: RankedEntry) -> int:
+    """D150: the largest size any source states: last filed accounts (UK register), months with
+    imports on record, or a size sentence on its own site. 0 when nothing states a size."""
+    c = entry.candidate
+    facts = c.company_register
+    tiers = [entry.site_size.tier if entry.site_size else 0]
+    if facts is not None and facts.accounts_type:
+        tiers.append(size_rank(facts.accounts_type))
+    months = int(_trade_slots(c).get("months_active") or 0)
+    tiers.append(3 if months >= 9 else 2 if months >= 6 else 1 if months >= 1 else 0)
+    return max(tiers)
+
+
 def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     """The entry's opportunity, from the facts it already holds and the client's own words. Pure."""
     c = entry.candidate
@@ -219,10 +236,18 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     # imports the product month after month.
     facts = c.company_register
     months = int(_trade_slots(c).get("months_active") or 0)
-    big = size_rank(facts.accounts_type if facts else None) >= 3 or months >= 6
-    # Abroad there are no UK accounts or import records to size a company: a partner whose own
-    # site shows it resells the product counts on fit alone (D133).
-    abroad = facts is None and (c.country or "") != "GB" and entry.site_role == "resells"
+    sized = get_settings().radar_size_signals
+    tier = size_tier(entry) if sized else 0
+    if sized:
+        # D150: big is a stated size, from any of the three; a foreign reseller with no size
+        # signal is worth a look, no longer a relationship on fit alone (D133's `abroad`)
+        big = tier >= 2
+        abroad = False
+    else:
+        big = size_rank(facts.accounts_type if facts else None) >= 3 or months >= 6
+        # Abroad there are no UK accounts or import records to size a company: a partner whose
+        # own site shows it resells the product counts on fit alone (D133).
+        abroad = facts is None and (c.country or "") != "GB" and entry.site_role == "resells"
     standing = play == "partner" and fit >= 2 and (big or abroad) and entry.site_role != "makes"
     if standing and intent < 2:
         label = "relationship"
@@ -235,6 +260,10 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
 
     sources = f"{confidence} source{'s' if confidence != 1 else ''} agree"
     words = f"{_INTENT_WORDS[intent]} · {_FIT_WORDS[fit]} · {sources}"
+    if tier >= 2:
+        said = f" ({entry.site_size.words})" if entry.site_size else ""
+        size = f"{_SIZE_WORDS[tier]}{said}"
+        words = f"{_INTENT_WORDS[intent]} · {_FIT_WORDS[fit]} · {size} · {sources}"
     return Opportunity(
         label=label,
         play=play,
@@ -244,6 +273,7 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
         latest=max((s[1] for s in signals), default=None),
         why_now=best[2] if best else "",
         words=words,
+        size_tier=tier,
     )
 
 
@@ -310,6 +340,9 @@ def order_opportunities(
             e.site_role == "makes",
             o.held is not None,
             LABEL_ORDER[o.label],
+            # D150 (size_tier stays 0 when size signals are off): big and in motion, then big
+            -(1 if o.size_tier >= 2 and o.intent >= 2 else 0),
+            -o.size_tier,
             -o.intent,
             -o.fit,
             -o.confidence,
