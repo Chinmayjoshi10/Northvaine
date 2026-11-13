@@ -148,6 +148,11 @@ def evaluate() -> list[list[str]]:
     return [_py("scripts/evaluate.py")]
 
 
+def leadbed() -> list[list[str]]:
+    """The lead test bed: would a salesperson call this lead? (add -- --replay, or --live --yes)"""
+    return [_py("scripts/leadbed.py")]
+
+
 TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "setup": setup,
     "dev": dev,
@@ -166,6 +171,7 @@ TASKS: dict[str, Callable[[], list[list[str]]]] = {
     "record-radar": record_radar,
     "eval": evaluate,
     "learn-sim": learn_sim,
+    "leadbed": leadbed,
 }
 
 HELP = {
@@ -186,11 +192,13 @@ HELP = {
     "learn-sim": "SIMULATED learning study on a recording, offline (add -- --client <id>)",
     "record-radar": "record a radar run live - SPENDS MONEY (add -- --client <id> --yes)",
     "eval": "quality and outcome metrics from filled-in scorecards (offline)",
+    "leadbed": "lead test bed: score 8 businesses' leads 0-5 (add -- --replay | --live --yes)",
 }
 
 # arguments after `--` go to the script
 PASSTHROUGH = {
     "smoke", "record-sensors", "record-llm", "radar", "record-radar", "eval", "learn-sim",
+    "leadbed",
 }  # fmt: skip
 
 PARALLEL = {"dev"}  # these tasks start every command at once and wait for all

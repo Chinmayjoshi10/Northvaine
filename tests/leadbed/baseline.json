@@ -1,0 +1,11 @@
+{
+  "_note": "Staging baseline of 12 Nov, scored by eye on the Station cards (Plan B section 0): shown, strong (2), worth a look (1), embarrassing (0). Good is strong + worth a look.",
+  "marshalls_co_uk": {"shown": 5, "strong": 3, "look": 2, "embarrassing": 0},
+  "kaeser_com": {"shown": 5, "strong": 2, "look": 2, "embarrassing": 1},
+  "welspunliving_com": {"shown": 5, "strong": 2, "look": 2, "embarrassing": 1},
+  "boss_design_com": {"shown": 5, "strong": 2, "look": 3, "embarrassing": 0},
+  "polypipe_com": {"shown": 5, "strong": 0, "look": 0, "embarrassing": 5},
+  "simpolo_net": {"shown": 5, "strong": 0, "look": 0, "embarrassing": 5},
+  "steelcase_com": {"shown": 3, "strong": 0, "look": 1, "embarrassing": 2},
+  "marleyalutec_co_uk": {"shown": 2, "strong": 0, "look": 0, "embarrassing": 2}
+}

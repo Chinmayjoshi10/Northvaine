@@ -77,11 +77,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--reports", default="reports/radar", help="folder of radar reports")
     parser.add_argument("--out", default="reports/eval", help="where eval reports are written")
     parser.add_argument("--min-all-four", type=int, default=2, help="the quality-gate threshold")
+    parser.add_argument(
+        "--harness", action="store_true", help="the lead test bed table and staging baseline"
+    )
     return parser
+
+
+def harness(root: Path) -> int:
+    """The lead test bed table (`scripts/leadbed.py`) next to the staging baseline."""
+    from northvaine.eval.leadbed import harness_dir, harness_table
+
+    baseline = json.loads((root / "tests/leadbed/baseline.json").read_text(encoding="utf-8"))
+    print(harness_table(harness_dir(root) / "scores", baseline))
+    return 0
 
 
 def main(argv: list[str] | None = None, *, root: Path = ROOT) -> int:
     args = build_parser().parse_args(argv)
+    if args.harness:
+        return harness(root)
     reports = (root / args.reports).resolve()
     cards = latest_scorecards(reports)
     if not cards:

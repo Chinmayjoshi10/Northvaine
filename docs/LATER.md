@@ -196,11 +196,6 @@ Industry-neutral; official APIs and public pages only; company-level facts only.
 - Accounts and sign-in for clients and the agency; subscriptions replace `_subscribers.txt`.
 - Contact requests and trial claims in the database with an admin view and email notification.
 
-- **Replay of recent recordings (found 27 Oct).** `scripts/radar.py` replay compares the spec's
-  sensor queries with `meta.queries`, but since D126 the recording stores the expanded set (intent,
-  partner and target-account searches), so a recent recording is refused as "queries differ".
-  Compare against the expanded set (or record both) so a live run can be replayed after a code fix.
-
 - **Clean-up after the hackathon (scan of 28 Oct).** Built for the full architecture but unused in
   the shipped product: about 35 table models for features not built (Gateway enquiries, messages,
   quote requests, theses, cases, beliefs, playbooks), the Postgres job queue (`core/queue.py`), the

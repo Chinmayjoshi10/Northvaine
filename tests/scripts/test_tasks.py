@@ -66,6 +66,7 @@ def test_task_names_in_order(tasks: ModuleType) -> None:
         "record-radar",
         "eval",
         "learn-sim",
+        "leadbed",
     ]
 
 
@@ -111,6 +112,8 @@ def test_exact_argv_for_every_task(
         "eval": [[PY, "scripts/evaluate.py"]],
         # SIMULATED learning study on a recording; offline and free (D89).
         "learn-sim": [[PY, "scripts/simulate_learning.py"]],
+        # The lead test bed (docs/EVALUATION.md).
+        "leadbed": [[PY, "scripts/leadbed.py"]],
     }
     assert set(expected) == set(tasks.TASKS)
     for name, argv in expected.items():
