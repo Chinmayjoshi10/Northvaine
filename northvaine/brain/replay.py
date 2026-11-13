@@ -327,6 +327,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_off_target_filter": False,  # D125: no market or product filter before the gate
     "radar_rank_by_opportunity": False,  # D125: the evidence-ladder order
     "radar_evidence_floor": False,  # D148: every assessed entry could be shown
+    "radar_resolve_country": False,  # D149: a record's country only
     "radar_intent_search": False,  # D126: no intent searches written from the answers
     "radar_partner_discovery": False,  # D136: no partner discovery searches
     "radar_target_accounts": False,  # D138: no target-account site reads

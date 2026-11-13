@@ -280,7 +280,10 @@ def hold_reason(entry: RankedEntry, spec: Any) -> str | None:
         return HELD_EVIDENCE if entry.requirement == "inferred" else None
     if EVIDENCE_ORDER.get(level, len(EVIDENCE_ORDER)) > EVIDENCE_ORDER["company_fit"]:
         return HELD_EVIDENCE
-    if entry.requirement == "inferred":
+    # a company's own site stating it deals in the product is proof by itself, whatever the
+    # record's requirement says; any other evidence needs the requirement on record
+    own_site = level == "company_fit" and entry.fit_level is not None
+    if entry.requirement == "inferred" and not own_site:
         return HELD_EVIDENCE
     return None
 

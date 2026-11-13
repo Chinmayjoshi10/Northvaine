@@ -131,6 +131,7 @@ SHAPING_SETTINGS = (
     "radar_off_target_filter",  # D125
     "radar_rank_by_opportunity",
     "radar_evidence_floor",
+    "radar_resolve_country",
     "radar_intent_search",  # D126
     "radar_intent_days",
     "radar_intent_per_market",

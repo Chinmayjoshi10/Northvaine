@@ -345,6 +345,9 @@ class Settings(BaseSettings):
     # D148: a lead is shown only with a known country in the client's markets, proof it deals in
     # the client's kind of product, and no sign it makes the same; the rest is held with a reason
     radar_evidence_floor: bool = True
+    # D149: a company with no country on record gets the one its own web address or its own
+    # verified words show (country ending, postal address, one of the client's markets named)
+    radar_resolve_country: bool = True
     radar_intent_search: bool = True  # D126: project and partner-change searches per market
     radar_intent_days: int = Field(default=90, ge=1)  # how far back the intent searches look
     # Searches per market per run: 1 alternates project and partner by day, to stay inside the

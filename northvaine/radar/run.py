@@ -34,6 +34,7 @@ from northvaine.core.models import (
 from northvaine.core.settings import Settings, get_settings
 from northvaine.radar.bidders import likely_bidders
 from northvaine.radar.brief import _trade_slots, apply_fit_order, main_selection, off_target, rank
+from northvaine.radar.country import resolve_countries
 from northvaine.radar.court import skeptic
 from northvaine.radar.discover import PageFetcher, discover, prepare_queries
 from northvaine.radar.edition import label_entries
@@ -652,6 +653,8 @@ async def run_radar(
 
     # 7c. opportunities (D125): every entry gets a play, intent, fit and confidence, and the run is
     # ordered by them, so the top holds the best reasons to call now
+    if settings.radar_resolve_country:  # D149: before the floor, which holds unknown countries
+        entries = resolve_countries(entries, spec)
     if settings.radar_rank_by_opportunity:
         entries = order_opportunities(
             entries, as_of.date(), spec, floor=settings.radar_evidence_floor
