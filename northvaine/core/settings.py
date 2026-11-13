@@ -366,6 +366,11 @@ class Settings(BaseSettings):
     radar_partner_discovery: bool = True
     radar_partner_per_market: int = Field(default=1, ge=1, le=2)
     radar_partner_all_markets: bool = False  # D140: a first radar searches every market
+    # D151: account-first discovery in every market, by each buyer role and product word, in
+    # place of one "<role> <product> showrooms <country>" search per market
+    radar_partner_matrix: bool = True
+    radar_partner_max_queries: int = Field(default=12, ge=1, le=24)
+    radar_partner_results: int = Field(default=10, ge=1, le=20)
     # D138: read each target account's own site (direct fetch, no search credits)
     radar_target_accounts: bool = True
     radar_target_pages: int = Field(default=6, ge=1, le=10)

@@ -81,3 +81,26 @@ def test_a_reseller_found_abroad_is_a_partner_and_a_relationship_once_its_size_i
     o = assess(sized, TODAY, SPEC)
     assert (o.play, o.label, o.size_tier) == ("partner", "relationship", 3)
     assert "Large (12 showrooms)" in o.words
+
+
+def test_d151_account_first_searches_take_every_role_and_word_market_by_market() -> None:
+    from northvaine.radar.intent import partner_matrix_queries
+
+    spec = SPEC.model_copy(
+        update={
+            "markets": ["GB", "FR"],
+            "buyer_roles": ["dealers", "contractors", "architects", "hotels"],
+            "offer_terms": ["widgets", "fittings", "spares"],
+        }
+    )
+    qs = partner_matrix_queries(spec, limit=5, results=10)
+    # markets take turns; roles before the second word; no fixed shop word; capped at the limit
+    assert [(q.text, q.countries) for q in qs] == [
+        ("dealers widgets United Kingdom", ["GB"]),
+        ("dealers widgets France", ["FR"]),
+        ("contractors widgets United Kingdom", ["GB"]),
+        ("contractors widgets France", ["FR"]),
+        ("architects widgets United Kingdom", ["GB"]),
+    ]
+    assert all(q.max_results == 10 for q in qs)
+    assert partner_matrix_queries(spec.model_copy(update={"buyer_roles": []}), 5, 10) == []

@@ -20,7 +20,13 @@ from typing import Any
 from northvaine.core.standards import iso2_to_name
 from northvaine.sensors.base import SensorQuery
 
-__all__ = ["intent_queries", "market_news_queries", "partner_queries", "trade_covered"]
+__all__ = [
+    "intent_queries",
+    "market_news_queries",
+    "partner_matrix_queries",
+    "partner_queries",
+    "trade_covered",
+]
 
 _PROJECT_WORDS = "contractor appointed"
 # One change per market, rotating: a search with all of them at once finds none well.
@@ -117,6 +123,35 @@ def partner_queries(
                     countries=[country],
                     languages=["en"],
                     max_results=5,
+                )
+            )
+    return out
+
+
+def partner_matrix_queries(spec: Any, limit: int, results: int) -> list[SensorQuery]:
+    """Account-first discovery (D151, plan B S3): companies' own sites, found by each of the
+    client's buyer roles (up to 3) with each of its own product words (up to 2), in every market,
+    `<role> <product words> <country>`. Markets take turns, so a run with many markets still asks
+    each one something; at most `limit` searches. No fixed shop word: "showrooms" fitted retail and
+    found nothing for wholesale, machinery or food. Nothing for a client with no roles or words."""
+    roles = [r for r in spec.buyer_roles if r.strip()][:3]
+    words = [t for t in spec.offer_terms if t.strip()][:2]
+    if not roles or not words or not spec.markets:
+        return []
+    pairs = [(r, w) for w in words for r in roles]
+    out: list[SensorQuery] = []
+    for turn in range(len(pairs)):
+        for country in spec.markets:
+            if len(out) >= limit:
+                return out
+            role, word = pairs[turn]
+            place = (iso2_to_name(country) or country).title()
+            out.append(
+                SensorQuery(
+                    text=f"{role} {word} {place}",
+                    countries=[country],
+                    languages=["en"],
+                    max_results=results,
                 )
             )
     return out

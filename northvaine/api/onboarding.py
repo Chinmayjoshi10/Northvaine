@@ -58,7 +58,7 @@ QUICK_PROFILE: dict[str, int | bool] = {
     # D140: a first radar reads the client's markets widely: project and partner searches in every
     # market, plus news of the client's own triggers
     "radar_intent_per_market": 2,
-    "radar_market_news_per_market": 2,
+    "radar_market_news_per_market": 1,  # D151: news filled the weak radars with non-buyers
     # D140: a first radar has no history, so a signal up to 6 months old is still news to the
     # client; and distributors are searched in every market, import records or not
     "radar_intent_days": 180,

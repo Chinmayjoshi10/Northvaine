@@ -162,6 +162,7 @@ async def test_the_run_adds_partner_searches_and_their_candidates_reach_the_gate
         radar_investigate_top=0,
         radar_site_guess_max_companies=0,
         radar_gate_concurrency=1,
+        radar_partner_matrix=False,  # D136's one showroom search per market
     )
     evidence: list[Any] = []
     with llm.client_override(fake):

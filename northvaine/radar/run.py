@@ -41,7 +41,12 @@ from northvaine.radar.edition import label_entries
 from northvaine.radar.entities import build_candidates, company_key
 from northvaine.radar.fit import company_fit
 from northvaine.radar.gate import gate_candidate
-from northvaine.radar.intent import intent_queries, market_news_queries, partner_queries
+from northvaine.radar.intent import (
+    intent_queries,
+    market_news_queries,
+    partner_matrix_queries,
+    partner_queries,
+)
 from northvaine.radar.investigate import investigate, rerank
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
@@ -189,12 +194,17 @@ def expanded_queries(
             notes.append(f"market news: {len(news)} search(es) for your triggers")
     partner_texts: set[str] = set()
     if settings.radar_partner_discovery:  # D136: distributors' own sites in markets without records
-        wanted = partner_queries(
-            spec,
-            as_of.date(),
-            settings.radar_partner_per_market,
-            all_markets=settings.radar_partner_all_markets,
-        )
+        if settings.radar_partner_matrix:  # D151: by role and product word, every market
+            wanted = partner_matrix_queries(
+                spec, settings.radar_partner_max_queries, settings.radar_partner_results
+            )
+        else:
+            wanted = partner_queries(
+                spec,
+                as_of.date(),
+                settings.radar_partner_per_market,
+                all_markets=settings.radar_partner_all_markets,
+            )
         if wanted:
             queries = {**queries, "tavily": [*queries.get("tavily", []), *wanted]}
             partner_texts = {q.text or "" for q in wanted}
