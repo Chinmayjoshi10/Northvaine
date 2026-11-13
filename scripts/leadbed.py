@@ -50,8 +50,8 @@ from northvaine.eval.leadbed import (  # noqa: E402
     make_llm_judge,
     score_run,
     scores_payload,
+    shown_scores,
     summarise,
-    top_n,
 )
 from northvaine.radar.models import ClientSpec, RadarRun, load_client_spec  # noqa: E402
 
@@ -231,7 +231,7 @@ async def amain(args: argparse.Namespace) -> int:
         scores = await score_run(run, spec, rules, judge=judge, cache=cache)
         cache.save()
         details[b["id"]] = scores
-        shown = top_n(scores, SHOWN)  # the rubric is applied to what the Station shows
+        shown = shown_scores(run, scores, SHOWN)  # the rubric: what the Station shows
         harness_rows[b["id"]] = harness_of(shown)
         day = datetime.now(UTC).strftime("%Y-%m-%d")
         (harness / "scores").mkdir(parents=True, exist_ok=True)

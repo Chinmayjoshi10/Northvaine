@@ -382,6 +382,13 @@ def top_n(scores: list[LeadScore], n: int) -> list[LeadScore]:
     return sorted(scores, key=lambda s: s.rank)[:n]
 
 
+def shown_scores(run: RadarRun, scores: list[LeadScore], n: int) -> list[LeadScore]:
+    """The leads the Station lists, first n by rank: an entry the evidence floor or the review
+    held back is never shown (D148), so it is never scored as shown."""
+    held = {e.rank for e in run.entries if e.opportunity is not None and e.opportunity.held}
+    return top_n([s for s in scores if s.rank not in held], n)
+
+
 def latest_score_files(scores_dir: Path) -> dict[str, Path]:
     """business id -> its newest `<id>_<date>.json` scores file."""
     found: dict[str, Path] = {}

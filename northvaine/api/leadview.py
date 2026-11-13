@@ -75,7 +75,8 @@ def opportunity_view(entry: RankedEntry) -> OpportunityView | None:
     return OpportunityView(
         label=o.label,
         word=LABEL_WORDS[o.label],
-        words=o.words,
+        # D148: a held entry says why it is held where a lead shows its strength
+        words=o.held or o.words,
         why_now=o.why_now,
         play=o.play,
     )
@@ -242,12 +243,16 @@ def opening_line(entry: RankedEntry, supply: str) -> str | None:
     """One line the client could open with, by play. Facts and a sample offer only: never a price,
     a discount, a date or a term."""
     o = entry.opportunity
-    if o is None or not supply:
+    if o is None or not supply or o.held:
         return None
     # A product name mid-sentence: lower-case its first letter, unless it is an acronym.
     if len(supply) > 1 and supply[0].isupper() and not supply[1].isupper():
         supply = supply[0].lower() + supply[1:]
     if o.play == "project":
+        # D148: "congratulations" only for a dated record that names this company as buyer or
+        # builder; anything less would claim a project that is not on record
+        if entry.evidence_level not in ("explicit_purchase", "project_requirement") or not o.latest:
+            return None
         news = _reason(o.why_now, _NEWS_WORDS, "the project")
         return (
             f"Congratulations on {news}. We supply {supply}; could we send samples for the project?"

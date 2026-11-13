@@ -20,12 +20,13 @@ import html
 from datetime import date, timedelta
 from typing import Any, Literal
 
+from northvaine.radar.account import LEVEL_ORDER as EVIDENCE_ORDER
 from northvaine.radar.account import size_rank
 from northvaine.radar.brief import _trade_slots, names_term, names_trigger
 from northvaine.radar.models import Opportunity, RadarStream, RankedEntry
 from northvaine.radar.timing import dated_changes, trade_changes
 
-__all__ = ["LABEL_ORDER", "Opportunity", "assess", "order_opportunities"]
+__all__ = ["LABEL_ORDER", "Opportunity", "assess", "hold_reason", "order_opportunities"]
 
 Label = Literal["connected", "approach_now", "relationship", "looking", "watch"]
 Play = Literal["project", "partner", "account"]
@@ -246,17 +247,65 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     )
 
 
-def order_opportunities(entries: list[RankedEntry], as_of: date, spec: Any) -> list[RankedEntry]:
+# D148: the evidence floor. Each reason is shown on the watch list, in this order of checking.
+HELD_MAKER = "Possible competitor: its own site says it makes what you sell"
+HELD_COUNTRY = "Held: the record does not say which country it is in"
+HELD_MARKET = "Held: it is outside your markets"
+HELD_PROJECT = "Held: a project to watch, no contractor named yet"
+HELD_EVIDENCE = "Held: the evidence names the kind of project, not a buyer"
+
+
+_HELD = (HELD_MAKER, HELD_COUNTRY, HELD_MARKET, HELD_PROJECT, HELD_EVIDENCE)
+# lines this module writes, replaced (not repeated) when a run is ordered again
+_OWN_LINES = (*LABEL_WORDS.values(), *_HELD)
+
+
+def hold_reason(entry: RankedEntry, spec: Any) -> str | None:
+    """Why this entry may not be shown as a lead, or None. A lead must be a company in one of the
+    client's markets, with proof it deals in the client's kind of product in a buying role
+    (official import record, an award or purchase naming it, or its own site's stated sentence),
+    and no sign it makes the same product. Everything else is held, never deleted (D148)."""
+    c = entry.candidate
+    if entry.site_role == "makes":
+        return HELD_MAKER
+    markets = set(getattr(spec, "markets", None) or [])
+    if markets and not c.country:
+        return HELD_COUNTRY
+    if markets and c.country not in markets:
+        return HELD_MARKET
+    if c.stream == RadarStream.TENDER and entry.account_role == "demand_source":
+        return HELD_PROJECT
+    level = entry.evidence_level
+    if level is None:  # a run record from before D94: the requirement is all there is
+        return HELD_EVIDENCE if entry.requirement == "inferred" else None
+    if EVIDENCE_ORDER.get(level, len(EVIDENCE_ORDER)) > EVIDENCE_ORDER["company_fit"]:
+        return HELD_EVIDENCE
+    if entry.requirement == "inferred":
+        return HELD_EVIDENCE
+    return None
+
+
+def order_opportunities(
+    entries: list[RankedEntry], as_of: date, spec: Any, *, floor: bool = False
+) -> list[RankedEntry]:
     """Every entry assessed and ordered: label, then intent, fit, confidence, the newest signal,
     then the earlier order. A possible competitor always goes last. Ranks renumbered 1..n and the
-    assessment is the first rank reason."""
-    assessed = [(e, assess(e, as_of, spec)) for e in sorted(entries, key=lambda e: e.rank)]
+    assessment is the first rank reason. With `floor` (D148), an entry without the evidence a
+    lead needs is held: labelled watch, ordered after every lead, its reason first."""
+    assessed = []
+    for e in sorted(entries, key=lambda e: e.rank):
+        o = assess(e, as_of, spec)
+        held = hold_reason(e, spec) if floor else None
+        if held:
+            o = o.model_copy(update={"label": "watch", "held": held})
+        assessed.append((e, o))
     oldest = as_of - timedelta(days=36500)
 
     def key(item: tuple[RankedEntry, Opportunity]) -> tuple[object, ...]:
         e, o = item
         return (
             e.site_role == "makes",
+            o.held is not None,
             LABEL_ORDER[o.label],
             -o.intent,
             -o.fit,
@@ -268,9 +317,11 @@ def order_opportunities(entries: list[RankedEntry], as_of: date, spec: Any) -> l
     out: list[RankedEntry] = []
     for n, (e, o) in enumerate(sorted(assessed, key=key), start=1):
         line = f"{LABEL_WORDS[o.label]}: {o.words}" + (f" ({o.why_now})" if o.why_now else "")
+        held = [o.held] if o.held else []
         reasons = [
+            *held,
             line,
-            *[r for r in e.rank_reasons if not r.startswith(tuple(LABEL_WORDS.values()))],
+            *[r for r in e.rank_reasons if not r.startswith(_OWN_LINES)],
         ]
         out.append(e.model_copy(update={"rank": n, "opportunity": o, "rank_reasons": reasons}))
     return out

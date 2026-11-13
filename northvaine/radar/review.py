@@ -71,14 +71,22 @@ async def review_top(
     run: RunContext,
     session: Any = None,
     concurrency: int = 4,
+    floor: bool = False,
 ) -> tuple[list[RankedEntry], list[str]]:
     """The top `top` non-watch opportunities reviewed (several at a time). A lead held back moves
     to the watch list (its rank is kept; the edition skips it) with the reviewer's note; a lead
     passed carries the note as its first rank reason."""
     out = list(entries)
-    picks = [
-        i for i, e in enumerate(out) if e.opportunity is not None and e.opportunity.label != "watch"
-    ][:top]
+    if floor:  # D148: review what will be shown, in display order; a held entry never is
+        picks = [
+            i for i, e in enumerate(out) if e.opportunity is not None and not e.opportunity.held
+        ][:top]
+    else:
+        picks = [
+            i
+            for i, e in enumerate(out)
+            if e.opportunity is not None and e.opportunity.label != "watch"
+        ][:top]
     gate = asyncio.Semaphore(concurrency)
     stopped = False
 
@@ -119,7 +127,12 @@ async def review_top(
             why = note or "the reviewer was not sure enough to put it in front of you today"
             out[i] = entry.model_copy(
                 update={
-                    "opportunity": o.model_copy(update={"label": "watch"}),
+                    # D148: with the floor, a lead the review holds back leaves the shown list
+                    "opportunity": o.model_copy(
+                        update={"label": "watch", "held": f"Held by the review: {why}"}
+                        if floor
+                        else {"label": "watch"}
+                    ),
                     "rank_reasons": [f"Held back by the review: {why}", *entry.rank_reasons],
                 }
             )

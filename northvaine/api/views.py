@@ -391,8 +391,10 @@ def brief_view(
 
     cap = settings.radar_brief_main_entries
     ordered = sorted(run.entries, key=lambda e: e.rank)
-    accounts = [e for e in ordered if e.candidate.stream != RadarStream.TENDER][:cap]
-    tenders = [e for e in ordered if e.candidate.stream == RadarStream.TENDER][:cap]
+    # D148: an entry the evidence floor (or the review) held back is never listed as a lead
+    showable = [e for e in ordered if not (e.opportunity and e.opportunity.held)]
+    accounts = [e for e in showable if e.candidate.stream != RadarStream.TENDER][:cap]
+    tenders = [e for e in showable if e.candidate.stream == RadarStream.TENDER][:cap]
     shown = {id(e) for e in accounts + tenders}
     weaker = [e for e in ordered if id(e) not in shown]
     edition = [row(e) for e in daily_edition(ordered, settings)]

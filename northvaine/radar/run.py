@@ -653,7 +653,9 @@ async def run_radar(
     # 7c. opportunities (D125): every entry gets a play, intent, fit and confidence, and the run is
     # ordered by them, so the top holds the best reasons to call now
     if settings.radar_rank_by_opportunity:
-        entries = order_opportunities(entries, as_of.date(), spec)
+        entries = order_opportunities(
+            entries, as_of.date(), spec, floor=settings.radar_evidence_floor
+        )
         # 7d. the senior review (D127): the deep model's last check on the top opportunities;
         # what it would not call is held back to the watch list with its reason
         if settings.radar_review_top > 0:
@@ -665,6 +667,7 @@ async def run_radar(
                 run=run,
                 session=session,
                 concurrency=settings.radar_gate_concurrency,
+                floor=settings.radar_evidence_floor,
             )
             notes.extend(review_notes)
 

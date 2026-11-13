@@ -306,6 +306,8 @@ class Opportunity(NorthvaineModel):
     latest: date | None  # the newest dated signal
     why_now: str  # the strongest signal, in our words, with its date
     words: str  # "Strong intent · Good fit · 3 sources agree"
+    # D148: why the evidence floor holds this entry back (never shown as a lead); None = shown
+    held: str | None = None
 
 
 class RankedEntry(NorthvaineModel):
