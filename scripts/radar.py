@@ -136,6 +136,9 @@ SHAPING_SETTINGS = (
     "radar_partner_matrix",
     "radar_partner_max_queries",
     "radar_partner_results",
+    "radar_list_pages",
+    "radar_list_max_dealers",
+    "radar_gate_prompt_version",
     "radar_intent_search",  # D126
     "radar_intent_days",
     "radar_intent_per_market",

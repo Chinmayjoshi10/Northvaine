@@ -109,6 +109,9 @@ class ClientSpec(NorthvaineModel):
     # D138: companies the client wants to win; each is read from its own site and checked
     # like any lead, never assumed to be a buyer
     target_accounts: list[TargetAccount] = Field(default_factory=list)
+    # D153: web addresses of brands like the client's; their public dealer and stockist
+    # pages name shops that may stock the client too
+    peer_sites: list[str] = Field(default_factory=list, max_length=5)
     # Who is competition rather than a buyer, in plain words (e.g. "other manufacturers of the
     # same products").
     not_buyers: list[str] = Field(default_factory=list)
@@ -204,6 +207,8 @@ class Candidate(NorthvaineModel):
     like_customers: list[str] = Field(default_factory=list)
     timing_signals: list[str] = Field(default_factory=list)  # D111
     from_list: bool = False  # D138: one of the client's target accounts
+    # D154: peer brands whose own stockist pages name this company (each a verified claim)
+    listed_by: list[str] = Field(default_factory=list)
 
 
 class GateDecision(NorthvaineModel):

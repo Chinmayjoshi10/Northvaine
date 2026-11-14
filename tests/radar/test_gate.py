@@ -239,7 +239,7 @@ BUYER_MODEL_SPEC = SPEC.model_copy(
 
 
 async def test_a_buyer_model_selects_the_prompt_that_reads_it() -> None:
-    client = FakeClient(reply())
+    client = FakeClient(reply(actor="buys_or_builds"))
     with llm.client_override(client):
         decision = await gate_candidate(make_candidate(), BUYER_MODEL_SPEC, run=RunContext())
     assert decision.passed
@@ -247,6 +247,30 @@ async def test_a_buyer_model_selects_the_prompt_that_reads_it() -> None:
     assert "Who buys from the client" in prompt
     assert "importer; distributor" in prompt
     assert "other manufacturers of the same products" in prompt
+    assert '"actor"' in prompt  # D155: v5 asks who did it
+
+
+async def test_d155_v4_is_kept_for_its_recordings() -> None:
+    client = FakeClient(reply())
+    v4 = Settings(_env_file=None, radar_gate_prompt_version=4)
+    with llm.client_override(client):
+        decision = await gate_candidate(
+            make_candidate(), BUYER_MODEL_SPEC, run=RunContext(), settings=v4
+        )
+    assert decision.passed and '"actor"' not in client.prompt
+
+
+async def test_d155_an_organisation_that_only_funds_or_permits_is_not_a_buyer() -> None:
+    for answer in (
+        reply(actor="funds_or_permits", verdict="authority", reason="it funds the programme"),
+        reply(actor="funds_or_permits", verdict="buyer"),  # a buyer verdict for a funder
+    ):
+        client = FakeClient(answer)
+        with llm.client_override(client):
+            decision = await gate_candidate(make_candidate(), BUYER_MODEL_SPEC, run=RunContext())
+        assert not decision.passed
+        assert decision.rejected_as == RejectedAs.NOT_A_BUYER
+        assert decision.reason.startswith("Funds or permits, does not buy")
 
 
 async def test_without_a_buyer_model_the_gate_prompt_is_unchanged() -> None:

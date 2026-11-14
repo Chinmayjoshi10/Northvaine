@@ -16,6 +16,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 from uuid import NAMESPACE_URL, uuid5
 
 from northvaine.brain.budget import RunContext
@@ -50,6 +51,7 @@ from northvaine.radar.intent import (
 from northvaine.radar.investigate import investigate, rerank
 from northvaine.radar.learning import Beta, choose_queries, exploration_pick, query_keys_by_ref
 from northvaine.radar.ledger import build_evidence
+from northvaine.radar.lists import dealer_accounts
 from northvaine.radar.models import (
     Candidate,
     ClientSpec,
@@ -61,7 +63,7 @@ from northvaine.radar.models import (
     TargetAccount,
 )
 from northvaine.radar.opportunity import order_opportunities
-from northvaine.radar.partners import partner_candidates, target_candidates
+from northvaine.radar.partners import listed_candidate, partner_candidates, target_candidates
 from northvaine.radar.register import (
     SeedProfile,
     mark_likeness,
@@ -212,6 +214,22 @@ def expanded_queries(
     return queries, notes, partner_texts
 
 
+def _listed_by(candidate: Any, listed: dict[str, Any]) -> Any:
+    """D153: a dealer found on peer brands' lists is not one of the client's own targets; it
+    says which brands list it (a lookup key only, never a claim)."""
+    site = next((d for d in listed if any(d in c.url for c in candidate.claims)), None)
+    if site is None:
+        return candidate
+    brands = listed[site].brands
+    kind = "several brands" if len(brands) > 1 else "one brand"
+    return candidate.model_copy(
+        update={
+            "from_list": False,
+            "window_note": f"Listed as a dealer by {kind}: {', '.join(brands)}.",
+        }
+    )
+
+
 def with_target_accounts(
     spec: ClientSpec, queries: dict[str, list[SensorQuery]], settings: Settings
 ) -> tuple[dict[str, list[SensorQuery]], dict[str, TargetAccount], list[str]]:
@@ -282,6 +300,13 @@ async def run_radar(
         )
     # D138: the client's target accounts, each read from its own site (after the strategy step,
     # so the list is always read); pages are matched back to their account by query
+    listed: dict[str, Any] = {}
+    if settings.radar_list_pages and spec.peer_sites:  # D153: peer brands' dealer lists
+        dealers, listed, list_notes = await dealer_accounts(spec, fetcher, settings)
+        notes.extend(list_notes)
+        known = {a.website for a in spec.target_accounts}
+        extra = [a for a in dealers if a.website not in known]
+        spec = spec.model_copy(update={"target_accounts": [*spec.target_accounts, *extra]})
     queries, target_of, target_notes = with_target_accounts(spec, queries, settings)
     notes.extend(target_notes)
     found = await discover(spec, queries, http=http, fetcher=fetcher, settings=settings)
@@ -413,10 +438,32 @@ async def run_radar(
         )
         candidates = [
             c.model_copy(update={"from_list": True}) if c.key in already else c for c in candidates
-        ] + made
+        ] + [_listed_by(c, listed) for c in made]
+        if listed:  # D154: a dealer a peer's stockist page names is a candidate on that page
+            taken = {d for d in listed for c in made if any(d in k.url for k in c.claims)}
+            from_lists = 0
+            for account in spec.target_accounts:
+                site = urlsplit(account.website).hostname or ""
+                site = site.removeprefix("www.")
+                if site not in listed or site in taken:
+                    continue
+                built = listed_candidate(account, listed[site].mentions, as_of, settings)
+                if built is None:
+                    continue
+                candidates.append(built[0])
+                from_lists += 1
+                if evidence_out is not None:
+                    evidence_out.append(built[1])
+            notes.append(f"dealer lists: {from_lists} dealer(s) named on a stockist page")
         if evidence_out is not None:
             evidence_out.extend(target_evidence)
-        notes.extend(target_notes)
+        # D153: a dealer taken from a peer's stockist page is not on the client's own list
+        notes.extend(
+            n.replace("your list:", "dealer lists:", 1)
+            if any(f"your list: {d}:" in n for d in listed)
+            else n
+            for n in target_notes
+        )
         notes.append(f"your list: {len(made) + len(already)} account(s) on record")
 
     def name_key(name: str) -> str:

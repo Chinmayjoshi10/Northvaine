@@ -305,6 +305,8 @@ def hold_reason(entry: RankedEntry, spec: Any) -> str | None:
         return HELD_MARKET
     if c.stream == RadarStream.TENDER and entry.account_role == "demand_source":
         return HELD_PROJECT
+    if c.listed_by:  # D154: a peer brand's own stockist page names it: it stocks the category
+        return None
     level = entry.evidence_level
     if level is None:  # a run record from before D94: the requirement is all there is
         return HELD_EVIDENCE if entry.requirement == "inferred" else None

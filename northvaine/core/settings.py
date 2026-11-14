@@ -374,6 +374,27 @@ class Settings(BaseSettings):
     # D138: read each target account's own site (direct fetch, no search credits)
     radar_target_accounts: bool = True
     radar_target_pages: int = Field(default=6, ge=1, le=10)
+    # D153: dealers named on peer brands' stockist pages, each read from its own site
+    radar_list_pages: bool = True
+    # D155: the gate prompt for clients with a buyer model (v5 asks who did it; v4 before)
+    radar_gate_prompt_version: int = Field(default=5, ge=4, le=5)
+    radar_list_max_peers: int = Field(default=3, ge=1, le=5)
+    radar_list_pages_per_peer: int = Field(default=3, ge=1, le=6)
+    radar_list_max_dealers: int = Field(default=12, ge=1, le=40)
+    radar_list_path_words: tuple[str, ...] = (
+        "stockist",
+        "where-to-buy",
+        "wheretobuy",
+        "dealer",
+        "distributor",
+        "retailer",
+        "store-locator",
+        "storelocator",
+        "find-a",
+        "showroom",
+        "partner",
+    )
+    radar_list_hosts_denied: tuple[str, ...] = ()
     radar_review_top: int = Field(default=10, ge=0)  # D127: top opportunities the deep model checks
     # Contract nature (D94): what the buying process buys. A record's own stated nature wins;
     # otherwise it is derived from the CPV division (the EU standard's structure, marked derived).

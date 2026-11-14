@@ -98,9 +98,33 @@ def test_d151_account_first_searches_take_every_role_and_word_market_by_market()
     assert [(q.text, q.countries) for q in qs] == [
         ("dealers widgets United Kingdom", ["GB"]),
         ("dealers widgets France", ["FR"]),
+        ("distributors widgets United Kingdom", ["GB"]),
+        ("distributors widgets France", ["FR"]),
         ("contractors widgets United Kingdom", ["GB"]),
-        ("contractors widgets France", ["FR"]),
-        ("architects widgets United Kingdom", ["GB"]),
     ]
     assert all(q.max_results == 10 for q in qs)
-    assert partner_matrix_queries(spec.model_copy(update={"buyer_roles": []}), 5, 10) == []
+    assert (
+        partner_matrix_queries(
+            spec.model_copy(update={"buyer_roles": [], "channel": "direct"}), 5, 10
+        )
+        == []
+    )
+
+
+def test_d152_a_partner_channel_is_searched_first_and_a_direct_seller_keeps_its_own_roles() -> None:
+    from northvaine.radar.intent import partner_matrix_queries
+
+    ends = SPEC.model_copy(
+        update={"markets": ["IN"], "buyer_roles": ["builders", "contractors"], "channel": "both"}
+    )
+    texts = [q.text for q in partner_matrix_queries(ends, limit=3, results=10)]
+    assert texts[:2] == [
+        f"distributors {ends.offer_terms[0]} India",
+        f"dealers {ends.offer_terms[0]} India",
+    ]
+    direct = ends.model_copy(update={"channel": "direct"})
+    texts = [q.text for q in partner_matrix_queries(direct, limit=2, results=10)]
+    assert texts == [
+        f"builders {ends.offer_terms[0]} India",
+        f"contractors {ends.offer_terms[0]} India",
+    ]

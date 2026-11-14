@@ -91,6 +91,7 @@ async def test_the_run_reads_each_account_site_and_gates_it(
         radar_investigate_top=0,
         radar_site_guess_max_companies=0,
         radar_gate_concurrency=1,
+        radar_gate_prompt_version=4,  # the scripted gate answers in the v4 shape
     )
     with llm.client_override(fake):
         result = await run_radar(

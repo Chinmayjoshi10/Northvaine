@@ -18,6 +18,7 @@ import re
 from collections.abc import Iterable
 from typing import Any
 from urllib.parse import urlsplit
+from uuid import NAMESPACE_URL, uuid5
 
 from northvaine.core.models import (
     ClaimCheck,
@@ -42,8 +43,9 @@ from northvaine.radar.models import (
     TargetAccount,
 )
 from northvaine.radar.verify import claim_fingerprint
+from northvaine.sensors.base import content_hash
 
-__all__ = ["partner_candidates", "target_candidates"]
+__all__ = ["listed_candidate", "partner_candidates", "target_candidates"]
 
 _MAX_CLAIMS = 3
 EVENT_TYPE = "company_profile"
@@ -157,6 +159,103 @@ def _site_candidate(
         checks=checks,
     )
     return candidate, (doc, result)
+
+
+def listed_candidate(
+    account: TargetAccount,
+    mentions: Iterable[Any],
+    available_at: Any,
+    settings: Settings | None = None,
+) -> Made | None:
+    """D154: a dealer that peer brands' own stockist pages name, as a candidate whose claims quote
+    those pages. Each `mention` is (peer, url, page text, the verbatim line naming the dealer);
+    the line is checked in the page text by code. None when no line is found."""
+    cfg = settings or get_settings()
+    mentions = [m for m in mentions if m.line and m.line in m.text]
+    if not mentions:
+        return None
+    name = re.split(r"\s[-|,(]\s?|,", mentions[0].line)[0].strip()[:80] or account.name
+    key = company_key(name, account.country, cfg)
+    checks: list[ClaimCheck] = []
+    claims: list[CandidateClaim] = []
+    documents: list[EvidenceDocument] = []
+    for m in mentions:
+        doc = EvidenceDocument(
+            id=uuid5(NAMESPACE_URL, content_hash(m.text)),
+            source_name="website",
+            url=m.url,
+            title=None,
+            text=m.text,
+            available_at=available_at,
+            meta={"stockists_of": m.peer},
+        )
+        documents.append(doc)
+        statement = f"{m.peer} lists {name} among the stockists of its products."
+        fingerprint = claim_fingerprint(doc.id, statement, m.line)
+        checks.append(
+            ClaimCheck(
+                document_id=doc.id,
+                draft=ClaimDraft(
+                    statement=statement,
+                    source_quote=m.line,
+                    subject=SubjectMention(name=name, country=account.country, role="distributor"),
+                    extracted_by="code",
+                ),
+                status=ClaimStatus.VERIFIED,
+                quote_offset=m.text.index(m.line),
+                verified_by="code",
+                fingerprint=fingerprint,
+            )
+        )
+        claims.append(
+            CandidateClaim(
+                ref=f"C{len(claims) + 1}",
+                fingerprint=fingerprint,
+                document_id=doc.id,
+                statement=statement,
+                source_quote=m.line,
+                source_name=doc.source_name,
+                url=doc.url,
+                available_at=doc.available_at,
+                evidence_kind=EvidenceKind.FULL_TEXT,
+                verified_by="code",
+                upgraded_from=None,
+            )
+        )
+    peers = sorted({m.peer for m in mentions})
+    event = CandidateEvent(
+        event_type=EVENT_TYPE,
+        description=f"Listed as a stockist by {', '.join(peers)}.",
+        occurred_on=None,
+        available_at=available_at,
+        claim_refs=[c.ref for c in claims],
+        slots={},
+        fingerprint=event_fingerprint(EVENT_TYPE, [c.fingerprint for c in claims], None, key),
+    )
+    candidate = Candidate(
+        key=key,
+        name=name,
+        country=account.country,
+        aliases=[account.website],
+        roles=["distributor"],
+        stream=RadarStream.ANNOUNCEMENT,
+        streams=[RadarStream.ANNOUNCEMENT],
+        events=[event],
+        claims=claims,
+        window_start=None,
+        window_end=None,
+        window_estimated=False,
+        window_note="Specification window, not enumerable.",
+        listed_by=peers,
+    )
+    # one ledger result per page; the first page carries every check made on it
+    first = documents[0]
+    result = LedgerResult(
+        document_id=first.id,
+        eligibility=Eligibility(kind=EvidenceKind.FULL_TEXT),
+        checks=[c for c in checks if c.document_id == first.id],
+    )
+    return candidate, (first, result)
 
 
 def partner_candidates(

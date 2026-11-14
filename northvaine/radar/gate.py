@@ -101,6 +101,33 @@ def _reject(
     )
 
 
+class GateOutputV5(NorthvaineModel):
+    """Prompt v5 (D155): who did it, then the verdict, with `authority` for an organisation that
+    only funds, permits or regulates. A separate model, so v3 and v4 requests (and recordings)
+    are unchanged: the output schema is part of every request."""
+
+    what_it_did: str
+    actor: Literal[
+        "buys_or_builds", "funds_or_permits", "reports_or_lists", "sells_same", "unclear"
+    ]
+    needs_the_offer: str
+    verdict: Literal[
+        "buyer",
+        "competitor",
+        "reseller",
+        "publisher",
+        "not_a_buyer",
+        "not_an_organisation",
+        "authority",
+    ]
+    direct_buyer: bool | None
+    reason: str
+    buyer_reason: str | None
+    demand_reason: str | None
+    suggested_action: str | None
+    cited_refs: list[str] = Field(max_length=8)
+
+
 async def gate_candidate(
     candidate: Candidate,
     spec: ClientSpec,
@@ -122,8 +149,13 @@ async def gate_candidate(
     # A client with a buyer model gets the prompt that reads it (v4, D101); every other client
     # keeps v3, so its recorded runs replay unchanged.
     variables: dict[str, Any] = {"offer": spec.offer, "markets": ", ".join(spec.markets)}
+    output_model: type[NorthvaineModel] = GateOutput
     if spec.buyer_roles:
-        prompt = load_prompt("radar_gate", version=4)
+        # D155: v5 asks who did it first (an organisation that funds or permits is not the buyer)
+        version = settings.radar_gate_prompt_version
+        prompt = load_prompt("radar_gate", version=version)
+        if version >= 5:
+            output_model = GateOutputV5
         variables["buyer_roles"] = "; ".join(spec.buyer_roles)
         variables["not_buyers"] = "; ".join(spec.not_buyers) or "not stated"
     else:
@@ -138,7 +170,7 @@ async def gate_candidate(
             "candidate_roles": Untrusted(", ".join(candidate.roles)),
             "claims": Untrusted(claim_lines(candidate.claims)),
         },
-        output_model=GateOutput,
+        output_model=output_model,
         purpose="radar_gate",
         run=run,
         workspace_id=run.workspace_id,
@@ -154,6 +186,13 @@ async def gate_candidate(
 
     if out.verdict == "not_an_organisation":
         return _reject(RejectedAs.NOT_AN_ORGANISATION, NOT_AN_ORGANISATION_REASON, "llm")
+    actor = getattr(out, "actor", None)
+    if out.verdict == "authority" or (out.verdict == "buyer" and actor == "funds_or_permits"):
+        # D155: it funds, permits or regulates; the buyers are the organisations it pays
+        if not reason or not numbers_grounded(reason, [c.source_quote for c in candidate.claims]):
+            reason = UNGROUNDED_REASON
+        why = f"Funds or permits, does not buy: {reason}"
+        return _reject(RejectedAs.NOT_A_BUYER, why, "llm", refs)
     partner = out.verdict == "reseller" and spec.channel in ("distributors", "both")
     if out.verdict != "buyer" and not partner:
         # A rejection's reason may lean on any claim, so it is checked against all of them.

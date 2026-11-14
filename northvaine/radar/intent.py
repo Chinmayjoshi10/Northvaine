@@ -38,6 +38,10 @@ _CHANNEL_WORDS = (
 )  # fmt: skip
 
 
+# D152: channel roles searched for a client that sells through partners and named none
+_GENERIC_CHANNEL = ("distributors", "dealers")
+
+
 def _product(spec: Any) -> str:
     """The client's product in its broadest own words, for finding projects: its first offer
     term. Priority lines are for ranking fit; they are too narrow to search the web with."""
@@ -133,8 +137,18 @@ def partner_matrix_queries(spec: Any, limit: int, results: int) -> list[SensorQu
     client's buyer roles (up to 3) with each of its own product words (up to 2), in every market,
     `<role> <product words> <country>`. Markets take turns, so a run with many markets still asks
     each one something; at most `limit` searches. No fixed shop word: "showrooms" fitted retail and
-    found nothing for wholesale, machinery or food. Nothing for a client with no roles or words."""
-    roles = [r for r in spec.buyer_roles if r.strip()][:3]
+    found nothing for wholesale, machinery or food. Nothing for a client with no roles or words.
+
+    A client that sells through partners is searched for its channel first: its own trade roles,
+    else generic ones ("distributors", "dealers"). A product word alone finds the product's makers
+    (a first run found only competitors), and an end buyer's own site rarely names a product it
+    buys, while a stockist's site states what it stocks (D152)."""
+    stated = [r for r in spec.buyer_roles if r.strip()]
+    channel = [r for r in stated if any(w in r.casefold() for w in _CHANNEL_WORDS)]
+    if spec.channel != "direct" and len(channel) < 2:
+        channel += [g for g in _GENERIC_CHANNEL if g not in channel][: 2 - len(channel)]
+    others = [r for r in stated if r not in channel]
+    roles = (channel + others)[:3] if spec.channel != "direct" else stated[:3]
     words = [t for t in spec.offer_terms if t.strip()][:2]
     if not roles or not words or not spec.markets:
         return []
