@@ -51,6 +51,12 @@ _FROM_OPPORTUNITY = {
 }
 
 
+def _workable(entry: RankedEntry) -> bool:
+    """D156: shown (not held by the floor or the review), not a possible competitor."""
+    o = entry.opportunity
+    return o is not None and not o.held and entry.site_role != "makes"
+
+
 def label_entries(entries: list[RankedEntry], today: date, settings: Settings) -> list[RankedEntry]:
     out: list[RankedEntry] = []
     for entry in entries:
@@ -69,6 +75,9 @@ def label_entries(entries: list[RankedEntry], today: date, settings: Settings) -
                 and entry.evidence_level == "proven_buyer"
             ):
                 label, reason = "account_to_work", "a proven buyer of your product codes"
+            elif settings.radar_edition_fill and _workable(entry):
+                # D156: proof it buys or stocks the product, no fresh news: worth a call anyway
+                label, reason = "account_to_work", f"worth a call: {opportunity.words}"
         elif status in ("bid now", "contact now"):
             label, reason = "act_now", status
         elif changes := _changes(entry, today, settings):
@@ -105,7 +114,18 @@ def daily_edition(entries: list[RankedEntry], settings: Settings) -> list[Ranked
             if pick is not None:
                 firsts.append(pick)
         rest = [e for e in [*reviewed, *unreviewed] if e not in firsts]
-        return sorted([*firsts, *rest][: settings.radar_daily_quota], key=lambda e: e.rank)
+        chosen = [*firsts, *rest][: settings.radar_daily_quota]
+        if settings.radar_edition_fill and len(chosen) < settings.radar_daily_quota:
+            # D156: a day without enough fresh signals is filled with accounts to work: shown
+            # leads with proof and no news, the biggest first. Never a held entry, never padding.
+            spare = [
+                e
+                for e in ranked
+                if e not in chosen and e.label == "account_to_work" and _workable(e)
+            ]
+            spare.sort(key=lambda e: (-(e.opportunity.size_tier if e.opportunity else 0), e.rank))
+            chosen += spare[: settings.radar_daily_quota - len(chosen)]
+        return sorted(chosen, key=lambda e: e.rank)
     taken: list[RankedEntry] = []
     counts: dict[str, int] = {}
     for entry in sorted(entries, key=lambda e: (-e.label_strength, e.rank)):

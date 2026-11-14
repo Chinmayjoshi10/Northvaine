@@ -511,6 +511,16 @@ async def run_radar(
                 f"off target: {len(off)} lead(s) outside your markets or not about your product"
             )
 
+    # The client is never its own lead: a search for its product finds its own site (15 Nov)
+    if spec.name:
+        own = company_key(spec.name, None, settings).partition(":")[2]
+        mine = [
+            c for c in candidates if own and (c.key.partition(":")[2] + " ").startswith(own + " ")
+        ]
+        if mine:
+            candidates = [c for c in candidates if c not in mine]
+            notes.append(f"left out {len(mine)} mention(s) of your own company")
+
     # 4. gate every candidate (strongest first, capped); the skeptic then runs only for the top
     # passed leads by a first rank (D130), since only the top is ever shown
     order = _gate_order_by_proof if settings.radar_gate_by_proof else _gate_order

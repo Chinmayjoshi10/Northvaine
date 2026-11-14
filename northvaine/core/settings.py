@@ -378,6 +378,8 @@ class Settings(BaseSettings):
     radar_list_pages: bool = True
     # D155: the gate prompt for clients with a buyer model (v5 asks who did it; v4 before)
     radar_gate_prompt_version: int = Field(default=5, ge=4, le=5)
+    # D156: a day's edition is filled to the quota with proven accounts that have no news
+    radar_edition_fill: bool = True
     radar_list_max_peers: int = Field(default=3, ge=1, le=5)
     radar_list_pages_per_peer: int = Field(default=3, ge=1, le=6)
     radar_list_max_dealers: int = Field(default=12, ge=1, le=40)

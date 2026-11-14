@@ -332,6 +332,7 @@ LEGACY_SETTINGS: dict[str, object] = {
     "radar_partner_matrix": False,  # D151: one showroom search per market
     "radar_list_pages": False,  # D153: no peer dealer lists
     "radar_gate_prompt_version": 4,  # D155: the gate did not ask who did it
+    "radar_edition_fill": False,  # D156: an edition held fresh signals only
     "radar_intent_search": False,  # D126: no intent searches written from the answers
     "radar_partner_discovery": False,  # D136: no partner discovery searches
     "radar_target_accounts": False,  # D138: no target-account site reads

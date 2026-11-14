@@ -102,3 +102,43 @@ def test_a_project_line_needs_a_dated_record_naming_the_company() -> None:
     [assessed] = order_opportunities([project], TODAY, SPEC)
     assert assessed.opportunity is not None and assessed.opportunity.play == "project"
     assert opening_line(assessed, "widgets") is None
+
+
+def test_d156_a_quiet_day_is_filled_with_accounts_to_work_never_with_held_entries() -> None:
+    from northvaine.core.settings import Settings
+    from northvaine.radar.edition import daily_edition, label_entries
+    from northvaine.radar.models import CandidateEvent
+
+    def keyed(e: RankedEntry, key: str, rank: int) -> RankedEntry:
+        return e.model_copy(
+            update={"rank": rank, "candidate": e.candidate.model_copy(update={"key": key})}
+        )
+
+    news = CandidateEvent(
+        event_type="contract_awarded",
+        description="won a contract",
+        occurred_on=date(2026, 11, 10),
+        available_at=None,
+        claim_refs=[],
+        slots={},
+        fingerprint="n",
+    )
+    fresh = keyed(_lead(), "GB:fresh", 1)
+    fresh = fresh.model_copy(
+        update={"candidate": fresh.candidate.model_copy(update={"events": [news]})}
+    )
+    quiet = [keyed(_lead(), f"GB:quiet{i}", 2 + i) for i in range(3)]
+    held = keyed(_lead(country=None), "x:held", 6)
+    maker = keyed(_lead(site_role="makes"), "GB:maker", 7)
+    ordered = order_opportunities([fresh, *quiet, held, maker], TODAY, SPEC, floor=True)
+    on = Settings(_env_file=None)
+    edition = daily_edition(label_entries(ordered, TODAY, on), on)
+    keys = {e.candidate.key for e in edition}
+    assert {"GB:quiet0", "GB:quiet1", "GB:quiet2"} <= keys
+    assert "x:held" not in keys and "GB:maker" not in keys
+    assert len(edition) <= on.radar_daily_quota
+    filled = [e for e in edition if e.candidate.key.startswith("GB:quiet")]
+    assert all(e.label == "account_to_work" for e in filled)
+    off = Settings(_env_file=None, radar_edition_fill=False)
+    plain = daily_edition(label_entries(ordered, TODAY, off), off)
+    assert not any(e.candidate.key.startswith("GB:quiet") for e in plain)
