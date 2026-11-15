@@ -465,6 +465,13 @@ function Station(props: {
             <span className="caps">To decide · by cost of waiting</span>
             <span className="mono">{decisions.length}</span>
           </div>
+          {decisions.length > 0 && decisions.length < 5 && (
+            // D156: a short day says so; the list is never padded with companies without proof
+            <p className="quiet">
+              {decisions.length === 1 ? "Only one company" : `Only ${decisions.length} companies`}{" "}
+              with proof today. We never pad this list; the rest are on watch with their reasons.
+            </p>
+          )}
           {decisions.length === 0 && (
             <p className="quiet">
               Nothing to act on today.{" "}

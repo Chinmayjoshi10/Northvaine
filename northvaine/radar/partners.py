@@ -174,7 +174,8 @@ def listed_candidate(
     mentions = [m for m in mentions if m.line and m.line in m.text]
     if not mentions:
         return None
-    name = re.split(r"\s[-|,(]\s?|,", mentions[0].line)[0].strip()[:80] or account.name
+    # the dealer's name: the line up to its first bracket, dash, comma or street number
+    name = re.split(r"\s[-|,(]\s?|,|\s\d", mentions[0].line)[0].strip()[:80] or account.name
     key = company_key(name, account.country, cfg)
     checks: list[ClaimCheck] = []
     claims: list[CandidateClaim] = []
@@ -190,7 +191,13 @@ def listed_candidate(
             meta={"stockists_of": m.peer},
         )
         documents.append(doc)
-        statement = f"{m.peer} lists {name} among the stockists of its products."
+        # About the dealer, not the list: a gate read "X lists Y" as Y being a directory entry
+        # The client named the peer as a brand selling its own kind of product (trusted onboarding
+        # answer), so a stockist of the peer stocks the client's category; the review needs that.
+        statement = (
+            f"{name} stocks products of {m.peer}, a brand you named as selling the same kind of "
+            f"product as yours: it is named on {m.peer}'s list of stockists."
+        )
         fingerprint = claim_fingerprint(doc.id, statement, m.line)
         checks.append(
             ClaimCheck(
