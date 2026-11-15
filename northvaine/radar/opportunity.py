@@ -258,7 +258,7 @@ def assess(entry: RankedEntry, as_of: date, spec: Any) -> Opportunity:
     else:
         label = {"project": "approach_now", "partner": "relationship", "account": "looking"}[play]
 
-    sources = f"{confidence} source{'s' if confidence != 1 else ''} agree"
+    sources = f"{confidence} source agrees" if confidence == 1 else f"{confidence} sources agree"
     words = f"{_INTENT_WORDS[intent]} · {_FIT_WORDS[fit]} · {sources}"
     if tier >= 2:
         said = f" ({entry.site_size.words})" if entry.site_size else ""
