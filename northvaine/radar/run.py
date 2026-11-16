@@ -593,6 +593,8 @@ async def run_radar(
         "offer": spec.offer,
         "terms": spec.offer_terms,
         "related_terms": spec.related_terms,
+        # D157: a supplies-award winner is a proven channel buyer for a client with partners
+        "channel_partner": settings.radar_proven_channel and spec.channel != "direct",
     }
     first = rank([(c, d, unchecked) for c, d in gated], **rank_args)
     chosen = {e.candidate.key for e in first[:skeptic_top]}

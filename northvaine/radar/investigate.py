@@ -316,6 +316,7 @@ def rerank(
         offer=spec.offer,
         terms=spec.offer_terms,
         related_terms=spec.related_terms,
+        channel_partner=settings.radar_proven_channel and spec.channel != "direct",
     )
     by_candidate = {id(f.candidate): f for f in fresh}
     out: list[RankedEntry] = []

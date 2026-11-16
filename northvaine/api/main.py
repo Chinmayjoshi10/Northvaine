@@ -50,7 +50,14 @@ async def _after_start(base: Path) -> None:
     try:
         restored = await durable.hydrate_reports(base)
         size = await durable.sweep()
-        logger.info("restored %d radar files; app_state is %s bytes", restored, size)
+        from northvaine.jobs.onboarding_run import peak_mb
+
+        logger.info(
+            "restored %d radar files; app_state is %s bytes; peak memory %s MB",
+            restored,
+            size,
+            peak_mb(),
+        )
     except Exception:
         logger.exception("background restore failed")
 

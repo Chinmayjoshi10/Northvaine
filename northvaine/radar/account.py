@@ -48,6 +48,7 @@ AccountRole = Literal[
 EvidenceLevel = Literal[
     "explicit_purchase",
     "proven_buyer",
+    "proven_channel",
     "project_requirement",
     "company_fit",
     "generic_mention",
@@ -56,10 +57,11 @@ EvidenceLevel = Literal[
 LEVEL_ORDER: dict[str, int] = {
     "explicit_purchase": 0,
     "proven_buyer": 1,
-    "project_requirement": 2,
-    "company_fit": 3,
-    "generic_mention": 4,
-    "no_evidence": 5,
+    "proven_channel": 2,  # D157: won a supplies contract for the client's kind of product
+    "project_requirement": 3,
+    "company_fit": 4,
+    "generic_mention": 5,
+    "no_evidence": 6,
 }
 
 
@@ -135,11 +137,20 @@ def account_role(candidate: Candidate, nature: str | None) -> AccountRole:
     return "unresolved"
 
 
-def evidence_level(requirement: str, role: AccountRole, direct_buyer: bool | None) -> EvidenceLevel:
-    """The commercial evidence level of an entry (strongest first, see the module doc)."""
+def evidence_level(
+    requirement: str,
+    role: AccountRole,
+    direct_buyer: bool | None,
+    channel_partner: bool = False,
+) -> EvidenceLevel:
+    """The commercial evidence level of an entry (strongest first, see the module doc).
+    `channel_partner` (D157): the client sells through partners, so a company that won a
+    supplies contract naming the client's kind of product is a proven channel buyer."""
     if requirement == "inferred":
         return "no_evidence"
     if role == "supplier":
+        if channel_partner and requirement == "stated":
+            return "proven_channel"
         return "generic_mention"  # it sells this kind of product: a competitor or a channel
     if role == "importer_of_record":
         # official records of the client's own product codes: proof it buys, not a live order

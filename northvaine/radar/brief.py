@@ -432,6 +432,7 @@ def rank(
     terms: list[str] | None = None,
     related_terms: list[str] | None = None,
     learned: Posteriors | None = None,
+    channel_partner: bool = False,
 ) -> list[RankedEntry]:
     """Lexicographic order by (requirement stated before inferred, window urgency or recency,
     evidence strength, direct buyer), each component explained in `rank_reasons`; no numeric
@@ -478,7 +479,7 @@ def rank(
         ]
         nature, nature_derived = contract_nature(candidate, cfg)
         role = account_role(candidate, nature)
-        level = evidence_level(requirement, role, gate.direct_buyer)
+        level = evidence_level(requirement, role, gate.direct_buyer, channel_partner)
         reasons.append(
             f"Account: {role.replace('_', ' ')}"
             + (

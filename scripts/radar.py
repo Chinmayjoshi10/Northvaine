@@ -140,6 +140,7 @@ SHAPING_SETTINGS = (
     "radar_list_max_dealers",
     "radar_gate_prompt_version",
     "radar_edition_fill",
+    "radar_proven_channel",
     "radar_intent_search",  # D126
     "radar_intent_days",
     "radar_intent_per_market",

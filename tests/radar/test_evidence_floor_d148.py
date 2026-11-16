@@ -142,3 +142,15 @@ def test_d156_a_quiet_day_is_filled_with_accounts_to_work_never_with_held_entrie
     off = Settings(_env_file=None, radar_edition_fill=False)
     plain = daily_edition(label_entries(ordered, TODAY, off), off)
     assert not any(e.candidate.key.startswith("GB:quiet") for e in plain)
+
+
+def test_d157_a_supplies_award_winner_is_a_proven_channel_buyer_for_a_partner_client() -> None:
+    from northvaine.radar.account import LEVEL_ORDER, evidence_level
+
+    assert evidence_level("stated", "supplier", None, channel_partner=True) == "proven_channel"
+    assert evidence_level("stated", "supplier", None) == "generic_mention"  # direct seller
+    assert evidence_level("inferred", "supplier", None, channel_partner=True) == "no_evidence"
+    assert LEVEL_ORDER["proven_buyer"] < LEVEL_ORDER["proven_channel"]
+    assert LEVEL_ORDER["proven_channel"] < LEVEL_ORDER["project_requirement"]
+    winner = _lead(evidence_level="proven_channel")
+    assert hold_reason(winner, SPEC) is None  # the floor shows it

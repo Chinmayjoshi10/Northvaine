@@ -102,7 +102,8 @@ def test_signatures_match_the_plan() -> None:
         "terms",
         "related_terms",
         "learned",
-    ]  # fmt: skip  (D80, D82, D84; learned: D89)
+        "channel_partner",
+    ]  # fmt: skip  (D80, D82, D84; learned: D89; channel_partner: D157)
     assert params(brief.render_brief) == ["run"]
     assert params(brief.render_scorecard) == ["run"]
     assert params(brief.write_reports) == ["run", "out_dir"]

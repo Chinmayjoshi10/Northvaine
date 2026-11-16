@@ -62,6 +62,17 @@ def _start_heartbeat(base: Path, sid: str, last_activity: Callable[[], float]) -
     return stop
 
 
+def peak_mb() -> int | None:
+    """The process's peak memory in MB (Linux; None elsewhere), logged so an out-of-memory
+    notice from the host can be checked against real numbers (16 Nov)."""
+    try:
+        import resource
+
+        return int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024)
+    except (ImportError, OSError):
+        return None
+
+
 async def _drop_cache(sid: str) -> None:
     """A run that will not be tried again needs no saved answers (D146); a free database fills
     up otherwise. Pending writes go first, or they would put the rows back."""
@@ -104,6 +115,7 @@ async def run(sid: str) -> int:
             logger.info("run %s resumes with %d saved answers", sid, len(cache.saved))
         result = await run_live(spec, as_of=as_of, settings=quick, progress=progress, resume=cache)
         logger.info("run %s: %d answers replayed, %d new", sid, cache.hits, cache.misses)
+        logger.info("run %s: peak memory %s MB", sid, peak_mb())
         paths = write_reports(result, base)
         del result
         gc.collect()
