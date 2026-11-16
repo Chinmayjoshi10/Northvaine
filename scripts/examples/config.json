@@ -1,60 +1,49 @@
 {
-  "note": "Which finished runs become landing-page examples. Brand names are never shown: each example is described by what the business does. Industry words belong in this data file only.",
+  "note": "Which finished runs become landing-page examples. Brand names are never shown: each example is described by what the business does. Industry words belong in this data file only. Rebuilt 17 Nov from runs with the evidence floor (D148-D158).",
   "examples": [
     {
-      "slug": "rice-exporter",
-      "source": "tilda_com",
-      "day": "2026-11-05",
-      "industry": "Food and drink",
-      "name": "A premium rice brand",
-      "offer": "Produces and sells premium packaged rice, including basmati, jasmine and pilau varieties, to retailers, wholesalers and food-service buyers.",
-      "summary": "Contract winners, new importers and food-service buyers that could need premium rice.",
-      "forbid": ["tilda"],
-      "keep": 10
+      "slug": "paving-maker",
+      "source": "marshalls_co_uk",
+      "day": "2026-11-14",
+      "industry": "Building products",
+      "name": "A UK paving and landscaping maker",
+      "offer": "Makes paving, walling and landscaping products for builders' merchants, contractors and housebuilders in the UK.",
+      "summary": "UK importers of paving whose official import records show they buy it now, the biggest first.",
+      "forbid": ["marshalls"],
+      "keep": 8
     },
     {
       "slug": "compressed-air-maker",
       "source": "kaeser_com",
-      "day": "2026-11-05",
+      "day": "2026-11-14",
       "industry": "Industrial machinery",
       "name": "A compressed-air equipment maker",
       "offer": "Manufactures compressed-air systems: rotary screw compressors, blowers, air treatment, controllers and portable compressors for industry.",
-      "summary": "Importers of compressor products whose official import record changed, and the news behind them.",
+      "summary": "UK importers of compressor products whose official import record changed, and the news behind them.",
       "forbid": ["kaeser", "kompressoren"],
-      "keep": 10
-    },
-    {
-      "slug": "home-textiles-exporter",
-      "source": "welspunliving_com",
-      "day": "2026-11-05",
-      "industry": "Textiles",
-      "name": "A home-textiles manufacturer",
-      "offer": "Manufactures and sells home textiles: sheets, towels and flooring, mainly to retailers, hotel chains and other bulk buyers.",
-      "summary": "Retailers and bulk buyers that just started importing a new textile product line.",
-      "forbid": ["welspun"],
-      "keep": 10
-    },
-    {
-      "slug": "office-furniture-maker",
-      "source": "boss_design_com",
-      "day": "2026-11-05",
-      "industry": "Furniture",
-      "name": "An office-furniture designer and maker",
-      "offer": "Designs and manufactures office furniture: task chairs, soft seating, sofas and meeting tables for workplaces.",
-      "summary": "Dealers and fit-out businesses that sell workplace furniture, checked against their own websites.",
-      "forbid": ["boss design"],
       "keep": 8
     },
     {
-      "slug": "ceramic-tiles-exporter",
-      "source": "simpolo_net",
-      "day": "2026-11-05",
-      "industry": "Ceramics and building materials",
-      "name": "A ceramic tile and bathware exporter",
-      "offer": "Manufactures and sells ceramic tiles and bathware products to buyers around the world.",
-      "summary": "Public projects and property developers that are specifying tiles now.",
-      "forbid": ["simpolo"],
-      "keep": 5
+      "slug": "piping-maker",
+      "source": "polypipe_com",
+      "day": "2026-11-14",
+      "industry": "Plumbing and drainage",
+      "name": "A plastic piping and drainage maker",
+      "offer": "Manufactures plastic piping, drainage and plumbing systems for residential, commercial and civil projects.",
+      "summary": "UK importers of piping and drainage products, with their size and the reason to call now.",
+      "forbid": ["polypipe"],
+      "keep": 8
+    },
+    {
+      "slug": "rainwater-maker",
+      "source": "marleyalutec_co_uk",
+      "day": "2026-11-15",
+      "industry": "Building products",
+      "name": "A rainwater systems maker",
+      "offer": "Makes aluminium rainwater systems (gutters, downpipes and fascias) for contractors, developers and merchants.",
+      "summary": "Builders' merchants named on a competing brand's public stockist list, checked one by one.",
+      "forbid": ["marley", "alutec"],
+      "keep": 8
     }
   ]
 }

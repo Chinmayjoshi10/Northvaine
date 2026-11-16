@@ -1,52 +1,42 @@
 [
  {
-  "client": "example-rice-exporter",
-  "industry": "Food and drink",
-  "name": "A premium rice brand",
-  "summary": "Contract winners, new importers and food-service buyers that could need premium rice.",
-  "day": "2026-11-05",
-  "shown": 10,
-  "found": 99,
-  "set_aside": 63
+  "client": "example-paving-maker",
+  "industry": "Building products",
+  "name": "A UK paving and landscaping maker",
+  "summary": "UK importers of paving whose official import records show they buy it now, the biggest first.",
+  "day": "2026-11-14",
+  "shown": 8,
+  "found": 127,
+  "set_aside": 30
  },
  {
   "client": "example-compressed-air-maker",
   "industry": "Industrial machinery",
   "name": "A compressed-air equipment maker",
-  "summary": "Importers of compressor products whose official import record changed, and the news behind them.",
-  "day": "2026-11-05",
-  "shown": 10,
-  "found": 61,
-  "set_aside": 30
+  "summary": "UK importers of compressor products whose official import record changed, and the news behind them.",
+  "day": "2026-11-14",
+  "shown": 8,
+  "found": 117,
+  "set_aside": 26
  },
  {
-  "client": "example-home-textiles-exporter",
-  "industry": "Textiles",
-  "name": "A home-textiles manufacturer",
-  "summary": "Retailers and bulk buyers that just started importing a new textile product line.",
-  "day": "2026-11-05",
-  "shown": 10,
-  "found": 150,
-  "set_aside": 113
+  "client": "example-piping-maker",
+  "industry": "Plumbing and drainage",
+  "name": "A plastic piping and drainage maker",
+  "summary": "UK importers of piping and drainage products, with their size and the reason to call now.",
+  "day": "2026-11-14",
+  "shown": 8,
+  "found": 158,
+  "set_aside": 56
  },
  {
-  "client": "example-office-furniture-maker",
-  "industry": "Furniture",
-  "name": "An office-furniture designer and maker",
-  "summary": "Dealers and fit-out businesses that sell workplace furniture, checked against their own websites.",
-  "day": "2026-11-05",
-  "shown": 6,
-  "found": 36,
-  "set_aside": 25
- },
- {
-  "client": "example-ceramic-tiles-exporter",
-  "industry": "Ceramics and building materials",
-  "name": "A ceramic tile and bathware exporter",
-  "summary": "Public projects and property developers that are specifying tiles now.",
-  "day": "2026-11-05",
-  "shown": 5,
-  "found": 36,
-  "set_aside": 31
+  "client": "example-rainwater-maker",
+  "industry": "Building products",
+  "name": "A rainwater systems maker",
+  "summary": "Builders' merchants named on a competing brand's public stockist list, checked one by one.",
+  "day": "2026-11-15",
+  "shown": 8,
+  "found": 49,
+  "set_aside": 37
  }
 ]

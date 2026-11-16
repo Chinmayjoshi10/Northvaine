@@ -103,6 +103,9 @@ def anonymise(obj: Any, words: list[str], key: str = "") -> Any:
 
 def _tidy_entry(entry: dict[str, Any]) -> dict[str, Any]:
     entry["company_contact"] = None
+    opportunity = entry.get("opportunity")
+    if opportunity and isinstance(opportunity.get("words"), str):  # runs saved before the fix
+        opportunity["words"] = opportunity["words"].replace("1 source agree", "1 source agrees")
     entry = scrub(entry)
     candidate = entry["candidate"]
     refs = {c["ref"] for c in candidate["claims"]}
@@ -132,9 +135,19 @@ def curate(run: dict[str, Any], cfg: dict[str, Any]) -> tuple[dict[str, Any], in
     run, _ = sanitize(anonymise(run, words), words)
     entries = run["entries"]
     before = len(entries)
-    entries.sort(key=lambda e: (STRENGTH_ORDER.get(e["strength"], 3), e["rank"]))
-    solid = [e for e in entries if e["strength"] != "weak"]
-    chosen = (solid if len(solid) >= 3 else entries)[: cfg["keep"]]
+    if any((e.get("opportunity") or {}).get("held") is not None for e in entries) or any(
+        "held" in (e.get("opportunity") or {}) for e in entries
+    ):
+        # D148 runs: the radar's own order, leads first, then held entries with their reasons
+        def held(e: dict[str, Any]) -> bool:
+            return bool((e.get("opportunity") or {}).get("held"))
+
+        entries.sort(key=lambda e: (held(e), e["rank"]))
+        chosen = entries[: cfg["keep"]]
+    else:
+        entries.sort(key=lambda e: (STRENGTH_ORDER.get(e["strength"], 3), e["rank"]))
+        solid = [e for e in entries if e["strength"] != "weak"]
+        chosen = (solid if len(solid) >= 3 else entries)[: cfg["keep"]]
     chosen = [_tidy_entry(e) for e in chosen]
     for n, entry in enumerate(chosen, start=1):
         entry["rank"] = n
@@ -160,7 +173,15 @@ def example_spec(spec: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
     spec["existing_customers"] = []
     spec["target_accounts"] = []
     spec["catalogue_lines"] = []
-    spec["sensors"] = {}
+    spec["peer_sites"] = []
+    # D158: keep which official sources cover which market (for the coverage line), nothing else
+    # of the searches: no search text, no codes, no domains
+    official = ("hmrc", "fts", "ted", "usaspending", "worldbank")
+    spec["sensors"] = {
+        name: [{"schema_ver": 1, "countries": q.get("countries", [])} for q in queries]
+        for name, queries in (spec.get("sensors") or {}).items()
+        if name in official
+    }
     return spec
 
 
@@ -212,6 +233,9 @@ def build(source: Path, out: Path, config: Path = CONFIG) -> list[str]:
         clients.mkdir(parents=True)
         index = []
         for cfg in cfgs:
+            # every example is cleaned of every example's brand words: one radar may name
+            # another example's business (as a competitor), which would undo its anonymity
+            cfg = {**cfg, "forbid": forbid}
             run_path = source / cfg["source"] / cfg["day"] / "run.json"
             run, before, kept = curate(json.loads(run_path.read_text(encoding="utf-8")), cfg)
             spec = json.loads((source / f"{cfg['source']}.json").read_text(encoding="utf-8"))
