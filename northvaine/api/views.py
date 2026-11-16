@@ -19,6 +19,7 @@ from northvaine.api.leadview import (
 )
 from northvaine.core.settings import Settings
 from northvaine.radar import brief
+from northvaine.radar.coverage import coverage_line
 from northvaine.radar.edition import daily_edition
 from northvaine.radar.models import (
     Candidate,
@@ -163,6 +164,7 @@ class BriefView(BaseModel):
     home_country: str | None = None  # where the client is based
     # ranks of up to three watch-list companies worth showing on a day with no edition
     watch_best: list[int] = []
+    coverage: str | None = None  # D158: where official buyer records exist
 
 
 class Claim(BaseModel):
@@ -415,6 +417,7 @@ def brief_view(
         log=_log(run),
         edition=edition,
         watch_best=[] if edition else watch_best(ordered),
+        coverage=coverage_line(spec) if spec else None,
     )
 
 

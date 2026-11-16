@@ -472,6 +472,10 @@ function Station(props: {
               with proof today. We never pad this list; the rest are on watch with their reasons.
             </p>
           )}
+          {decisions.length < 5 && brief.coverage && (
+            // D158: a short list in a market without official records is the data, not a fault
+            <p className="quiet">{brief.coverage}</p>
+          )}
           {decisions.length === 0 && (
             <p className="quiet">
               Nothing to act on today.{" "}

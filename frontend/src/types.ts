@@ -122,6 +122,8 @@ export interface BriefView {
   edition?: Row[];
   /** ranks of up to three watch-list companies to show on a day with no edition */
   watch_best?: number[];
+  /** D158: where official buyer records exist */
+  coverage?: string | null;
   /** the client's markets (ISO-2) and where it is based; both optional */
   markets?: string[];
   home_country?: string | null;
@@ -324,6 +326,7 @@ export interface OnboardingSession {
   /** D144: place in the run queue (1 = next or running) and a rough wait */
   queue_position?: number | null;
   wait_minutes?: number | null;
+  coverage?: string | null;
 }
 
 export interface OnboardingAnswers {

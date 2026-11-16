@@ -599,6 +599,10 @@ export function OnboardingPage() {
                   and come back.
                   {session?.progress ? ` Now: ${session.progress}.` : ""}
                 </p>
+                {session?.coverage && (
+                  // D158: where official buyer records exist, said before the result
+                  <p className="onb-hint">{session.coverage}</p>
+                )}
                 {reconnecting && (
                   <p className="onb-hint" role="status">
                     Reconnecting to the server. Your radar keeps going.

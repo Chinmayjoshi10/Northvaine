@@ -30,6 +30,7 @@ from northvaine.api import accounts, durable, limits, store
 from northvaine.brain.budget import RunContext
 from northvaine.core.models import NorthvaineModel
 from northvaine.core.settings import get_settings
+from northvaine.radar.coverage import coverage_line
 from northvaine.radar.models import REPO_ROOT
 from northvaine.radar.onboarding import (
     CatalogueRead,
@@ -141,6 +142,7 @@ class Session(NorthvaineModel):
     last_error: str | None = None  # raw error text: never sent to the browser (_public)
     queue_position: int | None = None  # filled when read: 1 = next
     wait_minutes: int | None = None  # filled when read: a rough estimate
+    coverage: str | None = None  # D158: where official buyer records exist, set on confirm
 
 
 def _dir(base: Path) -> Path:
@@ -495,6 +497,7 @@ async def confirm(sid: str, answers: OnboardingAnswers, base: Base) -> Session:
         as_of=datetime.now(UTC).isoformat(),
         error=None,
         attempts=0,  # a confirmed retry starts with its full allowance
+        coverage=coverage_line(spec),
         resumes=0,
     )
     from northvaine.api import supervisor
