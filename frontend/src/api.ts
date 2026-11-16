@@ -26,6 +26,31 @@ export function staticPath(path: string): string {
   return `${import.meta.env.BASE_URL}data${route}${day}.json`;
 }
 
+/** Example radars (landing page) are finished runs published as static files, read-only. Their
+ * client ids start with this; everything about them is read from `<base>examples/`, in every
+ * build, and nothing is ever sent for them. */
+export const EXAMPLE_PREFIX = "example-";
+export const isExample = (client: string) => client.startsWith(EXAMPLE_PREFIX);
+const EXAMPLE_PATH = new RegExp(`^/api/clients/${EXAMPLE_PREFIX}`);
+
+/** Keep in step with `static_file` in scripts/export_static.py (same layout under `examples/`). */
+export function examplePath(path: string): string {
+  const [route, query = ""] = path.split("?");
+  const day = query.startsWith("as_of=") ? "/" + query.slice("as_of=".length) : "";
+  return `${import.meta.env.BASE_URL}examples${route}${day}.json`;
+}
+
+export type ExampleCard = {
+  client: string;
+  industry: string;
+  name: string;
+  summary: string;
+  day: string;
+  shown: number;
+  found: number;
+  set_aside: number;
+};
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(liveUrl(path), init);
   return read<T>(response);
@@ -34,6 +59,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 /** A demo GET. In static mode the exported file answers; anything not exported (a client built
  * after the last nightly run) falls back to the live API. */
 async function load<T>(path: string): Promise<T> {
+  if (EXAMPLE_PATH.test(path)) return read<T>(await fetch(examplePath(path)));
   if (!STATIC_DATA) return request<T>(path);
   const exported = await fetch(staticPath(path)).catch(() => null);
   if (exported?.ok) return read<T>(exported);
@@ -74,8 +100,15 @@ export const api = {
     load<FeedbackRecord[]>(`/api/clients/${seg(client)}/feedback?as_of=${seg(day)}`),
   learning: (client: string) =>
     load<Learning>(`/api/clients/${seg(client)}/learning`),
+  examples: async (): Promise<ExampleCard[]> => {
+    const response = await fetch(`${import.meta.env.BASE_URL}examples/index.json`);
+    return read<ExampleCard[]>(response);
+  },
   sendFeedback: (body: Omit<FeedbackRecord, "received_at">) =>
-    request<FeedbackRecord>("/api/feedback", {
+    isExample(body.client)
+      ? // an example is read-only: the answer shows on this screen only, nothing is sent or saved
+        Promise.resolve({ ...body, received_at: new Date().toISOString() })
+      : request<FeedbackRecord>("/api/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

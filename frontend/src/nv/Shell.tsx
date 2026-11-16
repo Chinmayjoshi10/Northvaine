@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { isExample } from "../api";
 import { link } from "../routes";
 import "./nv.css";
+import "./example.css";
 
 // The app frame: window bar, rail, and the page. Only screens that exist appear in the rail,
 // so nothing in the product is a button that does nothing.
@@ -146,6 +148,16 @@ export function Shell(props: {
           </div>
         </nav>
         <main className="nv-main" id="main" tabIndex={-1}>
+          {isExample(client) && (
+            <div className="nv-example" role="note">
+              <span>
+                <b>Example radar.</b> A finished run for a business like this one. Read-only:
+                nothing you do here is saved or sent.
+              </span>
+              <a href={link("onboarding")}>Build my radar</a>
+              <a href="#examples">All examples</a>
+            </div>
+          )}
           {children}
         </main>
       </div>
