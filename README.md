@@ -163,22 +163,39 @@ Docker (the same image the live server runs): `docker build -t northvaine . && d
 ## Built during the hackathon
 
 Started from an empty repository on 2 October 2026, inside the submission period. Architecture and
-every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D139).
+every design decision with its reason: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D1-D158).
 
 ## How it was built
 
-A solo founder with an AI engineering team: Claude Code as the lead engineer, planning, reviewing
-and merging, with sub-agents building single, specified pieces in isolated branches. Every change
-passes the same gate (invariant checks, lint, unit and golden tests, frontend build) before it is
-merged. The product's own intelligence runs on NVIDIA Nemotron through Nebius Token Factory.
+Northvaine is built by a solo founder working with an AI engineering assistant, and we say so
+plainly.
+
+- **The founder decided the product.** What it is for, who it serves, what a good lead is, what it
+  must never do (no sending, no negotiating, no claim without a source), the scope and the demo
+  were the founder's calls. The rules are in `CLAUDE.md` and each decision, with its reason, is in
+  `docs/DECISIONS.md`.
+- **Claude Code (Anthropic) wrote most of the code.** It worked as the engineering assistant:
+  proposing designs, writing code and tests, and reviewing. For part of the build it ran sub-agents
+  that each built one specified piece on its own branch (`docs/FACTORY.md`); later work was done
+  directly in sessions with the founder.
+- **Checks, not trust.** Every change must pass one gate before it is committed: invariant checks
+  (for example, no industry words in code, every model call through one file), lint, unit and
+  golden tests, and the frontend build. The founder reviews the output and the leads by eye.
+- **The product's own intelligence is NVIDIA Nemotron on Nebius Token Factory** (see the section
+  above), not Claude. Claude Code is a development tool here, not part of the running product.
 
 ## Honest status
 
 - Working: the full radar (all sensors above), opportunity ranking and senior review, the Station,
   case pages with source chains, leads, connections, the map, onboarding from a website, nightly
   publishing of the demo.
+- Lead quality (D148-D158): a lead is shown only as a company in the client's markets with proof
+  it buys or stocks the product; governments, funders, statistics and makers of the same product
+  are held back with their reason; big buyers rank first; a short day says so instead of padding.
+  Every radar says where it has official buyer records.
 - Limits: company-named import records exist for free only in the UK; other markets rely on tenders,
-  contracts, registers and the web. Model output is probabilistic; leads are drafts for a person.
+  contracts, registers, stockist lists and the web, so radars there are thinner. Model output is
+  probabilistic; leads are drafts for a person.
 - Next: linking project -> contractor -> supplier chains, more markets and signal types, learning
   from which leads turn into meetings, accounts for many clients.
 

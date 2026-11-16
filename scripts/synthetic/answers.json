@@ -1,0 +1,69 @@
+{
+  "company": "Marshalls",
+  "website": "https://www.marshalls.co.uk",
+  "offer": "Marshalls provides landscaping, building, and roofing solutions including paving, drainage, bricks, roof systems, mortars, screeds, aggregates, and solar panels to consumers and construction customers in the UK.",
+  "offer_terms": [
+    "paving",
+    "drainage",
+    "bricks",
+    "roof systems",
+    "mortars",
+    "screeds",
+    "aggregates",
+    "solar panels"
+  ],
+  "related_terms": [
+    "concrete",
+    "timber",
+    "insulation",
+    "fixings",
+    "adhesives",
+    "sealants",
+    "geotextiles",
+    "edging",
+    "jointing compounds",
+    "hand tools"
+  ],
+  "markets": [
+    "GB"
+  ],
+  "buyer_roles": [
+    "homeowners",
+    "contractors",
+    "developers",
+    "housebuilders",
+    "local authorities",
+    "facilities managers",
+    "architects",
+    "specifiers"
+  ],
+  "need_triggers": [
+    "new housing developments",
+    "commercial building projects",
+    "public realm improvements",
+    "driveway installations",
+    "garden landscaping",
+    "school constructions",
+    "hospital builds",
+    "supermarket refurbishments"
+  ],
+  "priority_lines": [
+    "Landscaping",
+    "Water Management",
+    "Bricks and Masonry",
+    "Mortars and Screeds",
+    "Aggregates",
+    "Roofing Products"
+  ],
+  "not_buyers": [
+    "other landscaping suppliers",
+    "competing paving manufacturers",
+    "alternative brick producers",
+    "rival roofing companies"
+  ],
+  "hs_codes": [
+    "680299"
+  ],
+  "existing_customers": [],
+  "channel": "both"
+}
