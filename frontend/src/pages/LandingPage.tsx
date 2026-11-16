@@ -6,6 +6,10 @@ import content from "./landingContent.json";
 import "../nv/nv.css";
 import "./landing.css";
 import { Examples } from "./Examples";
+
+// The example radars are built (D-examples) but stay off the public landing until the founder
+// approves the rebuilt set (17 Nov).
+const SHOW_EXAMPLES = false;
 import { ResolvePanel, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 
@@ -242,7 +246,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
       <Intro replay={intro} onDone={introDone} />
       <nav className={`landing-nav${scrolled ? " lm-scrolled" : ""}`}><div className="landing-wrap">
         <a className="landing-wordmark" href={link()}>NORTHVAINE</a><span className="landing-spacer" />
-        <a className="landing-nav-link" href="#what">What it does</a><a className="landing-nav-link" href="#why">Why</a><a className="landing-nav-link" href="#industries">Industries</a><a className="landing-nav-link" href="#examples">Examples</a><a className="landing-nav-link" href="#how">How it works</a><a className="landing-nav-link" href="#product">The product</a><a className="landing-nav-link" href="#trust">Trust</a>
+        <a className="landing-nav-link" href="#what">What it does</a><a className="landing-nav-link" href="#why">Why</a><a className="landing-nav-link" href="#industries">Industries</a>{SHOW_EXAMPLES && <a className="landing-nav-link" href="#examples">Examples</a>}<a className="landing-nav-link" href="#how">How it works</a><a className="landing-nav-link" href="#product">The product</a><a className="landing-nav-link" href="#trust">Trust</a>
         <a className="landing-nav-link" href={link("contact")}>Talk to us</a><a className="landing-nav-link" href={link("clients")}>Sign in</a><WebsiteCta label="Try it free" />
       </div></nav>
 
@@ -270,7 +274,7 @@ export function LandingPage({ intro }: { intro: boolean }) {
 
       <Industries />
 
-      <Examples />
+      {SHOW_EXAMPLES && <Examples />}
 
       <section className="landing-section" id="how"><div className="landing-wrap"><div className="landing-eyebrow reveal">How it works</div><h2 className="reveal">Give it your website. <em>Get your buyers.</em></h2><div className="lm-stagger landing-steps reveal">
         <article><span className="mono">01</span><h3>It learns what you sell</h3><p>From your own website. You see what it understood, each point with a quote from your site, and correct anything.</p><div className="landing-mini">{content.learnRows.map(([label, value, note]) => <div key={label}><span>{label}</span>{label === "From" ? <em>{value}</em> : value}{note && <b>{note}</b>}</div>)}</div></article>
