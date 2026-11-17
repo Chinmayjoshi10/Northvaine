@@ -9,7 +9,7 @@ import { Examples } from "./Examples";
 
 // The example radars are built (D-examples) but stay off the public landing until the founder
 // approves the rebuilt set (17 Nov).
-const SHOW_EXAMPLES = false;
+const SHOW_EXAMPLES = true; // preview branch only: the founder reviews the examples on staging
 import { ResolvePanel, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 
