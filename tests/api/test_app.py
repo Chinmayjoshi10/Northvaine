@@ -310,3 +310,12 @@ async def test_a_visitors_radar_is_not_listed(client: AsyncClient, base: Path) -
     )
     assert (await client.get("/api/clients")).json() == []
     assert (await client.get("/api/clients/acme/runs/latest")).status_code == 200
+
+
+def test_the_shipped_demo_client_has_a_business_profile() -> None:
+    # 18 Nov: the demo spec ships in deploy/demo/clients; the live business page was "not found"
+    from northvaine.api.runs import _find_spec, _spec_dirs
+
+    assert any(d.as_posix().endswith("deploy/demo/clients") for d in _spec_dirs())
+    spec = _find_spec("stone_exporter_demo")
+    assert spec is not None and spec.markets

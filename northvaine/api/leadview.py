@@ -249,9 +249,13 @@ def opening_line(entry: RankedEntry, supply: str) -> str | None:
     if len(supply) > 1 and supply[0].isupper() and not supply[1].isupper():
         supply = supply[0].lower() + supply[1:]
     if o.play == "project":
-        # D148: "congratulations" only for a dated record that names this company as buyer or
-        # builder; anything less would claim a project that is not on record
-        if entry.evidence_level not in ("explicit_purchase", "project_requirement") or not o.latest:
+        # D148: "congratulations" only for a dated record of this company's own project: an
+        # official award or tender naming it, or evidence that names it as buyer or builder. A
+        # news mention alone would claim a project that is not on record (18 Nov: an official
+        # award won by the company is on record even when it does not name the client's product).
+        official = entry.candidate.stream in _RECORD_STREAMS
+        named = entry.evidence_level in ("explicit_purchase", "project_requirement")
+        if not o.latest or not (official or named):
             return None
         news = _reason(o.why_now, _NEWS_WORDS, "the project")
         return (

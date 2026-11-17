@@ -116,7 +116,13 @@ class BusinessView(BaseModel):
 
 def _spec_dirs() -> list[Path]:
     settings = get_settings()
-    dirs = [Path(settings.onboarding_clients_dir), Path(settings.radar_clients_dir)]
+    # the demo client's spec ships with the image in deploy/demo/clients (18 Nov: without it the
+    # live demo's business page was "not found" and its brief had no coverage line)
+    dirs = [
+        Path(settings.onboarding_clients_dir),
+        Path(settings.radar_clients_dir),
+        Path("deploy/demo/clients"),
+    ]
     return [d if d.is_absolute() else REPO_ROOT / d for d in dirs]
 
 
