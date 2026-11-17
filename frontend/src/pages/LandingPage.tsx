@@ -7,9 +7,9 @@ import "../nv/nv.css";
 import "./landing.css";
 import { Examples } from "./Examples";
 
-// The example radars are built (D-examples) but stay off the public landing until the founder
-// approves the rebuilt set (17 Nov).
-const SHOW_EXAMPLES = false;
+// The example radars (rebuilt 18 Nov from runs with the evidence floor), on the landing so a judge
+// sees a finished radar in one click (founder, 18 Nov).
+const SHOW_EXAMPLES = true;
 import { ResolvePanel, Thread, useSideways } from "./landingMotion";
 import { CountUp, Words, motionOk, useTilt } from "./useReveal";
 

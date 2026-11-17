@@ -10,7 +10,7 @@
       "offer": "Makes paving, walling and landscaping products for builders' merchants, contractors and housebuilders in the UK.",
       "summary": "UK importers of paving whose official import records show they buy it now, the biggest first.",
       "forbid": ["marshalls"],
-      "keep": 8
+      "keep": 40
     },
     {
       "slug": "compressed-air-maker",
@@ -21,7 +21,7 @@
       "offer": "Manufactures compressed-air systems: rotary screw compressors, blowers, air treatment, controllers and portable compressors for industry.",
       "summary": "UK importers of compressor products whose official import record changed, and the news behind them.",
       "forbid": ["kaeser", "kompressoren"],
-      "keep": 8
+      "keep": 40
     },
     {
       "slug": "piping-maker",
@@ -32,7 +32,7 @@
       "offer": "Manufactures plastic piping, drainage and plumbing systems for residential, commercial and civil projects.",
       "summary": "UK importers of piping and drainage products, with their size and the reason to call now.",
       "forbid": ["polypipe"],
-      "keep": 8
+      "keep": 40
     },
     {
       "slug": "rainwater-maker",
@@ -43,7 +43,7 @@
       "offer": "Makes aluminium rainwater systems (gutters, downpipes and fascias) for contractors, developers and merchants.",
       "summary": "Builders' merchants named on a competing brand's public stockist list, checked one by one.",
       "forbid": ["marley", "alutec"],
-      "keep": 8
+      "keep": 40
     }
   ]
 }

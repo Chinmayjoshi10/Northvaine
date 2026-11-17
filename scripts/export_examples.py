@@ -237,7 +237,7 @@ def build(source: Path, out: Path, config: Path = CONFIG) -> list[str]:
             # another example's business (as a competitor), which would undo its anonymity
             cfg = {**cfg, "forbid": forbid}
             run_path = source / cfg["source"] / cfg["day"] / "run.json"
-            run, before, kept = curate(json.loads(run_path.read_text(encoding="utf-8")), cfg)
+            run, before, _kept = curate(json.loads(run_path.read_text(encoding="utf-8")), cfg)
             spec = json.loads((source / f"{cfg['source']}.json").read_text(encoding="utf-8"))
             cid = CLIENT_PREFIX + cfg["slug"]
             (clients / f"{cid}.json").write_text(
@@ -253,7 +253,10 @@ def build(source: Path, out: Path, config: Path = CONFIG) -> list[str]:
                     "name": cfg["name"],
                     "summary": cfg["summary"],
                     "day": cfg["day"],
-                    "shown": kept,
+                    # leads with proof (not held by the evidence floor or the review), D148
+                    "shown": sum(
+                        1 for e in run["entries"] if not (e.get("opportunity") or {}).get("held")
+                    ),
                     "found": before + len(run["rejected"]),
                     "set_aside": len(run["rejected"]),
                 }
