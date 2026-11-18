@@ -1,0 +1,73 @@
+name: Publish the site
+
+# Republishes the GitHub Pages copy of the demo (the README's "Live demo" link) whenever main
+# changes, from the reviewed edition committed in demo_reports. It never runs the radar and needs
+# no model or search keys: the same publish steps as the "Nightly demo" workflow with
+# fresh_run=false (18 Nov: the Pages copy had stayed on an old version for weeks).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: nightly-demo
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install (Python 3.12 and locked dependencies)
+        run: uv sync --frozen
+
+      # The client is anonymised: drop its own group and customers (private list in a secret),
+      # remove company contacts, and stop if anything identifying is left (nothing deploys).
+      - name: Make the report safe to publish
+        env:
+          DEMO_FORBID: ${{ secrets.DEMO_FORBID }}
+        run: uv run python scripts/sanitize_demo_report.py demo_reports/radar
+
+      - name: Export the demo pages as static JSON
+        run: >
+          uv run python scripts/export_static.py --reports demo_reports/radar --out site_data
+          --clients-dir deploy/demo/clients
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build the frontend in static mode
+        env:
+          VITE_STATIC_DATA: "1"
+          VITE_LIVE_API: https://northvaine.onrender.com
+          VITE_BASE: /Northvaine/
+        run: |
+          npm --prefix frontend ci
+          npm --prefix frontend run build
+          cp -r site_data frontend/dist/data
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+      - name: Deploy to Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

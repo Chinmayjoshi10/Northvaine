@@ -254,6 +254,12 @@ export function LandingPage({ intro }: { intro: boolean }) {
         <div><div className="landing-eyebrow lm-h lm-h1">Leads with intent, not lists</div><h1 aria-label="Find the companies about to buy what you sell."><Words text="Find the companies" /> <em><Words text="about to buy" start={3} /></em> <Words text="what you sell." start={6} /></h1>
           <p className="landing-sub lm-h lm-h2">For manufacturers, distributors and B2B suppliers in any industry. Northvaine finds companies with a real reason to buy from you, right now, often before they start looking for suppliers. Every lead comes with its intent, its timing, who decides, and the proof.</p>
           <div className="landing-ctas lm-h lm-h3"><WebsiteCta label="Find my buyers →" /><a className="landing-btn line" href={link("app", "stone_exporter_demo", "latest")}>See a live example</a></div>
+          {SHOW_EXAMPLES && (
+            // 18 Nov: the examples sat below the fold; one plain link under the hero buttons
+            <p className="landing-hero-more lm-h lm-h3">
+              <a href="#examples">Or open an example radar for four industries →</a>
+            </p>
+          )}
           <div className="landing-fine mono lm-h lm-h4"><span>Free first radar</span><span>No card</span><span>Set up in minutes</span></div>
         </div><div className="lm-h lm-h5"><LeadCard ready={heroIn} /></div>
       </div></header>
