@@ -38,7 +38,7 @@ less than it seems. The real target is the per-page extraction call.
 - **Next experiment:** the same method as here, on recorded web pages with those labels. It
   needs more recorded full-text pages than today's mostly structured runs. Candidates are Jev,
   GLiClass, a small model of our own, and the LLM as the reference.
-- **Plan:** docs/research/UPGRADE_PLAN.md, "Classifiers beyond the hackathon".
+- **Plan:** classifiers are a post-hackathon item in docs/LATER.md.
 
 ## JEV: what it is
 

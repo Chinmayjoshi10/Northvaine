@@ -2,7 +2,7 @@
 
 Source: `api.uktradeinfo.com`, HMRC's open, keyless OData API, published under the Open
 Government Licence v3.0 (attribute: HM Revenue & Customs, uktradeinfo). Shapes confirmed on
-14 Oct 2026 (docs/BUYER_INTENT_PLAN.md, "Data sources"):
+14 Oct 2026 (docs/DECISIONS.md, D101 and D102):
 
 - `/Commodity?$filter=Hs6Code eq '<6 digits>'&$expand=Imports($filter=MonthId ge ..;
   $expand=Trader)` lists, per 8-digit code and month, each importing trader (name, address,

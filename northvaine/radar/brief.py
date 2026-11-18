@@ -366,7 +366,7 @@ def _trade_slots(candidate: Candidate) -> dict[str, Any]:
 
 def _trade_urgency(candidate: Candidate) -> tuple[int, int, str]:
     """Import records are a standing proof of buying, not a window. New importers lead: they are
-    still building their supplier list (BUYER_INTENT_PLAN, lesson 5)."""
+    still building their supplier list (the 14 Oct field test, D101)."""
     slots = _trade_slots(candidate)
     last, first = slots.get("last_month"), slots.get("first_month")
     months = slots.get("months_active")

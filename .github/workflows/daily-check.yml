@@ -1,11 +1,11 @@
 # One real "Build my radar" on the live demo each morning, the way a judge would do it. If the radar
 # does not finish or does not open, the run fails and GitHub notifies the repo owner.
-# OFF until the founder switches it on (judging, Dec 2026): uncomment the schedule.
+# ON since 18 Nov (founder): every morning at 06:15 UTC.
 name: Daily live check
 
 on:
-  # schedule:
-  #   - cron: "15 6 * * *"
+  schedule:
+    - cron: "15 6 * * *"
   workflow_dispatch:
 
 jobs:
